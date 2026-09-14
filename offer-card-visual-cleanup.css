@@ -26,8 +26,16 @@
 .nb-offer-card .mock-bookmark:active{transform:scale(.96)}
 .nb-offer-card .bookmark svg,
 .nb-offer-card .mock-bookmark svg{width:18px;height:22px;display:block;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* Followed state changes only the bookmark glyph. The outer button chrome stays identical. */
 .nb-offer-card .bookmark.saved,
-.nb-offer-card .mock-bookmark.saved{background:rgba(255,255,255,.96);border-color:#cfe2ff;color:#0877ff}
+.nb-offer-card .mock-bookmark.saved{
+  background:rgba(255,255,255,.94);
+  border-color:rgba(209,216,226,.92);
+  color:#23324a;
+}
+.nb-offer-card .bookmark.saved svg path,
+.nb-offer-card .mock-bookmark.saved svg path{fill:currentColor}
 
 /* Product art framing */
 .nb-offer-card .nb-main-art{overflow:hidden;border-radius:12px}
