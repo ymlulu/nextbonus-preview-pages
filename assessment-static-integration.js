@@ -37,11 +37,12 @@ function resultState(result){
     report:{applicationCopy:p.application_text,bonusCopy:p.bonus_text,offerCopy:p.offer_text,approvalCopy:p.approval_text,longCopy:p.long_term_text,nextStep:p.cta.pre}};
 }
 function reportHtml(result){
-  const d=result.dimensions,p=result.report;
+  const d=result.dimensions,p=result.report,cta=p.cta||{};
   const dimensions=[['开卡奖励评级',d.offer.rating],['获批可能性',d.application.approval_label],['能否拿奖励',d.bonus.label],['长期持有价值',d.long_term.label]];
-  const sections=[['申请规则',p.application_text],['开卡奖励资格',p.bonus_text],['当前开卡奖励',p.offer_text],['获批可能性',p.approval_text],['长期持有价值',p.long_term_text],['下一步',p.cta.pre]];
+  const sections=[['申请规则',p.application_text],['开卡奖励资格',p.bonus_text],['当前开卡奖励',p.offer_text],['获批可能性',p.approval_text],['长期持有价值',p.long_term_text],['下一步',cta.pre]];
   const body=sections.map(([k,v])=>`<section><h3>${esc(k)}</h3><p>${esc(v)}</p>${k==='当前开卡奖励'?'<div class="nb-offer-history" data-assessment-offer-history hidden></div>':''}</section>`).join('');
-  return `<h2 id="assessment-modal-title">${esc(result.decision.recommended_action)}</h2><p>${esc(result.decision.summary)}</p><dl class="canonical-dimensions">${dimensions.map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>${body}<small>${esc(result.provenance?.release_id||result.release_id||'')}</small><footer><button data-modal-action="restart" class="btn secondary">重新评估</button><button data-modal-action="close" class="btn primary">完成</button></footer>`;
+  const ctaText=cta.text||'完成',ctaDest=cta.dest||'offer_detail_url';
+  return `<h2 id="assessment-modal-title">${esc(result.decision.recommended_action)}</h2><p>${esc(result.decision.summary)}</p><dl class="canonical-dimensions">${dimensions.map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>${body}<small>${esc(result.provenance?.release_id||result.release_id||'')}</small><footer><button data-modal-action="restart" class="btn secondary">重新评估</button><button data-modal-action="report-cta" data-dest="${esc(ctaDest)}" class="btn primary">${esc(ctaText)}</button></footer>`;
 }
 let active=null;
 async function open(restart=false){
@@ -52,6 +53,10 @@ async function open(restart=false){
   const opener=document.activeElement,previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';document.body.append(dialog);
   function close(){session.token++;dialog.close();dialog.remove();active=null;document.body.style.overflow=previousOverflow;
     if(opener?.isConnected)opener.focus();else document.querySelector('[data-action="assessment-start"]')?.focus();}
+  function runReportCta(dest){
+    close();
+    if(dest==='current_application_url')requestAnimationFrame(()=>document.querySelector('[data-action="direct-apply"]')?.click());
+  }
   function paint(body){dialog.innerHTML=`<button class="canonical-close" data-modal-action="close" aria-label="关闭评估">×</button><div class="canonical-modal-body">${body}</div>`;dialog.scrollTop=0;}
   function paintReport(result){
     paint(reportHtml(result));
@@ -82,6 +87,7 @@ async function open(restart=false){
   dialog.addEventListener('cancel',e=>{e.preventDefault();close();});
   dialog.addEventListener('click',e=>{const button=e.target.closest('button');if(!button)return;const action=button.dataset.modalAction;
     if(action==='close'){close();return;}if(session.busy)return;
+    if(action==='report-cta'){runReportCta(button.dataset.dest);return;}
     if(action==='restart'||action==='retry'){load(action==='restart');return;}
     if(action==='back'){const d=draft();d.step--;ui.saveDraft(d);renderQuestion();return;}
     if(action==='next'){const d=draft();if(!valid(steps()[d.step],d.answers))return;if(d.step===steps().length-1)submit();else{d.step++;ui.saveDraft(d);renderQuestion();}return;}
