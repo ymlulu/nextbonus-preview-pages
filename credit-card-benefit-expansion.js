@@ -3,6 +3,12 @@
 
   const STORAGE_KEY = 'nextbonus-local-v8-state';
   const CYCLE_KEY = 'nextbonus-benefit-cycle-v1';
+  const CYCLE_USED_LABELS = Object.freeze({
+    month: '本月已使用',
+    quarter: '本季度已使用',
+    'half-year': '本半年已使用',
+    'calendar-year': '今年已使用'
+  });
 
   function esc(value) {
     return String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
@@ -43,7 +49,10 @@
       item => legacyAttentionMatches(item, title, productId)
     ) || null;
   }
-  function formatDate(date) { return `${date.getMonth() + 1}月${date.getDate()}日`; }
+
+  function formatDate(date) {
+    return `${date.getMonth() + 1}月${date.getDate()}日`;
+  }
 
   function cycleInfo(row) {
     const benefitId = row?.dataset?.benefitId;
@@ -60,6 +69,10 @@
     return { productId, benefitId, cycleType, key, legacyKey, window: period, record, used: record?.status === 'used' };
   }
 
+  function cycleUsedLabel(cycleType) {
+    return CYCLE_USED_LABELS[cycleType] || '本期已使用';
+  }
+
   function appAction(action, id) {
     if (!action || !id) return;
     const button = document.createElement('button');
@@ -70,6 +83,17 @@
     document.body.appendChild(button);
     button.click();
     button.remove();
+  }
+
+  function matchingHistoryForCycle(info, attentionId) {
+    const appState = readJson(STORAGE_KEY);
+    const history = Array.isArray(appState.attentionHistory) ? appState.attentionHistory : [];
+    return history.find((item) => item.type === 'benefit' || item.benefitId ?
+      item.productId === info.productId &&
+      item.benefitId === info.benefitId &&
+      item.cycleId === info.window.id &&
+      (!attentionId || item.source?.id === attentionId || item.id === attentionId)
+      : false) || null;
   }
 
   function setCycleUsed(info, used, attention) {
@@ -91,10 +115,24 @@
     }));
     if (used && attention?.id) appAction('complete-attention', attention.id);
     if (!used && info.record?.attentionId) {
-      const appState = readJson(STORAGE_KEY);
-      const history = Array.isArray(appState.attentionHistory) ? appState.attentionHistory : [];
-      if (history.some((item) => item.id === info.record.attentionId)) appAction('history-correction', info.record.attentionId);
+      const history = matchingHistoryForCycle(info, info.record.attentionId);
+      if (history?.id) appAction('history-correction', history.id);
     }
+  }
+
+  function quickStatusMarkup(cycle) {
+    const used = cycle.used;
+    const label = used ? cycleUsedLabel(cycle.cycleType) : '未使用';
+    return `<button type="button" class="nb-benefit-cycle-quick${used ? ' used' : ''}" data-nb-cycle-toggle="1" data-nb-cycle-quick="1" aria-pressed="${used ? 'true' : 'false'}" aria-label="${esc(label)}"><span aria-hidden="true">${used ? '✓' : '○'}</span><span>${esc(label)}</span></button>`;
+  }
+
+  function renderQuickStatus(row) {
+    row?.querySelector(':scope > [data-nb-cycle-quick="1"]')?.remove();
+    const cycle = cycleInfo(row);
+    if (!row || !cycle) return;
+    const chev = row.querySelector(':scope > b,:scope > .chev');
+    if (chev) chev.insertAdjacentHTML('beforebegin', quickStatusMarkup(cycle));
+    else row.insertAdjacentHTML('beforeend', quickStatusMarkup(cycle));
   }
 
   function detailMarkup(row, title, short, attention) {
@@ -151,6 +189,7 @@
       chev.textContent = '›';
       row.appendChild(chev);
     }
+    renderQuickStatus(row);
   }
 
   function openDetail(row) {
@@ -180,6 +219,7 @@
   }
 
   function refreshRow(row) {
+    renderQuickStatus(row);
     const wrap = row.closest('.v4-benefit-item-wrap');
     const detail = wrap?.querySelector(':scope > [data-nb-source-benefit-detail="1"]');
     if (!detail) return;
@@ -202,7 +242,7 @@
       if (!row || !cycle) return;
       const attention = matchingAttention(row, title);
       setCycleUsed(cycle, !cycle.used, attention);
-      if (!attention) refreshRow(row);
+      refreshRow(row);
       return;
     }
     if (event.target.closest?.('[data-action]')) return;
@@ -214,12 +254,24 @@
 
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
+    if (event.target.closest?.('[data-nb-cycle-toggle="1"],button')) return;
     const row = event.target.closest?.('.v4-pd-benefits .v4-benefit-row');
     if (!row || row.dataset.action === 'toggle-benefit') return;
     event.preventDefault();
     toggle(row);
   });
 
+  window.addEventListener('nextbonus-benefit-cycle-changed', (event) => {
+    const detail = event.detail || {};
+    document.querySelectorAll('.v4-pd-benefits .v4-benefit-row').forEach((row) => {
+      const cycle = cycleInfo(row);
+      if (!cycle) return;
+      if (detail.productId && cycle.productId !== detail.productId) return;
+      if (detail.benefitId && cycle.benefitId !== detail.benefitId) return;
+      if (detail.cycleId && cycle.window.id !== detail.cycleId) return;
+      refreshRow(row);
+    });
+  });
   window.addEventListener('nextbonus-product-facts-rendered', enhance);
   window.addEventListener('DOMContentLoaded', enhance);
   enhance();
