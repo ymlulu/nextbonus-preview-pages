@@ -65,5 +65,5 @@
   apply();
 })();
 
-import('./product-detail-earning-layout.js');
-import('./credit-card-benefit-expansion.js');
+import('./product-detail-earning-layout.js?v=20260915-1');
+import('./credit-card-benefit-expansion.js?v=20260915-1');
