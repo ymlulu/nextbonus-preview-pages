@@ -82,16 +82,16 @@
   ];
 
   const defaultAttention = [
-    {id:'a-bonus-plat', productId:'p-amex-plat-1005', product:'AMEX Platinum •••• 1005', action:'完成开卡奖励', secondary:'6个月消费 $12,000，获得 175,000 MR', time:'截止 9月18日', dueDate:'2026-09-18', type:'bonus', summary:'这笔开卡奖励仍在追踪中。完成全部消费条件后即可结束这条任务。', key:'175,000 MR', keySub:'最晚 9月18日完成', instruction:'完成以下条件', checklist:[{id:'c1',label:'完成 $12,000 合格消费',done:false}], primary:'我已完成', secondaryAction:null, completionKind:'completed'},
-    {id:'a-hilton-credit', productId:'p-hilton-aspire-2308', product:'Hilton Aspire •••• 2308', action:'使用 $200 Hilton 酒店报销', secondary:'', time:'本期截止 9月18日', dueDate:'2026-09-18', type:'benefit', summary:'本期 Hilton 酒店报销仍可使用。', key:'$200 Hilton 酒店报销', keySub:'本期可用至 9月18日', instruction:'本期怎么处理', checklist:[], primary:'已使用', secondaryAction:'本期不再提醒', completionKind:'used'},
-    {id:'a-csr-fee', productId:'p-csr-2948', product:'Chase Sapphire Reserve •••• 2948', action:'查看即将收取的 $795 年费', secondary:'', time:'年费日 10月2日', dueDate:'2026-10-02', type:'annual', summary:'下一次年费即将收取。现在适合重新确认这张卡是否仍值得长期保留。', key:'$795 年费', keySub:'年费日 10月2日', instruction:'确认你已经看过', checklist:[], primary:'我已查看', secondaryAction:null, completionKind:'viewed'},
-    {id:'a-plat-fee', productId:'p-amex-plat-1005', product:'AMEX Platinum •••• 1005', action:'年费即将收取', secondary:'$895 年费', time:'年费日 2027年4月15日', dueDate:'2027-04-15', type:'annual', summary:'下一次年费将在 2027 年 4 月 15 日收取。', key:'$895 年费', keySub:'2027年4月15日', instruction:'确认你已经看过', checklist:[], primary:'我已查看', secondaryAction:null, completionKind:'viewed'},
-    {id:'a-rule-change', productId:'p-amex-plat-1005', product:'AMEX Platinum •••• 1005', action:'年费与福利已更新', secondary:'生效日期 2025年9月18日', time:'生效 10月1日', dueDate:'2026-10-01', type:'change', summary:'这张卡的年费与部分福利已经更新。', key:'权益更新', keySub:'10月1日生效', instruction:'确认变化', checklist:[], primary:'知道了', secondaryAction:null, completionKind:'confirmed'},
+    {id:'a-bonus-plat', productId:'p-amex-plat-1005', product:'AMEX Platinum', action:'完成开卡奖励', secondary:'6个月消费 $12,000，获得 175,000 MR', time:'截止 9月18日', dueDate:'2026-09-18', type:'bonus', summary:'这笔开卡奖励仍在追踪中。完成全部消费条件后即可结束这条任务。', key:'175,000 MR', keySub:'最晚 9月18日完成', instruction:'完成以下条件', checklist:[{id:'c1',label:'完成 $12,000 合格消费',done:false}], primary:'我已完成', secondaryAction:null, completionKind:'completed'},
+    {id:'a-hilton-credit', productId:'p-hilton-aspire-2308', product:'Hilton Aspire', action:'使用 $200 Hilton 酒店报销', secondary:'', time:'本期截止 9月18日', dueDate:'2026-09-18', type:'benefit', summary:'本期 Hilton 酒店报销仍可使用。', key:'$200 Hilton 酒店报销', keySub:'本期可用至 9月18日', instruction:'本期怎么处理', checklist:[], primary:'已使用', secondaryAction:'本期不再提醒', completionKind:'used'},
+    {id:'a-csr-fee', productId:'p-csr-2948', product:'Chase Sapphire Reserve', action:'查看即将收取的 $795 年费', secondary:'', time:'年费日 10月2日', dueDate:'2026-10-02', type:'annual', summary:'下一次年费即将收取。现在适合重新确认这张卡是否仍值得长期保留。', key:'$795 年费', keySub:'年费日 10月2日', instruction:'确认你已经看过', checklist:[], primary:'我已查看', secondaryAction:null, completionKind:'viewed'},
+    {id:'a-plat-fee', productId:'p-amex-plat-1005', product:'AMEX Platinum', action:'年费即将收取', secondary:'$895 年费', time:'年费日 2027年4月15日', dueDate:'2027-04-15', type:'annual', summary:'下一次年费将在 2027 年 4 月 15 日收取。', key:'$895 年费', keySub:'2027年4月15日', instruction:'确认你已经看过', checklist:[], primary:'我已查看', secondaryAction:null, completionKind:'viewed'},
+    {id:'a-rule-change', productId:'p-amex-plat-1005', product:'AMEX Platinum', action:'年费与福利已更新', secondary:'生效日期 2025年9月18日', time:'生效 10月1日', dueDate:'2026-10-01', type:'change', summary:'这张卡的年费与部分福利已经更新。', key:'权益更新', keySub:'10月1日生效', instruction:'确认变化', checklist:[], primary:'知道了', secondaryAction:null, completionKind:'confirmed'},
     {id:'a-usbank', productId:'p-usbank', product:'U.S. Bank Smartly Checking', action:'完成开户奖励条件', secondary:'完成开户与 Direct Deposit 条件', time:'截止 10月12日', dueDate:'2026-10-12', type:'bonus', summary:'这个开户奖励包含多个完成条件。', key:'最高 $450', keySub:'截止 10月12日', instruction:'完成以下条件', checklist:[{id:'u1',label:'账户已成功开立',done:true},{id:'u2',label:'完成符合要求的 Direct Deposit',done:false}], primary:'我已完成', secondaryAction:null, completionKind:'completed'}
   ];
 
   const defaultHistory = [
-    {id:'h-uber', productId:'p-amex-plat-1005', product:'AMEX Platinum •••• 1005', action:'使用本期 Uber Cash', time:'本期截止 Aug 31', dueDate:'2026-08-31', result:'已使用', statusClass:'used', ended:'Sep 01, 2026', correction:'撤销已使用', summary:'8 月 Uber Cash 福利已在当期确认使用。', key:'$15 Uber Cash', keySub:'8 月周期', instruction:'历史记录'},
+    {id:'h-uber', productId:'p-amex-plat-1005', product:'AMEX Platinum', action:'使用本期 Uber Cash', time:'本期截止 Aug 31', dueDate:'2026-08-31', result:'已使用', statusClass:'used', ended:'Sep 01, 2026', correction:'撤销已使用', summary:'8 月 Uber Cash 福利已在当期确认使用。', key:'$15 Uber Cash', keySub:'8 月周期', instruction:'历史记录'},
     {id:'h-bonus-gold', productId:'p-amex-gold-7712', product:'AMEX Gold •••• 7712', action:'完成开卡奖励', time:'截止 Feb 03', dueDate:'2026-02-03', result:'已完成', statusClass:'used', ended:'Jan 21, 2026', correction:'撤销完成', summary:'开卡奖励要求已确认完成。', key:'90,000 MR', keySub:'完成于 Jan 21', instruction:'历史记录'},
     {id:'h-benefit-skip', productId:'p-hilton', product:'Hilton Honors Diamond', action:'使用季度酒店福利', time:'本期截止 Jun 30', dueDate:'2026-06-30', result:'本期已忽略', statusClass:'skipped', ended:'Jun 22, 2026', correction:'恢复本期提醒', summary:'你当时选择本期不再提醒。', key:'季度福利', keySub:'2026 Q2', instruction:'历史记录'},
     {id:'h-expired', productId:'p-csp-2948', product:'Chase Sapphire Preferred •••• 2948', action:'使用年度酒店福利', time:'本期截止 Aug 11', dueDate:'2026-08-11', result:'已到期', statusClass:'expired', ended:'Aug 11, 2026', correction:null, summary:'这项年度福利已经超过当期使用窗口。', key:'$50 酒店福利', keySub:'已到期', instruction:'历史记录'},
@@ -504,7 +504,7 @@
   function productPageAttentionItem(a){
     const expanded=state.expandedAttentionId===a.id;
     const tone=a.id==='a-bonus-plat'?'urgent':a.id==='a-hilton-credit'?'soon':'normal';
-    return `<div class="v4-pp-attention-item"><button class="v4-pp-attention-row" data-action="toggle-attention" data-id="${a.id}" data-history="0"><span class="v4-pp-product">${esc(a.product)}</span><span class="v4-pp-action">${esc(a.action)}</span><span class="v4-pp-time tone-${tone}">${esc(a.time)}</span><span class="v4-pp-chevron">›</span></button>${expanded?attentionExpanded(a,false):''}</div>`;
+    return `<div class="v4-pp-attention-item"><button class="v4-pp-attention-row" data-action="toggle-attention" data-id="${a.id}" data-history="0"><span class="v4-pp-product">${esc(attentionDisplayLabel(a))}</span><span class="v4-pp-action">${esc(a.action)}</span><span class="v4-pp-time tone-${tone}">${esc(a.time)}</span><span class="v4-pp-chevron">›</span></button>${expanded?attentionExpanded(a,false):''}</div>`;
   }
 
   function attentionPriority(a){
@@ -602,9 +602,19 @@
 
   function shortBrand(v){ return String(v||'NB').split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase().slice(0,3); }
   function attentionProduct(pId){ return state.products.find(p=>p.id===pId)||state.pastProducts.find(p=>p.id===pId)||null; }
+  function stripAttentionSnapshotInstance(value=''){ return String(value||'').replace(/\s+[•·]{4}\s*\d{4}\s*$/,'').trim(); }
+  function snapshotAttentionInstance(value=''){ const m=String(value||'').match(/([•·]{4}\s*\d{4})\s*$/); return m?m[1]:''; }
+  function attentionIdentity(a){
+    const p=attentionProduct(a?.productId);
+    if(p) return {name:p.name||stripAttentionSnapshotInstance(a?.product),instance:p.instance||''};
+    return {name:stripAttentionSnapshotInstance(a?.product),instance:a?.productInstance||snapshotAttentionInstance(a?.product)||''};
+  }
+  function attentionDisplayName(a){ return attentionIdentity(a).name; }
+  function attentionDisplayInstance(a){ return attentionIdentity(a).instance; }
+  function attentionDisplayLabel(a){ const x=attentionIdentity(a); return [x.name,x.instance].filter(Boolean).join(' '); }
   function attentionThumb(a){
     const p=attentionProduct(a.productId);
-    const asset=window.NextBonusProductArtRegistry?.resolveProduct?.(p)||window.NextBonusProductArtRegistry?.resolveByName?.(a.product);
+    const asset=window.NextBonusProductArtRegistry?.resolveProduct?.(p)||window.NextBonusProductArtRegistry?.resolveByName?.(attentionDisplayName(a));
     const src=asset?.web||asset?.local||'';
     return src?`<img src="${src}" alt="" />`:`<span>${esc(shortBrand(p?.institution||a.product))}</span>`;
   }
@@ -613,7 +623,7 @@
     const expanded=state.expandedAttentionId===a.id;
     const tone=a.time.includes('截止')?'due':a.time.includes('生效')?'info':'soft';
     return `<div class="attention-item"><button class="attention-row ${history?'history-row':''}" data-action="toggle-attention" data-id="${a.id}" data-history="${history?'1':'0'}">
-      <span class="att-product-cell"><span class="att-thumb">${attentionThumb(a)}</span><span class="att-product-copy"><strong>${esc(a.product)}</strong><small>${esc(attentionProduct(a.productId)?.instance||'')}</small></span></span>
+      <span class="att-product-cell"><span class="att-thumb">${attentionThumb(a)}</span><span class="att-product-copy"><strong>${esc(attentionDisplayName(a))}</strong><small>${esc(attentionDisplayInstance(a))}</small></span></span>
       <span class="att-action-cell"><strong>${esc(a.action)}</strong>${a.secondary?`<small>${esc(a.secondary)}</small>`:''}</span>
       <span class="att-time att-time-${tone}">${esc(a.time)}</span>${history?`<span class="history-status ${a.statusClass||''}">${esc(a.result)}</span>`:''}<span class="chev ${expanded?'up':''}">›</span>
     </button>${expanded?attentionExpanded(a,history):''}</div>`;
@@ -720,7 +730,7 @@
   }
 
   function uniqueAttentionProducts(){
-    const map=new Map(); [...currentActiveAttention(),...state.attentionHistory].forEach(a=>{ if(!map.has(a.productId)) map.set(a.productId,{id:a.productId,label:a.product}); }); return [...map.values()];
+    const map=new Map(); [...currentActiveAttention(),...state.attentionHistory].forEach(a=>{ if(!map.has(a.productId)) map.set(a.productId,{id:a.productId,label:attentionDisplayLabel(a)}); }); return [...map.values()];
   }
   function historyBucket(h){
     if(h.statusClass==='skipped') return 'skipped'; if(h.statusClass==='expired') return 'expired'; if(h.statusClass==='stopped') return 'stopped'; return 'completed';
@@ -872,7 +882,7 @@
       const chosen=f.offer==='manual'?null:publicOfferChoices(f.product).find(x=>x.id===f.offer);
       const reward=f.offer==='manual'?f.reward:(chosen?.value||'开户 / 开卡奖励');
       const due=f.offer==='manual'?f.tasks[0]?.due:'';
-      const a={id:`a-local-${now}`,productId:p.id,product:`${p.name} ${p.instance}`,action:f.category==='信用卡'?'完成开卡奖励':'完成开户奖励条件',secondary:reward,time:due?`截止 ${shortDate(due)}`:'截止日期以所选奖励规则为准',dueDate:due||null,type:'bonus',summary:'这是你在添加产品时建立的奖励追踪。逐项完成条件即可。',key:reward,keySub:due?`最晚 ${shortDate(due)} 完成`:'按所选奖励规则',instruction:'完成以下条件',checklist:f.offer==='manual'?f.tasks.map(t=>({id:t.id,label:t.desc,done:false,dueDate:t.due})):[{id:'req1',label:'完成对应奖励条件',done:false}],primary:'我已完成',secondaryAction:null,completionKind:'completed'};
+      const a={id:`a-local-${now}`,productId:p.id,product:p.name,action:f.category==='信用卡'?'完成开卡奖励':'完成开户奖励条件',secondary:reward,time:due?`截止 ${shortDate(due)}`:'截止日期以所选奖励规则为准',dueDate:due||null,type:'bonus',summary:'这是你在添加产品时建立的奖励追踪。逐项完成条件即可。',key:reward,keySub:due?`最晚 ${shortDate(due)} 完成`:'按所选奖励规则',instruction:'完成以下条件',checklist:f.offer==='manual'?f.tasks.map(t=>({id:t.id,label:t.desc,done:false,dueDate:t.due})):[{id:'req1',label:'完成对应奖励条件',done:false}],primary:'我已完成',secondaryAction:null,completionKind:'completed'};
       state.activeAttention.push(a);
       if(chosen?.sourceOfferId && isSaved(chosen.sourceOfferId)) removeSaved(chosen.sourceOfferId);
     }
@@ -906,7 +916,8 @@
     else if(a.completionKind==='used'){ result='已使用'; correction='撤销已使用'; }
     else if(a.completionKind==='viewed'){ result='已查看'; correction='撤销已查看'; }
     else if(a.completionKind==='confirmed'){ result='已了解'; correction='撤销确认'; }
-    const history={id:`h-${a.id}-${Date.now()}`,productId:a.productId,product:a.product,action:a.action,time:a.time,result,statusClass,ended:historyDateLabel(),correction,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:a};
+    const identity=attentionIdentity(a);
+    const history={id:`h-${a.id}-${Date.now()}`,productId:a.productId,product:identity.name,productInstance:identity.instance,action:a.action,time:a.time,result,statusClass,ended:historyDateLabel(),correction,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:{...a,product:identity.name,productInstance:identity.instance}};
     state.activeAttention.splice(idx,1); state.attentionHistory.unshift(history); state.expandedAttentionId=null;
     render(); toast(`${result} · `,()=>undoHistory(history.id,a));
   }
@@ -1019,14 +1030,14 @@
       const f=state.editFlow,p=state.products.find(x=>x.id===f.productId),t=(catalog['信用卡']||[]).find(x=>x.id===f.changeTargetId); if(!p||!t||!f.changeDate)return;
       const now=Date.now(), newId=`p-change-${now}`;
       const ending=state.activeAttention.filter(a=>a.productId===p.id);
-      ending.forEach((a,i)=>state.attentionHistory.unshift({id:`h-stopped-${a.id}-${now}-${i}`,productId:p.id,product:a.product,action:a.action,time:a.time,dueDate:a.dueDate||null,result:'已结束',resultReason:'已更换产品',statusClass:'stopped',ended:formatLongDate(f.changeDate),correction:null,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:a}));
+      ending.forEach((a,i)=>state.attentionHistory.unshift({id:`h-stopped-${a.id}-${now}-${i}`,productId:p.id,product:attentionIdentity(a).name,productInstance:attentionIdentity(a).instance,action:a.action,time:a.time,dueDate:a.dueDate||null,result:'已结束',resultReason:'已更换产品',statusClass:'stopped',ended:formatLongDate(f.changeDate),correction:null,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:a}));
       state.activeAttention=state.activeAttention.filter(a=>a.productId!==p.id);
       const old={...p,status:'已更换产品',statusText:`已于 ${formatLongDate(f.changeDate)} 更换产品`,history:[...(p.history||[]),{date:f.changeDate,copy:`已更换为 ${t.name}`,targetProductId:newId}]};
       state.products=state.products.filter(x=>x.id!==p.id); state.pastProducts.unshift(old);
       const np={id:newId,offerId:t.offerId||null,type:'信用卡',name:t.name,institution:t.institution,instance:p.instance,cardImageLocal:t.cardImageLocal||null,opened:f.changeDate,anniversary:formatAnniversary(f.changeDate),annualFee:t.annualFee||'—',status:'正常',earning:t.earning||'—',addedAt:now,history:[{date:f.changeDate,copy:`由 ${p.name} 更换而来`,targetProductId:p.id}]};
       state.products.push(np); state.currentProductId=np.id; state.productSearch=''; state.editFlow=null; render(); toast('产品已更换'); return;
     }
-    if(action==='save-edit-product'){ const f=state.editFlow,p=state.products.find(x=>x.id===el.dataset.id); if(!f||!p)return; const ins=document.getElementById('edit-instance')?.value??f.instance; const status=document.getElementById('edit-status')?.value??f.status; const opened=document.getElementById('edit-opened')?.value??f.opened; p.instance=p.type==='信用卡'?(ins?`•••• ${ins}`:p.instance):(ins||p.instance);p.status=status;p.opened=opened;p.anniversary=opened?formatAnniversary(opened):'—'; if(f.pendingBonus&&!state.activeAttention.some(a=>a.productId===p.id&&a.type==='bonus')){ const now=Date.now(),due=f.pendingBonus.kind==='manual'?f.pendingBonus.tasks[0]?.due:null; state.activeAttention.push({id:`a-edit-${now}`,productId:p.id,product:`${p.name} ${p.instance}`,action:'完成开卡奖励',secondary:f.pendingBonus.reward,time:due?`截止 ${shortDate(due)}`:'截止日期以所选奖励规则为准',dueDate:due,type:'bonus',summary:'这是你在编辑产品时补充建立的开卡奖励追踪。',key:f.pendingBonus.reward,keySub:due?`最晚 ${shortDate(due)} 完成`:'按所选奖励规则',instruction:'完成以下条件',checklist:f.pendingBonus.kind==='manual'?f.pendingBonus.tasks.map(t=>({id:t.id,label:t.desc,done:false,dueDate:t.due})):[{id:'req1',label:f.pendingBonus.req||'完成对应奖励条件',done:false}],primary:'我已完成',secondaryAction:null,completionKind:'completed'}); if(f.pendingBonus.sourceOfferId&&isSaved(f.pendingBonus.sourceOfferId))removeSaved(f.pendingBonus.sourceOfferId); } if(status==='已关闭'){ state.products=state.products.filter(x=>x.id!==p.id);p.statusText=`已于 ${formatLongDate(localDateISO())}关闭`;state.pastProducts.unshift(p);const stopped=state.activeAttention.filter(a=>a.productId===p.id);state.activeAttention=state.activeAttention.filter(a=>a.productId!==p.id);stopped.forEach(a=>state.attentionHistory.unshift({id:`h-stop-${a.id}-${Date.now()}`,productId:p.id,product:a.product,action:a.action,time:a.time,dueDate:a.dueDate,result:'已结束',resultReason:'产品已关闭',statusClass:'stopped',ended:historyDateLabel(),correction:null,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:a}));state.currentProductId=p.id;} state.editFlow=null;render();toast('已保存');return; }
+    if(action==='save-edit-product'){ const f=state.editFlow,p=state.products.find(x=>x.id===el.dataset.id); if(!f||!p)return; const ins=document.getElementById('edit-instance')?.value??f.instance; const status=document.getElementById('edit-status')?.value??f.status; const opened=document.getElementById('edit-opened')?.value??f.opened; p.instance=p.type==='信用卡'?(ins?`•••• ${ins}`:p.instance):(ins||p.instance);p.status=status;p.opened=opened;p.anniversary=opened?formatAnniversary(opened):'—'; if(f.pendingBonus&&!state.activeAttention.some(a=>a.productId===p.id&&a.type==='bonus')){ const now=Date.now(),due=f.pendingBonus.kind==='manual'?f.pendingBonus.tasks[0]?.due:null; state.activeAttention.push({id:`a-edit-${now}`,productId:p.id,product:p.name,action:'完成开卡奖励',secondary:f.pendingBonus.reward,time:due?`截止 ${shortDate(due)}`:'截止日期以所选奖励规则为准',dueDate:due,type:'bonus',summary:'这是你在编辑产品时补充建立的开卡奖励追踪。',key:f.pendingBonus.reward,keySub:due?`最晚 ${shortDate(due)} 完成`:'按所选奖励规则',instruction:'完成以下条件',checklist:f.pendingBonus.kind==='manual'?f.pendingBonus.tasks.map(t=>({id:t.id,label:t.desc,done:false,dueDate:t.due})):[{id:'req1',label:f.pendingBonus.req||'完成对应奖励条件',done:false}],primary:'我已完成',secondaryAction:null,completionKind:'completed'}); if(f.pendingBonus.sourceOfferId&&isSaved(f.pendingBonus.sourceOfferId))removeSaved(f.pendingBonus.sourceOfferId); } if(status==='已关闭'){ state.products=state.products.filter(x=>x.id!==p.id);p.statusText=`已于 ${formatLongDate(localDateISO())}关闭`;state.pastProducts.unshift(p);const stopped=state.activeAttention.filter(a=>a.productId===p.id);state.activeAttention=state.activeAttention.filter(a=>a.productId!==p.id);stopped.forEach(a=>state.attentionHistory.unshift({id:`h-stop-${a.id}-${Date.now()}`,productId:p.id,product:attentionIdentity(a).name,productInstance:attentionIdentity(a).instance,action:a.action,time:a.time,dueDate:a.dueDate,result:'已结束',resultReason:'产品已关闭',statusClass:'stopped',ended:historyDateLabel(),correction:null,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:a}));state.currentProductId=p.id;} state.editFlow=null;render();toast('已保存');return; }
     if(action==='remove-product-request'){ state.modal={type:'remove-product-confirm',productId:el.dataset.id};render();return; }
     if(action==='remove-product-confirm'){ const id=el.dataset.id; state.products=state.products.filter(p=>p.id!==id);state.activeAttention=state.activeAttention.filter(a=>a.productId!==id);state.modal=null;state.editFlow=null;state.route='products';render();toast('已从 NextBonus 中移除');return; }
     if(action==='product-call'){ const phone=el.dataset.phone;if(phone)navigator.clipboard?.writeText(phone);toast(phone?`客服电话 ${phone} 已复制`:'');return; }
