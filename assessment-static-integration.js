@@ -1,6 +1,13 @@
 (function(root){
 'use strict';
-const MAP={'chase-sapphire':'chase_sapphire_preferred'};
+const MAP={
+  'chase-sapphire':'chase_sapphire_preferred',
+  'amex-gold':'amex_gold',
+  'amex-platinum':'amex_platinum',
+  'bilt-palladium':'bilt_palladium',
+  'capitalone-venturex':'capital_one_venture_x',
+  'citi-strata':'citi_strata_elite'
+};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function localDate(date=new Date()){
   const pad=value=>String(value).padStart(2,'0');
