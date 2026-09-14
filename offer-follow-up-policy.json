@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "defaults": {
     "followUpMode": "none",
     "watchlistEntry": "saved"
@@ -20,7 +20,16 @@
     "moomoo": {"followUpMode":"none","watchlistEntry":"saved"},
     "robinhood": {"followUpMode":"none","watchlistEntry":"saved"},
     "cashback-deal": {"followUpMode":"none","watchlistEntry":"saved"},
-    "travel-transfer": {"followUpMode":"deal","watchlistEntry":"in_progress"},
+    "travel-transfer": {
+      "followUpMode":"deal",
+      "watchlistEntry":"in_progress",
+      "lifecycle": {
+        "endDate":"2026-09-30",
+        "completionMode":"user_confirmed",
+        "completeStatus":"completed",
+        "expireStatus":"expired"
+      }
+    },
     "amazon-gift": {"followUpMode":"none","watchlistEntry":"saved"},
     "panda-mobile": {"followUpMode":"none","watchlistEntry":"saved"}
   }

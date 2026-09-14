@@ -55,3 +55,5 @@
 })();
 
 import('./remaining-offers.js');
+import('./deal-watchlist-lifecycle.js');
+import('./deal-watchlist-ui.js');
