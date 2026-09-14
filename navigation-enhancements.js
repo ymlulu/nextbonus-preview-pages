@@ -3,11 +3,16 @@
 
   const STYLE_ID = 'nextbonus-navigation-enhancements-style';
   const MOBILE_QUERY='(max-width:780px)';
+  const APP_STATE_KEY='nextbonus-local-v8-state';
+  const HANDOFF_SUCCESS_KEY='nextbonus-application-handoff-success-v1';
+  const DETAIL_INTENT_KEY='nextbonus-product-detail-intent-v1';
   const root=document.getElementById('app');
   let sourceSnapshot=null;
   let sourceScroll=0;
   let sourceKind=null;
   let applyingLayer=false;
+  let consumingIntent=false;
+  let pendingHandoffDetail=false;
 
   function ensureStyles(){
     if(document.getElementById(STYLE_ID)) return;
@@ -83,9 +88,12 @@
 
   function rememberSource(trigger){
     if(!root || isMobile() || detailKind()) return;
-    sourceSnapshot=root.innerHTML;
+    const shell=root.querySelector(':scope > .shell');
+    if(!shell) return;
+    sourceSnapshot=shell.outerHTML;
     sourceScroll=window.scrollY||0;
-    sourceKind=trigger?.dataset?.action==='open-product'?'product':'offer';
+    const action=trigger?.dataset?.action||'';
+    sourceKind=(action==='open-product'||action==='add-view-product')?'product':'offer';
   }
 
   function clearLayerMemory(){
@@ -148,17 +156,71 @@
     if(!root.querySelector('.nb-detail-layer')) clearLayerMemory();
   }
 
+  function writeProductDetailIntent(productId){
+    if(!productId) return;
+    try{ localStorage.setItem(DETAIL_INTENT_KEY,JSON.stringify({productId:String(productId),createdAt:Date.now()})); }catch(_){}
+  }
+
+  function prepareHandoffProductDetail(){
+    if(!pendingHandoffDetail && !localStorage.getItem(HANDOFF_SUCCESS_KEY)) return;
+    try{
+      const raw=localStorage.getItem(APP_STATE_KEY);
+      if(!raw) return;
+      const state=JSON.parse(raw);
+      if(state?.route!=='product-detail'||!state.currentProductId) return;
+      const productId=state.currentProductId;
+      state.route='products';
+      state.routeSource='products';
+      state.productSearch='';
+      localStorage.setItem(APP_STATE_KEY,JSON.stringify(state));
+      writeProductDetailIntent(productId);
+    }catch(_){}
+  }
+
+  function consumeProductDetailIntent(){
+    if(!root || consumingIntent || detailKind() || !root.querySelector('.v4-products-page')) return;
+    let intent=null;
+    try{
+      const raw=localStorage.getItem(DETAIL_INTENT_KEY);
+      if(!raw) return;
+      intent=JSON.parse(raw);
+      if(!intent?.productId){ localStorage.removeItem(DETAIL_INTENT_KEY); return; }
+      localStorage.removeItem(DETAIL_INTENT_KEY);
+    }catch(_){
+      try{ localStorage.removeItem(DETAIL_INTENT_KEY); }catch(__){}
+      return;
+    }
+    consumingIntent=true;
+    const trigger=document.createElement('button');
+    trigger.type='button';
+    trigger.hidden=true;
+    trigger.dataset.action='open-product';
+    trigger.dataset.id=String(intent.productId);
+    document.body.appendChild(trigger);
+    trigger.click();
+    trigger.remove();
+    consumingIntent=false;
+  }
+
   function enhance(){
     ensureStyles();
     enhanceLogo();
     enhanceDetailPages();
+    consumeProductDetailIntent();
     syncDetailLayer();
   }
 
   document.addEventListener('click',event=>{
-    const trigger=event.target.closest('[data-action="open-offer"],[data-action="open-product"]');
+    const trigger=event.target.closest('[data-action="open-offer"],[data-action="open-product"],[data-action="add-view-product"]');
     if(trigger) rememberSource(trigger);
+    const handoff=event.target.closest('[data-handoff-action="approved-submit"],[data-handoff-action="duplicate-view"],[data-handoff-action="duplicate-override"]');
+    if(handoff){
+      pendingHandoffDetail=true;
+      setTimeout(()=>{ pendingHandoffDetail=false; },0);
+    }
   },true);
+
+  window.addEventListener('beforeunload',prepareHandoffProductDetail);
 
   let queued=false;
   const queueEnhance=()=>{
