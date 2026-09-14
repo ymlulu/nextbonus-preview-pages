@@ -98,31 +98,7 @@
     {id:'h-stopped', productId:'p-old-card', product:'AMEX Green •••• 4481', action:'使用 CLEAR 报销', time:'本期截止 Mar 31', dueDate:'2026-03-31', result:'已结束', resultReason:'产品已关闭', statusClass:'stopped', ended:'Mar 01, 2026', correction:null, summary:'产品关闭后，未来周期福利提醒已经停止。', key:'CLEAR 报销', keySub:'产品生命周期结束', instruction:'历史记录'}
   ];
 
-  const catalog = {
-    '信用卡':[
-      {id:'c-plat', offerId:'amex-platinum', name:'AMEX Platinum Card', institution:'American Express', art:'dark', cardImageLocal:'assets/product-art/amex-platinum.png'},
-      {id:'c-gold', offerId:'amex-gold', name:'AMEX Gold Card', institution:'American Express', art:'gold', cardImageLocal:'assets/product-art/amex-gold.png'},
-      {id:'c-csp', offerId:'chase-sapphire', name:'Chase Sapphire Preferred', institution:'Chase', art:'blue', cardImageLocal:'assets/product-art/chase-sapphire.png'},
-      {id:'c-bilt', offerId:'bilt-palladium', name:'Bilt Palladium Card', institution:'Bilt', art:'purple', cardImageLocal:'assets/product-art/bilt-palladium.png'},
-      {id:'c-vx', offerId:'capitalone-venturex', name:'Capital One Venture X', institution:'Capital One', art:'blue', cardImageLocal:'assets/product-art/capitalone-venturex.png'},
-      {id:'c-citi-elite', offerId:'citi-strata', name:'Citi Strata Elite', institution:'Citi', art:'dark', cardImageLocal:'assets/product-art/citi-strata.png'}
-    ],
-    '银行账户':[
-      {id:'b-usbank', offerId:'usbank-checking', name:'U.S. Bank Smartly Checking', institution:'U.S. Bank', art:'bank'},
-      {id:'b-hsbc', offerId:'hsbc-checking', name:'HSBC Premier Checking', institution:'HSBC', art:'bank'},
-      {id:'b-truist', offerId:'truist-checking', name:'Truist One Checking', institution:'Truist', art:'bank'}
-    ],
-    '券商账户':[
-      {id:'br-moomoo', offerId:'moomoo', name:'Moomoo Brokerage', institution:'Moomoo', art:'bank'},
-      {id:'br-robinhood', offerId:'robinhood', name:'Robinhood Brokerage', institution:'Robinhood', art:'bank'},
-      {id:'br-tradeup', name:'TradeUP Brokerage', institution:'TradeUP', art:'bank'}
-    ],
-    '其他':[
-      {id:'m-hilton-gold', name:'Hilton Honors Gold Status', institution:'Hilton', subtype:'等级', art:'bank'},
-      {id:'m-hilton-diamond', name:'Hilton Honors Diamond Status', institution:'Hilton', subtype:'等级', art:'bank'},
-      {id:'m-hyatt', name:'World of Hyatt Globalist', institution:'Hyatt', subtype:'等级', art:'bank'}
-    ]
-  };
+  const catalog = window.NextBonusProductCatalog || {};
 
   function defaultState(){
     return {
