@@ -3,12 +3,12 @@
 
   const categories = {
     '信用卡':[
-      {id:'c-plat', offerId:'amex-platinum', name:'AMEX Platinum Card', institution:'American Express', art:'dark', cardImageLocal:'assets/product-art/amex-platinum.png'},
-      {id:'c-gold', offerId:'amex-gold', name:'AMEX Gold Card', institution:'American Express', art:'gold', cardImageLocal:'assets/product-art/amex-gold.png'},
-      {id:'c-csp', offerId:'chase-sapphire', name:'Chase Sapphire Preferred', institution:'Chase', art:'blue', cardImageLocal:'assets/product-art/chase-sapphire.png'},
-      {id:'c-bilt', offerId:'bilt-palladium', name:'Bilt Palladium Card', institution:'Bilt', art:'purple', cardImageLocal:'assets/product-art/bilt-palladium.png'},
-      {id:'c-vx', offerId:'capitalone-venturex', name:'Capital One Venture X', institution:'Capital One', art:'blue', cardImageLocal:'assets/product-art/capitalone-venturex.png'},
-      {id:'c-citi-elite', offerId:'citi-strata', name:'Citi Strata Elite', institution:'Citi', art:'dark', cardImageLocal:'assets/product-art/citi-strata.png'}
+      {id:'c-plat', offerId:'amex-platinum', name:'AMEX Platinum Card', institution:'American Express', art:'dark'},
+      {id:'c-gold', offerId:'amex-gold', name:'AMEX Gold Card', institution:'American Express', art:'gold'},
+      {id:'c-csp', offerId:'chase-sapphire', name:'Chase Sapphire Preferred', institution:'Chase', art:'blue'},
+      {id:'c-bilt', offerId:'bilt-palladium', name:'Bilt Palladium Card', institution:'Bilt', art:'purple'},
+      {id:'c-vx', offerId:'capitalone-venturex', name:'Capital One Venture X', institution:'Capital One', art:'blue'},
+      {id:'c-citi-elite', offerId:'citi-strata', name:'Citi Strata Elite', institution:'Citi', art:'dark'}
     ],
     '银行账户':[
       {id:'b-usbank', offerId:'usbank-checking', name:'U.S. Bank Smartly Checking', institution:'U.S. Bank', art:'bank'},
@@ -27,10 +27,18 @@
     ]
   };
 
+  const typeForCategory = category => category === '信用卡' ? '信用卡' : category === '其他' ? '会籍' : '银行和券商账户';
+
+  function withCanonicalArt(category, product){
+    const asset = window.NextBonusProductArtRegistry?.resolveProduct?.({...product, type:typeForCategory(category)});
+    if(!asset) return {...product};
+    return {...product, cardImageLocal:asset.web || asset.local || undefined, cardArtKey:asset.key || undefined};
+  }
+
   const frozenCategories = Object.freeze(Object.fromEntries(
     Object.entries(categories).map(([category, products]) => [
       category,
-      Object.freeze(products.map(product => Object.freeze({...product})))
+      Object.freeze(products.map(product => Object.freeze(withCanonicalArt(category, product))))
     ])
   ));
 
@@ -40,7 +48,7 @@
 
   window.NextBonusProductCatalog = frozenCategories;
   window.NextBonusProductRegistry = Object.freeze({
-    schemaVersion: '1.0',
+    schemaVersion: '1.1',
     categories: frozenCategories,
     byId,
     getById(id){ return byId[id] || null; },
