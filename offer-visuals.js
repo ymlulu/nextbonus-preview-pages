@@ -11,12 +11,11 @@
     'capitalone-venturex': {kind:'image', src:'assets/product-art/capitalone-venturex.png', alt:'Capital One Venture X'},
     'citi-strata': {kind:'image', src:'assets/product-art/citi-strata.png', alt:'Citi Strata Elite'},
 
-    // Bank offers: use accurate/high-resolution debit art where confirmed. For products without
-    // a verified U.S. debit-card asset, prefer a crisp local bank mark instead of a blurry or
-    // potentially misleading card face.
+    // Bank offer visuals belong in the large center artwork slot. Provider logos are rendered
+    // separately in the top-left, so this registry should point at the main product artwork.
     'hsbc-checking': {kind:'logo', src:'assets/product-logo-marks/hsbc.svg', alt:'HSBC Premier Checking'},
     'chase-checking': {kind:'logo', src:'assets/product-logo-marks/chase.svg', alt:'Chase Total Checking'},
-    'usbank-checking': {kind:'image', src:'https://rewards.usbank.com/content/dam/us-bank-benefits/march-2026/US-Bank-Visa-Debit-Card.png', alt:'U.S. Bank Visa Debit Card'},
+    'usbank-checking': {kind:'image', src:'assets/product-page/bank-usbank.png', alt:'U.S. Bank Smartly Checking'},
     'truist-checking': {kind:'image', src:'https://www.truist.com/content/dam/truist/us/en/card-art/card-controls/370.png/jcr%3Acontent/renditions/original', alt:'Truist debit card'},
 
     'moomoo': {kind:'logo', src:'assets/product-logo-marks/moomoo.svg', alt:'Moomoo'},
