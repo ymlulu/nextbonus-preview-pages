@@ -3,6 +3,14 @@
 
   const esc = value => String(value || '');
 
+  function setText(node, value){
+    if(!node) return false;
+    const next = String(value || '');
+    if(node.textContent === next) return false;
+    node.textContent = next;
+    return true;
+  }
+
   function tagLabel(id){
     return id ? (window.NextBonusOfferTags?.[id]?.label || '') : '';
   }
@@ -34,23 +42,23 @@
     const {offer, product} = hit;
     const brand = poster.querySelector('.v4-generic-brand');
     const name = poster.querySelector('.v4-generic-name');
-    if(brand) brand.textContent = product.provider || '';
-    if(name) name.textContent = product.name || '';
+    setText(brand, product.provider || '');
+    setText(name, product.name || '');
 
     const tabs = Array.from(poster.querySelectorAll('.v4-generic-poster-tabs button'));
     const activeIndex = Math.max(0, tabs.findIndex(button => button.classList.contains('active')));
     if(activeIndex === 0){
       const big = poster.querySelector('.v4-generic-big');
       const copy = poster.querySelector('.v4-generic-copy');
-      if(big) big.textContent = offer.primaryValue || '';
-      if(copy) copy.textContent = offer.primaryRequirement || '';
+      setText(big, offer.primaryValue || '');
+      setText(copy, offer.primaryRequirement || '');
     }
 
     const cards = poster.querySelectorAll('.v4-generic-cards span b');
     const valueLabel = tagLabel(offer.valueTag);
     const attributeLabel = tagLabel(offer.attributeTag);
-    if(cards[0] && valueLabel) cards[0].textContent = valueLabel;
-    if(cards[1] && attributeLabel) cards[1].textContent = attributeLabel;
+    if(cards[0] && valueLabel) setText(cards[0], valueLabel);
+    if(cards[1] && attributeLabel) setText(cards[1], attributeLabel);
   }
 
   function syncDealDetail(page){
@@ -63,8 +71,8 @@
     const requirement = hit.offer.primaryRequirement || '';
     const posterValue = page.querySelector('.deal-poster-title');
     const panelValue = page.querySelector('.deal-value');
-    if(posterValue && value) posterValue.textContent = value;
-    if(panelValue && value) panelValue.textContent = value;
+    if(posterValue && value) setText(posterValue, value);
+    if(panelValue && value) setText(panelValue, value);
 
     const terms = page.querySelector('.deal-terms-copy');
     if(terms && requirement && !terms.textContent.includes(requirement)){
@@ -83,8 +91,8 @@
     const value = hit.offer.primaryValue || '';
     const posterValue = page.querySelector('.remaining-value');
     const rewardValue = page.querySelector('.remaining-reward-value');
-    if(posterValue && value) posterValue.textContent = value;
-    if(rewardValue && value) rewardValue.textContent = value;
+    if(posterValue && value) setText(posterValue, value);
+    if(rewardValue && value) setText(rewardValue, value);
   }
 
   function sync(){
