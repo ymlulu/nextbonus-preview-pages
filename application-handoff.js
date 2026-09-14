@@ -7,7 +7,7 @@
   const ROOT_ID = 'nb-application-handoff-root';
   const STYLE_ID = 'nb-application-handoff-style';
   const UNRESOLVED_STATUSES = new Set([
-    'awaiting_result', 'deferred', 'pending', 'denied',
+    'awaiting_result', 'deferred', 'pending',
     'approved_needs_login', 'approved_setup', 'approved_duplicate'
   ]);
 
@@ -56,6 +56,11 @@
   function attemptForCurrentView() {
     const state = appState();
     const store = handoffStore();
+    const active = store.attempts.find(attempt => attempt.id === store.activeId) || null;
+    if (active && !UNRESOLVED_STATUSES.has(active.status)) {
+      store.activeId = null;
+      saveStore(store);
+    }
     if (state?.route === 'offer-detail' && state.currentOfferId) {
       const matching = store.attempts.find(attempt =>
         attempt.offerId === state.currentOfferId && UNRESOLVED_STATUSES.has(attempt.status)
@@ -66,7 +71,7 @@
       }
       return matching;
     }
-    return store.attempts.find(attempt => attempt.id === store.activeId) || null;
+    return active && UNRESOLVED_STATUSES.has(active.status) ? active : null;
   }
 
   function updateAttempt(id, patch) {
