@@ -40,7 +40,8 @@ function reportHtml(result){
   const d=result.dimensions,p=result.report;
   const dimensions=[['开卡奖励评级',d.offer.rating],['获批可能性',d.application.approval_label],['能否拿奖励',d.bonus.label],['长期持有价值',d.long_term.label]];
   const sections=[['申请规则',p.application_text],['开卡奖励资格',p.bonus_text],['当前开卡奖励',p.offer_text],['获批可能性',p.approval_text],['长期持有价值',p.long_term_text],['下一步',p.cta.pre]];
-  return `<h2 id="assessment-modal-title">${esc(result.decision.recommended_action)}</h2><p>${esc(result.decision.summary)}</p><dl class="canonical-dimensions">${dimensions.map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>${sections.map(([k,v])=>`<section><h3>${esc(k)}</h3><p>${esc(v)}</p></section>`).join('')}<small>${esc(result.provenance?.release_id||result.release_id||'')}</small><footer><button data-modal-action="restart" class="btn secondary">重新评估</button><button data-modal-action="close" class="btn primary">完成</button></footer>`;
+  const body=sections.map(([k,v])=>`<section><h3>${esc(k)}</h3><p>${esc(v)}</p>${k==='当前开卡奖励'?'<div class="nb-offer-history" data-assessment-offer-history hidden></div>':''}</section>`).join('');
+  return `<h2 id="assessment-modal-title">${esc(result.decision.recommended_action)}</h2><p>${esc(result.decision.summary)}</p><dl class="canonical-dimensions">${dimensions.map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>${body}<small>${esc(result.provenance?.release_id||result.release_id||'')}</small><footer><button data-modal-action="restart" class="btn secondary">重新评估</button><button data-modal-action="close" class="btn primary">完成</button></footer>`;
 }
 let active=null;
 async function open(restart=false){
@@ -52,6 +53,11 @@ async function open(restart=false){
   function close(){session.token++;dialog.close();dialog.remove();active=null;document.body.style.overflow=previousOverflow;
     if(opener?.isConnected)opener.focus();else document.querySelector('[data-action="assessment-start"]')?.focus();}
   function paint(body){dialog.innerHTML=`<button class="canonical-close" data-modal-action="close" aria-label="关闭评估">×</button><div class="canonical-modal-body">${body}</div>`;dialog.scrollTop=0;}
+  function paintReport(result){
+    paint(reportHtml(result));
+    const host=dialog.querySelector('[data-assessment-offer-history]');
+    if(host&&root.NextBonusAssessmentOfferHistoryChart&&result.offer_history)root.NextBonusAssessmentOfferHistoryChart.render(host,result.offer_history,result.evaluation_date);
+  }
   function draft(){return ui.context().draft;}
   function steps(){return stepsFor(session.contract).filter(q=>visible(q,draft().answers));}
   function questionHtml(q,a){
@@ -70,7 +76,7 @@ async function open(restart=false){
   async function submit(){const d=draft(),all=steps();prune(stepsFor(session.contract),d.answers);const missing=all.findIndex(q=>!valid(q,d.answers));if(missing>=0){d.step=missing;ui.saveDraft(d);renderQuestion();return;}
     session.busy=true;const token=++session.token;const button=dialog.querySelector('[data-modal-action="next"]');button.disabled=true;button.textContent='正在生成…';
     try{const result=await root.AssessmentClient.evaluate({productId,evaluationDate:localDate(),answers:d.answers});if(active!==session||token!==session.token)return;
-      ui.saveResult(session.offerId,resultState(result));paint(reportHtml(result));
+      ui.saveResult(session.offerId,resultState(result));paintReport(result);
     }catch(e){if(active===session&&token===session.token){renderQuestion();dialog.querySelector('[role="alert"]').textContent=e.message;}}
     finally{if(active===session&&token===session.token)session.busy=false;}}
   dialog.addEventListener('cancel',e=>{e.preventDefault();close();});
@@ -85,7 +91,7 @@ async function open(restart=false){
   });
   dialog.addEventListener('input',e=>{if(session.busy||!e.target.dataset.number)return;const d=draft(),input=e.target;d.answers[input.dataset.number]=input.value===''?null:Number(input.value);ui.saveDraft(d);dialog.querySelector('[data-modal-action="next"]').disabled=!valid(steps()[d.step],d.answers);});
   paint('<h2 id="assessment-modal-title">申请评估</h2>');dialog.showModal();
-  if(!restart&&context.result?.canonicalResult)paint(reportHtml(context.result.canonicalResult));else await load(restart);
+  if(!restart&&context.result?.canonicalResult)paintReport(context.result.canonicalResult);else await load(restart);
 }
 root.NBStaticAssessmentIntegration=Object.freeze({productMap:{...MAP},mode:'modal',open,stepsFor,visible,prune,valid,resultState,reportHtml,localDate});
 })(window);
