@@ -3,19 +3,22 @@
 
   // Canonical credit-card art contract:
   // one product identity -> one approved local canonical card face.
+  // Issuer/web sources are used only to source/update these local assets; runtime never hotlinks them.
+  const ART_VERSION='20260914-3';
+  const local=path=>`${path}?v=${ART_VERSION}`;
   const ART = Object.freeze({
-    'amex-platinum': Object.freeze({key:'amex-platinum',local:'assets/product-cards/amex-platinum.png',source:'American Express'}),
-    'amex-gold': Object.freeze({key:'amex-gold',local:'assets/product-cards/amex-gold.png',source:'American Express'}),
-    'chase-sapphire-preferred': Object.freeze({key:'chase-sapphire-preferred',local:'assets/product-cards/chase-sapphire-preferred.png',source:'Chase'}),
-    'bilt-palladium': Object.freeze({key:'bilt-palladium',local:'assets/product-cards/bilt-palladium.webp',source:'public 4K card-art mirror'}),
-    'capitalone-venturex': Object.freeze({key:'capitalone-venturex',local:'assets/product-cards/capitalone-venturex.png',source:'Capital One'}),
-    'citi-strata-elite': Object.freeze({key:'citi-strata-elite',local:'assets/product-cards/citi-strata-elite.png',source:'public card-art mirror'}),
-    'hilton-aspire': Object.freeze({key:'hilton-aspire',local:'assets/product-cards/hilton-aspire.png',source:'local 640x404 approved card art'}),
-    'chase-sapphire-reserve': Object.freeze({key:'chase-sapphire-reserve',local:'assets/product-cards/chase-sapphire-reserve.png',source:'Chase'}),
-    'marriott-brilliant': Object.freeze({key:'marriott-brilliant',local:'assets/product-cards/marriott-brilliant.png',source:'American Express'}),
-    'amex-blue-business-plus': Object.freeze({key:'amex-blue-business-plus',local:'assets/product-cards/amex-blue-business-plus.png',source:'public card-art mirror'}),
-    'chase-freedom-unlimited': Object.freeze({key:'chase-freedom-unlimited',local:'assets/product-cards/chase-freedom-unlimited.png',source:'Chase'}),
-    'citi-double-cash': Object.freeze({key:'citi-double-cash',local:'assets/product-cards/citi-double-cash.png',source:'public card-art mirror'})
+    'amex-platinum': Object.freeze({key:'amex-platinum',local:local('assets/product-cards/amex-platinum.png'),source:'American Express'}),
+    'amex-gold': Object.freeze({key:'amex-gold',local:local('assets/product-cards/amex-gold.png'),source:'American Express'}),
+    'chase-sapphire-preferred': Object.freeze({key:'chase-sapphire-preferred',local:local('assets/product-cards/chase-sapphire-preferred.png'),source:'Chase'}),
+    'bilt-palladium': Object.freeze({key:'bilt-palladium',local:local('assets/product-cards/bilt-palladium.webp'),source:'public 4K card-art mirror'}),
+    'capitalone-venturex': Object.freeze({key:'capitalone-venturex',local:local('assets/product-cards/capitalone-venturex.png'),source:'Capital One'}),
+    'citi-strata-elite': Object.freeze({key:'citi-strata-elite',local:local('assets/product-cards/citi-strata-elite.png'),source:'Citi'}),
+    'hilton-aspire': Object.freeze({key:'hilton-aspire',local:local('assets/product-cards/hilton-aspire.png'),source:'approved local card art'}),
+    'chase-sapphire-reserve': Object.freeze({key:'chase-sapphire-reserve',local:local('assets/product-cards/chase-sapphire-reserve.png'),source:'Chase'}),
+    'marriott-brilliant': Object.freeze({key:'marriott-brilliant',local:local('assets/product-cards/marriott-brilliant.png'),source:'American Express'}),
+    'amex-blue-business-plus': Object.freeze({key:'amex-blue-business-plus',local:local('assets/product-cards/amex-blue-business-plus.png'),source:'American Express'}),
+    'chase-freedom-unlimited': Object.freeze({key:'chase-freedom-unlimited',local:local('assets/product-cards/chase-freedom-unlimited.png'),source:'Chase'}),
+    'citi-double-cash': Object.freeze({key:'citi-double-cash',local:local('assets/product-cards/citi-double-cash.png'),source:'Citi'})
   });
 
   const byOfferId=Object.freeze({
@@ -41,6 +44,6 @@
   const resolveOfferAsset=offerId=>byOfferId[offerId]||null;
   const resolveOffer=offerId=>resolveOfferAsset(offerId)?.local||null;
 
-  window.NextBonusCreditCardArt=Object.freeze({ART,byOfferId,byProductId,byName,resolve,resolveAsset,resolveOffer,resolveOfferAsset});
+  window.NextBonusCreditCardArt=Object.freeze({ART_VERSION,ART,byOfferId,byProductId,byName,resolve,resolveAsset,resolveOffer,resolveOfferAsset});
   window.dispatchEvent(new CustomEvent('nextbonus-card-art-ready'));
 })();
