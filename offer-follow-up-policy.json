@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "defaults": {
+    "followUpMode": "none",
+    "watchlistEntry": "saved"
+  },
+  "allowedFollowUpModes": ["none", "application", "deal"],
+  "allowedWatchlistEntries": ["saved", "in_progress"],
+  "offers": {
+    "chase-sapphire": {"followUpMode":"application","watchlistEntry":"saved"},
+    "amex-gold": {"followUpMode":"application","watchlistEntry":"saved"},
+    "amex-platinum": {"followUpMode":"application","watchlistEntry":"saved"},
+    "bilt-palladium": {"followUpMode":"application","watchlistEntry":"saved"},
+    "capitalone-venturex": {"followUpMode":"application","watchlistEntry":"saved"},
+    "citi-strata": {"followUpMode":"application","watchlistEntry":"saved"},
+    "hsbc-checking": {"followUpMode":"none","watchlistEntry":"saved"},
+    "chase-checking": {"followUpMode":"none","watchlistEntry":"saved"},
+    "usbank-checking": {"followUpMode":"none","watchlistEntry":"saved"},
+    "truist-checking": {"followUpMode":"none","watchlistEntry":"saved"},
+    "moomoo": {"followUpMode":"none","watchlistEntry":"saved"},
+    "robinhood": {"followUpMode":"none","watchlistEntry":"saved"},
+    "cashback-deal": {"followUpMode":"none","watchlistEntry":"saved"},
+    "travel-transfer": {"followUpMode":"deal","watchlistEntry":"in_progress"},
+    "amazon-gift": {"followUpMode":"none","watchlistEntry":"saved"},
+    "panda-mobile": {"followUpMode":"none","watchlistEntry":"saved"}
+  }
+}
