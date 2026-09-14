@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const TYPES = new Set(['month', 'quarter', 'half-year', 'calendar-year']);
+  const TYPES = new Set(['month', 'quarter', 'half-year', 'calendar-year', 'cardmember-year']);
   const pad = value => String(value).padStart(2, '0');
   const dateKey = date => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 
@@ -15,8 +15,45 @@
     return Number.isNaN(parsed.getTime()) ? null : parsed;
   }
 
-  function current(cycleType, value) {
+  function currentProductOpened() {
+    try {
+      const state = JSON.parse(localStorage.getItem('nextbonus-local-v8-state') || '{}');
+      const product = (Array.isArray(state.products) ? state.products : []).find(item => item.id === state.currentProductId);
+      return product?.opened || null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function anniversaryInYear(anchor, year) {
+    const month = anchor.getMonth();
+    const day = anchor.getDate();
+    const candidate = new Date(year, month, day);
+    if (candidate.getMonth() === month) return candidate;
+    return new Date(year, month + 1, 0);
+  }
+
+  function cardmemberYear(value, anchorValue) {
+    const date = asDate(value);
+    const anchor = asDate(anchorValue || currentProductOpened());
+    if (!date || !anchor) return null;
+    let start = anniversaryInYear(anchor, date.getFullYear());
+    if (date < start) start = anniversaryInYear(anchor, date.getFullYear() - 1);
+    const next = anniversaryInYear(anchor, start.getFullYear() + 1);
+    const end = new Date(next.getFullYear(), next.getMonth(), next.getDate() - 1);
+    return {
+      cycleType: 'cardmember-year',
+      id: `${dateKey(start)}__${dateKey(end)}`,
+      start,
+      end,
+      legacyId: `${dateKey(start)}:${dateKey(end)}`,
+      anchor: dateKey(anchor)
+    };
+  }
+
+  function current(cycleType, value, anchorValue) {
     if (!TYPES.has(cycleType)) return null;
+    if (cycleType === 'cardmember-year') return cardmemberYear(value, anchorValue);
     const date = asDate(value);
     if (!date) return null;
     const year = date.getFullYear();
@@ -46,8 +83,8 @@
     return { cycleType, id, start, end, legacyId: `${dateKey(start)}:${dateKey(end)}` };
   }
 
-  function cycleId(cycleType, value) {
-    return current(cycleType, value)?.id || null;
+  function cycleId(cycleType, value, anchorValue) {
+    return current(cycleType, value, anchorValue)?.id || null;
   }
 
   window.NextBonusBenefitCycle = Object.freeze({ types: Object.freeze([...TYPES]), current, cycleId });
