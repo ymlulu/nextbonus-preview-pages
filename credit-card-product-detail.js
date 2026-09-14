@@ -119,7 +119,7 @@
       .replace(/[^a-z0-9\u4e00-\u9fff]+/g, '');
   }
 
-  function benefitAttentionFor(title, attentions, productId) {
+  function legacyBenefitAttentionFor(title, attentions, productId) {
     const titleNorm = normalizeText(title);
     const direct = attentions.find((item) => {
       if (item.productId !== productId || item.type !== 'benefit') return false;
@@ -151,6 +151,17 @@
     }) || null;
   }
 
+  function benefitAttentionFor(row, title, attentions, productId) {
+    const benefitId = row?.dataset?.benefitId;
+    const period = window.NextBonusBenefitCycle?.current(row?.dataset?.cycleType);
+    const identity = benefitId && period ? { productId, benefitId, cycleId: period.id } : null;
+    return window.NextBonusBenefitAttention?.matchingBenefitAttention(
+      attentions,
+      identity,
+      item => legacyBenefitAttentionFor(title, [item], productId) === item
+    ) || null;
+  }
+
   function makeBenefitDue(attention) {
     const badge = document.createElement('span');
     const days = daysUntil(attention?.dueDate);
@@ -172,7 +183,7 @@
       }
 
       row.querySelector('.nb-card-benefit-due')?.remove();
-      const attention = benefitAttentionFor(title, attentions, productId);
+      const attention = benefitAttentionFor(row, title, attentions, productId);
       if (!attention) return;
       const chevron = row.querySelector('b');
       row.insertBefore(makeBenefitDue(attention), chevron || null);
@@ -196,7 +207,7 @@
     }
 
     head.querySelector('.nb-card-benefit-due')?.remove();
-    const attention = benefitAttentionFor(title, attentions, productId);
+    const attention = benefitAttentionFor(null, title, attentions, productId);
     if (attention) {
       const chevron = head.querySelector('.chev');
       head.insertBefore(makeBenefitDue(attention), chevron || null);

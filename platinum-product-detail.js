@@ -100,7 +100,7 @@
     return raw ? `Due ${raw}` : 'Due';
   }
 
-  function benefitAttentionFor(title, attentions) {
+  function legacyBenefitAttentionFor(title, attentions) {
     const patterns = [
       [/Uber/i, /Uber/i],
       [/Saks/i, /Saks/i],
@@ -123,6 +123,17 @@
     }) || null;
   }
 
+  function benefitAttentionFor(row, title, attentions) {
+    const benefitId = row?.dataset?.benefitId;
+    const period = window.NextBonusBenefitCycle?.current(row?.dataset?.cycleType);
+    const identity = benefitId && period ? { productId: PRODUCT_ID, benefitId, cycleId: period.id } : null;
+    return window.NextBonusBenefitAttention?.matchingBenefitAttention(
+      attentions,
+      identity,
+      item => legacyBenefitAttentionFor(title, [item]) === item
+    ) || null;
+  }
+
   function decorateBenefitRows(section, attentions) {
     section.querySelectorAll('.v4-benefit-row').forEach((row) => {
       const title = row.querySelector('strong')?.textContent?.trim() || '';
@@ -133,7 +144,7 @@
       }
 
       row.querySelector('.nb-plat-benefit-due')?.remove();
-      const attention = benefitAttentionFor(title, attentions);
+      const attention = benefitAttentionFor(row, title, attentions);
       if (!attention) return;
 
       const badge = document.createElement('span');

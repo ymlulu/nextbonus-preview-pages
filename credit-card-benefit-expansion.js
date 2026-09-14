@@ -22,48 +22,28 @@
     return String(value || '').toLowerCase().replace(/[®™℠]/g, '').replace(/[^a-z0-9\u4e00-\u9fff]+/g, '');
   }
 
-  function matchingAttention(title) {
+  function legacyAttentionMatches(item, title, productId) {
+    if (item.productId !== productId || item.type !== 'benefit') return false;
+    const needle = normalize(title);
+    const haystack = normalize(`${item.action || ''} ${item.key || ''} ${item.secondary || ''}`);
+    const aliases = ['uber','clear','hilton','marriott','resy','walmart','lululemon','oura','equinox','globalentry','tsa','prioritypass','航空','酒店'];
+    if (haystack.includes(needle) || needle.includes(haystack)) return true;
+    return aliases.some((word) => needle.includes(normalize(word)) && haystack.includes(normalize(word)));
+  }
+
+  function matchingAttention(row, title) {
     const state = readJson(STORAGE_KEY);
     const productId = state.currentProductId;
     const items = Array.isArray(state.activeAttention) ? state.activeAttention : [];
-    const needle = normalize(title);
-    const aliases = ['uber','clear','hilton','marriott','resy','walmart','lululemon','oura','equinox','globalentry','tsa','prioritypass','航空','酒店'];
-    return items.find((item) => {
-      if (item.productId !== productId || item.type !== 'benefit') return false;
-      const haystack = normalize(`${item.action || ''} ${item.key || ''} ${item.secondary || ''}`);
-      if (haystack.includes(needle) || needle.includes(haystack)) return true;
-      return aliases.some((word) => needle.includes(normalize(word)) && haystack.includes(normalize(word)));
-    }) || null;
+    const cycle = cycleInfo(row);
+    const identity = cycle ? { productId, benefitId: cycle.benefitId, cycleId: cycle.window.id } : null;
+    return window.NextBonusBenefitAttention?.matchingBenefitAttention(
+      items,
+      identity,
+      item => legacyAttentionMatches(item, title, productId)
+    ) || null;
   }
-
-  function pad(value) { return String(value).padStart(2, '0'); }
-  function dateKey(date) { return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`; }
   function formatDate(date) { return `${date.getMonth() + 1}月${date.getDate()}日`; }
-
-  function cycleWindow(type, now = new Date()) {
-    const y = now.getFullYear();
-    const m = now.getMonth();
-    let start;
-    let end;
-    if (type === 'month') {
-      start = new Date(y, m, 1);
-      end = new Date(y, m + 1, 0);
-    } else if (type === 'quarter') {
-      const first = Math.floor(m / 3) * 3;
-      start = new Date(y, first, 1);
-      end = new Date(y, first + 3, 0);
-    } else if (type === 'half-year') {
-      const first = m < 6 ? 0 : 6;
-      start = new Date(y, first, 1);
-      end = new Date(y, first + 6, 0);
-    } else if (type === 'calendar-year') {
-      start = new Date(y, 0, 1);
-      end = new Date(y, 11, 31);
-    } else {
-      return null;
-    }
-    return { start, end, id: `${dateKey(start)}:${dateKey(end)}` };
-  }
 
   function cycleInfo(row) {
     const benefitId = row?.dataset?.benefitId;
@@ -71,12 +51,13 @@
     if (!benefitId || !cycleType) return null;
     const appState = readJson(STORAGE_KEY);
     const productId = appState.currentProductId;
-    const window = cycleWindow(cycleType);
-    if (!productId || !window) return null;
-    const key = `${productId}|${benefitId}|${window.id}`;
+    const period = window.NextBonusBenefitCycle?.current(cycleType);
+    if (!productId || !period) return null;
+    const key = `${productId}|${benefitId}|${period.id}`;
+    const legacyKey = `${productId}|${benefitId}|${period.legacyId}`;
     const store = readJson(CYCLE_KEY);
-    const record = store.records?.[key] || null;
-    return { productId, benefitId, cycleType, key, window, record, used: record?.status === 'used' };
+    const record = store.records?.[key] || store.records?.[legacyKey] || null;
+    return { productId, benefitId, cycleType, key, legacyKey, window: period, record, used: record?.status === 'used' };
   }
 
   function appAction(action, id) {
@@ -103,6 +84,7 @@
     } else {
       delete store.records[info.key];
     }
+    delete store.records[info.legacyKey];
     writeCycles(store);
     window.dispatchEvent(new CustomEvent('nextbonus-benefit-cycle-changed', {
       detail: { productId: info.productId, benefitId: info.benefitId, cycleId: info.window.id, status: used ? 'used' : 'available' }
@@ -176,7 +158,7 @@
     if (!wrap) return;
     const title = row.querySelector('strong')?.textContent?.trim() || '';
     const short = row.querySelector('small')?.textContent?.trim() || '';
-    wrap.insertAdjacentHTML('beforeend', detailMarkup(row, title, short, matchingAttention(title)));
+    wrap.insertAdjacentHTML('beforeend', detailMarkup(row, title, short, matchingAttention(row, title)));
   }
 
   function toggle(row) {
@@ -218,7 +200,7 @@
       const title = row?.querySelector('strong')?.textContent?.trim() || '';
       const cycle = cycleInfo(row);
       if (!row || !cycle) return;
-      const attention = matchingAttention(title);
+      const attention = matchingAttention(row, title);
       setCycleUsed(cycle, !cycle.used, attention);
       if (!attention) refreshRow(row);
       return;
