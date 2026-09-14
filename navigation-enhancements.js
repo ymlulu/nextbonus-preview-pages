@@ -2,6 +2,12 @@
   'use strict';
 
   const STYLE_ID = 'nextbonus-navigation-enhancements-style';
+  const MOBILE_QUERY='(max-width:780px)';
+  const root=document.getElementById('app');
+  let sourceSnapshot=null;
+  let sourceScroll=0;
+  let sourceKind=null;
+  let applyingLayer=false;
 
   function ensureStyles(){
     if(document.getElementById(STYLE_ID)) return;
@@ -14,10 +20,31 @@
       .detail-back-button{appearance:none;border:0;background:transparent;padding:6px 4px;color:#3f6fd8;font:inherit;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;border-radius:8px}
       .detail-back-button:hover{background:rgba(61,111,216,.07)}
       .detail-back-button:focus-visible{outline:2px solid #3478f6;outline-offset:2px}
-      @media (max-width: 720px){.detail-back-nav{margin-bottom:14px}.detail-back-button{padding:8px 4px}}
+      @media (min-width:781px){
+        body.nb-detail-layer-open{overflow:hidden}
+        .nb-detail-layer{position:fixed;inset:0;z-index:75;overflow:hidden;background:#f6f8fb}
+        .nb-detail-layer-source{position:absolute;inset:0;overflow:hidden;pointer-events:none;filter:blur(2.4px) saturate(.92);transform:scale(1.004);transform-origin:center;background:#f6f8fb}
+        .nb-detail-layer-source-scroll{min-height:100%;transform:translateY(calc(-1 * var(--nb-source-scroll,0px)))}
+        .nb-detail-layer-source .sidebar{transform:translateY(var(--nb-source-scroll,0px))}
+        .nb-detail-layer-dim{position:absolute;inset:0;width:100%;height:100%;border:0;background:rgba(15,26,47,.24);backdrop-filter:blur(1.2px);z-index:1;cursor:default}
+        .nb-detail-layer-stage{position:absolute;inset:0;z-index:2;display:grid;place-items:start center;padding:28px 42px;overflow:auto;pointer-events:none}
+        .nb-detail-layer-panel{pointer-events:auto;width:min(1180px,calc(100vw - 104px));max-height:calc(100vh - 56px);overflow:auto;background:#fff;border:1px solid rgba(226,232,240,.96);border-radius:22px;box-shadow:0 28px 90px rgba(16,28,52,.26);overscroll-behavior:contain}
+        .nb-detail-layer-offer .nb-detail-layer-panel{width:min(1240px,calc(100vw - 104px))}
+        .nb-detail-layer-panel>.content{max-width:none!important;margin:0!important;padding:26px 28px 34px}
+      }
+      @media (min-width:781px) and (max-width:980px){
+        .nb-detail-layer-stage{padding:22px 24px}
+        .nb-detail-layer-panel,.nb-detail-layer-offer .nb-detail-layer-panel{width:calc(100vw - 48px);max-height:calc(100vh - 44px)}
+        .nb-detail-layer-panel>.content{padding:22px 22px 30px}
+      }
+      @media (max-width:720px){.detail-back-nav{margin-bottom:14px}.detail-back-button{padding:8px 4px}}
     `;
     document.head.appendChild(style);
   }
+
+  const isMobile=()=>window.matchMedia?.(MOBILE_QUERY).matches;
+  const detailKind=()=>root?.querySelector('.v4-offer-detail-page')?'offer':root?.querySelector('.v4-product-detail-page')?'product':null;
+  const canonicalBackAction=kind=>kind==='product'?'back-products':'back-offer-list';
 
   function enhanceLogo(){
     const brand=document.querySelector('.sidebar .brand');
@@ -54,11 +81,84 @@
     if(productPage) prependBackButton(productPage,'back-products','返回我的产品');
   }
 
+  function rememberSource(trigger){
+    if(!root || isMobile() || detailKind()) return;
+    sourceSnapshot=root.innerHTML;
+    sourceScroll=window.scrollY||0;
+    sourceKind=trigger?.dataset?.action==='open-product'?'product':'offer';
+  }
+
+  function clearLayerMemory(){
+    document.body.classList.remove('nb-detail-layer-open');
+    sourceSnapshot=null;
+    sourceScroll=0;
+    sourceKind=null;
+  }
+
+  function buildDetailLayer(kind){
+    if(!root || isMobile() || applyingLayer || root.querySelector(':scope > .nb-detail-layer')) return;
+    const shell=root.querySelector(':scope > .shell');
+    const detailContent=shell?.querySelector('.main')?.innerHTML;
+    if(!detailContent || !sourceSnapshot || (sourceKind && sourceKind!==kind)) return;
+
+    applyingLayer=true;
+    const layer=document.createElement('div');
+    layer.className=`nb-detail-layer nb-detail-layer-${kind}`;
+
+    const source=document.createElement('div');
+    source.className='nb-detail-layer-source';
+    source.setAttribute('aria-hidden','true');
+    source.style.setProperty('--nb-source-scroll',`${sourceScroll}px`);
+    source.innerHTML=`<div class="nb-detail-layer-source-scroll">${sourceSnapshot}</div>`;
+
+    const dim=document.createElement('button');
+    dim.type='button';
+    dim.className='nb-detail-layer-dim';
+    dim.dataset.action=canonicalBackAction(kind);
+    dim.setAttribute('aria-label','返回上一页');
+
+    const stage=document.createElement('div');
+    stage.className='nb-detail-layer-stage';
+    const panel=document.createElement('section');
+    panel.className='nb-detail-layer-panel';
+    panel.setAttribute('role','dialog');
+    panel.setAttribute('aria-modal','true');
+    panel.setAttribute('aria-label',kind==='product'?'产品详情':'Offer 详情');
+    panel.innerHTML=detailContent;
+
+    stage.appendChild(panel);
+    layer.append(source,dim,stage);
+    root.replaceChildren(layer);
+    document.body.classList.add('nb-detail-layer-open');
+    applyingLayer=false;
+    enhanceDetailPages();
+  }
+
+  function syncDetailLayer(){
+    if(!root || applyingLayer) return;
+    const kind=detailKind();
+    if(isMobile()){
+      document.body.classList.remove('nb-detail-layer-open');
+      return;
+    }
+    if(kind){
+      buildDetailLayer(kind);
+      return;
+    }
+    if(!root.querySelector('.nb-detail-layer')) clearLayerMemory();
+  }
+
   function enhance(){
     ensureStyles();
     enhanceLogo();
     enhanceDetailPages();
+    syncDetailLayer();
   }
+
+  document.addEventListener('click',event=>{
+    const trigger=event.target.closest('[data-action="open-offer"],[data-action="open-product"]');
+    if(trigger) rememberSource(trigger);
+  },true);
 
   let queued=false;
   const queueEnhance=()=>{
@@ -70,6 +170,11 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',enhance,{once:true});
   else enhance();
 
-  const root=document.getElementById('app');
   if(root) new MutationObserver(queueEnhance).observe(root,{childList:true,subtree:true});
+  window.addEventListener('popstate',queueEnhance);
+  const media=window.matchMedia?.(MOBILE_QUERY);
+  media?.addEventListener?.('change',()=>{
+    if(media.matches && root?.querySelector('.nb-detail-layer')) location.reload();
+    else queueEnhance();
+  });
 })();
