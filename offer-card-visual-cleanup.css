@@ -1,6 +1,5 @@
 /* Offer Card visual cleanup.
-   Keeps runtime art sources unchanged, but normalizes how Product Art and logos are framed.
-   White/transparent canvas in legacy assets is visually cropped with per-offer transforms.
+   Normalizes how Product Art and logos are framed without changing card layout.
    Bookmark uses one visual system across legacy and composed cards. */
 
 .nb-offer-card .bookmark,
@@ -34,14 +33,28 @@
 .nb-offer-card .nb-main-art{overflow:hidden;border-radius:12px}
 .nb-offer-card .nb-main-art img{transform-origin:center}
 
-/* Legacy bank/debit assets contain extra white canvas. Crop visually without changing the source file. */
-.offer-card[data-id="hsbc-checking"] .nb-main-art img{transform:scale(1.14)}
-.offer-card[data-id="chase-checking"] .nb-main-art img{transform:scale(1.12)}
-.offer-card[data-id="usbank-checking"] .nb-main-art img{transform:scale(1.12)}
-.offer-card[data-id="truist-checking"] .nb-main-art img{transform:scale(1.12)}
+/* Bank offers now use either confirmed debit-card art or scalable bank marks. */
+.offer-card[data-id="hsbc-checking"] .nb-main-art img,
+.offer-card[data-id="chase-checking"] .nb-main-art img{
+  filter:none;
+  transform:scale(.9);
+}
+.offer-card[data-id="usbank-checking"] .nb-main-art img,
+.offer-card[data-id="truist-checking"] .nb-main-art img{
+  filter:drop-shadow(0 10px 15px rgba(31,45,68,.12));
+  transform:scale(1);
+}
 
-/* Logo assets should not render as a tiny mark floating in a large white canvas. */
-.offer-card[data-id="robinhood"] .nb-main-art,
-.offer-card[data-id="cashback-deal"] .nb-main-art{overflow:hidden;border-radius:14px;background:transparent}
+/* Brand/deal marks should render cleanly instead of relying on low-resolution thumbnails. */
+.offer-card[data-id="moomoo"] .nb-main-art img,
 .offer-card[data-id="robinhood"] .nb-main-art img,
-.offer-card[data-id="cashback-deal"] .nb-main-art img{filter:none;transform:scale(1.35);transform-origin:center}
+.offer-card[data-id="travel-transfer"] .nb-main-art img,
+.offer-card[data-id="amazon-gift"] .nb-main-art img,
+.offer-card[data-id="panda-mobile"] .nb-main-art img{
+  filter:none;
+  transform:scale(1.08);
+}
+.offer-card[data-id="cashback-deal"] .nb-main-art img{
+  filter:none;
+  transform:scale(1);
+}
