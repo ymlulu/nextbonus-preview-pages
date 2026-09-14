@@ -68,4 +68,3 @@
 
 import('./product-detail-earning-layout.js');
 import('./credit-card-benefit-expansion.js');
-import('./credit-card-benefit-cycle-state.js');
