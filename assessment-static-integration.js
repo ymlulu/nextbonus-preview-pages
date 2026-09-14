@@ -1,17 +1,84 @@
 (function(root){
 'use strict';
-const K='nextbonus-local-v8-state',MAP={'chase-sapphire':'chase_sapphire_preferred'};let q6c='';
-const read=()=>{try{return JSON.parse(localStorage.getItem(K)||'{}')}catch(_){return {}}};
-const write=x=>localStorage.setItem(K,JSON.stringify(x));
-const step=()=>{const m=(document.querySelector('.assessment-kicker')?.textContent||'').match(/(\d+)\/(\d+)/);return m?Number(m[1]):0};
-const isCsp=()=>MAP[read().currentOfferId]==='chase_sapphire_preferred';
-const M={a1:{none:'NO_US_CARD',lt6:'LT_6M','6to11':'M6_11','1to2':'Y1_2','2plus':'Y2_PLUS',unknown:'UNKNOWN'},a2:{'740':'SCORE_740_PLUS','700':'SCORE_700_739','670':'SCORE_670_699',lt670:'SCORE_LT_670',unknown:'UNKNOWN'},n:{'0':'N0','1':'N1','2to3':'N2_3','4to5':'N4_5','6plus':'N6_PLUS',unknown:'UNKNOWN'},q5a:{'0to3':'N0_3','4':'N4','5plus':'N5_PLUS',unknown:'UNKNOWN'},yn:{no:'NO',yes:'YES',unknown:'UNKNOWN'},q6a:{'0':'N0','1':'N1','2plus':'N2_PLUS',unknown:'UNKNOWN'},q6b:{never:'NEVER',yes:'RECEIVED',unknown:'UNKNOWN'}};
-function canonical(a){const q7={hotel:'CSP_Q7_HOTEL',ge:'CSP_Q7_GE'},q8={rewards:'CSP_Q8_REWARDS',ur:'CSP_Q8_UR',rental:'CSP_Q8_RENTAL',protection:'CSP_Q8_TRAVEL_PROTECTION'},o={a1:M.a1[a.a1],a2:M.a2[a.a2],a3:M.n[a.a3],a4:M.n[a.a4],Q5A:M.q5a[a.q5a],Q5B:M.yn[a.q5b],Q6A:M.q6a[a.q6a],Q6B:M.q6b[a.q6b],Q6C:q6c||'UNKNOWN'};if(a.q5b==='yes'&&a.q5b_count!==undefined)o.Q5B_COUNT=Number(a.q5b_count);o.q7=(a.q7||[]).filter(x=>x!=='none').map(x=>q7[x]).filter(Boolean);o.q8=(a.q8||[]).filter(x=>x!=='none').map(x=>q8[x]).filter(Boolean);return o}
-function preview(r){const d=r.dimensions||{},p=r.report||{},c=r.decision||{};return {meta:`评估于 ${String(r.evaluation_date||'').replaceAll('-','.')}`,recommendation:c.recommended_action||'',shortSummary:c.summary||'',primaryAlert:'',bonus:d.offer?.rating||'',approval:d.application?.approval_label||'',eligible:d.bonus?.label||'',longTerm:d.long_term?.label||'',isSample:false,note:c.summary||'',internal:{appHard:d.application?.hard_behavior||null,bonusHard:d.bonus?.hard_behavior||null,knowledgeGap:false},report:{applicationCopy:p.application_text||'',bonusCopy:p.bonus_text||'',offerCopy:p.offer_text||'',approvalCopy:p.approval_text||'',longCopy:p.long_term_text||'',tips:[],nextStep:c.summary||''}}}
-function decorate(){const s=read(),d=s.assessmentDraft;if(s.route!=='assessment'||s.currentOfferId!=='chase-sapphire'||!d||d.completed||d.step!==5)return;const box=document.querySelector('.assessment-compound');if(!box||box.querySelector('[data-csp-q6c]'))return;box.insertAdjacentHTML('beforeend',`<div class="assessment-subq" data-csp-q6c><div class="assessment-subq-title"><span>3</span>你目前是否持有一张还没有关闭的 Chase Sapphire Preferred？</div><div class="assessment-choices compact">${[['NO','不是'],['YES','是'],['UNKNOWN','不确定']].map(([v,l])=>`<button class="assessment-choice ${q6c===v?'selected':''}" data-csp-q6c-choice="${v}"><span class="assessment-mark">${q6c===v?'✓':''}</span><span>${l}</span></button>`).join('')}</div></div>`)}
-async function submit(){const s=read(),d=s.assessmentDraft;if(!d)return;const b=document.querySelector('[data-action="assessment-next"]');if(b){b.disabled=true;b.textContent='正在生成…'}try{const raw=await root.AssessmentClient.evaluate({productId:'chase_sapphire_preferred',evaluationDate:new Date().toISOString().slice(0,10),answers:canonical(d.answers||{})}),r=preview(raw),n=read();n.assessmentResults=n.assessmentResults||{};n.assessmentResults['chase-sapphire']=r;n.assessmentDraft={offerId:'chase-sapphire',step:7,answers:d.answers||{},completed:true,result:r};n.route='assessment';write(n);location.reload()}catch(err){if(b){b.disabled=false;b.textContent='查看结果'}console.error(err)}}
-document.addEventListener('click',e=>{const c=e.target.closest('[data-csp-q6c-choice]');if(c){e.preventDefault();e.stopImmediatePropagation();q6c=c.dataset.cspQ6cChoice;document.querySelector('[data-csp-q6c]')?.remove();decorate();return}const el=e.target.closest('[data-action]');if(!el||!isCsp())return;if(el.dataset.action==='assessment-restart'){q6c='';return}if(el.dataset.action==='assessment-next'&&step()===6&&!q6c){e.preventDefault();e.stopImmediatePropagation();decorate();return}if(el.dataset.action==='assessment-next'&&step()===8){e.preventDefault();e.stopImmediatePropagation();submit()}},true);
-let queued=false;new MutationObserver(()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;decorate()})}).observe(document.documentElement,{childList:true,subtree:true});
-// Compatibility markers for the original CI contract: AssessmentClient.getQuestionnaire, result.report, result.provenance.
-root.NBStaticAssessmentIntegration=Object.freeze({productMap:{...MAP},mode:'native-page',canonicalAnswers:canonical});
+const MAP={'chase-sapphire':'chase_sapphire_preferred'};
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function localDate(date=new Date()){
+  const pad=value=>String(value).padStart(2,'0');
+  return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}`;
+}
+function visible(q,answers){return !q.show_when||answers[q.show_when.id]===q.show_when.value;}
+function stepsFor(contract){const q=contract.questionnaire;return [...q.common,...Object.values(q.specific),...Object.values(q.benefits)];}
+function leaves(q,answers){return !visible(q,answers)?[]:q.type==='group'?q.subs.flatMap(s=>leaves(s,answers)):[q];}
+function prune(steps,answers){
+  function visit(q){if(!visible(q,answers)){function clear(n){delete answers[n.id];if(n.number_id)delete answers[n.number_id];(n.subs||[]).forEach(clear);}clear(q);return;}
+    if(q.number_id&&answers[q.id]!==q.number_when)delete answers[q.number_id];(q.subs||[]).forEach(visit);}
+  steps.forEach(visit);return answers;
+}
+function valid(q,answers){return leaves(q,answers).every(p=>{
+  const value=answers[p.id],options=p.options||[];
+  if(p.type==='multi'){if(!Array.isArray(value)||(!value.length&&!p.none_option)||value.some(v=>!options.some(o=>o.value===v)))return false;
+    if(value.some(v=>(p.exclusive||[]).includes(v))&&value.length!==1)return false;
+  }else if(!options.some(o=>o.value===value))return false;
+  if(p.number_id&&value===p.number_when){const n=answers[p.number_id];return Number.isInteger(n)&&n>=(p.min??1)&&n<=(p.max??Number.MAX_SAFE_INTEGER);}
+  return true;
+});}
+function resultState(result){
+  const d=result.dimensions,p=result.report,c=result.decision;
+  return {canonicalResult:result,meta:result.evaluation_date,recommendation:c.recommended_action,shortSummary:c.summary,
+    bonus:d.offer.rating,approval:d.application.approval_label,eligible:d.bonus.label,longTerm:d.long_term.label,isSample:false,
+    internal:{appHard:d.application.hard_behavior,bonusHard:d.bonus.hard_behavior},
+    report:{applicationCopy:p.application_text,bonusCopy:p.bonus_text,offerCopy:p.offer_text,approvalCopy:p.approval_text,longCopy:p.long_term_text,nextStep:p.cta.pre}};
+}
+function reportHtml(result){
+  const d=result.dimensions,p=result.report;
+  const dimensions=[['开卡奖励评级',d.offer.rating],['获批可能性',d.application.approval_label],['能否拿奖励',d.bonus.label],['长期持有价值',d.long_term.label]];
+  const sections=[['申请规则',p.application_text],['开卡奖励资格',p.bonus_text],['当前开卡奖励',p.offer_text],['获批可能性',p.approval_text],['长期持有价值',p.long_term_text],['下一步',p.cta.pre]];
+  return `<h2 id="assessment-modal-title">${esc(result.decision.recommended_action)}</h2><p>${esc(result.decision.summary)}</p><dl class="canonical-dimensions">${dimensions.map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>${sections.map(([k,v])=>`<section><h3>${esc(k)}</h3><p>${esc(v)}</p></section>`).join('')}<small>${esc(result.provenance?.release_id||result.release_id||'')}</small><footer><button data-modal-action="restart" class="btn secondary">重新评估</button><button data-modal-action="close" class="btn primary">完成</button></footer>`;
+}
+let active=null;
+async function open(restart=false){
+  const ui=root.NBAssessmentUI,context=ui.context(),productId=MAP[context.offerId];
+  if(!productId||context.route!=='offer-detail'||active)return;
+  const dialog=document.createElement('dialog');dialog.className='canonical-assessment-modal';dialog.setAttribute('aria-labelledby','assessment-modal-title');
+  const session={dialog,offerId:context.offerId,productId,contract:null,busy:false,token:0};active=session;
+  const opener=document.activeElement,previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';document.body.append(dialog);
+  function close(){session.token++;dialog.close();dialog.remove();active=null;document.body.style.overflow=previousOverflow;
+    if(opener?.isConnected)opener.focus();else document.querySelector('[data-action="assessment-start"]')?.focus();}
+  function paint(body){dialog.innerHTML=`<button class="canonical-close" data-modal-action="close" aria-label="关闭评估">×</button><div class="canonical-modal-body">${body}</div>`;dialog.scrollTop=0;}
+  function draft(){return ui.context().draft;}
+  function steps(){return stepsFor(session.contract).filter(q=>visible(q,draft().answers));}
+  function questionHtml(q,a){
+    if(!visible(q,a))return '';
+    if(q.type==='group')return `<div class="assessment-compound">${q.subs.map(p=>`<section>${questionHtml(p,a)}</section>`).join('')}</div>`;
+    const selected=a[q.id],multi=q.type==='multi';
+    return `<h3>${esc(q.title)}</h3><div class="assessment-choices">${q.options.map(o=>{const on=multi?Array.isArray(selected)&&selected.includes(o.value):selected===o.value;return `<button class="assessment-choice ${on?'selected':''}" aria-pressed="${on}" data-answer="${esc(q.id)}" data-value="${esc(o.value)}">${esc(o.label)}</button>`;}).join('')}${multi&&q.none_option?`<button class="assessment-choice ${Array.isArray(selected)&&!selected.length?'selected':''}" data-answer="${esc(q.id)}" data-none="true" aria-pressed="${Array.isArray(selected)&&!selected.length}">${esc(q.none_option)}</button>`:''}</div>${q.number_id&&selected===q.number_when?`<label>${esc(q.number_label)}<input class="input" type="number" step="1" min="${q.min??1}" ${q.max!=null?`max="${q.max}"`:''} data-number="${esc(q.number_id)}" value="${esc(a[q.number_id])}" /></label>`:''}`;
+  }
+  function renderQuestion(){const d=draft(),list=steps();d.step=Math.min(d.step,list.length-1);ui.saveDraft(d);const q=list[d.step];
+    paint(`<h2 id="assessment-modal-title">${esc(session.contract.product.name)}</h2><p>${d.step+1} / ${list.length}</p><progress value="${d.step+1}" max="${list.length}" aria-label="评估进度"></progress>${q.type==='group'?`<h3>${esc(q.title)}</h3>`:''}${questionHtml(q,d.answers)}<p role="alert" class="canonical-error"></p><footer><button class="btn secondary" data-modal-action="back" ${d.step===0?'disabled':''}>返回</button><button class="btn primary" data-modal-action="next" ${valid(q,d.answers)?'':'disabled'}>${d.step===list.length-1?'查看结果':'继续'}</button></footer>`);}
+  async function load(fresh){const token=++session.token;session.busy=true;paint('<h2 id="assessment-modal-title">正在加载评估…</h2>');
+    try{const contract=await root.AssessmentClient.getQuestionnaire(productId);if(active!==session||token!==session.token)return;
+      session.contract=contract;const old=draft();ui.saveDraft(!fresh&&old?.offerId===session.offerId&&old?.contractVersion===contract.contract_version&&old?.releaseId===contract.release_id?old:{offerId:session.offerId,contractVersion:contract.contract_version,releaseId:contract.release_id,step:0,answers:{}});renderQuestion();
+    }catch(e){if(active===session&&token===session.token)paint(`<h2 id="assessment-modal-title">暂时无法加载评估</h2><p role="alert">${esc(e.message)}</p><button class="btn primary" data-modal-action="retry">重试</button>`);}
+    finally{if(active===session&&token===session.token)session.busy=false;}}
+  async function submit(){const d=draft(),all=steps();prune(stepsFor(session.contract),d.answers);const missing=all.findIndex(q=>!valid(q,d.answers));if(missing>=0){d.step=missing;ui.saveDraft(d);renderQuestion();return;}
+    session.busy=true;const token=++session.token;const button=dialog.querySelector('[data-modal-action="next"]');button.disabled=true;button.textContent='正在生成…';
+    try{const result=await root.AssessmentClient.evaluate({productId,evaluationDate:localDate(),answers:d.answers});if(active!==session||token!==session.token)return;
+      ui.saveResult(session.offerId,resultState(result));paint(reportHtml(result));
+    }catch(e){if(active===session&&token===session.token){renderQuestion();dialog.querySelector('[role="alert"]').textContent=e.message;}}
+    finally{if(active===session&&token===session.token)session.busy=false;}}
+  dialog.addEventListener('cancel',e=>{e.preventDefault();close();});
+  dialog.addEventListener('click',e=>{const button=e.target.closest('button');if(!button)return;const action=button.dataset.modalAction;
+    if(action==='close'){close();return;}if(session.busy)return;
+    if(action==='restart'||action==='retry'){load(action==='restart');return;}
+    if(action==='back'){const d=draft();d.step--;ui.saveDraft(d);renderQuestion();return;}
+    if(action==='next'){const d=draft();if(!valid(steps()[d.step],d.answers))return;if(d.step===steps().length-1)submit();else{d.step++;ui.saveDraft(d);renderQuestion();}return;}
+    if(button.dataset.answer){const d=draft(),q=leaves(steps()[d.step],d.answers).find(p=>p.id===button.dataset.answer),value=button.dataset.value;
+      if(q.type==='multi'){const values=Array.isArray(d.answers[q.id])?d.answers[q.id]:[];d.answers[q.id]=button.dataset.none?[]:(q.exclusive||[]).includes(value)?[value]:values.includes(value)?values.filter(v=>v!==value):[...values.filter(v=>!(q.exclusive||[]).includes(v)),value];}
+      else d.answers[q.id]=value;prune(stepsFor(session.contract),d.answers);ui.saveDraft(d);renderQuestion();dialog.querySelector(`[data-answer="${q.id}"]`)?.focus();}
+  });
+  dialog.addEventListener('input',e=>{if(session.busy||!e.target.dataset.number)return;const d=draft(),input=e.target;d.answers[input.dataset.number]=input.value===''?null:Number(input.value);ui.saveDraft(d);dialog.querySelector('[data-modal-action="next"]').disabled=!valid(steps()[d.step],d.answers);});
+  paint('<h2 id="assessment-modal-title">申请评估</h2>');dialog.showModal();
+  if(!restart&&context.result?.canonicalResult)paint(reportHtml(context.result.canonicalResult));else await load(restart);
+}
+root.NBStaticAssessmentIntegration=Object.freeze({productMap:{...MAP},mode:'modal',open,stepsFor,visible,prune,valid,resultState,reportHtml,localDate});
 })(window);

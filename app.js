@@ -377,13 +377,19 @@
       toast('已收藏');
     }else if(intent?.type==='assessment'){
       state.currentOfferId=intent.offerId;
-      state.route='assessment';
-      state.assessmentDraft={offerId:intent.offerId,step:0,answers:{}};
+      if(intent.offerId==='chase-sapphire'){
+        state.route='offer-detail';
+        state.assessmentDraft=null;
+      }else{
+        state.route='assessment';
+        state.assessmentDraft={offerId:intent.offerId,step:0,answers:{}};
+      }
     }else{
       state.route=target || source || 'discover';
     }
     const finalRoute=state.route;
     render();
+    if(intent?.type==='assessment'&&intent.offerId==='chase-sapphire') requestAnimationFrame(()=>window.NBStaticAssessmentIntegration.open(false));
     if(['discover','wishlist','products','attention'].includes(finalRoute) && (intent?.type==='bookmark'||(!target&&source))) restoreScroll(finalRoute);
   }
 
@@ -540,21 +546,6 @@
       {id:'a2',type:'single',title:'你目前的信用分大约是多少？',options:[['740','740+'],['700','700–739'],['670','670–699'],['lt670','670 以下'],['unknown','不知道']]},
       {id:'a3',type:'single',title:'过去 12 个月，你一共获批了多少张美国信用卡？',options:[['0','0 张'],['1','1 张'],['2to3','2–3 张'],['4to5','4–5 张'],['6plus','6 张以上'],['unknown','不确定']]},
       {id:'a4',type:'single',title:'过去 6 个月，你申请过几张美国信用卡？不管最后是否获批。',options:[['0','0 张'],['1','1 张'],['2to3','2–3 张'],['4to5','4–5 张'],['6plus','6 张以上'],['unknown','不确定']]}
-    ];
-  }
-
-  function chaseSapphireQuestions(){
-    return [...commonApprovalQuestions(),
-      {id:'q5',type:'compound',title:'过去 24 个月的开卡情况',parts:[
-        {id:'q5a',title:'过去 24 个月内，你本人作为主卡人新开了多少张信用卡？',options:[['0to3','0–3 张'],['4','4 张'],['5plus','5 张或以上'],['unknown','不确定']]},
-        {id:'q5b',type:'countChoice',title:'过去 24 个月内，你有没有被添加为别人信用卡的副卡用户？',options:[['no','没有'],['yes','有'],['unknown','不确定']],countId:'q5b_count',countLabel:'副卡数量',min:1,max:30}
-      ],help:'这里只把你本人主卡新账户用于 5/24 判断；副卡单独记录。'},
-      {id:'q6',type:'compound',title:'你的 Chase 近期记录和 CSP 奖励历史',parts:[
-        {id:'q6a',title:'过去 30 天内，你已经获批了多少张 Chase 信用卡？',options:[['0','0 张'],['1','1 张'],['2plus','2 张或以上'],['unknown','不确定']]},
-        {id:'q6b',title:'你以前是否拿到过 Chase Sapphire Preferred 的新卡开卡奖励？',options:[['never','从来没有'],['yes','拿到过'],['unknown','不确定']]}
-      ],help:'这里只看 CSP 本身的奖励历史；CSR 奖励历史不自动阻挡 CSP。'},
-      {id:'q7',type:'multi',title:'长期持有期间，下面哪些有明确金额的福利/报销你预计能实际用到？',options:[['hotel','$100 Chase Travel 酒店报销'],['ge','Global Entry、TSA PreCheck 或 NEXUS 报销（最高 $120，每 4 年一次）'],['none','以上基本都用不到']],exclusive:['none']},
-      {id:'q8',type:'multi',title:'除上述可量化福利外，下面哪些长期福利对你有实际价值？',options:[['rewards','消费返点（Chase Travel 等特定旅行 5x；餐饮、流媒体、加油/EV 充电、共享住宿等 3x；其他旅行 2x）'],['ur','Ultimate Rewards 转航空或酒店伙伴及 Chase Travel、Pay Yourself Back 等使用能力'],['rental','主要租车保险'],['protection','旅行保障（行程取消/延误、紧急撤离等）'],['none','以上基本都用不到']],exclusive:['none']}
     ];
   }
 
@@ -880,7 +871,7 @@
 
   function offerDetailPage(){
     const o=currentOffer();
-    const supportsAssessment=!!assessmentQuestionsFor(o.id);
+    const supportsAssessment=o.id==='chase-sapphire'||!!assessmentQuestionsFor(o.id);
     const isEnded=state.unavailableSavedIds.includes(o.id);
     const r=supportsAssessment?offerResult(o):null;
     const isPlat=o.id==='amex-platinum';
@@ -906,7 +897,7 @@
           <p class="v4-decision-copy">${supportsAssessment&&!isEnded?'基于你已确认的信息与当前规则，判断这张卡现在是否适合申请。':isEnded?'这次机会已不再作为当前申请建议。':'只有存在已冻结评估规则时，才显示个性化申请结论。'}</p>
           ${resultHtml}
           ${actions.length?`<div class="v4-detail-actions ${actions.length===1?'single':''}">${actions.join('')}</div>`:''}
-          ${!isEnded&&supportsAssessment&&state.assessmentResults[o.id]?`<button class="v5-reassess" data-action="assessment-restart">重新评估</button>`:''}
+          ${o.id!=='chase-sapphire'&&!isEnded&&supportsAssessment&&state.assessmentResults[o.id]?`<button class="v5-reassess" data-action="assessment-restart">重新评估</button>`:''}
           ${!isEnded&&!actions.length?`<div class="v4-no-action-note">当前暂未提供可执行的申请入口。</div>`:''}
           <div class="v4-security-line">♙ <span>安全、免费、不会影响你的信用评分</span></div>
           <div class="v4-trust-row"><span>▤<b>个性化分析</b><small>结合已确认信息</small></span><span>◉<b>规则拆分</b><small>申请与奖励分开判断</small></span><span>☼<b>固定输出</b><small>同样输入得到同样结果</small></span><span>♢<b>隐私安全</b><small>只保存评估所需的信息</small></span></div>
@@ -946,7 +937,7 @@
 
   function assessmentQuestionsFor(offerId){
     if(offerId==='amex-platinum') return platinumQuestions();
-    if(offerId==='chase-sapphire') return chaseSapphireQuestions();
+    if(offerId==='chase-sapphire') return null; // AssessmentClient owns the questionnaire.
     if(offerId==='amex-gold') return amexGoldQuestions();
     if(offerId==='bilt-palladium') return biltQuestions();
     if(offerId==='capitalone-venturex') return ventureXQuestions();
@@ -1506,12 +1497,18 @@
     if(action==='poster'){ state.posterIndex=Number(el.dataset.index); render(); return; }
     if(action==='poster-step'){ state.posterIndex=((state.posterIndex||0)+Number(el.dataset.dir)+2)%2; render(); return; }
     if(action==='assessment-start'){
+      if(state.currentOfferId==='chase-sapphire'){
+        if(!state.loggedIn) openLogin('offer-detail',{type:'assessment',offerId:state.currentOfferId},'offer-detail');
+        else window.NBStaticAssessmentIntegration.open(false);
+        return;
+      }
       if(state.assessmentResults[state.currentOfferId]){ state.route='full-report'; render(); }
       else if(!state.loggedIn){ openLogin('offer-detail',{type:'assessment',offerId:state.currentOfferId},'offer-detail'); }
       else { state.assessmentDraft={offerId:state.currentOfferId,step:0,answers:{}}; state.route='assessment'; render(); }
       return;
     }
     if(action==='assessment-restart'){
+      if(state.currentOfferId==='chase-sapphire'){ window.NBStaticAssessmentIntegration.open(true); return; }
       delete state.assessmentResults[state.currentOfferId];
       state.assessmentDraft={offerId:state.currentOfferId,step:0,answers:{}};
       state.route='assessment'; render(); window.scrollTo(0,0); return;
@@ -1694,5 +1691,15 @@
 
   function focusEnd(id){ requestAnimationFrame(()=>{const el=document.getElementById(id);if(el){el.focus();const n=el.value.length;try{el.setSelectionRange(n,n);}catch(e){}}}); }
 
+  // Presentation boundary into the existing persisted Assessment state.
+  window.NBAssessmentUI=Object.freeze({
+    context(){ return {offerId:state.currentOfferId,route:state.route,result:state.assessmentResults[state.currentOfferId],draft:state.assessmentDraft}; },
+    saveDraft(draft){ state.assessmentDraft=draft; persist(); },
+    saveResult(offerId,result){
+      state.assessmentResults[offerId]=result;
+      state.assessmentDraft=null;
+      render();
+    }
+  });
   render();
 })();
