@@ -62,7 +62,6 @@
 
   window.addEventListener('nextbonus-product-facts-rendered', apply);
   window.addEventListener('DOMContentLoaded', apply);
-  new MutationObserver(apply).observe(document.documentElement,{childList:true,subtree:true});
   apply();
 })();
 
