@@ -14,68 +14,32 @@
 
   const categories = ['全部','信用卡','银行','券商','羊毛省钱','旅行','购物','生活'];
 
-  const offers = [
-    {id:'chase-sapphire', provider:'CHASE', name:'Chase Sapphire Preferred®', category:'信用卡', value:'75,000 UR', requirement:'3 个月内消费 $4,000', status:'', tags:['高额奖励','旅行神卡'], art:'blue', applyUrl:'https://creditcards.chase.com/rewards-credit-cards/sapphire/preferred', mockImage:'assets/mock-cards/chase-sapphire.png'},
-    {id:'amex-gold', provider:'AMEX', name:'AMEX Gold Card', category:'信用卡', value:'100,000 MR', requirement:'6 个月内消费 $6,000', status:'新奖励', tags:['高额奖励','餐饮神卡'], art:'gold', applyUrl:'https://www.americanexpress.com/us/credit-cards/card/gold-card/', mockImage:'assets/mock-cards/amex-gold.png'},
-    {id:'amex-platinum', provider:'AMEX', name:'AMEX Platinum Card', category:'信用卡', value:'最高 175,000 MR', requirement:'6 个月内消费 $12,000', status:'新奖励', tags:['高额奖励','旅行神卡'], art:'dark', applyUrl:'https://www.americanexpress.com/us/credit-cards/card/platinum/', mockImage:'assets/mock-cards/amex-platinum.png'},
-    {id:'bilt-palladium', provider:'BILT', name:'Bilt Palladium Card', category:'信用卡', value:'50,000 points + $300 Bilt Cash', requirement:'3 个月内消费 $4,000', status:'', tags:['高额奖励','日常消费'], art:'purple', applyUrl:'https://www.bilt.com/card/palladium', mockImage:'assets/mock-cards/bilt-palladium.png'},
-    {id:'capitalone-venturex', provider:'Capital One', name:'Capital One Venture X', category:'信用卡', value:'75,000 miles', requirement:'3 个月内消费 $4,000', status:'', tags:['高额奖励','旅行神卡'], art:'blue', applyUrl:'https://www.capitalone.com/credit-cards/venture-x/', mockImage:'assets/mock-cards/capitalone-venturex.png'},
-    {id:'citi-strata', provider:'Citi', name:'Citi Strata Elite℠', category:'信用卡', value:'75,000 TYP', requirement:'3 个月内消费 $6,000', status:'', tags:['高额奖励','旅行神卡'], art:'dark', applyUrl:'https://www.citi.com/credit-cards/citi-strata-elite-credit-card/apply', mockImage:'assets/mock-cards/citi-strata.png'},
-    {id:'hsbc-checking', provider:'HSBC', name:'HSBC Premier Checking', category:'银行', value:'$1,000', requirement:'开户并满足存款要求', status:'', tags:['高额奖励','银行账户'], art:'bank', risk:false, mockImage:'assets/mock-cards/hsbc-checking.png'},
-    {id:'chase-checking', provider:'CHASE', name:'Chase Checking', category:'银行', value:'$300', requirement:'开户并完成 Direct Deposit', status:'', tags:['高额奖励','银行账户'], art:'bank', risk:false, mockImage:'assets/mock-cards/chase-checking.png'},
-    {id:'usbank-checking', provider:'U.S. BANK', name:'U.S. Bank Smartly® Checking', category:'银行', value:'$450', requirement:'开户并满足 Direct Deposit 要求', status:'', tags:['高额奖励','银行账户'], art:'bank', risk:false, mockImage:'assets/mock-cards/usbank-checking.png'},
-    {id:'truist-checking', provider:'TRUIST', name:'Truist Checking', category:'银行', value:'$400', requirement:'开户并满足 Direct Deposit 要求', status:'', tags:['高额奖励','银行账户'], art:'bank', risk:false, mockImage:'assets/mock-cards/truist-checking.png'},
-    {id:'moomoo', provider:'MOOMOO', name:'Moomoo Brokerage', category:'券商', value:'最高 50 股 NVDA', requirement:'按档位入金并保持 60 天', status:'限时加码', tags:['高额奖励','券商账户'], art:'green', risk:false},
-    {id:'robinhood', provider:'ROBINHOOD', name:'Robinhood Gold', category:'券商', value:'4.75% APY', requirement:'Gold 会员适用', status:'已延长', tags:['高息账户','券商账户'], art:'green', risk:false},
-    {id:'cashback-deal', provider:'TCB', name:'TopCashback 限时返现', category:'羊毛省钱', value:'最高 100% 返现', requirement:'仅限符合条件的新用户', status:'今日截止', tags:['高额返现','限时'], art:'blue', risk:false},
-    {id:'travel-transfer', provider:'POINTS', name:'MR → Flying Blue 转点活动', category:'旅行', value:'30% 转点加成', requirement:'9 月 30 日前转点', status:'即将结束', tags:['转点','旅行'], art:'purple', risk:false},
-    {id:'amazon-gift', provider:'AMAZON', name:'Amazon Mastercard Gift Card', category:'购物', value:'最高 $100', requirement:'符合条件账户可见', status:'活动回归', tags:['购物','Gift Card'], art:'bank', risk:false},
-    {id:'panda-mobile', provider:'PANDA', name:'Panda Mobile 新用户优惠', category:'生活', value:'首月低至 $10', requirement:'仅限新客户', status:'新奖励', tags:['通信','新用户'], art:'blue', risk:false}
-  ];
+  function offerTagLabel(id){ return id ? (window.NextBonusOfferTags?.[id]?.label || '') : ''; }
+  const OFFER_TONES=Object.freeze({
+    'chase-sapphire':'blue','amex-gold':'gold','amex-platinum':'dark','bilt-palladium':'purple','capitalone-venturex':'blue','citi-strata':'dark',
+    'hsbc-checking':'bank','chase-checking':'bank','usbank-checking':'bank','truist-checking':'bank','moomoo':'green','robinhood':'green',
+    'cashback-deal':'blue','travel-transfer':'purple','amazon-gift':'bank','panda-mobile':'blue'
+  });
+  const offers=Object.entries(window.NextBonusOfferData||{}).map(([id,fact])=>{
+    const product=window.NextBonusOfferProducts?.[fact.productId];
+    if(!product) return null;
+    return {id,provider:product.provider,name:product.name,category:product.category,value:fact.primaryValue,requirement:fact.primaryRequirement,status:offerTagLabel(fact.statusTag),tags:[offerTagLabel(fact.valueTag),offerTagLabel(fact.attributeTag)].filter(Boolean),art:OFFER_TONES[id]||'bank',applyUrl:fact.applyUrl||null,risk:false};
+  }).filter(Boolean);
 
   const posterSets = {
     'amex-gold':[
-      {tab:'开卡奖励', kicker:'LIMITED OFFER', title:'100,000 MR', copy:'当前奖励处在较高水平，适合正在规划新卡消费的人。'},
+      {tab:'开卡奖励', kicker:'LIMITED OFFER'},
       {tab:'餐饮回报', kicker:'DAILY VALUE', title:'餐饮与超市高回报', copy:'长期价值主要来自自然消费场景与可用报销。'},
       {tab:'长期持有', kicker:'KEEP OR CANCEL', title:'看你是否真的用得上福利', copy:'长期判断不只看年费，还要看你真实能使用的 Credits 与消费回报。'}
     ],
     'chase-sapphire':[
-      {tab:'开卡奖励', kicker:'WELCOME BONUS', title:'75,000 UR', copy:'当前奖励明显高于常规水平，是这张卡最值得先看的部分。'},
+      {tab:'开卡奖励', kicker:'WELCOME BONUS'},
       {tab:'旅行转点', kicker:'TRANSFER', title:'灵活的旅行伙伴', copy:'UR 可在多个航空与酒店伙伴之间灵活转点。'},
       {tab:'日常使用', kicker:'EVERYDAY', title:'年费压力较低', copy:'适合作为长期保留的中端旅行卡。'}
     ]
   };
 
-  const productCardArt = {
-    'p-amex-plat-1005':{
-      web:'https://travelafterwork.azureedge.net/uploads/2019/08/Amex-Plat.png',
-      local:'assets/product-cards/amex-platinum-local.png'
-    },
-    'p-hilton-aspire-2308':{
-      web:'https://fearthez.com/wp-content/uploads/2022/01/amexhiltonaspire.png?w=1024',
-      local:'assets/product-cards/hilton-aspire-local.png'
-    },
-    'p-csr-2948':{
-      web:'https://fearthez.com/wp-content/uploads/2022/01/chasesapphirereservenew.png?w=1024',
-      local:'assets/product-cards/chase-sapphire-reserve-local.png'
-    },
-    'p-marriott-brilliant-6503':{
-      web:'https://icm.aexp-static.com/acquisition/card-art/NUS000000313_480x304_straight_withname.png',
-      local:'assets/product-cards/marriott-brilliant-local.png'
-    },
-    'p-amex-biz-4321':{
-      web:'https://ck-content.imgix.net/pcm/content/f1866bfc72a9d2fb05a0-Blue_Business_Plus_1920_x_1216.jpg?auto=compress%2Cformat',
-      local:'assets/product-cards/amex-blue-business-plus-local.png'
-    },
-    'p-freedom-7182':{
-      web:'https://creditcards.chase.com/content/dam/jpmc-marketplace/card-art/freedom_unlimited_card_alt.png',
-      local:'assets/product-cards/chase-freedom-unlimited-local.png'
-    },
-    'p-citi-3490':{
-      web:'https://aemapi.citi.com/content/dam/cfs/uspb/usmkt/cards/en/static/images/citi-double-cash-credit-card/citi-double-cash-credit-card_306x192.webp',
-      local:'assets/product-cards/citi-double-cash-local.png'
-    }
-  };
+
 
   const defaultProducts = [
     {id:'p-amex-plat-1005', offerId:'amex-platinum', type:'信用卡', name:'AMEX Platinum', institution:'American Express', instance:'•••• 1005', artAsset:'credit-amex-platinum', opened:'2026-04-15', anniversary:'4 月 15 日', annualFee:'$895', status:'正常', earning:'机票 5x · 预付酒店 5x · 其他 1x'},
@@ -136,21 +100,21 @@
 
   const catalog = {
     '信用卡':[
-      {id:'c-plat', offerId:'amex-platinum', name:'AMEX Platinum Card', institution:'American Express', art:'dark', cardImageLocal:'assets/product-art/amex-platinum.png', annualFee:'$895', earning:'机票 5x · 预付酒店 5x · 其他 1x'},
-      {id:'c-gold', offerId:'amex-gold', name:'AMEX Gold Card', institution:'American Express', art:'gold', cardImageLocal:'assets/product-art/amex-gold.png', annualFee:'$325', earning:'餐饮 / 美国超市 4x · 部分旅行高回报'},
-      {id:'c-csp', offerId:'chase-sapphire', name:'Chase Sapphire Preferred', institution:'Chase', art:'blue', cardImageLocal:'assets/product-art/chase-sapphire.png', annualFee:'$95', earning:'Chase Travel 5x · 餐饮等 3x · 其他旅行 2x'},
-      {id:'c-bilt', offerId:'bilt-palladium', name:'Bilt Palladium Card', institution:'Bilt', art:'purple', cardImageLocal:'assets/product-art/bilt-palladium.png', annualFee:'$495', earning:'房租/房贷 1x · 其他消费 2x + Bilt Cash'},
-      {id:'c-vx', offerId:'capitalone-venturex', name:'Capital One Venture X', institution:'Capital One', art:'blue', cardImageLocal:'assets/product-art/capitalone-venturex.png', annualFee:'$395', earning:'所有消费 2x · Capital One Travel 最高 10x'},
-      {id:'c-citi-elite', offerId:'citi-strata', name:'Citi Strata Elite', institution:'Citi', art:'dark', cardImageLocal:'assets/product-art/citi-strata.png', annualFee:'$595', earning:'Citi Travel 最高 12x · 餐饮最高 6x · 其他 1.5x'}
+      {id:'c-plat', offerId:'amex-platinum', name:'AMEX Platinum Card', institution:'American Express', art:'dark', cardImageLocal:'assets/product-art/amex-platinum.png'},
+      {id:'c-gold', offerId:'amex-gold', name:'AMEX Gold Card', institution:'American Express', art:'gold', cardImageLocal:'assets/product-art/amex-gold.png'},
+      {id:'c-csp', offerId:'chase-sapphire', name:'Chase Sapphire Preferred', institution:'Chase', art:'blue', cardImageLocal:'assets/product-art/chase-sapphire.png'},
+      {id:'c-bilt', offerId:'bilt-palladium', name:'Bilt Palladium Card', institution:'Bilt', art:'purple', cardImageLocal:'assets/product-art/bilt-palladium.png'},
+      {id:'c-vx', offerId:'capitalone-venturex', name:'Capital One Venture X', institution:'Capital One', art:'blue', cardImageLocal:'assets/product-art/capitalone-venturex.png'},
+      {id:'c-citi-elite', offerId:'citi-strata', name:'Citi Strata Elite', institution:'Citi', art:'dark', cardImageLocal:'assets/product-art/citi-strata.png'}
     ],
     '银行账户':[
-      {id:'b-usbank', name:'U.S. Bank Smartly Checking', institution:'U.S. Bank', art:'bank'},
-      {id:'b-hsbc', name:'HSBC Premier Checking', institution:'HSBC', art:'bank'},
-      {id:'b-truist', name:'Truist One Checking', institution:'Truist', art:'bank'}
+      {id:'b-usbank', offerId:'usbank-checking', name:'U.S. Bank Smartly Checking', institution:'U.S. Bank', art:'bank'},
+      {id:'b-hsbc', offerId:'hsbc-checking', name:'HSBC Premier Checking', institution:'HSBC', art:'bank'},
+      {id:'b-truist', offerId:'truist-checking', name:'Truist One Checking', institution:'Truist', art:'bank'}
     ],
     '券商账户':[
-      {id:'br-moomoo', name:'Moomoo Brokerage', institution:'Moomoo', art:'bank'},
-      {id:'br-robinhood', name:'Robinhood Brokerage', institution:'Robinhood', art:'bank'},
+      {id:'br-moomoo', offerId:'moomoo', name:'Moomoo Brokerage', institution:'Moomoo', art:'bank'},
+      {id:'br-robinhood', offerId:'robinhood', name:'Robinhood Brokerage', institution:'Robinhood', art:'bank'},
       {id:'br-tradeup', name:'TradeUP Brokerage', institution:'TradeUP', art:'bank'}
     ],
     '其他':[
@@ -245,12 +209,20 @@
   function currentProduct(){ return state.products.find(p=>p.id===state.currentProductId) || state.pastProducts.find(p=>p.id===state.currentProductId) || state.products[0]; }
   function isSaved(id){ return state.savedOfferIds.includes(id) || state.unavailableSavedIds.includes(id); }
 
-  const DEMO_EVALUATION_DATE = new Date('2026-09-12T12:00:00');
+  function localDateISO(date=new Date()){
+    const pad=n=>String(n).padStart(2,'0');
+    return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}`;
+  }
+  function historyDateLabel(date=new Date()){
+    const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${months[date.getMonth()]} ${String(date.getDate()).padStart(2,"0")} , ${date.getFullYear()}`.replace(' ,',',');
+  }
   function daysUntil(dateString){
     if(!dateString) return null;
     const d=new Date(`${dateString}T12:00:00`);
-    if(Number.isNaN(d.getTime())) return null;
-    return Math.ceil((d-DEMO_EVALUATION_DATE)/86400000);
+    const today=new Date(`${localDateISO()}T12:00:00`);
+    if(Number.isNaN(d.getTime())||Number.isNaN(today.getTime())) return null;
+    return Math.ceil((d-today)/86400000);
   }
   function isAttentionActiveNow(a){
     const days=daysUntil(a.dueDate);
@@ -265,7 +237,7 @@
   }
 
   function activePrimaryRoute(){
-    if(['discover','offer-detail','assessment','full-report'].includes(state.route)) return state.routeSource==='wishlist' ? 'wishlist' : 'discover';
+    if(['discover','offer-detail'].includes(state.route)) return state.routeSource==='wishlist' ? 'wishlist' : 'discover';
     if(state.route==='wishlist') return 'wishlist';
     if(['products','product-detail'].includes(state.route)) return 'products';
     if(state.route==='attention') return 'attention';
@@ -310,8 +282,6 @@
       case 'attention': content=attentionPage(); break;
       case 'login': content=loginPage(); break;
       case 'offer-detail': content=offerDetailPage(); break;
-      case 'assessment': content=assessmentPage(); break;
-      case 'full-report': content=fullReportPage(); break;
       case 'product-detail': content=productDetailPage(); break;
       default: content=discoverPage();
     }
@@ -321,7 +291,7 @@
   }
 
   function captureScroll(route=state.route){
-    const primary=route==='offer-detail'||route==='assessment'||route==='full-report' ? state.routeSource : route==='product-detail' ? 'products' : route;
+    const primary=route==='offer-detail' ? state.routeSource : route==='product-detail' ? 'products' : route;
     if(['discover','wishlist','products','attention'].includes(primary)){
       state.pageScroll=state.pageScroll||{};
       state.pageScroll[primary]=window.scrollY||0;
@@ -377,19 +347,14 @@
       toast('已收藏');
     }else if(intent?.type==='assessment'){
       state.currentOfferId=intent.offerId;
-      if(intent.offerId==='chase-sapphire'){
-        state.route='offer-detail';
-        state.assessmentDraft=null;
-      }else{
-        state.route='assessment';
-        state.assessmentDraft={offerId:intent.offerId,step:0,answers:{}};
-      }
+      state.route='offer-detail';
+      state.assessmentDraft=null;
     }else{
       state.route=target || source || 'discover';
     }
     const finalRoute=state.route;
     render();
-    if(intent?.type==='assessment'&&intent.offerId==='chase-sapphire') requestAnimationFrame(()=>window.NBStaticAssessmentIntegration.open(false));
+    if(intent?.type==='assessment'&&window.NBStaticAssessmentIntegration?.productMap?.[intent.offerId]) requestAnimationFrame(()=>window.NBStaticAssessmentIntegration.open(false));
     if(['discover','wishlist','products','attention'].includes(finalRoute) && (intent?.type==='bookmark'||(!target&&source))) restoreScroll(finalRoute);
   }
 
@@ -488,7 +453,9 @@
     </div>`;
   }
   function posterData(offer){
-    return posterSets[offer.id] || [
+    const custom=posterSets[offer.id];
+    if(custom) return custom.map((item,index)=>index===0?{...item,title:offer.value,copy:offer.requirement}:item);
+    return [
       {tab:'核心奖励',kicker:'CURRENT OFFER',title:offer.value,copy:offer.requirement},
       {tab:'为什么值得看',kicker:'VALUE',title:offer.tags[0]||'当前机会',copy:'这里集中展示最影响决策的产品卖点，不在列表页重复完整规则。'},
       {tab:'长期价值',kicker:'LONG TERM',title:offer.tags[1]||'长期使用',copy:'长期是否值得持有，需要结合年费、自然消费和你真正会使用的福利判断。'}
@@ -519,359 +486,10 @@
     return `<div class="metric v4-metric"><span class="v4-metric-icon">${metricIcon(label)}</span><div><div class="metric-label">${label}</div><div class="metric-value tone-${tone}">${esc(value)}</div>${sub?`<div class="metric-sub">${sub}</div>`:''}</div></div>`;
   }
 
-  function platinumQuestions(){
-    return [
-      {id:'a1',type:'single',title:'你的第一张美国信用卡开了多久？',options:[['none','还没有美国信用卡'],['lt6','不到 6 个月'],['6to11','6–11 个月'],['1to2','1–2 年'],['2plus','2 年以上'],['unknown','不确定']]},
-      {id:'a2',type:'single',title:'你目前的信用分大约是多少？',options:[['740','740+'],['700','700–739'],['670','670–699'],['lt670','670 以下'],['unknown','不知道']]},
-      {id:'a3',type:'single',title:'过去 12 个月，你一共获批了多少张美国信用卡？',options:[['0','0 张'],['1','1 张'],['2to3','2–3 张'],['4to5','4–5 张'],['6plus','6 张以上'],['unknown','不确定']]},
-      {id:'a4',type:'single',title:'过去 6 个月，你申请过几张美国信用卡？不管最后是否获批。',options:[['0','0 张'],['1','1 张'],['2to3','2–3 张'],['4to5','4–5 张'],['6plus','6 张以上'],['unknown','不确定']]},
-      {id:'q5',type:'compound',title:'这张卡的近期申请和 AMEX 持卡情况',parts:[
-        {id:'q5a',title:'过去 90 天内，你是否申请过或获批过 AMEX Platinum？',options:[['no','没有'],['yes','有'],['unknown','不确定']]},
-        {id:'q5b',title:'你目前一共持有多少张 AMEX Gold、Platinum、Green 这类卡？',options:[['0to4','0–4 张'],['5to7','5–7 张'],['8to9','8–9 张'],['10plus','10 张或以上'],['unknown','不确定']]}
-      ],help:'这里只统计 AMEX Gold、Platinum、Green 这类卡的数量。'},
-      {id:'q6',type:'multi',title:'你过去是否持有过以下任一张个人 Platinum 卡？',options:[['plat','AMEX Platinum'],['schwab','AMEX Platinum（Schwab）'],['ms','AMEX Platinum（Morgan Stanley）'],['none','都没有'],['unknown','不确定']],exclusive:['none','unknown'],help:'可以多选。当前申请奖励资格会以这次 Offer 的实际条款为准。'},
-      {id:'q7',type:'multi',title:'长期持有期间，下面哪些有明确金额的福利/报销你预计能实际用到？',options:[
-        ['fhr','$600 FHR 酒店报销'],['ent','$300 娱乐订阅报销'],['equinox','$300 Equinox 报销'],['clear','$209 CLEAR 报销'],['oura','$200 Oura Ring 报销'],['lululemon','$300 Lululemon 报销'],['resy','$400 Resy 报销'],['walmart','Walmart+ 会员报销'],['airline','$200 航空杂费报销'],['uber','$200 Uber 报销 + $100 Uber One'],['ge','Global Entry 或 TSA PreCheck 报销（最高 $120，每 4 年一次）'],['none','以上基本都用不到']
-      ],exclusive:['none'],help:'可多选。这里只选择你长期持有时预计真正能用到的项目。'},
-      {id:'q8',type:'multi',title:'除上述可量化福利外，下面哪些长期福利对你有实际价值？',options:[
-        ['rewards','消费返点（机票及部分 AMEX Travel 酒店 5x MR）'],['mr','Membership Rewards 转航空或酒店伙伴'],['lounge','Centurion Lounge、Priority Pass、Delta Sky Club 等机场休息室'],['hotelstatus','Hilton Gold、Marriott Gold、Leaders Club Sterling 等酒店会籍'],['fhr','FHR / THC 酒店附加待遇'],['rental','Avis、Hertz、National 等租车高级会员'],['offers','AMEX Offers'],['protection','延长保修及购物保护等 AMEX 购物保障'],['none','以上基本都用不到']
-      ],exclusive:['none'],help:'可多选。消费返点整体只按 1 个福利项计算。'}
-    ];
-  }
-
-
-  function commonApprovalQuestions(){
-    return [
-      {id:'a1',type:'single',title:'你的第一张美国信用卡开了多久？',options:[['none','还没有美国信用卡'],['lt6','不到 6 个月'],['6to11','6–11 个月'],['1to2','1–2 年'],['2plus','2 年以上'],['unknown','不确定']]},
-      {id:'a2',type:'single',title:'你目前的信用分大约是多少？',options:[['740','740+'],['700','700–739'],['670','670–699'],['lt670','670 以下'],['unknown','不知道']]},
-      {id:'a3',type:'single',title:'过去 12 个月，你一共获批了多少张美国信用卡？',options:[['0','0 张'],['1','1 张'],['2to3','2–3 张'],['4to5','4–5 张'],['6plus','6 张以上'],['unknown','不确定']]},
-      {id:'a4',type:'single',title:'过去 6 个月，你申请过几张美国信用卡？不管最后是否获批。',options:[['0','0 张'],['1','1 张'],['2to3','2–3 张'],['4to5','4–5 张'],['6plus','6 张以上'],['unknown','不确定']]}
-    ];
-  }
-
-  function amexGoldQuestions(){
-    return [...commonApprovalQuestions(),
-      {id:'q5',type:'compound',title:'你的 AMEX Gold 近期申请和 AMEX 持卡情况',parts:[
-        {id:'q5a',title:'过去 90 天内，你是否申请过或获批过 AMEX Gold？',options:[['no','没有'],['yes','有'],['unknown','不确定']]},
-        {id:'q5b',title:'你目前一共持有多少张 AMEX Gold、Platinum、Green 这类卡？',options:[['0to4','0–4 张'],['5to7','5–7 张'],['8to9','8–9 张'],['10plus','10 张或以上'],['unknown','不确定']]}
-      ],help:'这里只统计 AMEX Gold、Platinum、Green 这类卡的数量。'},
-      {id:'q6',type:'multi',title:'你过去是否持有过以下任一张卡？',options:[['gold','AMEX Gold'],['prg','Premier Rewards Gold'],['plat','AMEX Platinum'],['schwab','AMEX Platinum（Schwab）'],['ms','AMEX Platinum（Morgan Stanley）'],['none','都没有'],['unknown','不确定']],exclusive:['none','unknown'],help:'可以多选。这里只收集持卡历史，不等同于是否拿过开卡奖励。'},
-      {id:'q7',type:'multi',title:'长期持有期间，下面哪些有明确金额的福利/报销你预计能实际用到？',options:[['uber','$120 Uber 报销'],['dunkin','$84 Dunkin 报销'],['resy','$100 Resy 报销'],['dining','$120 餐饮报销'],['none','以上基本都用不到']],exclusive:['none']},
-      {id:'q8',type:'multi',title:'除上述可量化福利外，下面哪些长期福利对你有实际价值？',options:[['rewards','消费返点（餐饮和美国超市 4x；AMEX Travel 预付酒店 5x；机票等旅行消费高倍积分）'],['mr','Membership Rewards 转航空或酒店伙伴'],['thc','The Hotel Collection 酒店待遇'],['hertz','Hertz Five Star'],['offers','AMEX Offers'],['none','以上基本都用不到']],exclusive:['none']}
-    ];
-  }
-
-  function biltQuestions(){
-    return [...commonApprovalQuestions(),
-      {id:'q5',type:'single',title:'你的 Bilt Card 2.0 持卡和开卡奖励历史是什么？',options:[['never','从未持有过 Bilt Card 2.0，也没拿过 Bilt Card 2.0 开卡奖励'],['held','现在或过去持有过 Bilt Blue / Obsidian / Palladium，但没有拿过开卡奖励'],['bonus','曾经拿过任一张 Bilt Card 2.0 的开卡奖励'],['unknown','不确定']],help:'这里只统计 Column N.A. 发行的 Bilt Card 2.0；旧 Wells Fargo Bilt 1.0 不计入。'},
-      {id:'q6',type:'single',title:'你最近一次 Bilt Card 2.0 申请是否被拒？',options:[['no','没有被拒'],['lt45','被拒且未满 45 天'],['gte45','被拒且已满 45 天'],['unknown','不确定']]},
-      {id:'q7',type:'multi',title:'长期持有期间，下面哪些有明确金额的福利/报销你预计能实际用到？',options:[['hotel','每年 $400 Bilt Travel 酒店报销'],['cash','每年 $200 Bilt Cash'],['none','以上基本都用不到']],exclusive:['none']},
-      {id:'q8',type:'multi',title:'除上述可量化福利外，下面哪些长期福利对你有实际价值？',options:[['rewards','消费返点（房租/房贷 1x；其他消费 2x Bilt Points + 4% Bilt Cash）'],['transfer','Bilt Points 转航空或酒店伙伴'],['pp','Priority Pass'],['phone','手机保险'],['lhc','Bilt Luxury Hotel Collection'],['experiences','Bilt Rent Day 与其他会员活动'],['none','以上基本都用不到']],exclusive:['none']}
-    ];
-  }
-
-  function ventureXQuestions(){
-    return [...commonApprovalQuestions(),
-      {id:'q5',type:'compound',title:'你的 Capital One 近期申请情况',parts:[
-        {id:'q5a',title:'距离你最近一次申请或获批 Capital One 信用卡是否不足 6 个月？',options:[['no','不是'],['yes','是'],['unknown','不确定']]},
-        {id:'q5b',title:'过去 30 天内，你申请过多少次 Capital One 信用卡？',options:[['0','0 次'],['1','1 次'],['2plus','2 次或以上'],['unknown','不确定']]}
-      ]},
-      {id:'q6',type:'single',title:'过去 48 个月内，你是否拿到过 Capital One Venture X 的新卡开卡奖励？',options:[['no','没有'],['yes','有'],['unknown','不确定']],help:'当前冻结的 Venture X Offer 没有要求你填写“仍开放的 Capital One 信用卡账户数量”，所以这里不额外询问。'},
-      {id:'q7',type:'multi',title:'长期持有期间，下面哪些有明确金额的福利/报销你预计能实际用到？',options:[['travel','每年 $300 Capital One Travel 报销'],['anniv','每年 10,000 周年里程'],['ge','Global Entry 或 TSA PreCheck 报销'],['none','以上基本都用不到']],exclusive:['none']},
-      {id:'q8',type:'multi',title:'除上述可量化福利外，下面哪些长期福利对你有实际价值？',options:[['rewards','消费返点（所有消费 2x；Capital One Travel 订酒店/租车等最高 10x、机票等 5x）'],['transfer','Capital One Miles 转航空伙伴'],['lounge','Priority Pass 与 Capital One Lounge'],['hertz','Hertz 高级会员'],['protection','其他旅行与租车保障'],['none','以上基本都用不到']],exclusive:['none']}
-    ];
-  }
-
-  function citiStrataQuestions(){
-    return [...commonApprovalQuestions(),
-      {id:'q5',type:'compound',title:'你的 Citi 近期申请情况',parts:[
-        {id:'q5a',title:'过去 8 天内，你是否申请过 Citi 的个人信用卡？',options:[['no','没有'],['yes','有'],['unknown','不确定']]},
-        {id:'q5b',title:'过去 65 天内，你一共提交过多少次 Citi 信用卡申请？',options:[['0','0 次'],['1','1 次'],['2plus','2 次或以上'],['unknown','不确定']]}
-      ],help:'8 天内的近期申请属于风险信号；65 天内 2 次或以上属于更明确的申请节奏限制。'},
-      {id:'q6',type:'compound',title:'你的 Citi Strata Elite 奖励和转卡历史',parts:[
-        {id:'q6a',title:'过去 48 个月内，你是否拿到过 Citi Strata Elite 的新卡开卡奖励？',options:[['no','没有'],['yes','有'],['unknown','不确定']]},
-        {id:'q6b',title:'你是否曾把其他 Citi 信用卡转换成 Citi Strata Elite？',options:[['no','没有'],['yes','有'],['unknown','不确定']]},
-        {id:'q6c',title:'被转成 Citi Strata Elite 的那张 Citi 卡，开卡奖励是否在过去 48 个月内拿到？',options:[['yes','是'],['over48','否，已超过 48 个月'],['no_bonus','当时没有拿过'],['unknown','不确定']],showIf:{key:'q6b',value:'yes'}}
-      ],help:'48 个月按原 Citi 卡的开卡奖励到账时间计算，不按转卡日期计算。'},
-      {id:'q7',type:'multi',title:'长期持有期间，下面哪些有明确金额的福利/报销你预计能实际用到？',options:[['hotel','每年 $300 Citi Travel 酒店报销'],['splurge','每年 $200 Splurge 报销'],['blacklane','每年 $200 Blacklane 报销'],['ge','Global Entry 或 TSA PreCheck 报销（最高 $120）'],['relation','Citigold / Private Client 年费优惠（如适用）'],['none','以上基本都用不到']],exclusive:['none']},
-      {id:'q8',type:'multi',title:'除上述可量化福利外，下面哪些长期福利对你有实际价值？',options:[['rewards','消费返点（Citi Travel 酒店/租车/活动 12x、机票 6x、周五周六晚餐饮/外卖 6x、其他餐饮 3x、其他消费 1.5x）'],['aa','ThankYou Points 转 American Airlines'],['transfer','转其他航空或酒店伙伴'],['pp','Priority Pass（主卡可带 2 位客人）'],['aa_pass','每年 4 张 Admirals Club Lounge 门票'],['reserve','The Reserve by Citi Travel 高端酒店待遇'],['protection','旅行保险与旅行保障'],['none','以上基本都用不到']],exclusive:['none']}
-    ];
-  }
-
-  function recentActivitySignal(a){
-    if(a.a3==='unknown'||a.a4==='unknown') return 'UNKNOWN';
-    if(a.a4==='6plus' && ['4to5','6plus'].includes(a.a3)) return 'VERY_HIGH';
-    if(a.a4==='6plus') return 'VERY_HIGH';
-    if(a.a4==='4to5') return 'HIGH';
-    if(a.a4==='2to3') return 'MEDIUM';
-    if(['0','1'].includes(a.a4) && ['0','1'].includes(a.a3)) return 'LOW';
-    return 'MEDIUM';
-  }
-
-  function downgradeApprovalRaw(raw,steps){
-    if(raw==='INSUFFICIENT_DATA') return raw;
-    const order=['HIGH_RISK','MEDIUM','HIGH'];
-    const i=Math.max(0,order.indexOf(raw)-steps);
-    return order[i]||'HIGH_RISK';
-  }
-
-  function baseApprovalFor(a,sensitivity='MEDIUM',biltOverlay=false){
-    const matrix={
-      none:{'740':'HIGH_RISK','700':'HIGH_RISK','670':'HIGH_RISK','lt670':'HIGH_RISK',unknown:'INSUFFICIENT_DATA'},
-      lt6:{'740':'HIGH_RISK','700':'HIGH_RISK','670':'HIGH_RISK','lt670':'HIGH_RISK',unknown:'INSUFFICIENT_DATA'},
-      '6to11':{'740':'MEDIUM','700':'MEDIUM','670':'HIGH_RISK','lt670':'HIGH_RISK',unknown:'INSUFFICIENT_DATA'},
-      '1to2':{'740':'HIGH','700':'MEDIUM','670':'MEDIUM','lt670':'HIGH_RISK',unknown:'INSUFFICIENT_DATA'},
-      '2plus':{'740':'HIGH','700':'HIGH','670':'MEDIUM','lt670':'HIGH_RISK',unknown:'INSUFFICIENT_DATA'},
-      unknown:{'740':'INSUFFICIENT_DATA','700':'INSUFFICIENT_DATA','670':'INSUFFICIENT_DATA','lt670':'INSUFFICIENT_DATA',unknown:'INSUFFICIENT_DATA'}
-    };
-    let raw=(matrix[a.a1]||matrix.unknown)[a.a2]||'INSUFFICIENT_DATA';
-    const activity=recentActivitySignal(a);
-    if(raw!=='INSUFFICIENT_DATA'){
-      let steps=0;
-      if(sensitivity==='MEDIUM' && ['HIGH','VERY_HIGH'].includes(activity)) steps=1;
-      if(sensitivity==='HIGH'){
-        if(activity==='MEDIUM'||activity==='HIGH') steps=1;
-        if(activity==='VERY_HIGH') steps=2;
-      }
-      raw=downgradeApprovalRaw(raw,steps);
-      if(biltOverlay){
-        if(['none','lt6'].includes(a.a1)) raw='HIGH_RISK';
-        if(a.a4==='6plus') raw=downgradeApprovalRaw(raw,1);
-        if(a.a3==='6plus') raw=downgradeApprovalRaw(raw,1);
-      }
-    }
-    return {raw,activity,label:raw==='HIGH'?'较高':raw==='MEDIUM'?'一般':raw==='HIGH_RISK'?'较低':'无法判断'};
-  }
-
-  function applyApplicationImpact(label,impact,hardBehavior){
-    if(hardBehavior==='BLOCK') return '极低';
-    if(label==='无法判断') return label;
-    const levels=['较低','一般','较高'];
-    let i=levels.indexOf(label);
-    if(i<0) return label;
-    i=Math.max(0,i-Math.min(2,impact||0));
-    return levels[i];
-  }
-
-  function longTermFor(a,fee,q7Values,q8N){
-    const q7=(a.q7||[]).filter(x=>x!=='none');
-    const annualValue=q7.reduce((sum,x)=>sum+(q7Values[x]||0),0);
-    const feeScore=fee===0?5:scoreBand(Math.min(1,annualValue/fee));
-    const q8=(a.q8||[]).filter(x=>x!=='none');
-    const q8Score=scoreBand(q8.length/q8N);
-    const total=feeScore+q8Score;
-    let value;
-    if(feeScore===5 && q8.length>=1) value='很高';
-    else if(total>=9) value='很高';
-    else if(total>=7) value='较高';
-    else if(total>=5) value='一般';
-    else if(total>=3) value='较低';
-    else value='很低';
-    return {value,annualValue:Math.round(annualValue),feeScore,q8Count:q8.length};
-  }
-
-  function fixedApprovalCopy(label){
-    if(label==='较高') return '按你目前的情况，这张卡还是比较容易批的。';
-    if(label==='一般') return '按你目前的情况，这张卡不算特别稳。';
-    if(label==='较低'||label==='极低') return '按你目前的情况，这张卡不太容易批。';
-    return '目前还没法判断这张卡好不好批。';
-  }
-
-  function fixedLongCopy(label,annualValue,fee){
-    if(label==='很高') return `这张卡很适合你长期持有。你勾选的可量化福利年化约 $${annualValue}，并且还有其他长期福利对你有实际价值。`;
-    if(label==='较高') return '这张卡还是比较适合你长期持有的。你能用上多项主要福利。';
-    if(label==='一般') return '这张卡长期持有价值一般。部分价值能用上，但并不是所有核心福利都适合你。';
-    if(label==='较低') return `这张卡不太适合你长期持有。你勾选的可量化福利年化约 $${annualValue}，对 $${fee} 年费的覆盖有限。`;
-    return `这张卡长期持有价值很低。按你的选择，年费较难通过实际可用福利覆盖。`;
-  }
-
-  function evaluateOtherAssessment(offerId,a){
-    const cfg={
-      'chase-sapphire':{sensitivity:'MEDIUM',fee:95,q7:{hotel:100,ge:30},q8N:4,timing:'一般',timingWait:false,offerCopy:'现在的开卡奖励比较一般。当前冻结快照为 75,000 UR；历史上出现过更好的奖励，如果不着急可以等等。'},
-      'amex-gold':{sensitivity:'MEDIUM',fee:325,q7:{uber:120,dunkin:84,resy:100,dining:120},q8N:5,timing:'史高',timingWait:false,offerCopy:'目前最高档奖励处在历史最高水平。当前最高可达 100,000 MR，实际申请时你看到的奖励可能更低。'},
-      'bilt-palladium':{sensitivity:'HIGH',bilt:true,fee:495,q7:{hotel:400,cash:200},q8N:6,timing:'史高',timingWait:false,offerCopy:'现在的开卡奖励处在历史最高水平。当前冻结快照为 50,000 Bilt Points + $300 Bilt Cash。'},
-      'capitalone-venturex':{sensitivity:'HIGH',fee:395,q7:{travel:300,anniv:130,ge:30},q8N:5,timing:'一般',timingWait:true,offerCopy:'现在的开卡奖励比较一般。当前冻结快照为 75,000 miles；Offer Timing 当前给出“建议等待”。'},
-      'citi-strata':{sensitivity:'HIGH',fee:595,q7:{hotel:300,splurge:200,blacklane:200,ge:30,relation:145},q8N:7,timing:'一般',timingWait:false,offerCopy:'现在的开卡奖励比较一般。当前冻结快照为 75,000 TYP。'}
-    }[offerId];
-    const approvalBase=baseApprovalFor(a,cfg.sensitivity,cfg.bilt);
-    const rules={appSoftImpact:0,appHard:null,bonusHard:null,eligible:'可以',unknown:false,applicationNotes:[],bonusReason:'',tips:[],nextWait:''};
-
-    if(['unknown'].includes(a.a1)||a.a2==='unknown'||a.a3==='unknown'||a.a4==='unknown') rules.unknown=true;
-
-    if(offerId==='chase-sapphire'){
-      if(a.q5a==='5plus'){ rules.appHard='WAIT'; rules.nextWait='等 5/24 窗口降到 5 张以下后重新评估。'; rules.applicationNotes.push('你过去 24 个月本人主卡新开账户已达到 5 张或以上，当前会卡在 Chase 5/24。'); }
-      if(a.q6a==='2plus'){ rules.appHard='WAIT'; rules.nextWait='等 Chase 30 天申请节奏窗口结束后重新评估。'; rules.applicationNotes.push('你过去 30 天已经获批 2 张或以上 Chase 信用卡，当前需要等待。'); }
-      if(a.q5b==='yes' && Number(a.q5b_count)>0 && a.q5a!=='5plus') rules.tips.push({title:'副卡账户单独看',copy:'你有副卡账户，但 5/24 的正式判断仍以本人主卡新账户为核心；必要时可以在人工复议时解释副卡。'});
-      if(a.q6b==='yes'){ rules.bonusHard='BLOCK'; rules.eligible='不可以'; rules.bonusReason='你以前拿到过 Chase Sapphire Preferred 的新卡开卡奖励。'; }
-      if(a.q5a==='unknown'||a.q5b==='unknown'||a.q6a==='unknown'||a.q6b==='unknown'){ rules.unknown=true; if(a.q6b==='unknown') rules.eligible='不确定'; }
-    }
-
-    if(offerId==='amex-gold'){
-      if(a.q5a==='yes'){ rules.appSoftImpact=Math.max(rules.appSoftImpact,2); rules.applicationNotes.push('你过去 90 天内申请过或获批过同一 AMEX Gold，会明显增加当前申请风险，但不是硬性限制。'); rules.tips.push({title:'近期重复申请',copy:'同一 AMEX 产品 90 天内重复申请属于明显风险信号，但不是直接判拒。'}); }
-      if(['8to9','10plus'].includes(a.q5b)){ rules.appSoftImpact=Math.max(rules.appSoftImpact,1); rules.applicationNotes.push('你目前持有的 AMEX Gold / Platinum / Green 数量已经接近或达到 10 张，会增加一些申请风险。'); }
-      const held=(a.q6||[]).some(x=>['gold','prg','plat','schwab','ms'].includes(x));
-      if(held){ rules.bonusHard='BLOCK'; rules.eligible='不可以'; rules.bonusReason='你过去持有过 Gold / Premier Rewards Gold 或当前条款列出的个人 Platinum 系列产品。'; rules.tips.push({title:'开卡奖励限制',copy:'当前 Gold family language 会把相关 Gold / Platinum 持卡历史计入奖励资格判断。'}); }
-      if(a.q5a==='unknown'||a.q5b==='unknown'||(a.q6||[]).includes('unknown')){ rules.unknown=true; if((a.q6||[]).includes('unknown')) rules.eligible='不确定'; }
-    }
-
-    if(offerId==='bilt-palladium'){
-      if(['held','bonus'].includes(a.q5)){ rules.bonusHard='BLOCK'; rules.eligible='不可以'; rules.bonusReason='你现在或过去持有过 Column N.A. 发行的 Bilt Card 2.0，或已经拿过 Bilt 2.0 开卡奖励。'; rules.tips.push({title:'Bilt 2.0 奖励限制',copy:'Bilt Blue / Obsidian / Palladium 共用当前 Bilt 2.0 的持卡与 Welcome Bonus family 规则。'}); }
-      if(a.q6==='lt45'){ rules.appHard='WAIT'; rules.nextWait='等距离最近一次 Bilt 被拒满 45 天后重新评估。'; rules.applicationNotes.push('你最近一次 Bilt Card 2.0 被拒还未满 45 天，当前应先等待。'); }
-      if(a.q5==='unknown'||a.q6==='unknown'){ rules.unknown=true; if(a.q5==='unknown') rules.eligible='不确定'; }
-    }
-
-    if(offerId==='capitalone-venturex'){
-      if(a.q5a==='yes'){ rules.appSoftImpact=Math.max(rules.appSoftImpact,1); rules.applicationNotes.push('距离你最近一次 Capital One 申请或获批不足 6 个月，会增加一些申请风险，但不是硬性限制。'); }
-      if(a.q5b==='2plus'){ rules.appHard='WAIT'; rules.nextWait='等 Capital One 当前 30 天申请窗口结束后重新评估。'; rules.applicationNotes.push('当前 Venture X 的冻结申请条款明确限制过去 30 天内达到 2 次或以上 Capital One 信用卡申请。'); }
-      if(a.q6==='yes'){ rules.bonusHard='WAIT'; rules.eligible='不可以'; rules.bonusReason='你过去 48 个月内拿到过 Venture X 的新卡开卡奖励。'; rules.nextWait='等 Venture X 48 个月奖励窗口结束后重新评估。'; }
-      if(a.q5a==='unknown'||a.q5b==='unknown'||a.q6==='unknown'){ rules.unknown=true; if(a.q6==='unknown') rules.eligible='不确定'; }
-    }
-
-    if(offerId==='citi-strata'){
-      if(a.q5a==='yes'){ rules.appSoftImpact=Math.max(rules.appSoftImpact,2); rules.applicationNotes.push('你过去 8 天内申请过 Citi 个人信用卡，会明显增加当前申请节奏风险，但不是直接判拒。'); }
-      if(a.q5b==='2plus'){ rules.appHard='WAIT'; rules.nextWait='等 Citi 65 天申请节奏窗口结束后重新评估。'; rules.applicationNotes.push('你过去 65 天已经提交 2 次或以上 Citi 信用卡申请，当前需要等待。'); }
-      if(a.q6a==='yes'){ rules.bonusHard='WAIT'; rules.eligible='不可以'; rules.bonusReason='你过去 48 个月内拿到过 Citi Strata Elite 的新卡开卡奖励。'; rules.nextWait='等 48 个月奖励窗口结束后重新评估。'; }
-      if(a.q6b==='yes' && a.q6c==='yes'){ rules.bonusHard='WAIT'; rules.eligible='不可以'; rules.bonusReason='你曾把一张过去 48 个月内拿过新卡奖励的 Citi 账户转换成 Citi Strata Elite。'; rules.nextWait='等相关 Citi 开卡奖励满 48 个月后重新评估。'; }
-      if(a.q5a==='unknown'||a.q5b==='unknown'||a.q6a==='unknown'||a.q6b==='unknown'||(a.q6b==='yes'&&a.q6c==='unknown')){ rules.unknown=true; if(a.q6a==='unknown'||a.q6b==='unknown'||(a.q6b==='yes'&&a.q6c==='unknown')) rules.eligible='不确定'; }
-    }
-
-    if(['HIGH','VERY_HIGH'].includes(approvalBase.activity)) rules.applicationNotes.push('你近期申请活动较多，Approval Engine 会下调基础判断。');
-    let approval=applyApplicationImpact(approvalBase.label,rules.appSoftImpact,rules.appHard);
-    const lt=longTermFor(a,cfg.fee,cfg.q7,cfg.q8N);
-    let recommendation='可以申请', primaryAlert='';
-    if(rules.appHard==='BLOCK'){ recommendation='暂不建议申请'; primaryAlert='当前申请规则直接限制这次申请。'; }
-    else if(rules.appHard==='WAIT'){ recommendation='建议等待'; primaryAlert='当前有明确的申请时间窗口需要先等。'; }
-    else if(rules.bonusHard==='BLOCK'){ recommendation='暂不建议申请'; primaryAlert='按当前规则，你这次拿不到开卡奖励。'; }
-    else if(rules.bonusHard==='WAIT'){ recommendation='建议等待'; primaryAlert='当前奖励资格还在等待窗口内。'; }
-    else if(rules.unknown){ recommendation='建议等待'; primaryAlert='还有会改变当前判断的关键信息无法确认，补充后再评估更稳妥。'; }
-    else if(['较低','极低'].includes(approval)){ recommendation='暂不建议申请'; primaryAlert='按你目前的情况，这张卡不太容易批。'; }
-    else if(cfg.timingWait){ recommendation='建议等待'; primaryAlert='当前奖励并不处在需要马上申请的位置。'; }
-    else if(approval==='较高' && rules.eligible==='可以' && ['史高','较高'].includes(cfg.timing)){ recommendation='现在申请'; }
-
-    const shortMap={'现在申请':'目前条件和奖励都不错','可以申请':'目前没有明显申请限制','建议等待':'先等规则窗口或补充关键信息','暂不建议申请':'目前不适合申请这张卡'};
-    const applicationCopy=rules.applicationNotes.length?rules.applicationNotes.join(' '):'从申请规则看，目前没有发现会直接限制你申请这张卡的规则。';
-    const bonusCopy=rules.eligible==='可以'?'从你目前的持卡和奖励记录看，没有发现会影响这次开卡奖励的情况。':rules.eligible==='不可以'?`按当前规则，你这次拿不到开卡奖励。${rules.bonusReason}`:'目前资料不足，暂时不能判断你能不能拿到开卡奖励。';
-    const nextStep=recommendation==='现在申请'?'现在申请。':recommendation==='可以申请'?'如果不着急，可以按自己的开卡计划安排申请。':recommendation==='建议等待'?(rules.nextWait||'补充或确认缺少的关键信息后重新评估。'):'暂时不要申请这张卡。';
-    if(lt.annualValue<cfg.fee) rules.tips.push({title:'年费覆盖',copy:`你勾选的可量化福利年化约 $${lt.annualValue}，低于 $${cfg.fee} 年费。`});
-    return {meta:'评估于 2026.09.12',recommendation,shortSummary:shortMap[recommendation],primaryAlert,bonus:cfg.timing,approval,eligible:rules.eligible,longTerm:lt.value,isSample:false,note:shortMap[recommendation],internal:{appHard:rules.appHard,bonusHard:rules.bonusHard,knowledgeGap:rules.unknown},report:{applicationCopy,bonusCopy,offerCopy:cfg.offerCopy,approvalCopy:fixedApprovalCopy(approval),longCopy:fixedLongCopy(lt.value,lt.annualValue,cfg.fee),tips:rules.tips.slice(0,4),nextStep,annualValue:lt.annualValue,feeScore:lt.feeScore,q8Count:lt.q8Count,activity:approvalBase.activity,appImpact:rules.appSoftImpact}};
-  }
-
-  function evaluateAssessmentFor(offerId,a){
-    return offerId==='amex-platinum' ? evaluatePlatinumAssessment(a) : evaluateOtherAssessment(offerId,a);
-  }
-
-  function assessmentCanAdvance(q,answers){
-    if(q.type==='single') return answers[q.id]!==undefined;
-    if(q.type==='compound') return q.parts.filter(p=>assessmentPartVisible(p,answers)).every(p=>{
-      if(answers[p.id]===undefined) return false;
-      if(p.type==='countChoice' && answers[p.id]==='yes') return Number(answers[p.countId])>=Number(p.min||1);
-      return true;
-    });
-    if(q.type==='multi') return Array.isArray(answers[q.id]) && answers[q.id].length>0;
-    return false;
-  }
-
-  function scoreBand(ratio){
-    if(ratio>=1) return 5;
-    if(ratio>=.75) return 4;
-    if(ratio>=.5) return 3;
-    if(ratio>=.25) return 2;
-    return 1;
-  }
-
-  function evaluatePlatinumAssessment(a){
-    const baseMatrix={
-      none:{'740':'HIGH_RISK','700':'HIGH_RISK','670':'HIGH_RISK','lt670':'HIGH_RISK',unknown:'INSUFFICIENT_DATA'},
-      lt6:{'740':'HIGH_RISK','700':'HIGH_RISK','670':'HIGH_RISK','lt670':'HIGH_RISK',unknown:'INSUFFICIENT_DATA'},
-      '6to11':{'740':'MEDIUM','700':'MEDIUM','670':'HIGH_RISK','lt670':'HIGH_RISK',unknown:'INSUFFICIENT_DATA'},
-      '1to2':{'740':'HIGH','700':'MEDIUM','670':'MEDIUM','lt670':'HIGH_RISK',unknown:'INSUFFICIENT_DATA'},
-      '2plus':{'740':'HIGH','700':'HIGH','670':'MEDIUM','lt670':'HIGH_RISK',unknown:'INSUFFICIENT_DATA'},
-      unknown:{'740':'INSUFFICIENT_DATA','700':'INSUFFICIENT_DATA','670':'INSUFFICIENT_DATA','lt670':'INSUFFICIENT_DATA',unknown:'INSUFFICIENT_DATA'}
-    };
-    let base=(baseMatrix[a.a1]||baseMatrix.unknown)[a.a2]||'INSUFFICIENT_DATA';
-    const unknownActivity=a.a3==='unknown'||a.a4==='unknown';
-    let activity='LOW';
-    if(unknownActivity) activity='UNKNOWN';
-    else if(a.a4==='6plus' && ['4to5','6plus'].includes(a.a3)) activity='VERY_HIGH';
-    else if(a.a4==='4to5' && ['2to3','4to5','6plus'].includes(a.a3)) activity='HIGH';
-    else if(a.a4==='2to3') activity='MEDIUM';
-    else if(['0','1'].includes(a.a4) && ['0','1'].includes(a.a3)) activity='LOW';
-    else if(a.a4==='6plus') activity='VERY_HIGH';
-    else if(a.a4==='4to5') activity='HIGH';
-    else activity='MEDIUM';
-    // AMEX sensitivity is MEDIUM: HIGH / VERY_HIGH recent activity lowers one level; MEDIUM does not.
-    const rank={HIGH:2,MEDIUM:1,HIGH_RISK:0};
-    if(base!=='INSUFFICIENT_DATA' && ['HIGH','VERY_HIGH'].includes(activity)){
-      const r=Math.max(0,rank[base]-1); base=r===2?'HIGH':r===1?'MEDIUM':'HIGH_RISK';
-    }
-    let approval=base==='HIGH'?'较高':base==='MEDIUM'?'一般':base==='HIGH_RISK'?'较低':'无法判断';
-    // Bank Rules Application Impact aggregates by MAX, not sum.
-    let appImpact=0;
-    if(a.q5a==='yes') appImpact=Math.max(appImpact,2); // AMEX-011
-    if(['8to9','10plus'].includes(a.q5b)) appImpact=Math.max(appImpact,1); // AMEX-008
-    if(approval!=='无法判断'){
-      const levels=['较低','一般','较高'];
-      let i=levels.indexOf(approval);
-      i=Math.max(0,i-appImpact);
-      approval=levels[i];
-    }
-
-    const q6=a.q6||[];
-    const familyHeld=q6.some(x=>['plat','schwab','ms'].includes(x));
-    const familyUnknown=q6.includes('unknown');
-    const eligible=familyHeld?'不可以':familyUnknown?'不确定':'可以';
-
-    const q7Values={fhr:600,ent:300,equinox:300,clear:209,oura:200,lululemon:300,resy:400,walmart:155.4,airline:200,uber:300,ge:30};
-    const q7=(a.q7||[]).filter(x=>x!=='none');
-    const annualValue=q7.reduce((sum,x)=>sum+(q7Values[x]||0),0);
-    const feeRatio=Math.min(1,annualValue/895);
-    const feeScore=scoreBand(feeRatio);
-    const q8=(a.q8||[]).filter(x=>x!=='none');
-    const q8Score=scoreBand(q8.length/8);
-    const total=feeScore+q8Score;
-    let longTerm;
-    if(feeScore===5 && q8.length>=1) longTerm='很高';
-    else if(total>=9) longTerm='很高';
-    else if(total>=7) longTerm='较高';
-    else if(total>=5) longTerm='一般';
-    else if(total>=3) longTerm='较低';
-    else longTerm='很低';
-
-    const bonus='史高'; // OT-AMEX-001: Up to 175k MR, historical-high band; no Timing wait.
-    const decisiveUnknown=['unknown'].includes(a.a1)||a.a2==='unknown'||unknownActivity||a.q5a==='unknown'||familyUnknown;
-    let recommendation='可以申请';
-    let primaryAlert='';
-    if(familyHeld){ recommendation='暂不建议申请'; primaryAlert='按当前 Platinum family language，你这次拿不到开卡奖励。'; }
-    else if(approval==='较低'){ recommendation='暂不建议申请'; primaryAlert='按你目前的情况，这张卡不太容易批。'; }
-    else if(decisiveUnknown){ recommendation='建议等待'; primaryAlert='还有会改变当前判断的关键信息无法确认，补充后再评估更稳妥。'; }
-    else if(approval==='较高' && eligible==='可以' && ['史高','较高'].includes(bonus)){ recommendation='现在申请'; }
-    const shortMap={'现在申请':'目前条件和奖励都不错','可以申请':'目前没有明显申请限制','建议等待':'先等规则窗口或补充关键信息','暂不建议申请':'目前不适合申请这张卡'};
-    const nextMap={'现在申请':'现在申请。','可以申请':'如果不着急，可以按自己的开卡计划安排申请。','建议等待':'补充或确认缺少的关键信息后重新评估。','暂不建议申请':familyHeld?'暂时不要申请这张卡；先等奖励资格条件发生变化。':'暂时不要申请这张卡。'};
-    const approvalCopy=approval==='较高'?'按你目前的情况，这张卡还是比较容易批的。':approval==='一般'?'按你目前的情况，这张卡不算特别稳。':approval==='较低'?'按你目前的情况，这张卡不太容易批。':'目前还没法判断这张卡好不好批。';
-    const bonusCopy=eligible==='可以'?'从你目前的持卡记录看，没有发现会影响这次开卡奖励的情况。':eligible==='不可以'?'按当前规则，你这次拿不到开卡奖励。你过去持有过 Platinum 系列中的相关产品。':'目前资料不足，暂时不能判断你能不能拿到开卡奖励。';
-    const offerCopy='目前最高档奖励处在历史最高水平。当前最高可达 175,000 MR，实际申请时你看到的奖励可能更低。';
-    const longCopy=longTerm==='很高'?'这张卡很适合你长期持有。你选择的可量化福利已经覆盖年费，而且还有其他长期福利对你有价值。':longTerm==='较高'?'这张卡还是比较适合你长期持有的。':longTerm==='一般'?'这张卡长期持有价值一般。':longTerm==='较低'?'这张卡不太适合你长期持有。':'这张卡长期持有价值很低。';
-    const appRisk=[];
-    if(a.q5a==='yes') appRisk.push('你过去 90 天内申请过或获批过同一 Platinum 产品，会明显增加当前申请风险。');
-    if(['8to9','10plus'].includes(a.q5b)) appRisk.push('你目前持有的 AMEX Gold / Platinum / Green 数量已经接近或达到 10 张，会增加一些申请风险，但不是硬性限制。');
-    if(['HIGH','VERY_HIGH'].includes(activity)) appRisk.push('你近期申请活动较多，Approval Engine 会下调基础判断。');
-    const applicationCopy=appRisk.length?appRisk.join(' '):'从申请规则看，目前没有发现会直接限制你申请这张卡的规则。';
-    const tips=[];
-    if(a.q5a==='yes') tips.push({title:'近期重复申请',copy:'同一 AMEX 产品 90 天内重复申请属于明显风险信号，但不是直接判拒。'});
-    if(familyHeld) tips.push({title:'开卡奖励限制',copy:'你勾选了过去持有过个人 Platinum 系列卡；当前 Offer 的 family language 会影响奖励资格。'});
-    if(annualValue<895) tips.push({title:'年费覆盖',copy:`你勾选的可量化福利年化约 $${Math.round(annualValue)}，低于 $895 年费。`});
-    return {
-      meta:'评估于 2026.09.12',recommendation,shortSummary:shortMap[recommendation],primaryAlert,
-      bonus,approval,eligible,longTerm,isSample:false,
-      note:shortMap[recommendation],
-      internal:{appHard:null,bonusHard:familyHeld?'BLOCK':null,knowledgeGap:decisiveUnknown},
-      report:{applicationCopy,bonusCopy,offerCopy,approvalCopy,longCopy,tips:tips.slice(0,4),nextStep:nextMap[recommendation],annualValue:Math.round(annualValue),feeScore,q8Count:q8.length,activity,appImpact}
-    };
-  }
 
   function offerDetailPage(){
     const o=currentOffer();
-    const supportsAssessment=o.id==='chase-sapphire'||!!assessmentQuestionsFor(o.id);
+    const supportsAssessment=!!window.NBStaticAssessmentIntegration?.productMap?.[o.id];
     const isEnded=state.unavailableSavedIds.includes(o.id);
     const r=supportsAssessment?offerResult(o):null;
     const isPlat=o.id==='amex-platinum';
@@ -897,7 +515,7 @@
           <p class="v4-decision-copy">${supportsAssessment&&!isEnded?'基于你已确认的信息与当前规则，判断这张卡现在是否适合申请。':isEnded?'这次机会已不再作为当前申请建议。':'只有存在已冻结评估规则时，才显示个性化申请结论。'}</p>
           ${resultHtml}
           ${actions.length?`<div class="v4-detail-actions ${actions.length===1?'single':''}">${actions.join('')}</div>`:''}
-          ${o.id!=='chase-sapphire'&&!isEnded&&supportsAssessment&&state.assessmentResults[o.id]?`<button class="v5-reassess" data-action="assessment-restart">重新评估</button>`:''}
+          ${!isEnded&&supportsAssessment&&state.assessmentResults[o.id]?`<button class="v5-reassess" data-action="assessment-restart">重新评估</button>`:''}
           ${!isEnded&&!actions.length?`<div class="v4-no-action-note">当前暂未提供可执行的申请入口。</div>`:''}
           <div class="v4-security-line">♙ <span>安全、免费、不会影响你的信用评分</span></div>
           <div class="v4-trust-row"><span>▤<b>个性化分析</b><small>结合已确认信息</small></span><span>◉<b>规则拆分</b><small>申请与奖励分开判断</small></span><span>☼<b>固定输出</b><small>同样输入得到同样结果</small></span><span>♢<b>隐私安全</b><small>只保存评估所需的信息</small></span></div>
@@ -906,68 +524,6 @@
     </div>`;
   }
 
-  function assessmentOption(opt,key,selected,action='assessment-select'){
-    const [value,label]=opt;
-    return `<button class="assessment-choice ${selected?'selected':''}" data-action="${action}" data-key="${key}" data-value="${esc(value)}"><span class="assessment-mark">${selected?'✓':''}</span><span>${esc(label)}</span></button>`;
-  }
-
-  function assessmentPartVisible(p,answers){
-    return !p.showIf || answers[p.showIf.key]===p.showIf.value;
-  }
-
-  function renderAssessmentPart(p,a,index){
-    if(!assessmentPartVisible(p,a)) return '';
-    let inner='';
-    if(p.type==='countChoice'){
-      inner=`<div class="assessment-choices compact">${p.options.map(o=>assessmentOption(o,p.id,a[p.id]===o[0])).join('')}</div>`;
-      if(a[p.id]==='yes') inner+=`<div class="assessment-inline-number"><label for="assessment-${p.countId}">${esc(p.countLabel||'数量')}</label><input id="assessment-${p.countId}" class="input assessment-number" data-key="${p.countId}" type="number" min="${p.min||1}" max="${p.max||99}" step="1" value="${esc(a[p.countId]??'')}" placeholder="请输入数量" /></div>`;
-    }else{
-      inner=`<div class="assessment-choices compact">${p.options.map(o=>assessmentOption(o,p.id,a[p.id]===o[0])).join('')}</div>`;
-    }
-    return `<div class="assessment-subq"><div class="assessment-subq-title"><span>${index+1}</span>${esc(p.title)}</div>${inner}${p.help?`<p class="assessment-help">${esc(p.help)}</p>`:''}</div>`;
-  }
-
-  function renderAssessmentQuestion(q,draft){
-    const a=draft.answers||{};
-    if(q.type==='single') return `<div class="assessment-choices">${q.options.map(o=>assessmentOption(o,q.id,a[q.id]===o[0])).join('')}</div>`;
-    if(q.type==='compound') return `<div class="assessment-compound">${q.parts.filter(p=>assessmentPartVisible(p,a)).map((p,i)=>renderAssessmentPart(p,a,i)).join('')}</div>`;
-    const selected=Array.isArray(a[q.id])?a[q.id]:[];
-    return `<div class="assessment-choices multi">${q.options.map(o=>assessmentOption(o,q.id,selected.includes(o[0]),'assessment-toggle')).join('')}</div>`;
-  }
-
-  function assessmentQuestionsFor(offerId){
-    if(offerId==='amex-platinum') return platinumQuestions();
-    if(offerId==='chase-sapphire') return null; // AssessmentClient owns the questionnaire.
-    if(offerId==='amex-gold') return amexGoldQuestions();
-    if(offerId==='bilt-palladium') return biltQuestions();
-    if(offerId==='capitalone-venturex') return ventureXQuestions();
-    if(offerId==='citi-strata') return citiStrataQuestions();
-    return null;
-  }
-
-  function assessmentPage(){
-    if(!state.loggedIn){ openLogin('assessment',{type:'assessment',offerId:state.currentOfferId},'offer-detail'); return ''; }
-    const d=state.assessmentDraft || {offerId:state.currentOfferId,step:0,answers:{}};
-    const o=offers.find(x=>x.id===d.offerId)||currentOffer();
-    if(d.completed && d.result){
-      const r=d.result; const rep=r.report||{};
-      return `<div class="content narrow assessment-page"><button class="detail-back" data-action="assessment-result-back">‹ 返回优惠详情</button><div class="assessment-shell"><div class="assessment-kicker">申请评估完成</div><h1>${esc(r.recommendation)}</h1><p class="page-subtitle">${esc(r.shortSummary||'')}</p><div class="result-block"><div class="result-meta">${esc(r.meta)}</div>${r.primaryAlert?`<div class="v5-primary-alert">! ${esc(r.primaryAlert)}</div>`:''}<div class="metric-grid">${metric('开卡奖励评级',r.bonus)}${metric('获批可能性',r.approval)}${metric('能否拿奖励',r.eligible)}${metric('长期持有价值',r.longTerm)}</div></div><div class="assessment-result-reasons"><h3>为什么</h3><p>${esc(rep.applicationCopy||'')}</p><p>${esc(rep.bonusCopy||'')}</p><p>${esc(rep.approvalCopy||'')}</p></div><div class="actions two"><button class="btn primary" data-action="assessment-result-report">查看完整分析</button><button class="btn secondary" data-action="assessment-result-back">返回优惠详情</button></div></div></div>`;
-    }
-    const qs=assessmentQuestionsFor(d.offerId)||[];
-    const q=qs[d.step];
-    if(!q) return `<div class="content narrow"><div class="empty"><h3>当前没有需要确认的问题</h3><button class="btn primary" data-action="assessment-exit">返回优惠详情</button></div></div>`;
-    const can=assessmentCanAdvance(q,d.answers||{});
-    return `<div class="content narrow assessment-page"><button class="detail-back" data-action="assessment-exit">‹ 返回优惠详情</button><div class="assessment-shell"><div class="assessment-progress"><span style="width:${Math.round(((d.step+1)/qs.length)*100)}%"></span></div><div class="assessment-kicker">${esc(o.name)} · ${d.step+1}/${qs.length}</div><h1>${esc(q.title)}</h1>${q.help?`<p class="assessment-help top">${esc(q.help)}</p>`:''}${renderAssessmentQuestion(q,d)}<div class="assessment-foot">${d.step>0?`<button class="btn secondary" data-action="assessment-back">返回</button>`:'<span></span>'}<button class="btn primary" data-action="assessment-next" ${can?'':'disabled'}>${d.step===qs.length-1?'查看结果':'继续'}</button></div></div></div>`;
-  }
-
-  function fullReportPage(){
-    const o=currentOffer(); const r=offerResult(o); const rep=r.report||{};
-    return `<div class="content narrow"><button class="detail-back" data-action="back-offer-detail">‹ 返回申请建议</button>
-      <div class="page-head"><div><div class="eyebrow">完整分析</div><h1 class="page-title">${esc(o.name)}</h1><p class="page-subtitle">这里只解释已经得到的结构化结论，不运行第二套判断。</p></div></div>
-      <div class="result-block" style="margin-bottom:18px"><div class="result-meta">${esc(r.meta)}</div><div class="recommendation">${esc(r.recommendation)}</div><p class="v5-report-summary">${esc(r.shortSummary||r.note||'')}</p>${r.primaryAlert?`<div class="v5-primary-alert">! ${esc(r.primaryAlert)}</div>`:''}<div class="metric-grid">${metric('开卡奖励评级',r.bonus)}${metric('获批可能性',r.approval)}${metric('能否拿奖励',r.eligible)}${metric('长期持有价值',r.longTerm)}</div></div>
-      <article class="report v5-full-report"><h3>最终建议</h3><p>${esc(r.shortSummary||r.note||'')}</p><h3>评估结果</h3><p>开卡奖励评级「${esc(r.bonus)}」；获批可能性「${esc(r.approval)}」；能否拿奖励「${esc(r.eligible)}」；长期持有价值「${esc(r.longTerm)}」。</p><h3>申请规则</h3><p>${esc(rep.applicationCopy||'目前没有发现会直接限制你申请这张卡的规则。')}</p><h3>开卡奖励资格</h3><p>${esc(rep.bonusCopy||'')}</p><h3>当前开卡奖励</h3><p>${esc(rep.offerCopy||`${o.value}；${o.requirement}`)}</p><h3>获批可能性</h3><p>${esc(rep.approvalCopy||'')}</p><h3>长期持有价值</h3><p>${esc(rep.longCopy||'')}</p>${rep.tips?.length?`<h3>需要注意</h3><div class="v5-tip-list">${rep.tips.map(t=>`<div><strong>${esc(t.title)}</strong><p>${esc(t.copy)}</p></div>`).join('')}</div>`:''}<h3>下一步</h3><p>${esc(rep.nextStep||'根据当前结果安排下一步。')}</p></article>
-    </div>`;
-  }
 
   function productPageAttentionItem(a){
     const expanded=state.expandedAttentionId===a.id;
@@ -1030,44 +586,14 @@
   }
 
   function productCardDisplay(p, detail=false){
-    const mapped=productCardArt[p?.id];
-    let localSrc=p?.cardImageLocal || mapped?.local || (p?.artAsset?`assets/product-page/${p.artAsset}.png`:productArtSrc(p));
-    let primarySrc=p?.cardImageWeb || mapped?.web || localSrc;
-    // Product Detail must show the exact product artwork, never a generic artAsset guess.
-    // Keep the Platinum detail mock asset because it is already the approved large-card reference.
-    if(detail && p?.id==='p-amex-plat-1005'){
-      primarySrc='assets/product-detail/amex-platinum-card.png';
-      localSrc=primarySrc;
-    }
-    const fallbackAttr=(localSrc && primarySrc && primarySrc!==localSrc)
-      ? ` data-fallback="${esc(localSrc)}" onerror="if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback;}"`
-      : '';
+    const canonical=window.NextBonusCreditCardArt?.resolveAsset?.(p);
+    const localSrc=p?.cardImageLocal || canonical?.local || (p?.artAsset?`assets/product-page/${p.artAsset}.png`:productArtSrc(p));
+    const primarySrc=p?.cardImageWeb || canonical?.web || localSrc;
+    const fallbackAttr=(localSrc&&primarySrc&&primarySrc!==localSrc)?` data-fallback="${esc(localSrc)}" onerror="if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback;}"`:'';
     return {primarySrc,localSrc,fallbackAttr};
   }
 
-  const productLogoAssets={
-    'p-chase-checking':'assets/product-logos/chase.png',
-    'p-fidelity':'assets/product-logos/fidelity.png',
-    'p-robinhood':'assets/product-logos/robinhood.png',
-    'p-truist':'assets/product-logos/truist.png',
-    'p-usbank':'assets/product-logos/usbank.png',
-    'p-wf-checking':'assets/product-logos/wells-fargo.png',
-    'p-delta-status':'assets/product-logos/delta.png',
-    'p-hilton':'assets/product-logos/hilton.png',
-    'p-ihg':'assets/product-logos/ihg.png',
-    'p-marriott-status':'assets/product-logos/marriott.png',
-    'p-hyatt':'assets/product-logos/hyatt.png',
-    'p-awardwallet':'assets/product-logos/awardwallet.png',
-    'p-rakuten':'assets/product-logos/rakuten.png',
-    'p-topcashback':'assets/product-logos/topcashback.png',
-    'p-rebatesme':'assets/product-logos/rebatesme.png',
-    'p-gocashback':'assets/product-logos/gocashback.png',
-    'p-pointsyeah':'assets/product-logos/pointsyeah.png',
-    'p-cardpointers':'assets/product-logos/cardpointers.png',
-    'p-maxrewards':'assets/product-logos/maxrewards.png',
-    'p-bilt-rent':'assets/product-logos/bilt.png',
-    'p-google-one':'assets/product-logos/google-one.png'
-  };
+
   const productTileCopy={
     'p-chase-checking':['Chase','Total Checking'],
     'p-fidelity':['Fidelity','Cash Management Account'],
@@ -1094,17 +620,18 @@
       return `<button class="v4-owned-product-card credit-tile" data-action="open-product" data-id="${p.id}" aria-label="${esc(p.name)}"><span class="v4-owned-product-art">${art.primarySrc?`<img src="${art.primarySrc}"${art.fallbackAttr} alt="${esc(p.name)}" />`:`<span class="fallback-brand">${esc(fallbackLabel)}</span>`}</span><span class="owned-product-meta"><strong>${esc(p.name)}</strong><small>${esc(p.instance||p.institution||'')}</small></span><span class="owned-product-chevron">›</span></button>`;
     }
     const [primary,secondary]=productInfoTileCopy(p);
-    const logo=productLogoAssets[p.id]||'';
+    const logo=window.NextBonusProductLogoRegistry?.resolve?.(p.id,p.offerId,p.name)||'';
     return `<button class="v4-owned-product-card compact-tile v10-info-tile" data-action="open-product" data-id="${p.id}" aria-label="${esc(p.name)}"><span class="v10-info-logo">${logo?`<img src="${logo}" alt="" />`:`<span class="v10-logo-fallback">${esc(shortBrand(p.institution||p.name))}</span>`}</span><span class="v10-info-copy"><strong>${esc(primary)}</strong><small>${esc(secondary)}</small></span><span class="v10-info-chevron">›</span></button>`;
   }
 
   function shortBrand(v){ return String(v||'NB').split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase().slice(0,3); }
   function productArtSrc(p){
+    if(p?.type==='信用卡'){
+      const canonical=window.NextBonusCreditCardArt?.resolveAsset?.(p);
+      if(canonical) return canonical.web||canonical.local||'';
+    }
     if(p?.artAsset) return `assets/product-page/${p.artAsset}.png`;
     const n=(p?.name||'').toLowerCase();
-    if(n.includes('platinum')) return 'assets/product-detail/amex-platinum-card.png';
-    if(n.includes('gold')) return 'assets/product-page/credit-amex-gold.png';
-    if(n.includes('sapphire')) return 'assets/product-page/credit-csr.png';
     if(n.includes('u.s. bank')||n.includes('smartly')) return 'assets/product-page/bank-usbank.png';
     return '';
   }
@@ -1136,37 +663,9 @@
 
   function pdAttentionItem(a){
     const expanded=state.expandedAttentionId===a.id;
-    return `<div class="v4-pd-attention-item"><button class="v4-pd-attention-row" data-action="toggle-attention" data-id="${a.id}" data-history="0"><span class="v4-pd-att-icon">${pdAttentionIcon(a)}</span><span class="v4-pd-att-copy"><strong>${esc(a.action)}</strong><small>${esc(a.secondary||'')}</small></span><span class="v4-pd-att-time ${a.id==='a-bonus-plat'?'urgent':''}">${a.id==='a-bonus-plat'?'剩余 43 天':esc(a.time)}</span><span class="v4-pd-att-chevron">›</span></button>${expanded?attentionExpanded(a,false):''}</div>`;
-  }
-
-  function platinumBenefitDetail(id){
-    const map={
-      lounge:{title:'Centurion Lounge 贵宾室',usable:'持卡期间可用',next:'按官方网络规则更新',eligibility:'需满足对应休息室访问规则',enroll:'按项目要求完成登记'},
-      hotel:{title:'$200 酒店报销',usable:'按当前福利周期使用',next:'下一周期按官方规则开始',eligibility:'需通过符合条件的预付酒店渠道',enroll:'无需在 NextBonus 内登记'},
-      air:{title:'$200 航空报销',usable:'本自然年内使用',next:'下一自然年刷新',eligibility:'需先选择符合条件的航空公司',enroll:'需要提前选择航空公司'},
-      '$200 Uber Cash':{title:'$200 Uber Cash',usable:'按月使用',next:'下月刷新',eligibility:'需将卡加入 Uber 账户',enroll:'需要在 Uber 中完成设置'},
-      '$100 Saks 报销':{title:'$100 Saks 报销',usable:'按半年周期使用',next:'下一半年度刷新',eligibility:'符合条件的 Saks 消费',enroll:'需要提前登记'},
-      '$189 CLEAR® Plus 报销':{title:'CLEAR® Plus 报销',usable:'按当前年度福利规则',next:'下一周期刷新',eligibility:'符合条件的 CLEAR 消费',enroll:'按官方规则使用'},
-      'Global Entry / TSA PreCheck® 申请费报销':{title:'Global Entry / TSA PreCheck® 申请费报销',usable:'按资格周期使用',next:'按官方周期刷新',eligibility:'符合条件的申请费',enroll:'无需额外登记'},
-      'Hilton Honors 金卡会籍':{title:'Hilton Honors 金卡会籍',usable:'持卡且资格有效期间',next:'资格变化时更新',eligibility:'需按官方方式关联会籍',enroll:'可能需要激活'},
-      'Marriott Bonvoy 金卡会籍':{title:'Marriott Bonvoy 金卡会籍',usable:'持卡且资格有效期间',next:'资格变化时更新',eligibility:'需按官方方式关联会籍',enroll:'可能需要激活'},
-      '高级租车保障':{title:'高级租车保障',usable:'符合条件的租车交易',next:'持续有效',eligibility:'需满足保障条款',enroll:'按官方条款'},
-      '行程延误险':{title:'行程延误险',usable:'符合条件的行程',next:'持续有效',eligibility:'需满足保障条款',enroll:'按官方条款'},
-      '购物保障':{title:'购物保障',usable:'符合条件的购物交易',next:'持续有效',eligibility:'需满足保障条款',enroll:'按官方条款'},
-      '退货保障':{title:'退货保障',usable:'符合条件的购物交易',next:'持续有效',eligibility:'需满足保障条款',enroll:'按官方条款'}
-    };
-    return map[id]||null;
-  }
-  function platinumBenefitExpanded(id){
-    const b=platinumBenefitDetail(id); if(!b) return '';
-    return `<div class="benefit-detail v4-benefit-expanded"><dl><dt>本期可用至</dt><dd>${esc(b.usable)}</dd><dt>下一期开始</dt><dd>${esc(b.next)}</dd><dt>适用条件</dt><dd>${esc(b.eligibility)}</dd><dt>需要提前登记</dt><dd>${esc(b.enroll)}</dd><dt>最后核验</dt><dd>2026.09.12</dd></dl></div>`;
-  }
-  function amexPlatinumBenefits(){
-    const left=[['🚕','$200 Uber Cash','每月最高 $15'],['▱','$100 Saks 报销','每 6 个月最高 $50'],['◌','$189 CLEAR® Plus 报销','每年最高 $189'],['◎','Global Entry / TSA PreCheck® 申请费报销','每 4 年最高 $120'],['H','Hilton Honors 金卡会籍','免费赠送']];
-    const right=[['M','Marriott Bonvoy 金卡会籍','免费赠送'],['🚗','高级租车保障','次级保障'],['◷','行程延误险','每次行程最高 $500'],['♢','购物保障','每次最高 $10,000'],['◇','退货保障','每件最高 $300']];
-    const row=x=>`<div class="v4-benefit-item-wrap"><button class="v4-benefit-row" data-action="toggle-benefit" data-id="${esc(x[1])}"><span class="v4-benefit-icon">${x[0]}</span><strong>${x[1]}</strong><small>${x[2]}</small><b class="${state.expandedBenefitId===x[1]?'up':''}">›</b></button>${state.expandedBenefitId===x[1]?platinumBenefitExpanded(x[1]):''}</div>`;
-    const featured=(id,img,title,copy)=>`<div class="v4-feature-benefit-wrap"><button class="v4-feature-benefit" data-action="toggle-benefit" data-id="${id}"><img src="${img}" alt=""/><span><strong>${title}</strong><small>${copy}</small></span><b class="${state.expandedBenefitId===id?'up':''}">›</b></button>${state.expandedBenefitId===id?platinumBenefitExpanded(id):''}</div>`;
-    return `<div class="v4-featured-benefits">${featured('lounge','assets/product-detail/benefit-lounge.png','Centurion Lounge 贵宾室','持卡期间按当前规则使用。')}${featured('hotel','assets/product-detail/benefit-hotel.png','$200 酒店报销','符合条件的预付酒店住宿。')}${featured('air','assets/product-detail/benefit-airline.png','$200 航空报销','选择符合条件的航空公司后使用。')}</div><div class="v4-benefit-lists"><div>${left.map(row).join('')}</div><div>${right.map(row).join('')}</div></div>`;
+    const days=daysUntil(a.dueDate);
+    const time=days!==null&&days>=0&&a.type==='bonus'?`剩余 ${days} 天`:a.time;
+    return `<div class="v4-pd-attention-item"><button class="v4-pd-attention-row" data-action="toggle-attention" data-id="${a.id}" data-history="0"><span class="v4-pd-att-icon">${pdAttentionIcon(a)}</span><span class="v4-pd-att-copy"><strong>${esc(a.action)}</strong><small>${esc(a.secondary||"")}</small></span><span class="v4-pd-att-time ${days!==null&&days<=7?"urgent":""}">${esc(time)}</span><span class="v4-pd-att-chevron">›</span></button>${expanded?attentionExpanded(a,false):""}</div>`;
   }
 
   function earningBlock(p){
@@ -1189,19 +688,18 @@
     const related=activeAttentionSorted(currentActiveAttention().filter(a=>a.productId===p.id));
     const top=related.slice(0,3);
     const isPast=state.pastProducts.some(x=>x.id===p.id);
-    const isPlat=p.id==='p-amex-plat-1005';
     const detailArt=productCardDisplay(p,true);
     const timeline=productTimelineItems(p);
     return `<div class="content v4-product-detail-page">
       <section class="v4-pd-overview">
         <div class="v4-pd-left"><div class="v4-pd-card ${p.type==='信用卡'?'credit-card-art':''}">${detailArt.primarySrc?`<img src="${detailArt.primarySrc}"${detailArt.fallbackAttr} alt="${esc(p.name)}" />`:`<span class="fallback-brand large">${esc(shortBrand(p.institution))}</span>`}</div>${(p.phone||p.loginUrl)?`<div class="v4-pd-actions">${p.phone?`<button data-action="product-call" data-phone="${esc(p.phone)}">☎ <span>致电</span></button>`:''}${p.phone&&p.loginUrl?'<i></i>':''}${p.loginUrl?`<button data-action="product-login-external" data-url="${esc(p.loginUrl)}">↗ <span>登录</span></button>`:''}</div>`:''}</div>
-        <div class="v4-pd-right"><div class="v4-pd-title-row"><div><h1>${isPlat?'The Platinum Card® from American Express':esc(p.name)}</h1><div class="v4-pd-status"><span>${esc(p.instance||'')}</span>${p.instance?'<i></i>':''}<b class="${isPast?'past':''}"></b><strong>${isPast?'历史产品':esc(p.status||'不确定')}</strong></div></div>${isPast?'':`<button class="v4-pd-edit" data-action="edit-product">✎　编辑</button>`}</div>
+        <div class="v4-pd-right"><div class="v4-pd-title-row"><div><h1>${esc(p.name)}</h1><div class="v4-pd-status"><span>${esc(p.instance||'')}</span>${p.instance?'<i></i>':''}<b class="${isPast?'past':''}"></b><strong>${isPast?'历史产品':esc(p.status||'不确定')}</strong></div></div>${isPast?'':`<button class="v4-pd-edit" data-action="edit-product">✎　编辑</button>`}</div>
           <div class="v4-pd-facts"><div><span class="fact-icon">▣</span><span><small>${p.type==='信用卡'?'开卡日期':'开户日期'}</small><strong>${p.opened?formatLongDate(p.opened):'未填写'}</strong></span></div>${p.type==='信用卡'?`<div><span class="fact-icon">♙</span><span><small>周年日</small><strong>${esc(p.anniversary||'—')}</strong></span></div><div><span class="fact-icon">$</span><span><small>年费</small><strong>${esc(p.annualFee||'—')}</strong></span></div>`:''}</div>
           ${earningBlock(p)}
         </div>
       </section>
       ${related.length?`<section class="v4-pd-section v4-pd-attention"><div class="v4-section-head"><h2>需要关注 <span class="attention-count-dot">${related.length}</span></h2>${related.length>3?`<button class="mock-link" data-action="attention-for-product" data-id="${p.id}">查看全部 ${related.length}</button>`:''}</div><div class="v4-pd-attention-list">${top.map(pdAttentionItem).join('')}</div></section>`:''}
-      <section class="v4-pd-section v4-pd-benefits"><div class="v4-section-head"><h2>福利</h2></div>${isPlat?amexPlatinumBenefits():(benefitsFor(p).length?`<div class="benefit-grid pd-benefit-grid">${benefitsFor(p).map(benefitCard).join('')}</div>`:`<div class="timeline-empty">暂时没有可展示的结构化福利信息</div>`)}</section>
+      <section class="v4-pd-section v4-pd-benefits"><div class="v4-section-head"><h2>福利</h2></div>${benefitsFor(p).length?`<div class="benefit-grid pd-benefit-grid">${benefitsFor(p).map(benefitCard).join('')}</div>`:`<div class="timeline-empty">暂时没有可展示的结构化福利信息</div>`}</section>
       <section class="v4-pd-section v4-pd-history"><button class="v4-past-head" data-action="toggle-product-history"><span>历史记录 <b>${timeline.length}</b></span><span class="chev ${state.productHistoryOpen?'up':''}">›</span></button>${state.productHistoryOpen?timelineFor(p,timeline):''}</section>
     </div>`;
   }
@@ -1284,7 +782,7 @@
     }
     if(f.step==='change-confirm'){
       const t=(catalog['信用卡']||[]).find(x=>x.id===f.changeTargetId);
-      return `<div class="content narrow edit-product-page"><button class="detail-back" data-action="edit-back">‹ 返回选择产品</button><div class="page-head"><div><h1 class="page-title">确认更换产品</h1></div></div><div class="report"><h3>${esc(p.name)} → ${esc(t?.name||'')}</h3><p>原产品历史会保留；原产品后续新的福利和年费提醒会停止；旧奖励追踪不会迁移到新产品。</p></div><div class="form-group"><label class="label">变更生效日期</label><input id="edit-change-date" class="input" type="date" max="2026-09-12" value="${esc(f.changeDate)}"/></div><button class="btn primary" data-action="edit-change-confirm" ${f.changeDate?'':'disabled'}>确认更换产品</button></div>`;
+      return `<div class="content narrow edit-product-page"><button class="detail-back" data-action="edit-back">‹ 返回选择产品</button><div class="page-head"><div><h1 class="page-title">确认更换产品</h1></div></div><div class="report"><h3>${esc(p.name)} → ${esc(t?.name||'')}</h3><p>原产品历史会保留；原产品后续新的福利和年费提醒会停止；旧奖励追踪不会迁移到新产品。</p></div><div class="form-group"><label class="label">变更生效日期</label><input id="edit-change-date" class="input" type="date" max="${localDateISO()}" value="${esc(f.changeDate)}"/></div><button class="btn primary" data-action="edit-change-confirm" ${f.changeDate?'':'disabled'}>确认更换产品</button></div>`;
     }
     const tracked=state.activeAttention.some(a=>a.productId===p.id&&a.type==='bonus') || state.attentionHistory.some(h=>h.productId===p.id&&/奖励/.test(h.action));
     return `<div class="content narrow edit-product-page"><button class="detail-back" data-action="edit-exit">‹ 返回产品详情</button><div class="page-head"><div><h1 class="page-title">编辑产品</h1><p class="page-subtitle">${esc(p.name)}</p></div></div><div class="edit-panel"><div class="form-group"><label class="label">卡号后四位 / 账户识别</label><input class="input" id="edit-instance" value="${esc(f.instance)}" /></div><div class="form-group"><label class="label">账户状态</label><select class="select" id="edit-status"><option ${f.status==='正常'?'selected':''}>正常</option><option ${f.status==='已关闭'?'selected':''}>已关闭</option><option ${f.status==='不确定'?'selected':''}>不确定</option></select></div><div class="form-group"><label class="label">${p.type==='信用卡'?'开卡日期':'开户日期'}</label><input type="date" class="input" id="edit-opened" value="${esc(f.opened)}" /></div>${p.type==='信用卡'?`<button class="option-row" data-action="edit-bonus-open"><span class="option-main"><span class="option-title">开卡奖励</span><span class="option-sub">${f.pendingBonus?esc(f.pendingBonus.reward):tracked?'正在追踪 / 已有记录':'未添加'}</span></span><span>›</span></button>`:''}<button class="option-row" style="margin-top:10px" data-action="edit-change-open"><span class="option-main"><span class="option-title">已变更为其他产品</span><span class="option-sub">只显示已确认可变更目标</span></span><span>›</span></button><div class="edit-footer split"><button class="btn danger" data-action="remove-product-request" data-id="${p.id}">从 NextBonus 中移除</button><button class="btn primary" data-action="save-edit-product" data-id="${p.id}">保存</button></div></div></div>`;
@@ -1357,7 +855,7 @@
     }else if(f.step==='info'){
       title='填写最少账户信息';
       const isCard=f.category==='信用卡', duplicate=findPotentialDuplicate(f);
-      body=`${isCard?`<div class="form-group"><label class="label">卡号后四位 <span class="muted">（可选）</span></label><input id="add-last4" class="input" maxlength="4" inputmode="numeric" value="${esc(f.last4)}" placeholder="例如 1005" /></div>`:`<div class="form-group"><label class="label">账户昵称 <span class="muted">（可选）</span></label><input id="add-nickname" class="input" value="${esc(f.nickname)}" placeholder="例如 主账户" /></div>`}<div class="form-group"><label class="label">${isCard?'开卡日期':'开户日期'} <span class="muted">（可选）</span></label><div class="date-field-row"><input id="add-opened" type="date" max="2026-09-12" class="input" value="${esc(f.opened)}" />${f.opened?`<button class="btn secondary small" data-action="add-clear-opened">清除日期</button>`:''}</div></div><p class="hint">只收当前添加流程真正需要的最少信息，之后可以再编辑。</p>${duplicate&&!f.allowDuplicate?`<div class="duplicate-warning"><strong>你可能已经添加过这个产品</strong><p>${esc(duplicate.name)} ${esc(duplicate.instance||'')}</p><div class="actions two"><button class="btn secondary" data-action="add-view-existing" data-id="${duplicate.id}">查看已添加的产品</button><button class="btn primary" data-action="add-override-duplicate">仍然添加一个</button></div></div>`:''}`;
+      body=`${isCard?`<div class="form-group"><label class="label">卡号后四位 <span class="muted">（可选）</span></label><input id="add-last4" class="input" maxlength="4" inputmode="numeric" value="${esc(f.last4)}" placeholder="例如 1005" /></div>`:`<div class="form-group"><label class="label">账户昵称 <span class="muted">（可选）</span></label><input id="add-nickname" class="input" value="${esc(f.nickname)}" placeholder="例如 主账户" /></div>`}<div class="form-group"><label class="label">${isCard?'开卡日期':'开户日期'} <span class="muted">（可选）</span></label><div class="date-field-row"><input id="add-opened" type="date" max="${localDateISO()}" class="input" value="${esc(f.opened)}" />${f.opened?`<button class="btn secondary small" data-action="add-clear-opened">清除日期</button>`:''}</div></div><p class="hint">只收当前添加流程真正需要的最少信息，之后可以再编辑。</p>${duplicate&&!f.allowDuplicate?`<div class="duplicate-warning"><strong>你可能已经添加过这个产品</strong><p>${esc(duplicate.name)} ${esc(duplicate.instance||'')}</p><div class="actions two"><button class="btn secondary" data-action="add-view-existing" data-id="${duplicate.id}">查看已添加的产品</button><button class="btn primary" data-action="add-override-duplicate">仍然添加一个</button></div></div>`:''}`;
       footer=backNext('add-to-track','继续',!!duplicate&&!f.allowDuplicate);
     }else if(f.step==='track'){
       title=f.category==='信用卡'?'是否追踪开卡奖励':'是否追踪开户奖励';
@@ -1384,11 +882,10 @@
   function backOnly(){ return `<button class="btn secondary" data-action="add-back">返回</button><span></span>`; }
   function backNext(action,label,disabled=false){ return `<button class="btn secondary" data-action="add-back">返回</button><button class="btn primary" data-action="${action}" ${disabled?'disabled':''}>${label}</button>`; }
   function publicOfferChoices(prod){
-    const p=prod?.name||'', source=prod?.offerId||null;
-    if(p.includes('Platinum')) return [{id:'plat175',value:'175,000 MR',req:'6 个月内消费 $12,000',sourceOfferId:source},{id:'plat150',value:'150,000 MR',req:'6 个月内消费 $8,000',sourceOfferId:null},{id:'plat125',value:'125,000 MR',req:'6 个月内消费 $8,000',sourceOfferId:null}];
-    if(p.includes('U.S. Bank')) return [{id:'us450',value:'$450 开户奖励',req:'90 天内完成 Direct Deposit 条件',sourceOfferId:'usbank-checking'},{id:'us300',value:'$300 开户奖励',req:'满足符合要求的 Direct Deposit',sourceOfferId:null}];
-    if(p.includes('Moomoo')) return [{id:'moo',value:'$150 coupon + NVDA 奖励',req:'按档位入金并保持 60 天',sourceOfferId:'moomoo'}];
-    return [{id:'standard',value:'当前常见奖励',req:'满足对应消费 / 入金条件',sourceOfferId:source},{id:'historic',value:'历史奖励',req:'适用于较早开卡 / 开户记录',sourceOfferId:null}];
+    const source=prod?.offerId||null;
+    const offer=source?window.NextBonusOfferData?.[source]:null;
+    if(!offer) return [];
+    return [{id:`current-${source}`,value:offer.primaryValue,req:offer.primaryRequirement,sourceOfferId:source}];
   }
 
   function submitAddedProduct(){
@@ -1438,7 +935,7 @@
     else if(a.completionKind==='used'){ result='已使用'; correction='撤销已使用'; }
     else if(a.completionKind==='viewed'){ result='已查看'; correction='撤销已查看'; }
     else if(a.completionKind==='confirmed'){ result='已了解'; correction='撤销确认'; }
-    const history={id:`h-${a.id}-${Date.now()}`,productId:a.productId,product:a.product,action:a.action,time:a.time,result,statusClass,ended:'Sep 12, 2026',correction,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:a};
+    const history={id:`h-${a.id}-${Date.now()}`,productId:a.productId,product:a.product,action:a.action,time:a.time,result,statusClass,ended:historyDateLabel(),correction,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:a};
     state.activeAttention.splice(idx,1); state.attentionHistory.unshift(history); state.expandedAttentionId=null;
     render(); toast(`${result} · `,()=>undoHistory(history.id,a));
   }
@@ -1455,13 +952,13 @@
     state.attentionHistory.splice(idx,1);
     const source=h.source || {id:`restored-${Date.now()}`,productId:h.productId,product:h.product,action:h.action,secondary:'',time:h.time,dueDate:h.dueDate||null,type:'restored',summary:h.summary,key:h.key,keySub:h.keySub,instruction:'重新处理这项提醒',checklist:[],primary:'我已完成',secondaryAction:null,completionKind:'completed'};
     const productStillCurrent=state.products.some(p=>p.id===h.productId);
-    const today='2026-09-12', due=source.dueDate||h.dueDate||null;
+    const today=localDateISO(), due=source.dueDate||h.dueDate||null;
     if(!productStillCurrent){
-      state.attentionHistory.unshift({...h,id:`h-recalc-${Date.now()}`,result:'已结束',statusClass:'stopped',resultReason:'产品已不在当前生命周期',correction:null,ended:'Sep 12, 2026'});
+      state.attentionHistory.unshift({...h,id:`h-recalc-${Date.now()}`,result:'已结束',statusClass:'stopped',resultReason:'产品已不在当前生命周期',correction:null,ended:historyDateLabel()});
       render(); toast('已重新计算：该事项当前已结束'); return;
     }
     if(due && due<today){
-      state.attentionHistory.unshift({...h,id:`h-recalc-${Date.now()}`,result:'已到期',statusClass:'expired',correction:null,ended:'Sep 12, 2026'});
+      state.attentionHistory.unshift({...h,id:`h-recalc-${Date.now()}`,result:'已到期',statusClass:'expired',correction:null,ended:historyDateLabel()});
       render(); toast('已重新计算：该事项已经到期'); return;
     }
     if(!state.activeAttention.find(a=>a.id===source.id)) state.activeAttention.push(source);
@@ -1497,50 +994,16 @@
     if(action==='poster'){ state.posterIndex=Number(el.dataset.index); render(); return; }
     if(action==='poster-step'){ state.posterIndex=((state.posterIndex||0)+Number(el.dataset.dir)+2)%2; render(); return; }
     if(action==='assessment-start'){
-      if(state.currentOfferId==='chase-sapphire'){
-        if(!state.loggedIn) openLogin('offer-detail',{type:'assessment',offerId:state.currentOfferId},'offer-detail');
-        else window.NBStaticAssessmentIntegration.open(false);
-        return;
-      }
-      if(state.assessmentResults[state.currentOfferId]){ state.route='full-report'; render(); }
-      else if(!state.loggedIn){ openLogin('offer-detail',{type:'assessment',offerId:state.currentOfferId},'offer-detail'); }
-      else { state.assessmentDraft={offerId:state.currentOfferId,step:0,answers:{}}; state.route='assessment'; render(); }
+      const supported=!!window.NBStaticAssessmentIntegration?.productMap?.[state.currentOfferId];
+      if(!supported) return;
+      if(!state.loggedIn) openLogin('offer-detail',{type:'assessment',offerId:state.currentOfferId},'offer-detail');
+      else window.NBStaticAssessmentIntegration.open(false);
       return;
     }
     if(action==='assessment-restart'){
-      if(state.currentOfferId==='chase-sapphire'){ window.NBStaticAssessmentIntegration.open(true); return; }
-      delete state.assessmentResults[state.currentOfferId];
-      state.assessmentDraft={offerId:state.currentOfferId,step:0,answers:{}};
-      state.route='assessment'; render(); window.scrollTo(0,0); return;
-    }
-    if(action==='assessment-select'){
-      const d=state.assessmentDraft||{offerId:state.currentOfferId,step:0,answers:{}};
-      d.answers=d.answers||{}; d.answers[el.dataset.key]=el.dataset.value; state.assessmentDraft=d; render(); return;
-    }
-    if(action==='assessment-toggle'){
-      const d=state.assessmentDraft||{offerId:state.currentOfferId,step:0,answers:{}};
-      d.answers=d.answers||{}; const key=el.dataset.key; const val=el.dataset.value;
-      let arr=Array.isArray(d.answers[key])?[...d.answers[key]]:[];
-      const q=(assessmentQuestionsFor(d.offerId)||[]).find(x=>x.id===key); const exclusive=q?.exclusive||[];
-      if(exclusive.includes(val)) arr=arr.includes(val)?[]:[val];
-      else { arr=arr.filter(x=>!exclusive.includes(x)); arr=arr.includes(val)?arr.filter(x=>x!==val):[...arr,val]; }
-      d.answers[key]=arr; state.assessmentDraft=d; render(); return;
-    }
-    if(action==='assessment-back'){
-      const d=state.assessmentDraft; if(d){d.step=Math.max(0,(d.step||0)-1);state.assessmentDraft=d;render();window.scrollTo(0,0);} return;
-    }
-    if(action==='assessment-next'){
-      const d=state.assessmentDraft; if(!d) return;
-      const qs=assessmentQuestionsFor(d.offerId)||[]; const q=qs[d.step]; if(!q||!assessmentCanAdvance(q,d.answers||{})) return;
-      if(d.step>=qs.length-1){
-        const result=evaluateAssessmentFor(d.offerId,d.answers||{});
-        state.assessmentResults[d.offerId]=result; d.completed=true; d.result=result; state.assessmentDraft=d; render(); window.scrollTo(0,0);
-      } else { d.step++; state.assessmentDraft=d; render(); window.scrollTo(0,0); }
+      if(window.NBStaticAssessmentIntegration?.productMap?.[state.currentOfferId]) window.NBStaticAssessmentIntegration.open(true);
       return;
     }
-    if(action==='assessment-exit'||action==='back-offer-detail'){ state.assessmentDraft=null; state.route='offer-detail'; render(); return; }
-    if(action==='assessment-result-back'){ state.assessmentDraft=null; state.route='offer-detail'; render(); return; }
-    if(action==='assessment-result-report'){ state.assessmentDraft=null; state.route='full-report'; render(); window.scrollTo(0,0); return; }
     if(action==='direct-apply'){ const o=currentOffer(), r=state.assessmentResults[o.id]; if(!o.applyUrl)return; const appRestriction=!!(r&&['BLOCK','WAIT'].includes(r.internal?.appHard)); const bonusRestriction=!!(r&&(r.eligible==='不可以'||['BLOCK','WAIT'].includes(r.internal?.bonusHard))); const risky=appRestriction||bonusRestriction||!!(r&&r.recommendation==='暂不建议申请'); if(risky){state.modal={type:'apply-risk',copy:appRestriction?'按当前已知规则，你现在申请可能不符合申请限制。仍要继续申请吗？':'你可能无法获得当前开卡奖励。仍要继续申请吗？'};render();}else{window.open(o.applyUrl,'_blank','noopener,noreferrer');} return; }
     if(action==='apply-confirm'){ const o=currentOffer(); state.modal=null; render(); if(o.applyUrl) window.open(o.applyUrl,'_blank','noopener,noreferrer'); return; }
     if(action==='modal-close'){ state.modal=null; render(); return; }
@@ -1592,7 +1055,7 @@
       const np={id:newId,offerId:t.offerId||null,type:'信用卡',name:t.name,institution:t.institution,instance:p.instance,cardImageLocal:t.cardImageLocal||null,opened:f.changeDate,anniversary:formatAnniversary(f.changeDate),annualFee:t.annualFee||'—',status:'正常',earning:t.earning||'—',addedAt:now,history:[{date:f.changeDate,copy:`由 ${p.name} 更换而来`,targetProductId:p.id}]};
       state.products.push(np); state.currentProductId=np.id; state.productSearch=''; state.editFlow=null; render(); toast('产品已更换'); return;
     }
-    if(action==='save-edit-product'){ const f=state.editFlow,p=state.products.find(x=>x.id===el.dataset.id); if(!f||!p)return; const ins=document.getElementById('edit-instance')?.value??f.instance; const status=document.getElementById('edit-status')?.value??f.status; const opened=document.getElementById('edit-opened')?.value??f.opened; p.instance=p.type==='信用卡'?(ins?`•••• ${ins}`:p.instance):(ins||p.instance);p.status=status;p.opened=opened;p.anniversary=opened?formatAnniversary(opened):'—'; if(f.pendingBonus&&!state.activeAttention.some(a=>a.productId===p.id&&a.type==='bonus')){ const now=Date.now(),due=f.pendingBonus.kind==='manual'?f.pendingBonus.tasks[0]?.due:null; state.activeAttention.push({id:`a-edit-${now}`,productId:p.id,product:`${p.name} ${p.instance}`,action:'完成开卡奖励',secondary:f.pendingBonus.reward,time:due?`截止 ${shortDate(due)}`:'截止日期以所选奖励规则为准',dueDate:due,type:'bonus',summary:'这是你在编辑产品时补充建立的开卡奖励追踪。',key:f.pendingBonus.reward,keySub:due?`最晚 ${shortDate(due)} 完成`:'按所选奖励规则',instruction:'完成以下条件',checklist:f.pendingBonus.kind==='manual'?f.pendingBonus.tasks.map(t=>({id:t.id,label:t.desc,done:false,dueDate:t.due})):[{id:'req1',label:f.pendingBonus.req||'完成对应奖励条件',done:false}],primary:'我已完成',secondaryAction:null,completionKind:'completed'}); if(f.pendingBonus.sourceOfferId&&isSaved(f.pendingBonus.sourceOfferId))removeSaved(f.pendingBonus.sourceOfferId); } if(status==='已关闭'){ state.products=state.products.filter(x=>x.id!==p.id);p.statusText=`已于 2026 年 9 月 12 日关闭`;state.pastProducts.unshift(p);const stopped=state.activeAttention.filter(a=>a.productId===p.id);state.activeAttention=state.activeAttention.filter(a=>a.productId!==p.id);stopped.forEach(a=>state.attentionHistory.unshift({id:`h-stop-${a.id}-${Date.now()}`,productId:p.id,product:a.product,action:a.action,time:a.time,dueDate:a.dueDate,result:'已结束',resultReason:'产品已关闭',statusClass:'stopped',ended:'Sep 12, 2026',correction:null,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:a}));state.currentProductId=p.id;} state.editFlow=null;render();toast('已保存');return; }
+    if(action==='save-edit-product'){ const f=state.editFlow,p=state.products.find(x=>x.id===el.dataset.id); if(!f||!p)return; const ins=document.getElementById('edit-instance')?.value??f.instance; const status=document.getElementById('edit-status')?.value??f.status; const opened=document.getElementById('edit-opened')?.value??f.opened; p.instance=p.type==='信用卡'?(ins?`•••• ${ins}`:p.instance):(ins||p.instance);p.status=status;p.opened=opened;p.anniversary=opened?formatAnniversary(opened):'—'; if(f.pendingBonus&&!state.activeAttention.some(a=>a.productId===p.id&&a.type==='bonus')){ const now=Date.now(),due=f.pendingBonus.kind==='manual'?f.pendingBonus.tasks[0]?.due:null; state.activeAttention.push({id:`a-edit-${now}`,productId:p.id,product:`${p.name} ${p.instance}`,action:'完成开卡奖励',secondary:f.pendingBonus.reward,time:due?`截止 ${shortDate(due)}`:'截止日期以所选奖励规则为准',dueDate:due,type:'bonus',summary:'这是你在编辑产品时补充建立的开卡奖励追踪。',key:f.pendingBonus.reward,keySub:due?`最晚 ${shortDate(due)} 完成`:'按所选奖励规则',instruction:'完成以下条件',checklist:f.pendingBonus.kind==='manual'?f.pendingBonus.tasks.map(t=>({id:t.id,label:t.desc,done:false,dueDate:t.due})):[{id:'req1',label:f.pendingBonus.req||'完成对应奖励条件',done:false}],primary:'我已完成',secondaryAction:null,completionKind:'completed'}); if(f.pendingBonus.sourceOfferId&&isSaved(f.pendingBonus.sourceOfferId))removeSaved(f.pendingBonus.sourceOfferId); } if(status==='已关闭'){ state.products=state.products.filter(x=>x.id!==p.id);p.statusText=`已于 ${formatLongDate(localDateISO())}关闭`;state.pastProducts.unshift(p);const stopped=state.activeAttention.filter(a=>a.productId===p.id);state.activeAttention=state.activeAttention.filter(a=>a.productId!==p.id);stopped.forEach(a=>state.attentionHistory.unshift({id:`h-stop-${a.id}-${Date.now()}`,productId:p.id,product:a.product,action:a.action,time:a.time,dueDate:a.dueDate,result:'已结束',resultReason:'产品已关闭',statusClass:'stopped',ended:historyDateLabel(),correction:null,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:a}));state.currentProductId=p.id;} state.editFlow=null;render();toast('已保存');return; }
     if(action==='remove-product-request'){ state.modal={type:'remove-product-confirm',productId:el.dataset.id};render();return; }
     if(action==='remove-product-confirm'){ const id=el.dataset.id; state.products=state.products.filter(p=>p.id!==id);state.activeAttention=state.activeAttention.filter(a=>a.productId!==id);state.modal=null;state.editFlow=null;state.route='products';render();toast('已从 NextBonus 中移除');return; }
     if(action==='product-call'){ const phone=el.dataset.phone;if(phone)navigator.clipboard?.writeText(phone);toast(phone?`客服电话 ${phone} 已复制`:'');return; }
@@ -1632,7 +1095,6 @@
   document.addEventListener('input', e => {
     if(e.target.id==='offer-search'){ state.offerSearch=e.target.value; render(); focusEnd('offer-search'); }
     if(e.target.id==='product-search'){ state.productSearch=e.target.value; render(); focusEnd('product-search'); }
-    if(e.target.classList.contains('assessment-number') && state.assessmentDraft){ const key=e.target.dataset.key; state.assessmentDraft.answers=state.assessmentDraft.answers||{}; state.assessmentDraft.answers[key]=e.target.value; render(); focusEnd(e.target.id); return; }
     if(e.target.id==='add-search' && state.addFlow){ state.addFlow.search=e.target.value; render(); focusEnd('add-search'); }
     if(e.target.id==='add-last4' && state.addFlow){ state.addFlow.last4=e.target.value.replace(/\D/g,'').slice(0,4); }
     if(e.target.id==='add-nickname' && state.addFlow){ state.addFlow.nickname=e.target.value; }
