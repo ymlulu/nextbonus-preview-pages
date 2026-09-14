@@ -42,32 +42,32 @@
 
 
   const defaultProducts = [
-    {id:'p-amex-plat-1005', offerId:'amex-platinum', type:'信用卡', name:'AMEX Platinum', institution:'American Express', instance:'•••• 1005', artAsset:'credit-amex-platinum', opened:'2026-04-15', anniversary:'4 月 15 日', annualFee:'$895', status:'正常', earning:'机票 5x · 预付酒店 5x · 其他 1x'},
-    {id:'p-hilton-aspire-2308', type:'信用卡', name:'Hilton Aspire', institution:'American Express', instance:'•••• 2308', artAsset:'credit-amex-gold', opened:'2025-10-02', anniversary:'10 月 2 日', annualFee:'$550', status:'正常', earning:'Hilton 14x · 其他 3x'},
-    {id:'p-csr-2948', type:'信用卡', name:'Chase Sapphire Reserve', institution:'Chase', instance:'•••• 2948', artAsset:'credit-csr', opened:'2024-10-02', anniversary:'10 月 2 日', annualFee:'$795', status:'正常', earning:'旅行 / 餐饮高回报'},
-    {id:'p-marriott-brilliant-6503', type:'信用卡', name:'Marriott Bonvoy Brilliant', institution:'American Express', instance:'•••• 6503', artAsset:'credit-marriott', opened:'2024-08-03', anniversary:'8 月 3 日', annualFee:'$650', status:'正常', earning:'Marriott 6x'},
-    {id:'p-amex-biz-4321', type:'信用卡', name:'AMEX Business Plus', institution:'American Express', instance:'•••• 4321', artAsset:'credit-amex-biz', opened:'2025-03-12', anniversary:'3 月 12 日', annualFee:'$0', status:'正常', earning:'日常消费回报'},
-    {id:'p-freedom-7182', type:'信用卡', name:'Chase Freedom Unlimited', institution:'Chase', instance:'•••• 7182', artAsset:'credit-freedom', opened:'2023-06-18', anniversary:'6 月 18 日', annualFee:'$0', status:'正常', earning:'1.5x 起'},
-    {id:'p-citi-3490', type:'信用卡', name:'Citi Double Cash', institution:'Citi', instance:'•••• 3490', artAsset:'credit-citi', opened:'2023-11-08', anniversary:'11 月 8 日', annualFee:'$0', status:'正常', earning:'2% 现金回报'},
+    {id:'p-amex-plat-1005', offerId:'amex-platinum', type:'信用卡', name:'AMEX Platinum', institution:'American Express', instance:'•••• 1005', opened:'2026-04-15', anniversary:'4 月 15 日', annualFee:'$895', status:'正常', earning:'机票 5x · 预付酒店 5x · 其他 1x'},
+    {id:'p-hilton-aspire-2308', type:'信用卡', name:'Hilton Aspire', institution:'American Express', instance:'•••• 2308', opened:'2025-10-02', anniversary:'10 月 2 日', annualFee:'$550', status:'正常', earning:'Hilton 14x · 其他 3x'},
+    {id:'p-csr-2948', type:'信用卡', name:'Chase Sapphire Reserve', institution:'Chase', instance:'•••• 2948', opened:'2024-10-02', anniversary:'10 月 2 日', annualFee:'$795', status:'正常', earning:'旅行 / 餐饮高回报'},
+    {id:'p-marriott-brilliant-6503', type:'信用卡', name:'Marriott Bonvoy Brilliant', institution:'American Express', instance:'•••• 6503', opened:'2024-08-03', anniversary:'8 月 3 日', annualFee:'$650', status:'正常', earning:'Marriott 6x'},
+    {id:'p-amex-biz-4321', type:'信用卡', name:'AMEX Business Plus', institution:'American Express', instance:'•••• 4321', opened:'2025-03-12', anniversary:'3 月 12 日', annualFee:'$0', status:'正常', earning:'日常消费回报'},
+    {id:'p-freedom-7182', type:'信用卡', name:'Chase Freedom Unlimited', institution:'Chase', instance:'•••• 7182', opened:'2023-06-18', anniversary:'6 月 18 日', annualFee:'$0', status:'正常', earning:'1.5x 起'},
+    {id:'p-citi-3490', type:'信用卡', name:'Citi Double Cash', institution:'Citi', instance:'•••• 3490', opened:'2023-11-08', anniversary:'11 月 8 日', annualFee:'$0', status:'正常', earning:'2% 现金回报'},
 
-    {id:'p-usbank', type:'银行和券商账户', name:'U.S. Bank Smartly Checking', institution:'U.S. Bank', instance:'主账户', artAsset:'bank-usbank', opened:'2026-08-24', annualFee:'—', status:'正常', earning:'—'},
-    {id:'p-truist', type:'银行和券商账户', name:'Truist One Checking', institution:'Truist', instance:'Checking', artAsset:'bank-truist', opened:'2026-07-10', annualFee:'—', status:'正常', earning:'—'},
-    {id:'p-chase-checking', type:'银行和券商账户', name:'Chase Total Checking', institution:'Chase', instance:'Checking', artAsset:'bank-chase', opened:'2026-06-18', annualFee:'—', status:'正常', earning:'—'},
-    {id:'p-wf-checking', type:'银行和券商账户', name:'Wells Fargo Everyday Checking', institution:'Wells Fargo', instance:'Checking', artAsset:'bank-wf', opened:'2026-05-21', annualFee:'—', status:'正常', earning:'—'},
-    {id:'p-fidelity', type:'银行和券商账户', name:'Fidelity Cash Management Account', institution:'Fidelity', instance:'CMA', artAsset:'bank-fidelity', opened:'2026-02-05', annualFee:'$0', status:'正常', earning:'—'},
-    {id:'p-robinhood', type:'银行和券商账户', name:'Robinhood Brokerage Account', institution:'Robinhood', instance:'Brokerage', artAsset:'bank-robinhood', opened:'2026-01-26', annualFee:'$0', status:'正常', earning:'—'},
+    {id:'p-usbank', type:'银行和券商账户', name:'U.S. Bank Smartly Checking', institution:'U.S. Bank', instance:'主账户', opened:'2026-08-24', annualFee:'—', status:'正常', earning:'—'},
+    {id:'p-truist', type:'银行和券商账户', name:'Truist One Checking', institution:'Truist', instance:'Checking', opened:'2026-07-10', annualFee:'—', status:'正常', earning:'—'},
+    {id:'p-chase-checking', type:'银行和券商账户', name:'Chase Total Checking', institution:'Chase', instance:'Checking', opened:'2026-06-18', annualFee:'—', status:'正常', earning:'—'},
+    {id:'p-wf-checking', type:'银行和券商账户', name:'Wells Fargo Everyday Checking', institution:'Wells Fargo', instance:'Checking', opened:'2026-05-21', annualFee:'—', status:'正常', earning:'—'},
+    {id:'p-fidelity', type:'银行和券商账户', name:'Fidelity Cash Management Account', institution:'Fidelity', instance:'CMA', opened:'2026-02-05', annualFee:'$0', status:'正常', earning:'—'},
+    {id:'p-robinhood', type:'银行和券商账户', name:'Robinhood Brokerage Account', institution:'Robinhood', instance:'Brokerage', opened:'2026-01-26', annualFee:'$0', status:'正常', earning:'—'},
 
-    {id:'p-hilton', type:'会籍', name:'Hilton Honors Diamond', institution:'Hilton', instance:'Diamond', artAsset:'member-hilton', opened:'2026-01-01', annualFee:'—', status:'正常', earning:'—'},
-    {id:'p-ihg', type:'会籍', name:'IHG One Rewards Platinum', institution:'IHG', instance:'Platinum', artAsset:'member-ihg', opened:'2026-01-01', annualFee:'—', status:'正常', earning:'—'},
-    {id:'p-marriott-status', type:'会籍', name:'Marriott Bonvoy Titanium', institution:'Marriott', instance:'Titanium', artAsset:'member-marriott', opened:'2026-01-01', annualFee:'—', status:'正常', earning:'—'},
-    {id:'p-hyatt', type:'会籍', name:'World of Hyatt Globalist', institution:'Hyatt', instance:'Globalist', artAsset:'member-hyatt', opened:'2026-01-01', annualFee:'—', status:'正常', earning:'—'},
-    {id:'p-delta-status', type:'会籍', name:'Delta SkyMiles Platinum', institution:'Delta', instance:'Platinum', artAsset:'member-delta', opened:'2026-01-01', annualFee:'—', status:'正常', earning:'—'},
+    {id:'p-hilton', type:'会籍', name:'Hilton Honors Diamond', institution:'Hilton', instance:'Diamond', opened:'2026-01-01', annualFee:'—', status:'正常', earning:'—'},
+    {id:'p-ihg', type:'会籍', name:'IHG One Rewards Platinum', institution:'IHG', instance:'Platinum', opened:'2026-01-01', annualFee:'—', status:'正常', earning:'—'},
+    {id:'p-marriott-status', type:'会籍', name:'Marriott Bonvoy Titanium', institution:'Marriott', instance:'Titanium', opened:'2026-01-01', annualFee:'—', status:'正常', earning:'—'},
+    {id:'p-hyatt', type:'会籍', name:'World of Hyatt Globalist', institution:'Hyatt', instance:'Globalist', opened:'2026-01-01', annualFee:'—', status:'正常', earning:'—'},
+    {id:'p-delta-status', type:'会籍', name:'Delta SkyMiles Platinum', institution:'Delta', instance:'Platinum', opened:'2026-01-01', annualFee:'—', status:'正常', earning:'—'},
 
-    {id:'p-rakuten', type:'其他', name:'Rakuten', institution:'Rakuten', instance:'返现平台', artAsset:'other-rakuten', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
-    {id:'p-topcashback', type:'其他', name:'TopCashback', institution:'TopCashback', instance:'返现平台', artAsset:'other-tcb', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
-    {id:'p-rebatesme', type:'其他', name:'RebatesMe', institution:'RebatesMe', instance:'返现平台', artAsset:'other-rebatesme', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
-    {id:'p-gocashback', type:'其他', name:'GoCashBack', institution:'GoCashBack', instance:'返现平台', artAsset:'other-gocashback', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
-    {id:'p-awardwallet', type:'其他', name:'AwardWallet', institution:'AwardWallet', instance:'积分工具', artAsset:'other-awardwallet', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
+    {id:'p-rakuten', type:'其他', name:'Rakuten', institution:'Rakuten', instance:'返现平台', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
+    {id:'p-topcashback', type:'其他', name:'TopCashback', institution:'TopCashback', instance:'返现平台', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
+    {id:'p-rebatesme', type:'其他', name:'RebatesMe', institution:'RebatesMe', instance:'返现平台', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
+    {id:'p-gocashback', type:'其他', name:'GoCashBack', institution:'GoCashBack', instance:'返现平台', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
+    {id:'p-awardwallet', type:'其他', name:'AwardWallet', institution:'AwardWallet', instance:'积分工具', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
     {id:'p-pointsyeah', type:'其他', name:'PointsYeah', institution:'PointsYeah', instance:'里程工具', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
     {id:'p-cardpointers', type:'其他', name:'CardPointers', institution:'CardPointers', instance:'信用卡工具', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
     {id:'p-maxrewards', type:'其他', name:'MaxRewards', institution:'MaxRewards', instance:'信用卡工具', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
@@ -562,9 +562,9 @@
   }
 
   function productCardDisplay(p, detail=false){
-    const canonical=window.NextBonusCreditCardArt?.resolveAsset?.(p);
-    const localSrc=p?.cardImageLocal || canonical?.local || (p?.artAsset?`assets/product-page/${p.artAsset}.png`:productArtSrc(p));
-    const primarySrc=p?.cardImageWeb || canonical?.web || localSrc;
+    const asset=window.NextBonusProductArtRegistry?.resolveProduct?.(p);
+    const primarySrc=asset?.web||asset?.local||'';
+    const localSrc=asset?.local||primarySrc;
     const fallbackAttr=(localSrc&&primarySrc&&primarySrc!==localSrc)?` data-fallback="${esc(localSrc)}" onerror="if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback;}"`:'';
     return {primarySrc,localSrc,fallbackAttr};
   }
@@ -601,18 +601,13 @@
   }
 
   function shortBrand(v){ return String(v||'NB').split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase().slice(0,3); }
-  function productArtSrc(p){
-    if(p?.type==='信用卡'){
-      const canonical=window.NextBonusCreditCardArt?.resolveAsset?.(p);
-      if(canonical) return canonical.web||canonical.local||'';
-    }
-    if(p?.artAsset) return `assets/product-page/${p.artAsset}.png`;
-    const n=(p?.name||'').toLowerCase();
-    if(n.includes('u.s. bank')||n.includes('smartly')) return 'assets/product-page/bank-usbank.png';
-    return '';
-  }
   function attentionProduct(pId){ return state.products.find(p=>p.id===pId)||state.pastProducts.find(p=>p.id===pId)||null; }
-  function attentionThumb(a){ const p=attentionProduct(a.productId); const src=productArtSrc(p); return src?`<img src="${src}" alt="" />`:`<span>${esc(shortBrand(p?.institution||a.product))}</span>`; }
+  function attentionThumb(a){
+    const p=attentionProduct(a.productId);
+    const asset=window.NextBonusProductArtRegistry?.resolveProduct?.(p)||window.NextBonusProductArtRegistry?.resolveByName?.(a.product);
+    const src=asset?.web||asset?.local||'';
+    return src?`<img src="${src}" alt="" />`:`<span>${esc(shortBrand(p?.institution||a.product))}</span>`;
+  }
 
   function attentionItem(a, history=false){
     const expanded=state.expandedAttentionId===a.id;
