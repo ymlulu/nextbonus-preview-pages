@@ -54,6 +54,17 @@
     return `${date.getMonth() + 1}月${date.getDate()}日`;
   }
 
+  function attentionDueLabel(attention) {
+    const due = String(attention?.dueDate || '').slice(0, 10);
+    const match = due.match(/^\d{4}-(\d{2})-(\d{2})$/);
+    if (match) return `⚠ ${Number(match[1])}月${Number(match[2])}日到期`;
+    const raw = String(attention?.time || '')
+      .replace(/^本期截止\s*/u, '')
+      .replace(/^截止\s*/u, '')
+      .trim();
+    return raw ? `⚠ ${raw}到期` : '⚠ 即将到期';
+  }
+
   function cycleInfo(row) {
     const benefitId = row?.dataset?.benefitId;
     const cycleType = row?.dataset?.cycleType;
@@ -126,6 +137,23 @@
     return `<button type="button" class="nb-benefit-cycle-quick${used ? ' used' : ''}" data-nb-cycle-toggle="1" data-nb-cycle-quick="1" aria-pressed="${used ? 'true' : 'false'}" aria-label="${esc(label)}"><span aria-hidden="true">${used ? '✓' : '○'}</span><span>${esc(label)}</span></button>`;
   }
 
+  function renderAttentionBadge(row) {
+    row?.querySelector(':scope > [data-nb-benefit-attention-badge="1"]')?.remove();
+    if (!row) return;
+    const cycle = cycleInfo(row);
+    if (cycle?.used) return;
+    const title = row.querySelector('strong')?.textContent?.trim() || '';
+    const attention = matchingAttention(row, title);
+    if (!attention) return;
+    const badge = document.createElement('span');
+    badge.className = 'nb-card-benefit-due tone-warning';
+    badge.dataset.nbBenefitAttentionBadge = '1';
+    badge.textContent = attentionDueLabel(attention);
+    const quick = row.querySelector(':scope > [data-nb-cycle-quick="1"]');
+    const chev = row.querySelector(':scope > b,:scope > .chev');
+    row.insertBefore(badge, quick || chev || null);
+  }
+
   function renderQuickStatus(row) {
     row?.querySelector(':scope > [data-nb-cycle-quick="1"]')?.remove();
     const cycle = cycleInfo(row);
@@ -190,6 +218,7 @@
       row.appendChild(chev);
     }
     renderQuickStatus(row);
+    renderAttentionBadge(row);
   }
 
   function openDetail(row) {
@@ -220,6 +249,7 @@
 
   function refreshRow(row) {
     renderQuickStatus(row);
+    renderAttentionBadge(row);
     const wrap = row.closest('.v4-benefit-item-wrap');
     const detail = wrap?.querySelector(':scope > [data-nb-source-benefit-detail="1"]');
     if (!detail) return;
@@ -272,6 +302,7 @@
       refreshRow(row);
     });
   });
+  window.addEventListener('nextbonus-benefit-attention-updated', enhance);
   window.addEventListener('nextbonus-product-facts-rendered', enhance);
   window.addEventListener('DOMContentLoaded', enhance);
   enhance();
