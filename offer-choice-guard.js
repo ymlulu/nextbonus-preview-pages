@@ -1,0 +1,1 @@
+(()=>{'use strict';function apply(){document.querySelectorAll('.option-row').forEach(row=>{const title=row.querySelector('.option-title')?.textContent?.trim()||'';if(title==='当前常见奖励'||title==='历史奖励')row.remove();});}document.addEventListener('DOMContentLoaded',()=>queueMicrotask(apply));document.addEventListener('click',()=>queueMicrotask(apply));queueMicrotask(apply);})();

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Capital One">
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="#fff"/>
+  <path d="M15 22c13-10 28-9 39-2-10-1-21 3-29 10" fill="none" stroke="#D9272E" stroke-width="5" stroke-linecap="round"/>
+  <text x="32" y="43" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="800" fill="#004977">C1</text>
+</svg>

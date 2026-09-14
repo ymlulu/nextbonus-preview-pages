@@ -1,0 +1,47 @@
+/* Offer Card visual cleanup.
+   Keeps runtime art sources unchanged, but normalizes how Product Art and logos are framed.
+   White/transparent canvas in legacy assets is visually cropped with per-offer transforms.
+   Bookmark uses one visual system across legacy and composed cards. */
+
+.nb-offer-card .bookmark,
+.nb-offer-card .mock-bookmark{
+  position:absolute;
+  right:10px;
+  top:9px;
+  z-index:4;
+  width:30px;
+  height:32px;
+  padding:0;
+  border:1px solid rgba(209,216,226,.92);
+  border-radius:9px;
+  background:rgba(255,255,255,.94);
+  color:#23324a;
+  display:grid;
+  place-items:center;
+  box-shadow:0 1px 4px rgba(22,38,61,.04);
+  transition:background .15s ease,border-color .15s ease,color .15s ease,transform .12s ease;
+}
+.nb-offer-card .bookmark:hover,
+.nb-offer-card .mock-bookmark:hover{background:#fff;border-color:#c7d0dc}
+.nb-offer-card .bookmark:active,
+.nb-offer-card .mock-bookmark:active{transform:scale(.96)}
+.nb-offer-card .bookmark svg,
+.nb-offer-card .mock-bookmark svg{width:18px;height:22px;display:block;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nb-offer-card .bookmark.saved,
+.nb-offer-card .mock-bookmark.saved{background:rgba(255,255,255,.96);border-color:#cfe2ff;color:#0877ff}
+
+/* Product art framing */
+.nb-offer-card .nb-main-art{overflow:hidden;border-radius:12px}
+.nb-offer-card .nb-main-art img{transform-origin:center}
+
+/* Legacy bank/debit assets contain extra white canvas. Crop visually without changing the source file. */
+.offer-card[data-id="hsbc-checking"] .nb-main-art img{transform:scale(1.14)}
+.offer-card[data-id="chase-checking"] .nb-main-art img{transform:scale(1.12)}
+.offer-card[data-id="usbank-checking"] .nb-main-art img{transform:scale(1.12)}
+.offer-card[data-id="truist-checking"] .nb-main-art img{transform:scale(1.12)}
+
+/* Logo assets should not render as a tiny mark floating in a large white canvas. */
+.offer-card[data-id="robinhood"] .nb-main-art,
+.offer-card[data-id="cashback-deal"] .nb-main-art{overflow:hidden;border-radius:14px;background:transparent}
+.offer-card[data-id="robinhood"] .nb-main-art img,
+.offer-card[data-id="cashback-deal"] .nb-main-art img{filter:none;transform:scale(1.35);transform-origin:center}
