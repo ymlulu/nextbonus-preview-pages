@@ -31,11 +31,13 @@
   }
 
   function seedIdentity(item) {
-    if (!item || item.type !== 'benefit' || item.benefitId) return null;
+    if (!item || item.type !== 'benefit') return null;
     if (item.id === 'a-hilton-credit' && item.productId === 'p-hilton-aspire-2308') {
+      const expectedBenefitId = 'hilton-aspire-resort-credit';
+      if (item.benefitId && item.benefitId !== expectedBenefitId) return null;
       return identity({
         productId: item.productId,
-        benefitId: 'hilton-aspire-resort-credit',
+        benefitId: expectedBenefitId,
         cycleType: 'half-year',
         date: item.dueDate || '2026-09-18'
       });
