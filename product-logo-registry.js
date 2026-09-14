@@ -10,7 +10,9 @@
     awardwallet:'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/fd/02/ec/fd02ec5a-a542-3ef2-5f9c-7a436f08d677/AppIcon-0-0-1x_U007emarketing-0-0-0-11-0-0-85-220.png/512x512bb.png',
     cardpointers:'https://impresskit.net/media/press-kit-icons/cardpointers_icon_26_sml.png',
     maxrewards:'https://cdn.jim-nielsen.com/ios/512/maxrewards-rewards-cashback-2024-06-04.png?rf=1024',
-    pointsyeah:'https://fastly.mwm-storage.mwmcdn.com/raw_files/0e9b7866-7c74-4c54-a36f-76afbae9fd3e'
+    pointsyeah:'https://fastly.mwm-storage.mwmcdn.com/raw_files/0e9b7866-7c74-4c54-a36f-76afbae9fd3e',
+    delta:'https://news.delta.com/sites/default/files/2021-11/delta_c_r.png',
+    topcashback:'https://ukp.tcb-cdn.com/images/media/squaretcblogo.jpg'
   };
 
   const mark={
@@ -38,14 +40,14 @@
     'p-truist':icon.truist,
     'p-usbank':icon.usbank,
     'p-wf-checking':mark.wellsFargo,
-    'p-delta-status':'assets/product-logos/delta.png',
+    'p-delta-status':icon.delta,
     'p-hilton':icon.hilton,
     'p-ihg':icon.ihg,
     'p-marriott-status':mark.marriott,
     'p-hyatt':icon.hyatt,
     'p-awardwallet':icon.awardwallet,
     'p-rakuten':mark.rakuten,
-    'p-topcashback':'assets/product-logos/topcashback.png',
+    'p-topcashback':icon.topcashback,
     'p-rebatesme':'assets/product-logos/rebatesme.png',
     'p-gocashback':'assets/product-logos/gocashback.png',
     'p-pointsyeah':icon.pointsyeah,
@@ -67,7 +69,7 @@
     'hsbc-checking':mark.hsbc,
     'moomoo':mark.moomoo,
     'robinhood':mark.robinhood,
-    'cashback-deal':'assets/product-logos/topcashback.png',
+    'cashback-deal':icon.topcashback,
     'travel-transfer':mark.flyingBlue,
     'amazon-gift':mark.amazon,
     'panda-mobile':mark.pandaMobile
@@ -89,9 +91,9 @@
     'ihg one rewards platinum':icon.ihg,
     'marriott bonvoy titanium':mark.marriott,
     'world of hyatt globalist':icon.hyatt,
-    'delta skymiles platinum':'assets/product-logos/delta.png',
+    'delta skymiles platinum':icon.delta,
     'rakuten':mark.rakuten,
-    'topcashback':'assets/product-logos/topcashback.png',
+    'topcashback':icon.topcashback,
     'rebatesme':'assets/product-logos/rebatesme.png',
     'gocashback':'assets/product-logos/gocashback.png',
     'awardwallet':icon.awardwallet,
@@ -105,5 +107,5 @@
   const normalize=value=>String(value||'').toLowerCase().replace(/[®™℠]/g,'').replace(/[^a-z0-9.]+/g,' ').trim().replace(/\s+/g,' ');
   const resolve=(productId,offerProductId,productName)=>byProductId[productId]||byOfferProductId[offerProductId]||byProductName[normalize(productName)]||'';
 
-  window.NextBonusProductLogoRegistry=Object.freeze({schemaVersion:'2.0',byProductId,byOfferProductId,byProductName,resolve});
+  window.NextBonusProductLogoRegistry=Object.freeze({schemaVersion:'2.1',byProductId,byOfferProductId,byProductName,resolve});
 })();
