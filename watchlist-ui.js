@@ -35,6 +35,12 @@
     return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`;
   }
 
+  function historyTime(item){
+    const value = item?.completedAt || item?.updatedAt || item?.createdAt || '';
+    const parsed = Date.parse(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
   function statusView(item){
     const status = String(item?.status || '');
     const table = {
@@ -117,7 +123,7 @@
     const store = api.read();
     const inProgress = store.items.filter(x=>x.stage === 'in_progress');
     const saved = store.items.filter(x=>x.stage === 'saved');
-    const history = store.items.filter(x=>x.stage === 'history');
+    const history = store.items.filter(x=>x.stage === 'history').sort((a,b)=>historyTime(b)-historyTime(a));
     const activeCount = inProgress.length + saved.length;
 
     page.classList.add('nb-watchlist-page','nb-watchlist-rendered');

@@ -57,17 +57,45 @@
     };
   }
 
+  function timeValue(item) {
+    const value = item?.completedAt || item?.updatedAt || item?.createdAt || '';
+    const parsed = Date.parse(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  function applicationHistoryKey(item) {
+    return item?.stage === 'history' && item?.sourceType === 'application' && item?.sourceId
+      ? `application:${item.sourceId}`
+      : null;
+  }
+
   function normalizeStore(raw) {
     const store = raw && typeof raw === 'object' ? raw : emptyStore();
-    const items = Array.isArray(store.items) ? store.items.map(normalizeItem).filter(Boolean) : [];
-    const seen = new Set();
+    const normalized = Array.isArray(store.items) ? store.items.map(normalizeItem).filter(Boolean) : [];
+    const seenIds = new Set();
+    const byApplicationAttempt = new Map();
+    const items = [];
+
+    normalized.forEach(item => {
+      if (seenIds.has(item.id)) return;
+      seenIds.add(item.id);
+      const key = applicationHistoryKey(item);
+      if (!key) {
+        items.push(item);
+        return;
+      }
+      const existingIndex = byApplicationAttempt.get(key);
+      if (existingIndex == null) {
+        byApplicationAttempt.set(key, items.length);
+        items.push(item);
+        return;
+      }
+      if (timeValue(item) >= timeValue(items[existingIndex])) items[existingIndex] = item;
+    });
+
     return {
       schemaVersion: SCHEMA_VERSION,
-      items: items.filter(item => {
-        if (seen.has(item.id)) return false;
-        seen.add(item.id);
-        return true;
-      }),
+      items,
       updatedAt: store.updatedAt || null,
       legacySyncedAt: store.legacySyncedAt || null
     };
@@ -82,6 +110,16 @@
     next.updatedAt = nowIso();
     writeJson(STORE_KEY, next);
     return clone(next);
+  }
+
+  function migrateExistingApplicationHistory() {
+    const raw = readJson(STORE_KEY, null);
+    if (!raw || !Array.isArray(raw.items)) return false;
+    const normalized = normalizeStore(raw);
+    if (normalized.items.length === raw.items.length) return false;
+    normalized.updatedAt = nowIso();
+    writeJson(STORE_KEY, normalized);
+    return true;
   }
 
   function createId(offerId) {
@@ -188,22 +226,37 @@
     if (!offerId) return null;
     const store = readStore();
     const timestamp = nowIso();
-    let item = activeForOffer(store, String(offerId));
+    const normalizedOfferId = String(offerId);
+    const sourceId = patch.sourceId || null;
+    const sourceType = patch.sourceType || null;
+    let item = null;
+
+    if (sourceType === 'application' && sourceId) {
+      item = store.items.find(existing =>
+        existing.stage === 'history' && existing.sourceType === 'application' && existing.sourceId === sourceId
+      ) || null;
+      if (!item) {
+        const active = activeForOffer(store, normalizedOfferId);
+        if (active?.sourceType === 'application' && active?.sourceId === sourceId) item = active;
+      }
+    } else {
+      item = activeForOffer(store, normalizedOfferId);
+    }
 
     if (!item) {
       item = normalizeItem({
-        id: createId(String(offerId)),
-        offerId: String(offerId),
+        id: createId(normalizedOfferId),
+        offerId: normalizedOfferId,
         stage: 'history',
         status,
         followedAt: patch.followedAt || null,
         startedAt: patch.startedAt || null,
-        completedAt: timestamp,
+        completedAt: patch.completedAt || timestamp,
         createdAt: timestamp,
         updatedAt: timestamp,
         offerVersionId: patch.offerVersionId || null,
-        sourceId: patch.sourceId || null,
-        sourceType: patch.sourceType || 'watchlist',
+        sourceId,
+        sourceType: sourceType || 'watchlist',
         meta: patch.meta || null
       });
       store.items.unshift(item);
@@ -213,8 +266,8 @@
       item.completedAt = patch.completedAt || timestamp;
       item.updatedAt = timestamp;
       item.offerVersionId = patch.offerVersionId || item.offerVersionId || null;
-      item.sourceId = patch.sourceId || item.sourceId || null;
-      item.sourceType = patch.sourceType || item.sourceType || 'watchlist';
+      item.sourceId = sourceId || item.sourceId || null;
+      item.sourceType = sourceType || item.sourceType || 'watchlist';
       if (patch.meta) item.meta = clone(patch.meta);
     }
 
@@ -239,6 +292,7 @@
     return clone(activeForOffer(readStore(), String(offerId)));
   }
 
+  migrateExistingApplicationHistory();
   const legacy = readJson(LEGACY_APP_STATE_KEY, null);
   if (legacy) syncLegacyStateObject(legacy);
 
