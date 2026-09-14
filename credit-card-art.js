@@ -45,9 +45,9 @@
     }),
     'hilton-aspire': Object.freeze({
       key: 'hilton-aspire',
-      web: 'https://lsja3tgfz37mp0wt.public.blob.vercel-storage.com/cards/1763149412912-nus000000329-480x304-straight-withname.avif',
+      web: null,
       local: 'assets/product-cards/hilton-aspire-local.png',
-      source: 'public card-art mirror'
+      source: 'local 640x404 approved card art'
     }),
     'chase-sapphire-reserve': Object.freeze({
       key: 'chase-sapphire-reserve',
@@ -57,9 +57,9 @@
     }),
     'marriott-brilliant': Object.freeze({
       key: 'marriott-brilliant',
-      web: 'https://lsja3tgfz37mp0wt.public.blob.vercel-storage.com/cards/1763143723064-nus000000313-480x304-straight-noname--1-.avif',
+      web: null,
       local: 'assets/product-cards/marriott-brilliant-local.png',
-      source: 'public card-art mirror'
+      source: 'local 640x404 approved card art'
     }),
     'amex-blue-business-plus': Object.freeze({
       key: 'amex-blue-business-plus',
@@ -90,7 +90,6 @@
     'citi-strata': ART['citi-strata-elite']
   });
 
-  // Legacy demo products predate offerId, so bind those stable IDs directly.
   const byProductId = Object.freeze({
     'p-amex-plat-1005': ART['amex-platinum'],
     'p-hilton-aspire-2308': ART['hilton-aspire'],

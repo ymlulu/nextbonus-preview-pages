@@ -9,6 +9,8 @@
     .trim()
     .replace(/\s+/g,' ');
 
+  const cleanName=name=>String(name||'').replace(/[•*]{2,}\s*\d{4}\s*$/,'').trim();
+
   const offerAliases=Object.freeze({
     'hsbc premier checking':'hsbc-checking',
     'chase checking':'chase-checking',
@@ -35,26 +37,41 @@
     return '';
   }
 
+  function sourceAsset(key,src,source){
+    if(!src) return null;
+    const remote=/^https?:\/\//i.test(src);
+    return Object.freeze({key,web:remote?src:null,local:remote?null:src,source});
+  }
+
   function visualAssetForOffer(offerId){
     if(!offerId) return null;
     const product=window.NextBonusOfferProducts?.[offerId];
     const visualId=product?.visualId||offerId;
     const visual=window.NextBonusOfferVisuals?.[visualId];
     if(!visual || !['image','logo'].includes(visual.kind) || !visual.src) return null;
-    const remote=/^https?:\/\//i.test(visual.src);
-    return Object.freeze({
-      key:`offer:${offerId}`,
-      web:remote?visual.src:null,
-      local:remote?null:visual.src,
-      source:'NextBonusOfferVisuals'
-    });
+    return sourceAsset(`offer:${offerId}`,visual.src,'NextBonusOfferVisuals');
+  }
+
+  function logoAssetForProduct(product){
+    if(!product) return null;
+    const src=window.NextBonusProductLogoRegistry?.resolve?.(product.id||'',product.offerId||'',product.name||'');
+    return sourceAsset(`logo:${product.id||normalize(product.name)}`,src,'NextBonusProductLogoRegistry');
+  }
+
+  function logoAssetForName(name){
+    const clean=cleanName(name);
+    const offerId=offerIdForName(clean);
+    const src=window.NextBonusProductLogoRegistry?.resolve?.('',offerId,clean);
+    return sourceAsset(`logo:${offerId||normalize(clean)}`,src,'NextBonusProductLogoRegistry');
   }
 
   function resolveByName(name){
-    const clean=String(name||'').replace(/[•*]{2,}\s*\d{4}\s*$/,'').trim();
+    const clean=cleanName(name);
     const credit=window.NextBonusCreditCardArt?.resolveAsset?.({type:'信用卡',name:clean});
     if(credit) return credit;
-    return visualAssetForOffer(offerIdForName(clean));
+    const offerVisual=visualAssetForOffer(offerIdForName(clean));
+    if(offerVisual) return offerVisual;
+    return logoAssetForName(clean);
   }
 
   function resolveProduct(product){
@@ -65,7 +82,9 @@
       const direct=visualAssetForOffer(product.offerId);
       if(direct) return direct;
     }
-    return resolveByName(product.name||'');
+    const namedOffer=visualAssetForOffer(offerIdForName(product.name||''));
+    if(namedOffer) return namedOffer;
+    return logoAssetForProduct(product)||resolveByName(product.name||'');
   }
 
   function applyAsset(img,asset,alt){
@@ -77,6 +96,7 @@
     if(img.getAttribute('src')!==primary) img.setAttribute('src',primary);
     if(alt) img.setAttribute('alt',alt);
     img.dataset.canonicalProductArt=asset.key||'1';
+    img.dataset.productArtSource=asset.source||'';
     if(fallback && fallback!==primary){
       img.onerror=()=>{
         if(img.getAttribute('src')!==fallback) img.setAttribute('src',fallback);
@@ -100,12 +120,7 @@
     });
   }
 
-  window.NextBonusProductArtRegistry=Object.freeze({
-    resolveByName,
-    resolveProduct,
-    offerIdForName,
-    visualAssetForOffer
-  });
+  window.NextBonusProductArtRegistry=Object.freeze({resolveByName,resolveProduct,offerIdForName,visualAssetForOffer,logoAssetForProduct,logoAssetForName});
 
   let scheduled=false;
   function schedule(){

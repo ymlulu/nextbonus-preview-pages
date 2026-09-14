@@ -1,6 +1,12 @@
 (() => {
   'use strict';
 
+  const featuredArt=Object.freeze({
+    'assets/product-detail/benefit-lounge.png':'assets/product-detail/benefit-lounge.svg',
+    'assets/product-detail/benefit-hotel.png':'assets/product-detail/benefit-hotel.svg',
+    'assets/product-detail/benefit-airline.png':'assets/product-detail/benefit-airline.svg'
+  });
+
   function iconSvg(kind) {
     const icons = {
       car: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 11 2-4h10l2 4"></path><path d="M4 11h16v6H4z"></path><circle cx="7" cy="18" r="1.5"></circle><circle cx="17" cy="18" r="1.5"></circle></svg>',
@@ -30,7 +36,18 @@
     return 'shield';
   }
 
+  function applyFeaturedArt(){
+    document.querySelectorAll('.v4-feature-benefit img').forEach(img=>{
+      const replacement=featuredArt[img.getAttribute('src')||''];
+      if(replacement && img.getAttribute('src')!==replacement){
+        img.setAttribute('src',replacement);
+        img.dataset.canonicalBenefitArt='1';
+      }
+    });
+  }
+
   function apply() {
+    applyFeaturedArt();
     document.querySelectorAll('.v4-pd-benefits .v4-benefit-row').forEach((row) => {
       const title = row.querySelector('strong')?.textContent?.trim() || '';
       const icon = row.querySelector('.v4-benefit-icon');
@@ -45,6 +62,7 @@
 
   window.addEventListener('nextbonus-product-facts-rendered', apply);
   window.addEventListener('DOMContentLoaded', apply);
+  new MutationObserver(apply).observe(document.documentElement,{childList:true,subtree:true});
   apply();
 })();
 
