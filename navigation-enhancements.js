@@ -6,6 +6,21 @@
   const APP_STATE_KEY='nextbonus-local-v8-state';
   const HANDOFF_SUCCESS_KEY='nextbonus-application-handoff-success-v1';
   const DETAIL_INTENT_KEY='nextbonus-product-detail-intent-v1';
+  const PRODUCT_LAYER_RENDER_ACTIONS=new Set([
+    'edit-product',
+    'edit-back',
+    'edit-bonus-open',
+    'edit-bonus-choice',
+    'edit-bonus-use',
+    'edit-add-task',
+    'edit-delete-task',
+    'edit-clear-task-due',
+    'edit-bonus-manual-use',
+    'edit-change-open',
+    'edit-change-target',
+    'edit-change-confirm',
+    'save-edit-product'
+  ]);
   const root=document.getElementById('app');
   let sourceSnapshot=null;
   let sourceScroll=0;
@@ -13,6 +28,7 @@
   let applyingLayer=false;
   let consumingIntent=false;
   let pendingHandoffDetail=false;
+  let immediateProductLayerQueued=false;
 
   function ensureStyles(){
     if(document.getElementById(STYLE_ID)) return;
@@ -156,6 +172,15 @@
     if(!root.querySelector('.nb-detail-layer')) clearLayerMemory();
   }
 
+  function queueImmediateProductLayerSync(){
+    if(immediateProductLayerQueued || isMobile()) return;
+    immediateProductLayerQueued=true;
+    queueMicrotask(()=>{
+      immediateProductLayerQueued=false;
+      enhance();
+    });
+  }
+
   function writeProductDetailIntent(productId){
     if(!productId) return;
     try{ localStorage.setItem(DETAIL_INTENT_KEY,JSON.stringify({productId:String(productId),createdAt:Date.now()})); }catch(_){}
@@ -211,6 +236,11 @@
   }
 
   document.addEventListener('click',event=>{
+    const actionTrigger=event.target.closest('[data-action]');
+    const action=actionTrigger?.dataset?.action||'';
+    const inDesktopProductLayer=!!actionTrigger?.closest('.nb-detail-layer-product .nb-detail-layer-panel');
+    if(inDesktopProductLayer && PRODUCT_LAYER_RENDER_ACTIONS.has(action)) queueImmediateProductLayerSync();
+
     const trigger=event.target.closest('[data-action="open-offer"],[data-action="open-product"],[data-action="add-view-product"]');
     if(trigger) rememberSource(trigger);
     const handoff=event.target.closest('[data-handoff-action="approved-submit"],[data-handoff-action="duplicate-view"],[data-handoff-action="duplicate-override"]');
