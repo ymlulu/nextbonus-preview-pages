@@ -1,0 +1,138 @@
+/* Mobile-only V1 fixes for Discover density and Attention information hierarchy.
+   Layout/presentation only: no content, typography, lifecycle, storage or routing changes. */
+
+@media(max-width:780px){
+  /* Discover: keep the fixed Offer Card design, but use the mobile canvas as a
+     dense two-column browse surface instead of centering one desktop-width card. */
+  .discover-page .offer-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px 10px;
+    align-items:start;
+  }
+
+  .discover-page .mock-visual-card,
+  .discover-page .fallback-offer-card{
+    width:100%;
+    max-width:none;
+    margin:0;
+  }
+
+  .discover-page .mock-visual-card{
+    height:auto;
+    aspect-ratio:202/330;
+  }
+
+  .discover-page .offer-card-mock{
+    width:100%;
+    height:100%;
+  }
+
+  .discover-page .filters{
+    scroll-snap-type:x proximity;
+    scroll-padding-inline:16px;
+    padding-right:20px;
+  }
+
+  .discover-page .pill{
+    flex:0 0 auto;
+    scroll-snap-align:start;
+  }
+
+  /* Attention: mobile top controls stack vertically so the page title never
+     competes with the product filter for horizontal space. */
+  .attention-page .attention-top{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:14px;
+    align-items:stretch;
+  }
+
+  .attention-page .attention-top>div{
+    min-width:0;
+  }
+
+  .attention-page .mock-filter-select{
+    width:100%;
+    max-width:none;
+  }
+
+  .attention-page .attention-toolbar{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:8px;
+    align-items:stretch;
+  }
+
+  .attention-page .mock-tabs{
+    width:100%;
+    min-width:0;
+    overflow-x:auto;
+  }
+
+  .attention-page .mock-status-select{
+    width:100%;
+    max-width:none;
+  }
+
+  /* Attention rows switch from the desktop table model to Product -> Action ->
+     Time. The chevron stays at the trailing edge as the single disclosure cue. */
+  .attention-page .attention-row:not(.history-row){
+    grid-template-columns:minmax(0,1fr) auto 18px;
+    grid-template-areas:
+      "product product chev"
+      "action action chev"
+      "time time chev";
+    gap:5px 8px;
+    padding:12px;
+    align-items:start;
+  }
+
+  .attention-page .att-product-cell{
+    grid-area:product;
+    min-width:0;
+  }
+
+  .attention-page .att-action-cell{
+    grid-area:action;
+    min-width:0;
+    margin-left:55px;
+  }
+
+  .attention-page .att-action-cell strong,
+  .attention-page .att-action-cell small{
+    white-space:normal;
+    overflow:visible;
+    text-overflow:clip;
+  }
+
+  .attention-page .att-time{
+    grid-area:time;
+    justify-self:start;
+    align-self:start;
+    margin-left:55px;
+  }
+
+  .attention-page .attention-row .chev{
+    grid-area:chev;
+    align-self:center;
+    justify-self:end;
+  }
+
+  /* History keeps the same hierarchy and uses the final line for time + result. */
+  .history-attention-box .attention-row.history-row{
+    grid-template-columns:minmax(0,1fr) auto 18px;
+    grid-template-areas:
+      "product product chev"
+      "action action chev"
+      "time status chev";
+    gap:5px 8px;
+    padding:12px;
+    align-items:start;
+  }
+
+  .history-attention-box .history-status{
+    grid-area:status;
+    justify-self:end;
+    align-self:start;
+  }
+}
