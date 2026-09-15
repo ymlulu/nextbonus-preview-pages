@@ -1,0 +1,67 @@
+/* Watchlist V1 visual polish
+   Keep the existing information architecture and lifecycle intact. Section
+   headings carry the grouping; only the row list keeps a quiet container. */
+
+.wishlist-page.nb-watchlist-page .nb-watchlist-section{
+  background:transparent;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  overflow:visible;
+  margin-bottom:32px;
+}
+
+.wishlist-page.nb-watchlist-page .nb-watchlist-section-head{
+  padding:0 2px 11px;
+}
+
+.wishlist-page.nb-watchlist-page .nb-watchlist-list{
+  background:#fff;
+  border:1px solid rgba(0,0,0,.055);
+  border-radius:16px;
+  overflow:hidden;
+  border-top-width:1px;
+}
+
+.wishlist-page.nb-watchlist-page .nb-watchlist-item{
+  padding:15px 16px;
+}
+
+.wishlist-page.nb-watchlist-page .nb-watchlist-section-empty{
+  border:0;
+  border-radius:14px;
+  background:rgba(0,0,0,.025);
+  padding:18px 16px;
+}
+
+.wishlist-page.nb-watchlist-page .nb-watchlist-history{
+  background:transparent;
+  border:0;
+  border-radius:0;
+  overflow:visible;
+}
+
+.wishlist-page.nb-watchlist-page .nb-watchlist-history-head{
+  background:transparent;
+  padding:15px 2px;
+  border-top:1px solid rgba(0,0,0,.065);
+}
+
+.wishlist-page.nb-watchlist-page .nb-watchlist-history-body{
+  margin-top:2px;
+  border:1px solid rgba(0,0,0,.055);
+  border-radius:16px;
+  overflow:hidden;
+}
+
+.wishlist-page.nb-watchlist-page .nb-watchlist-history-body .nb-watchlist-item:last-child{
+  border-bottom:0;
+}
+
+@media(max-width:780px){
+  .wishlist-page.nb-watchlist-page .nb-watchlist-section{margin-bottom:26px}
+  .wishlist-page.nb-watchlist-page .nb-watchlist-section-head{padding-bottom:9px}
+  .wishlist-page.nb-watchlist-page .nb-watchlist-list,
+  .wishlist-page.nb-watchlist-page .nb-watchlist-history-body{border-radius:14px}
+  .wishlist-page.nb-watchlist-page .nb-watchlist-item{padding:14px 14px}
+}
