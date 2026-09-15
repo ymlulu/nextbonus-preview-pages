@@ -1,0 +1,162 @@
+/* NextBonus V1 Typography Foundation
+   Apple HIG semantic text styles are the single source of truth for App UI.
+   Desktop follows macOS defaults; <=780px follows iOS/iPadOS default Large text styles.
+   Marketing artwork/posters intentionally stay outside this system. */
+
+:root{
+  --nb-font-system:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+
+  --nb-large-title-size:26px; --nb-large-title-leading:32px; --nb-large-title-weight:400; --nb-large-title-emphasis:700;
+  --nb-title1-size:22px; --nb-title1-leading:26px; --nb-title1-weight:400; --nb-title1-emphasis:700;
+  --nb-title2-size:17px; --nb-title2-leading:22px; --nb-title2-weight:400; --nb-title2-emphasis:700;
+  --nb-title3-size:15px; --nb-title3-leading:20px; --nb-title3-weight:400; --nb-title3-emphasis:600;
+  --nb-headline-size:13px; --nb-headline-leading:16px; --nb-headline-weight:700; --nb-headline-emphasis:800;
+  --nb-body-size:13px; --nb-body-leading:16px; --nb-body-weight:400; --nb-body-emphasis:600;
+  --nb-callout-size:12px; --nb-callout-leading:15px; --nb-callout-weight:400; --nb-callout-emphasis:600;
+  --nb-subheadline-size:11px; --nb-subheadline-leading:14px; --nb-subheadline-weight:400; --nb-subheadline-emphasis:600;
+  --nb-footnote-size:10px; --nb-footnote-leading:13px; --nb-footnote-weight:400; --nb-footnote-emphasis:600;
+  --nb-caption1-size:10px; --nb-caption1-leading:13px; --nb-caption1-weight:400; --nb-caption1-emphasis:500;
+  --nb-caption2-size:10px; --nb-caption2-leading:13px; --nb-caption2-weight:500; --nb-caption2-emphasis:600;
+
+  --nb-display-value-size:24px; --nb-display-value-leading:28px;
+  --nb-display-value-compact-size:20px; --nb-display-value-compact-leading:24px;
+  --nb-result-value-size:30px; --nb-result-value-leading:34px;
+
+  --nb-label-primary:var(--text,#0b173a);
+  --nb-label-secondary:#6e6e73;
+  --nb-label-tertiary:#86868b;
+  --nb-label-link:var(--blue,#0877ff);
+
+  --nb-space-1:4px;
+  --nb-space-2:8px;
+  --nb-space-3:12px;
+  --nb-space-4:16px;
+  --nb-space-6:24px;
+  --nb-space-8:32px;
+  --nb-primary-canvas:1080px;
+}
+
+html,body,button,input,select,textarea{font-family:var(--nb-font-system)}
+body{
+  font-size:var(--nb-body-size)!important;
+  line-height:var(--nb-body-leading)!important;
+  font-weight:var(--nb-body-weight)!important;
+  font-style:normal!important;
+  letter-spacing:normal!important;
+}
+
+[data-nb-type]{
+  font-family:var(--nb-font-system)!important;
+  font-style:normal!important;
+  letter-spacing:normal!important;
+}
+[data-nb-type="large-title"]{font-size:var(--nb-large-title-size)!important;line-height:var(--nb-large-title-leading)!important;font-weight:var(--nb-large-title-weight)!important}
+[data-nb-type="title1"]{font-size:var(--nb-title1-size)!important;line-height:var(--nb-title1-leading)!important;font-weight:var(--nb-title1-weight)!important}
+[data-nb-type="title2"]{font-size:var(--nb-title2-size)!important;line-height:var(--nb-title2-leading)!important;font-weight:var(--nb-title2-weight)!important}
+[data-nb-type="title3"]{font-size:var(--nb-title3-size)!important;line-height:var(--nb-title3-leading)!important;font-weight:var(--nb-title3-weight)!important}
+[data-nb-type="headline"]{font-size:var(--nb-headline-size)!important;line-height:var(--nb-headline-leading)!important;font-weight:var(--nb-headline-weight)!important}
+[data-nb-type="body"]{font-size:var(--nb-body-size)!important;line-height:var(--nb-body-leading)!important;font-weight:var(--nb-body-weight)!important}
+[data-nb-type="callout"]{font-size:var(--nb-callout-size)!important;line-height:var(--nb-callout-leading)!important;font-weight:var(--nb-callout-weight)!important}
+[data-nb-type="subheadline"]{font-size:var(--nb-subheadline-size)!important;line-height:var(--nb-subheadline-leading)!important;font-weight:var(--nb-subheadline-weight)!important}
+[data-nb-type="footnote"]{font-size:var(--nb-footnote-size)!important;line-height:var(--nb-footnote-leading)!important;font-weight:var(--nb-footnote-weight)!important}
+[data-nb-type="caption1"]{font-size:var(--nb-caption1-size)!important;line-height:var(--nb-caption1-leading)!important;font-weight:var(--nb-caption1-weight)!important}
+[data-nb-type="caption2"]{font-size:var(--nb-caption2-size)!important;line-height:var(--nb-caption2-leading)!important;font-weight:var(--nb-caption2-weight)!important}
+[data-nb-type="display-value"]{font-size:var(--nb-display-value-size)!important;line-height:var(--nb-display-value-leading)!important;font-weight:700!important}
+[data-nb-type="display-value-compact"]{font-size:var(--nb-display-value-compact-size)!important;line-height:var(--nb-display-value-compact-leading)!important;font-weight:700!important}
+[data-nb-type="result-value"]{font-size:var(--nb-result-value-size)!important;line-height:var(--nb-result-value-leading)!important;font-weight:700!important}
+
+[data-nb-emphasis="true"][data-nb-type="large-title"]{font-weight:var(--nb-large-title-emphasis)!important}
+[data-nb-emphasis="true"][data-nb-type="title1"]{font-weight:var(--nb-title1-emphasis)!important}
+[data-nb-emphasis="true"][data-nb-type="title2"]{font-weight:var(--nb-title2-emphasis)!important}
+[data-nb-emphasis="true"][data-nb-type="title3"]{font-weight:var(--nb-title3-emphasis)!important}
+[data-nb-emphasis="true"][data-nb-type="headline"]{font-weight:var(--nb-headline-emphasis)!important}
+[data-nb-emphasis="true"][data-nb-type="body"]{font-weight:var(--nb-body-emphasis)!important}
+[data-nb-emphasis="true"][data-nb-type="callout"]{font-weight:var(--nb-callout-emphasis)!important}
+[data-nb-emphasis="true"][data-nb-type="subheadline"]{font-weight:var(--nb-subheadline-emphasis)!important}
+[data-nb-emphasis="true"][data-nb-type="footnote"]{font-weight:var(--nb-footnote-emphasis)!important}
+[data-nb-emphasis="true"][data-nb-type="caption1"]{font-weight:var(--nb-caption1-emphasis)!important}
+[data-nb-emphasis="true"][data-nb-type="caption2"]{font-weight:var(--nb-caption2-emphasis)!important}
+
+[data-nb-tone="primary"]{color:var(--nb-label-primary)!important}
+[data-nb-tone="secondary"]{color:var(--nb-label-secondary)!important}
+[data-nb-tone="tertiary"]{color:var(--nb-label-tertiary)!important}
+[data-nb-tone="link"]{color:var(--nb-label-link)!important}
+
+.discover-page,
+.wishlist-page.nb-watchlist-page,
+.v4-products-page,
+.attention-page.content.narrow{
+  width:100%;
+  max-width:var(--nb-primary-canvas)!important;
+  margin-left:0!important;
+  margin-right:auto!important;
+}
+.wishlist-page.nb-watchlist-page{padding-left:0!important;padding-right:0!important}
+.nb-primary-page-head,
+.nb-watchlist-header,
+.v4-products-head,
+.attention-page .mock-page-top{
+  gap:var(--nb-space-4)!important;
+  margin-bottom:var(--nb-space-6)!important;
+}
+.nb-primary-page-head{display:flex;align-items:flex-start;justify-content:space-between}
+.nb-primary-page-head h1,
+.nb-watchlist-header h1,
+.v4-products-head h1,
+.attention-page .mock-page-title{margin:0!important}
+.nb-watchlist-header p,
+.v4-products-head>div>div,
+.mock-page-subtitle{margin-top:var(--nb-space-1)!important}
+
+.nb-watchlist-section-head,
+.v4-section-head,
+.mock-section-title-row{margin-bottom:var(--nb-space-2)!important}
+.nb-watchlist-section-head p,
+.nb-watchlist-copy small,
+.v10-info-copy small,
+.v4-pd-att-copy small,
+.v4-feature-benefit small,
+.option-sub,
+.category-sub{margin-top:var(--nb-space-1)!important}
+.form-group .label{margin-bottom:var(--nb-space-2)!important}
+.form-group .hint{margin-top:var(--nb-space-1)!important}
+
+[data-nb-type="callout"]{text-decoration-thickness:from-font;text-underline-offset:.14em}
+[data-nb-typography-exempt="marketing"]{font-family:inherit;font-style:inherit;letter-spacing:inherit}
+
+@media(max-width:780px){
+  :root{
+    --nb-large-title-size:34px; --nb-large-title-leading:41px; --nb-large-title-weight:400; --nb-large-title-emphasis:700;
+    --nb-title1-size:28px; --nb-title1-leading:34px; --nb-title1-weight:400; --nb-title1-emphasis:700;
+    --nb-title2-size:22px; --nb-title2-leading:28px; --nb-title2-weight:400; --nb-title2-emphasis:700;
+    --nb-title3-size:20px; --nb-title3-leading:25px; --nb-title3-weight:400; --nb-title3-emphasis:600;
+    --nb-headline-size:17px; --nb-headline-leading:22px; --nb-headline-weight:600; --nb-headline-emphasis:600;
+    --nb-body-size:17px; --nb-body-leading:22px; --nb-body-weight:400; --nb-body-emphasis:600;
+    --nb-callout-size:16px; --nb-callout-leading:21px; --nb-callout-weight:400; --nb-callout-emphasis:600;
+    --nb-subheadline-size:15px; --nb-subheadline-leading:20px; --nb-subheadline-weight:400; --nb-subheadline-emphasis:600;
+    --nb-footnote-size:13px; --nb-footnote-leading:18px; --nb-footnote-weight:400; --nb-footnote-emphasis:600;
+    --nb-caption1-size:12px; --nb-caption1-leading:16px; --nb-caption1-weight:400; --nb-caption1-emphasis:600;
+    --nb-caption2-size:11px; --nb-caption2-leading:13px; --nb-caption2-weight:400; --nb-caption2-emphasis:600;
+    --nb-display-value-size:28px; --nb-display-value-leading:32px;
+    --nb-display-value-compact-size:22px; --nb-display-value-compact-leading:26px;
+    --nb-result-value-size:34px; --nb-result-value-leading:41px;
+  }
+
+  .discover-page,
+  .wishlist-page.nb-watchlist-page,
+  .v4-products-page,
+  .attention-page.content.narrow{max-width:100%!important}
+  .wishlist-page.nb-watchlist-page{padding-top:0!important;padding-bottom:40px!important}
+  .nb-primary-page-head,
+  .nb-watchlist-header,
+  .v4-products-head,
+  .attention-page .mock-page-top{margin-bottom:var(--nb-space-6)!important}
+
+  .btn,
+  .assessment-choice,
+  .option-row,
+  .nb-ah-btn,
+  .deal-cta,
+  .remaining-cta,
+  .nb-bank-cta{min-height:44px}
+}
