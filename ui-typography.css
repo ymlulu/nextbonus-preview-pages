@@ -343,3 +343,69 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
   .remaining-cta,
   .nb-bank-cta{min-height:44px}
 }
+
+/* Apple-light hierarchy pass ---------------------------------------------
+   Keep Apple text-style size and leading, but use emphasized weight sparingly.
+   The interface should be mostly Regular/Medium; only real focal content gets
+   Semibold, while reward/result display values retain Bold. */
+[data-nb-emphasis="true"][data-nb-type="title1"]{font-weight:400!important}
+[data-nb-emphasis="true"][data-nb-type="title2"]{font-weight:500!important}
+[data-nb-emphasis="true"][data-nb-type="title3"]{font-weight:500!important}
+[data-nb-type="headline"]{font-weight:500!important}
+[data-nb-emphasis="true"][data-nb-type="headline"]{font-weight:600!important}
+[data-nb-emphasis="true"][data-nb-type="body"]{font-weight:500!important}
+[data-nb-emphasis="true"][data-nb-type="callout"]{font-weight:500!important}
+[data-nb-emphasis="true"][data-nb-type="subheadline"]{font-weight:500!important}
+[data-nb-emphasis="true"][data-nb-type="footnote"]{font-weight:500!important}
+[data-nb-type="caption2"]{font-weight:400!important}
+[data-nb-emphasis="true"][data-nb-type="caption2"]{font-weight:500!important}
+
+/* Navigation uses tint and selection state instead of permanent boldness. */
+.nav-item:not(.login-item)[data-nb-type]{font-weight:400!important;color:var(--nb-label-secondary)!important}
+.nav-item:not(.login-item).active[data-nb-type]{font-weight:500!important;color:var(--nb-system-blue)!important}
+
+/* Pills and low-level filters stay quiet until selected. */
+.discover-page .pill[data-nb-type],
+.add-product-modal .pill[data-nb-type],
+.add-more-filter button[data-nb-type]{font-weight:400!important;color:var(--nb-label-secondary)!important}
+.discover-page .pill.active[data-nb-type],
+.add-product-modal .pill.active[data-nb-type],
+.add-more-filter button.active[data-nb-type]{font-weight:500!important;color:var(--nb-system-blue)!important}
+
+/* Buttons are Medium by default; only primary actions rise to Semibold. */
+.btn[data-nb-type],
+#nb-application-handoff-root .nb-ah-btn[data-nb-type],
+.deal-cta[data-nb-type],
+.remaining-cta[data-nb-type],
+.nb-bank-cta[data-nb-type]{font-weight:500!important}
+.btn.primary[data-nb-type],
+.mock-add-btn[data-nb-type],
+#nb-application-handoff-root .nb-ah-btn.primary[data-nb-type],
+.deal-cta[data-nb-type],
+.remaining-cta[data-nb-type],
+.nb-bank-cta[data-nb-type]{font-weight:600!important}
+
+/* Metadata and tags should read as supporting information, not mini-headlines. */
+.nb-offer-card .nb-provider-text[data-nb-type],
+.nb-offer-card .nb-tag[data-nb-type],
+.fallback-offer-card .provider[data-nb-type],
+.fallback-offer-card .soft-tag[data-nb-type],
+.nb-watchlist-provider[data-nb-type],
+.nb-watchlist-status[data-nb-type],
+.nb-watchlist-count[data-nb-type],
+.att-time[data-nb-type],
+.history-status[data-nb-type],
+.mock-page-count[data-nb-type],
+.section-count[data-nb-type]{font-weight:400!important}
+.nb-offer-card .nb-status-tag[data-nb-type],
+.fallback-offer-card .status-tag[data-nb-type]{font-weight:500!important}
+
+/* Attention gets a single focal line: the action. Product context recedes. */
+.att-product-copy strong[data-nb-type],
+.att-product[data-nb-type]{font-weight:400!important;color:var(--nb-label-secondary)!important}
+.att-action-cell strong[data-nb-type],
+.att-action[data-nb-type]{font-weight:600!important;color:var(--nb-label-primary)!important}
+
+/* Tabs rely on selection color/indicator, not heavy text. */
+.tab[data-nb-type],.mock-tabs .tab[data-nb-type]{font-weight:400!important}
+.tab.active[data-nb-type],.mock-tabs .tab.active[data-nb-type]{font-weight:500!important}
