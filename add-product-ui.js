@@ -76,14 +76,28 @@
     });
   }
 
+  function ensureSelectorFooter(modal){
+    let footer=modal.querySelector('.modal-foot');
+    if(!footer){
+      footer=document.createElement('div');
+      footer.className='modal-foot';
+      modal.appendChild(footer);
+    }
+    if(!footer.querySelector('[data-action="add-back"]')){
+      footer.innerHTML='<button class="btn secondary" data-action="add-back">返回</button><span></span>';
+    }
+    footer.dataset.nbSelectorFooter='1';
+    return footer;
+  }
+
   function renderUnifiedSelector(modal){
     modal.dataset.nbStage='selector';
     modal.classList.add('nb-unified-selector');
     const title=modal.querySelector('.modal-title');
     if(title) title.textContent='添加产品';
     const body=modal.querySelector('.modal-body');
-    const footer=modal.querySelector('.modal-foot');
     if(!body) return;
+    ensureSelectorFooter(modal);
 
     const items=visibleEntries();
     const renderKey=selectorRenderKey(items);
@@ -98,10 +112,6 @@
     const itemHtml=items.map(({category,product})=>`<button class="option-row" type="button" data-nb-add-product-id="${esc(product.id)}" data-nb-add-category="${esc(category)}">${product.cardImageLocal?`<span class="add-card-art"><img src="${esc(product.cardImageLocal)}" alt="${esc(product.name)}" /></span>`:`<div class="mini-art ${esc(product.art||'bank')}"></div>`}<span class="option-main"><span class="option-title">${esc(product.name)}</span><span class="option-sub">${esc(product.institution)}${product.subtype?` · ${esc(product.subtype)}`:''}</span></span><span>›</span></button>`).join('');
 
     body.innerHTML=`<div class="search-wrap"><span class="search-icon">⌕</span><input id="nb-add-search" class="search" value="${esc(ui.query)}" placeholder="搜索信用卡、银行账户、券商或会籍" />${ui.query?'<button class="search-clear" type="button" data-nb-clear-search>×</button>':''}</div><div class="filters nb-add-filter-row">${FILTERS.map(([label])=>`<button class="pill ${ui.filter===label?'active':''}" type="button" data-nb-add-filter="${esc(label)}">${esc(label)}</button>`).join('')}</div>${items.length?`<div class="option-list">${itemHtml}</div>`:`<div class="empty"><h3>没有找到这个产品</h3><p>换个关键词试试。</p></div>`}`;
-    if(footer && footer.dataset.nbSelectorFooter!=='1'){
-      footer.innerHTML='<button class="btn secondary" data-action="add-back">返回</button><span></span>';
-      footer.dataset.nbSelectorFooter='1';
-    }
     modal.dataset.nbSelectorRenderKey=renderKey;
     modal.classList.add('nb-add-product-ready');
   }
@@ -110,6 +120,23 @@
     const input=modal.querySelector(`#${inputId}`);
     const label=input?.closest('.form-group')?.querySelector('.label');
     if(label) label.textContent=text;
+  }
+
+  function syncOpenedClear(modal){
+    const input=modal?.querySelector('#add-opened');
+    const row=input?.closest('.date-field-row');
+    if(!input||!row) return;
+    let clear=row.querySelector('[data-action="add-clear-opened"]');
+    if(input.value && !clear){
+      clear=document.createElement('button');
+      clear.type='button';
+      clear.className='btn secondary small';
+      clear.dataset.action='add-clear-opened';
+      clear.textContent='清除日期';
+      row.appendChild(clear);
+    }else if(!input.value && clear){
+      clear.remove();
+    }
   }
 
   function enhanceInfo(modal){
@@ -123,6 +150,7 @@
     if(isCard) replaceLabelForInput(modal,'add-last4','卡号后四位（可选）');
     else replaceLabelForInput(modal,'add-nickname','账户昵称（可选）');
     replaceLabelForInput(modal,'add-opened',`${isCard?'开卡日期':'开户日期'}（可选）`);
+    syncOpenedClear(modal);
     const hint=modal.querySelector('.hint');
     if(hint) hint.textContent='这些信息都可以稍后修改。';
     const duplicate=modal.querySelector('.duplicate-warning');
@@ -208,7 +236,9 @@
       const strong=duplicate.querySelector('strong');
       if(strong) strong.textContent='这个会籍已经在钱包里';
       const view=duplicate.querySelector('[data-action="add-view-existing"]');
+      const override=duplicate.querySelector('[data-action="add-override-duplicate"]');
       if(view) view.textContent='查看已有等级';
+      if(override) override.textContent='仍然添加';
     }
     const submit=modal.querySelector('[data-action="add-membership-submit"]');
     if(submit) submit.textContent='添加到钱包';
@@ -369,6 +399,11 @@
   },true);
 
   document.addEventListener('input',event=>{
+    if(event.target.id==='add-opened'){
+      const modal=event.target.closest('.add-product-modal');
+      if(modal) syncOpenedClear(modal);
+      return;
+    }
     if(event.target.id!=='nb-add-search') return;
     ui.query=event.target.value;
     const modal=root.querySelector('.add-product-modal.nb-unified-selector');
