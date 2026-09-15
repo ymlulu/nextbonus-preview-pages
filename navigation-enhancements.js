@@ -48,7 +48,7 @@
   }
 
   const isMobile=()=>window.matchMedia?.(MOBILE_QUERY).matches;
-  const detailKind=()=>root?.querySelector('.v4-offer-detail-page')?'offer':root?.querySelector('.v4-product-detail-page')?'product':null;
+  const detailKind=()=>root?.querySelector('.v4-offer-detail-page')?'offer':root?.querySelector('.v4-product-detail-page,.edit-product-page')?'product':null;
   const canonicalBackAction=kind=>kind==='product'?'back-products':'back-offer-list';
 
   function enhanceLogo(){
