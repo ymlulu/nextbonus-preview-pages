@@ -8,7 +8,7 @@
   const STYLE_ID = 'nb-application-handoff-style';
   const UNRESOLVED_STATUSES = new Set([
     'awaiting_result', 'deferred', 'pending',
-    'approved_needs_login', 'approved_setup', 'approved_duplicate'
+    'approved_needs_login'
   ]);
 
   const clone = value => value == null ? value : JSON.parse(JSON.stringify(value));
@@ -185,9 +185,7 @@
       deferred: ['待确认申请结果','申请上下文已经保存，之后回来不需要重新选择产品或 Offer。'],
       pending: ['申请还在审核中','NextBonus 已保留这次申请上下文，你可以随时回来更新结果。'],
       denied: ['这次申请没有通过','如果后续结果变化，可以回来更新；已核验的后续处理入口也会显示在这里。'],
-      approved_needs_login: ['已通过 · 待保存','登录后即可把产品和本次奖励追踪一起加入“我的”。'],
-      approved_setup: ['已通过 · 待保存','确认获批 / 开户日期后即可开始追踪。'],
-      approved_duplicate: ['已通过 · 待确认','检测到可能已添加的同一产品，请确认后再创建。']
+      approved_needs_login: ['已通过 · 待保存','登录后即可把产品和本次奖励追踪一起加入“我的”。']
     }[attempt.status];
     if (!copy) return '';
     return `<div class="nb-ah-banner"><strong>${esc(copy[0])}</strong><p>${esc(attempt.productName)} · ${esc(copy[1])}</p><div class="nb-ah-row"><button class="nb-ah-btn secondary" data-handoff-action="open">${attempt.status === 'denied' ? '查看后续' : '更新结果'}</button></div></div>`;
@@ -217,16 +215,7 @@
     return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">登录后保存到“我的”</div><div class="nb-ah-sub">${esc(attempt.productName)} 已确认通过</div></div><button class="nb-ah-close" data-handoff-action="hide">×</button></div><div class="nb-ah-body"><div class="nb-ah-note">“直接申请”本身不要求登录；但创建 UserProduct、奖励追踪和任务属于个人数据，需要登录后保存。</div></div><div class="nb-ah-foot"><button class="nb-ah-btn secondary" data-handoff-action="hide">稍后处理</button><button class="nb-ah-btn primary" data-handoff-action="login">登录并继续</button></div></div></div>`;
   }
 
-  function approvedModal(attempt) {
-    const label = attempt.category === '信用卡' ? '哪天获批 / 开卡？' : '哪天开户？';
-    return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">已通过</div><div class="nb-ah-sub">${esc(attempt.productName)} · 当前 Offer 已自动带入</div></div><button class="nb-ah-close" data-handoff-action="hide">×</button></div><div class="nb-ah-body"><div class="nb-ah-field"><label for="nb-ah-anchor">${esc(label)}</label><input id="nb-ah-anchor" type="date" max="${today()}" value="${esc(attempt.anchorDate || today())}" /></div><div class="nb-ah-note">日期默认选今天供你确认，但 NextBonus 不会把“点击直接申请”的时间当作开卡 / 开户日期。当前 Preview 的 Offer 数据如果没有结构化 Deadline Rule，也不会从自然语言里猜截止日。</div></div><div class="nb-ah-foot"><button class="nb-ah-btn secondary" data-handoff-action="hide">稍后处理</button><button class="nb-ah-btn primary" data-handoff-action="approved-submit">添加到“我的”并开始追踪</button></div></div></div>`;
-  }
 
-  function duplicateModal(attempt) {
-    const duplicate = potentialDuplicate(attempt);
-    const duplicateName = duplicate?.name || attempt.productName;
-    return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">你可能已经添加过这个产品</div><div class="nb-ah-sub">${esc(duplicateName)}</div></div><button class="nb-ah-close" data-handoff-action="hide">×</button></div><div class="nb-ah-body"><div class="nb-ah-note">NextBonus 找到了相同 Offer 或产品名称的已有产品。查看已有产品不会结束这次申请结果确认。</div></div><div class="nb-ah-foot"><button class="nb-ah-btn secondary" data-handoff-action="duplicate-view">查看已添加的产品</button><button class="nb-ah-btn primary" data-handoff-action="duplicate-override">仍然添加一个</button></div></div></div>`;
-  }
 
   function render(mode = null) {
     ensureStyles();
@@ -244,8 +233,6 @@
     else if (mode === 'pending') root.innerHTML = followupModal(attempt, 'pending');
     else if (mode === 'denied') root.innerHTML = followupModal(attempt, 'denied');
     else if (mode === 'login') root.innerHTML = loginModal(attempt);
-    else if (mode === 'approved') root.innerHTML = approvedModal(attempt);
-    else if (mode === 'duplicate') root.innerHTML = duplicateModal(attempt);
     else root.innerHTML = banner(attempt);
   }
 
@@ -253,152 +240,47 @@
     if (!attempt) return;
     if (attempt.status === 'pending') render('pending');
     else if (attempt.status === 'denied') render('denied');
-    else if (attempt.status === 'approved_duplicate') render('duplicate');
-    else if (attempt.status === 'approved_needs_login' || attempt.status === 'approved_setup') {
-      const state = appState();
-      render(state?.loggedIn ? 'approved' : 'login');
-    } else render('choice');
+    else if (attempt.status === 'approved_needs_login') render('login');
+    else render('choice');
   }
 
   function catalogProduct(attempt) {
     return Object.values(window.NextBonusProductCatalog || {}).flat().find(x => x.offerId === attempt.offerId) || {};
   }
 
-  function normalizedProductName(value) {
-    return String(value || '').replace(/\b(Card|Account)\b/gi, '').trim().toLowerCase();
-  }
-
-  function potentialDuplicate(attempt, state = appState()) {
-    const products = state?.products || [];
-    const alreadyCreated = products.find(product => product.applicationHandoffId === attempt.id);
-    if (alreadyCreated) return null;
-    const catalog = catalogProduct(attempt);
-    const entity = window.NextBonusOfferProducts?.[attempt.productId] || {};
-    const expectedName = normalizedProductName(catalog.name || entity.name || attempt.productName);
-    return products.find(product =>
-      (product.offerId && product.offerId === attempt.offerId) ||
-      (expectedName && normalizedProductName(product.name) === expectedName)
-    ) || null;
-  }
-
-  function anniversary(date) {
-    try {
-      const d = new Date(`${date}T00:00:00`);
-      return `${d.getMonth() + 1} 月 ${d.getDate()} 日`;
-    } catch (_) {
-      return '—';
-    }
-  }
-
-  function shortDate(date) {
-    try {
-      const d = new Date(`${date}T00:00:00`);
-      return `${d.getMonth() + 1}/${d.getDate()}`;
-    } catch (_) {
-      return date;
-    }
-  }
 
   function commitApproved(attempt, anchorDate) {
     const state = appState();
     if (!state) throw new Error('state unavailable');
-    const existing = (state.products || []).find(p => p.applicationHandoffId === attempt.id);
-    if (existing) {
-      const next = clone(state);
-      next.currentProductId = existing.id;
-      next.route = 'product-detail';
-      next.routeSource = 'products';
-      writeJson(APP_STATE_KEY, next);
-      return existing;
-    }
-
+    const lifecycle = window.NextBonusProductLifecycleCore;
+    if (!lifecycle) throw new Error('Product Lifecycle Core unavailable');
+    const next = clone(state);
     const fact = window.NextBonusOfferData?.[attempt.offerId] || {};
     const entity = window.NextBonusOfferProducts?.[attempt.productId] || {};
     const catalog = catalogProduct(attempt);
-    const stamp = Date.now();
-    const userProductId = `p-app-${stamp}`;
     const type = entity.category === '信用卡' ? '信用卡' : (entity.category === '银行' || entity.category === '券商') ? '银行和券商账户' : '其他';
-    const instance = type === '信用卡' ? '账户 1' : '主账户';
-    const name = attempt.productName || catalog.name || entity.name;
-    const institution = attempt.issuer || catalog.institution || entity.provider || '';
-    const trackingId = `tracking-${attempt.id}`;
-    const taskId = `task-${attempt.id}-1`;
-    const requirement = attempt.requirement || fact.primaryRequirement || '完成当前 Offer 对应的奖励条件';
-    const reward = attempt.reward || fact.primaryValue || '当前奖励';
-
-    const product = {
-      id: userProductId,
-      offerId: attempt.offerId,
-      offerVersionId: attempt.offerVersionId,
-      applicationHandoffId: attempt.id,
+    const result = lifecycle.commitApplicationApproval(next, {
+      applicationHandoffId:attempt.id,
+      offerId:attempt.offerId,
+      offerVersionId:attempt.offerVersionId,
       type,
-      name,
-      institution,
-      instance,
-      art: catalog.art || 'bank',
-      cardImageLocal: catalog.cardImageLocal || null,
-      opened: anchorDate,
-      anniversary: anniversary(anchorDate),
-      annualFee: type === '信用卡' ? '以产品规则为准' : '—',
-      status: '正常',
-      earning: '—',
-      addedAt: stamp
-    };
-    const tracking = {
-      id: trackingId,
-      applicationHandoffId: attempt.id,
-      userProductId,
-      offerId: attempt.offerId,
-      offerVersionId: attempt.offerVersionId,
-      status: 'in_progress',
-      anchorDate,
-      anchorKind: 'user_confirmed_approval_or_open_date',
-      reward,
-      createdAt: nowIso()
-    };
-    const task = {
-      id: taskId,
-      trackingId,
-      applicationHandoffId: attempt.id,
-      description: requirement,
-      dueDate: null,
-      status: 'pending'
-    };
-    const attention = {
-      id: `a-handoff-${attempt.id}`,
-      applicationHandoffId: attempt.id,
-      productId: userProductId,
-      product: `${name} ${instance}`,
-      action: type === '信用卡' ? '完成开卡奖励' : '完成开户奖励条件',
-      secondary: reward,
-      time: '截止日期以当前 Offer 结构化规则为准',
-      dueDate: null,
-      type: 'bonus',
-      summary: '你已确认本次申请通过，NextBonus 已开始追踪这次奖励条件。',
-      key: reward,
-      keySub: `起算日期已确认：${shortDate(anchorDate)}`,
-      instruction: '完成以下条件',
-      checklist: [{ id: taskId, label: requirement, done: false }],
-      primary: '我已完成',
-      secondaryAction: null,
-      completionKind: 'completed'
-    };
-
-    const next = clone(state);
-    next.products = [...(next.products || []), product];
-    next.offerTrackings = [...(next.offerTrackings || []), tracking];
-    next.trackingTasks = [...(next.trackingTasks || []), task];
-    next.activeAttention = [...(next.activeAttention || []), attention];
-    next.savedOfferIds = (next.savedOfferIds || []).filter(id => id !== attempt.offerId);
-    next.unavailableSavedIds = (next.unavailableSavedIds || []).filter(id => id !== attempt.offerId);
-    next.currentProductId = userProductId;
+      name:attempt.productName || catalog.name || entity.name,
+      institution:attempt.issuer || catalog.institution || entity.provider || '',
+      instance:type === '信用卡' ? '账户 1' : '主账户',
+      art:catalog.art || 'bank',
+      cardImageLocal:catalog.cardImageLocal || null,
+      opened:anchorDate,
+      annualFee:type === '信用卡' ? '以产品规则为准' : '—',
+      earning:'—',
+      reward:attempt.reward || fact.primaryValue || '当前奖励',
+      requirement:attempt.requirement || fact.primaryRequirement || '完成当前 Offer 对应的奖励条件'
+    });
+    next.currentProductId = result.product.id;
     next.route = 'product-detail';
     next.routeSource = 'products';
     next.productSearch = '';
-
-    // Preview atomic commit: Product + Tracking + Task + Attention are serialized in one write.
     writeJson(APP_STATE_KEY, next);
-    return product;
+    return result.product;
   }
 
   function completeApproved(attempt, anchorDate) {
@@ -414,8 +296,13 @@
   function handleResult(attempt, result) {
     if (result === 'approved') {
       const loggedIn = !!appState()?.loggedIn;
-      updateAttempt(attempt.id, { status: loggedIn ? 'approved_setup' : 'approved_needs_login', resultConfirmedAt: nowIso() });
-      render(loggedIn ? 'approved' : 'login');
+      const anchorDate = attempt.anchorDate || today();
+      const confirmedAt = nowIso();
+      const confirmed = updateAttempt(attempt.id, { ...(loggedIn ? {} : { status: 'approved_needs_login' }), anchorDate, resultConfirmedAt: confirmedAt }) || { ...attempt, anchorDate, resultConfirmedAt: confirmedAt };
+      if (loggedIn) {
+        try { completeApproved(confirmed, anchorDate); }
+        catch (_) { updateAttempt(attempt.id, { status: 'deferred' }); render('choice'); }
+      } else render('login');
     } else if (result === 'pending') {
       updateAttempt(attempt.id, { status: 'pending', resultConfirmedAt: nowIso() });
       render('pending');
@@ -437,8 +324,8 @@
       setTimeout(() => {
         const attempt = activeAttempt();
         if (attempt?.status === 'approved_needs_login' && appState()?.loggedIn) {
-          updateAttempt(attempt.id, { status: 'approved_setup' });
-          render('approved');
+          try { completeApproved(attempt, attempt.anchorDate || today()); }
+          catch (_) { render('login'); }
         }
       }, 0);
     }
@@ -462,38 +349,6 @@
       updateAttempt(attempt.id, { status: 'approved_needs_login' });
       render();
       document.querySelector('[data-action="nav"][data-route="login"]')?.click();
-    } else if (action === 'approved-submit') {
-      const anchorDate = document.getElementById('nb-ah-anchor')?.value || '';
-      if (!anchorDate) return;
-      try {
-        const duplicate = potentialDuplicate(attempt);
-        if (duplicate) {
-          updateAttempt(attempt.id, { status: 'approved_duplicate', anchorDate, duplicateProductId: duplicate.id });
-          render('duplicate');
-        } else {
-          completeApproved(attempt, anchorDate);
-        }
-      } catch (_) {
-        const note = ensureRoot().querySelector('.nb-ah-note');
-        if (note) note.textContent = '保存失败，当前信息仍保留。请重试。';
-      }
-    } else if (action === 'duplicate-view') {
-      const duplicate = potentialDuplicate(attempt) || appState()?.products?.find(product => product.id === attempt.duplicateProductId);
-      if (!duplicate) { updateAttempt(attempt.id, { status: 'approved_setup', duplicateProductId: null }); render('approved'); return; }
-      const next = clone(appState());
-      next.currentProductId = duplicate.id;
-      next.route = 'product-detail';
-      next.routeSource = 'products';
-      writeJson(APP_STATE_KEY, next);
-      render();
-      location.reload();
-    } else if (action === 'duplicate-override') {
-      try {
-        completeApproved(attempt, attempt.anchorDate || today());
-      } catch (_) {
-        const note = ensureRoot().querySelector('.nb-ah-note');
-        if (note) note.textContent = '保存失败，当前信息仍保留。请重试。';
-      }
     }
   });
 

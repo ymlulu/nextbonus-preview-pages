@@ -122,22 +122,6 @@
     if(label) label.textContent=text;
   }
 
-  function syncOpenedClear(modal){
-    const input=modal?.querySelector('#add-opened');
-    const row=input?.closest('.date-field-row');
-    if(!input||!row) return;
-    let clear=row.querySelector('[data-action="add-clear-opened"]');
-    if(input.value && !clear){
-      clear=document.createElement('button');
-      clear.type='button';
-      clear.className='btn secondary small';
-      clear.dataset.action='add-clear-opened';
-      clear.textContent='清除日期';
-      row.appendChild(clear);
-    }else if(!input.value && clear){
-      clear.remove();
-    }
-  }
 
   function enhanceInfo(modal){
     const body=modal.querySelector('.modal-body');
@@ -150,18 +134,8 @@
     if(isCard) replaceLabelForInput(modal,'add-last4','卡号后四位（可选）');
     else replaceLabelForInput(modal,'add-nickname','账户昵称（可选）');
     replaceLabelForInput(modal,'add-opened',`${isCard?'开卡日期':'开户日期'}（可选）`);
-    syncOpenedClear(modal);
     const hint=modal.querySelector('.hint');
     if(hint) hint.textContent='这些信息都可以稍后修改。';
-    const duplicate=modal.querySelector('.duplicate-warning');
-    if(duplicate){
-      const strong=duplicate.querySelector('strong');
-      if(strong) strong.textContent='你可能已经添加过这个产品';
-      const view=duplicate.querySelector('[data-action="add-view-existing"]');
-      const override=duplicate.querySelector('[data-action="add-override-duplicate"]');
-      if(view) view.textContent='查看已有产品';
-      if(override) override.textContent='仍然添加';
-    }
   }
 
   function enhanceTrack(modal){
@@ -231,15 +205,6 @@
     modal.querySelectorAll('.modal-body p.muted').forEach(node=>{
       if((node.textContent||'').includes('这里只记录')) node.remove();
     });
-    const duplicate=modal.querySelector('.duplicate-warning');
-    if(duplicate){
-      const strong=duplicate.querySelector('strong');
-      if(strong) strong.textContent='这个会籍已经在钱包里';
-      const view=duplicate.querySelector('[data-action="add-view-existing"]');
-      const override=duplicate.querySelector('[data-action="add-override-duplicate"]');
-      if(view) view.textContent='查看已有等级';
-      if(override) override.textContent='仍然添加';
-    }
     const submit=modal.querySelector('[data-action="add-membership-submit"]');
     if(submit) submit.textContent='添加到钱包';
   }
@@ -399,11 +364,6 @@
   },true);
 
   document.addEventListener('input',event=>{
-    if(event.target.id==='add-opened'){
-      const modal=event.target.closest('.add-product-modal');
-      if(modal) syncOpenedClear(modal);
-      return;
-    }
     if(event.target.id!=='nb-add-search') return;
     ui.query=event.target.value;
     const modal=root.querySelector('.add-product-modal.nb-unified-selector');

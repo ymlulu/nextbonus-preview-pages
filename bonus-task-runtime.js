@@ -6,9 +6,8 @@
   if(!rules)return;
 
   const APP_STATE_KEY='nextbonus-local-v8-state';
-  const HANDOFF_KEY='nextbonus-application-handoff-v1';
   const BENEFIT_CYCLE_KEY='nextbonus-benefit-cycle-v1';
-  const memory={opened:'',pendingHandoff:null,pendingAdd:null,pendingEdit:null,pendingEditOffer:null,pendingChecklist:null};
+  const memory={opened:'',pendingAdd:null,pendingEdit:null,pendingEditOffer:null,pendingChecklist:null};
 
   function readJson(key,fallback=null){
     try{const raw=localStorage.getItem(key);return raw?JSON.parse(raw):fallback;}catch(_){return fallback;}
@@ -119,18 +118,6 @@
     return rules.buildPlan(offer.requirement,opened,{category});
   }
 
-  function handoffSnapshot(action){
-    if(!['approved-submit','duplicate-override'].includes(action))return null;
-    const store=readJson(HANDOFF_KEY,null);
-    const attempt=store?.attempts?.find(item=>item.id===store.activeId)||null;
-    if(!attempt)return null;
-    const anchor=document.getElementById('nb-ah-anchor')?.value||attempt.anchorDate||'';
-    if(!anchor)return null;
-    return{
-      action,anchorDate:anchor,
-      attempt:{id:attempt.id,offerId:attempt.offerId,offerVersionId:attempt.offerVersionId||currentOfferVersion(attempt.offerId),reward:attempt.reward||'',requirement:attempt.requirement||''}
-    };
-  }
 
   function ensureTracking(state,product,attention,source,anchorDate){
     state.offerTrackings=Array.isArray(state.offerTrackings)?state.offerTrackings:[];
@@ -186,18 +173,6 @@
     return true;
   }
 
-  function patchApplicationProduct(snapshot){
-    const state=readJson(APP_STATE_KEY,null);if(!state)return false;
-    const attempt=snapshot.attempt;
-    const product=(state.products||[]).find(item=>item.applicationHandoffId===attempt.id);
-    const attention=(state.activeAttention||[]).find(item=>item.applicationHandoffId===attempt.id&&item.type==='bonus');
-    if(!product||!attention)return false;
-    const current=window.NextBonusOfferData?.[attempt.offerId]||{};
-    const source={offerId:attempt.offerId,offerVersionId:attempt.offerVersionId||current.offerVersionId||currentOfferVersion(attempt.offerId),sourceOfferChoiceId:null,reward:attempt.reward||current.primaryValue||'',requirement:attempt.requirement||current.primaryRequirement||'',source:'application-handoff'};
-    const plan=planFor(source,snapshot.anchorDate,product.type);
-    if(!patchAttention(state,product,attention,source,plan,snapshot.anchorDate))return false;
-    writeJson(APP_STATE_KEY,state);return true;
-  }
 
   function addSnapshot(action){
     if(action?.dataset?.action!=='add-offer-next')return null;
@@ -371,9 +346,6 @@
   },true);
 
   document.addEventListener('click',event=>{
-    const handoff=event.target.closest?.('[data-handoff-action]');
-    if(handoff){const snapshot=handoffSnapshot(handoff.dataset.handoffAction);if(snapshot)memory.pendingHandoff=snapshot;}
-
     const action=event.target.closest?.('[data-action]');if(!action)return;
     if(action.dataset.action==='open-add-product'||action.dataset.action==='add-another')reset();
     if(['add-close','add-discard'].includes(action.dataset.action)){reset();return;}
@@ -423,10 +395,6 @@
   },true);
 
   document.addEventListener('click',event=>{
-    const handoff=event.target.closest?.('[data-handoff-action]');
-    if(handoff&&memory.pendingHandoff&&handoff.dataset.handoffAction===memory.pendingHandoff.action){
-      const snapshot=memory.pendingHandoff;memory.pendingHandoff=null;patchApplicationProduct(snapshot);
-    }
     const action=event.target.closest?.('[data-action]');if(!action)return;
     if(action.dataset.action==='add-offer-next'&&memory.pendingAdd){
       const snapshot=memory.pendingAdd;memory.pendingAdd=null;window.setTimeout(()=>patchAddedProduct(snapshot),0);

@@ -3,7 +3,7 @@
 
   const HANDOFF_KEY = 'nextbonus-application-handoff-v1';
   const ROOT_ID = 'nb-application-handoff-root';
-  const REVIEW_STATUSES = new Set(['awaiting_result','deferred','pending','approved_needs_login','approved_setup','approved_duplicate']);
+  const REVIEW_STATUSES = new Set(['awaiting_result','deferred','pending','approved_needs_login']);
   let openedFromWatchlistAttemptId = null;
 
   function readStore(){

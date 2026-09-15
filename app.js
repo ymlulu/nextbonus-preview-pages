@@ -781,7 +781,7 @@
   }
 
   function openAddProduct(){
-    state.addFlow={step:'category',category:null,product:null,search:'',filter:'全部',moreFilterOpen:false,reportStatus:null,last4:'',nickname:'',opened:'',track:null,offer:null,reward:'',tasks:[{id:'t1',desc:'',due:''}],savedProductId:null,allowDuplicate:false,submitting:false,committed:false};
+    state.addFlow={step:'category',category:null,product:null,search:'',filter:'全部',moreFilterOpen:false,reportStatus:null,last4:'',nickname:'',opened:'',track:null,offer:null,reward:'',tasks:[{id:'t1',desc:'',due:''}],savedProductId:null,submitting:false,committed:false};
     render();
   }
 
@@ -805,18 +805,13 @@
     if(f.category==='券商账户') return (x.market||'美国券商')===f.filter;
     return (x.subtype||'会籍')===f.filter;
   }
-  function findPotentialDuplicate(f){
-    if(!f?.product) return null;
-    if(f.category==='其他') return state.products.find(p=>p.type==='会籍'&&p.institution===f.product.institution)||null;
-    return state.products.find(p=>p.offerId&&f.product.offerId&&p.offerId===f.product.offerId || (p.name.replace(/\b(Card|Account)\b/gi,'').trim().toLowerCase()===f.product.name.replace(/\b(Card|Account)\b/gi,'').trim().toLowerCase()))||null;
-  }
   function resetAddAfterCategory(f){
     f.product=null; f.last4=''; f.nickname=''; f.opened=''; f.track=null; f.offer=null; f.reward='';
-    f.tasks=[{id:'t1',desc:'',due:''}]; f.savedProductId=null; f.allowDuplicate=false; f.submitting=false; f.committed=false;
+    f.tasks=[{id:'t1',desc:'',due:''}]; f.savedProductId=null; f.submitting=false; f.committed=false;
   }
   function resetAddAfterProduct(f){
     f.last4=''; f.nickname=''; f.opened=''; f.track=null; f.offer=null; f.reward='';
-    f.tasks=[{id:'t1',desc:'',due:''}]; f.savedProductId=null; f.allowDuplicate=false; f.submitting=false; f.committed=false;
+    f.tasks=[{id:'t1',desc:'',due:''}]; f.savedProductId=null; f.submitting=false; f.committed=false;
   }
 
   function addProductModal(){
@@ -835,9 +830,9 @@
       footer=backOnly();
     }else if(f.step==='info'){
       title='填写最少账户信息';
-      const isCard=f.category==='信用卡', duplicate=findPotentialDuplicate(f);
-      body=`${isCard?`<div class="form-group"><label class="label">卡号后四位 <span class="muted">（可选）</span></label><input id="add-last4" class="input" maxlength="4" inputmode="numeric" value="${esc(f.last4)}" placeholder="例如 1005" /></div>`:`<div class="form-group"><label class="label">账户昵称 <span class="muted">（可选）</span></label><input id="add-nickname" class="input" value="${esc(f.nickname)}" placeholder="例如 主账户" /></div>`}<div class="form-group"><label class="label">${isCard?'开卡日期':'开户日期'} <span class="muted">（可选）</span></label><div class="date-field-row"><input id="add-opened" type="date" max="${localDateISO()}" class="input" value="${esc(f.opened)}" />${f.opened?`<button class="btn secondary small" data-action="add-clear-opened">清除日期</button>`:''}</div></div><p class="hint">只收当前添加流程真正需要的最少信息，之后可以再编辑。</p>${duplicate&&!f.allowDuplicate?`<div class="duplicate-warning"><strong>你可能已经添加过这个产品</strong><p>${esc(duplicate.name)} ${esc(duplicate.instance||'')}</p><div class="actions two"><button class="btn secondary" data-action="add-view-existing" data-id="${duplicate.id}">查看已添加的产品</button><button class="btn primary" data-action="add-override-duplicate">仍然添加一个</button></div></div>`:''}`;
-      footer=backNext('add-to-track','继续',!!duplicate&&!f.allowDuplicate);
+      const isCard=f.category==='信用卡';
+      body=`${isCard?`<div class="form-group"><label class="label">卡号后四位 <span class="muted">（可选）</span></label><input id="add-last4" class="input" maxlength="4" inputmode="numeric" value="${esc(f.last4)}" placeholder="例如 1005" /></div>`:`<div class="form-group"><label class="label">账户昵称 <span class="muted">（可选）</span></label><input id="add-nickname" class="input" value="${esc(f.nickname)}" placeholder="例如 主账户" /></div>`}<div class="form-group"><label class="label">${isCard?'开卡日期':'开户日期'} <span class="muted">（可选）</span></label><div class="date-field-row"><input id="add-opened" type="date" max="${localDateISO()}" class="input" value="${esc(f.opened)}" />${`<button class="btn secondary small" data-action="add-clear-opened" ${f.opened?'':'disabled'}>清除日期</button>`}</div></div><p class="hint">只收当前添加流程真正需要的最少信息，之后可以再编辑。</p>`;
+      footer=backNext('add-to-track','继续');
     }else if(f.step==='track'){
       title=f.category==='信用卡'?'是否追踪开卡奖励':'是否追踪开户奖励';
       body=`<div class="option-list"><button class="option-row ${f.track===true?'selected':''}" data-action="add-track-choice" data-value="yes"><span class="radio-dot"></span><span class="option-main"><span class="option-title">是，追踪${f.category==='信用卡'?'开卡':'开户'}奖励</span><span class="option-sub">下一步选择你申请 / 开户时对应的奖励</span></span></button><button class="option-row ${f.track===false?'selected':''}" data-action="add-track-choice" data-value="no"><span class="radio-dot"></span><span class="option-main"><span class="option-title">否，只添加${f.category==='信用卡'?'这张卡':'账户'}</span><span class="option-sub">以后仍可从产品详情补开奖励追踪</span></span></button></div>`;
@@ -851,9 +846,8 @@
       body=`<div class="form-group"><label class="label">你会获得什么</label><textarea id="add-reward" class="textarea" placeholder="例如 $300 现金奖励 + 2 张房券">${esc(f.reward)}</textarea></div><div><label class="label">需要完成什么</label>${f.tasks.map((t,i)=>`<div class="task-card"><div class="task-head"><span>条件 ${i+1}</span><button class="icon-btn" data-action="delete-task" data-id="${t.id}" aria-label="删除条件">×</button></div><input class="input task-desc" data-id="${t.id}" value="${esc(t.desc)}" placeholder="例如 消费 $12,000" /><div style="height:8px"></div><div class="date-field-row"><input type="date" class="input task-due" data-id="${t.id}" value="${esc(t.due)}" />${t.due?`<button class="btn secondary small" data-action="clear-task-due" data-id="${t.id}">清除日期</button>`:''}</div></div>`).join('')}<button class="btn secondary small" data-action="add-task">+ 再添加一个条件</button></div>`;
       const valid=f.reward.trim() && f.tasks.length && f.tasks.every(t=>t.desc.trim()&&t.due); footer=backNext('add-manual-submit',f.submitting?'保存中…':'继续',!valid||f.submitting);
     }else if(f.step==='membership-confirm'){
-      const existing=findPotentialDuplicate(f), same=existing&&existing.name===f.product.name, targetLevel=f.product.name.replace(/^.*Honors\s+/,'').replace(/\s+Status$/,'').replace(/^.*Hyatt\s+/,'');
-      title='确认添加'; body=`<div class="report"><h3>${esc(f.product.name)}</h3><p>${esc(f.product.institution)} · ${esc(f.product.subtype||'会籍')}</p></div><p class="muted">这里只记录你当前持有的会籍 / 等级，不会自动创建奖励追踪或提醒。</p>${existing?`<div class="duplicate-warning"><strong>这个会籍计划已经在“我的产品”中</strong><p>${esc(existing.name)}</p><div class="actions two"><button class="btn secondary" data-action="add-view-existing" data-id="${existing.id}">查看已有等级</button>${same?'':`<button class="btn primary" data-action="add-membership-update" data-id="${existing.id}">更新为 ${esc(targetLevel)}</button>`}</div></div>`:''}`;
-      footer=existing?'':backNext('add-membership-submit',f.submitting?'保存中…':(f.product.subtype==='等级'?'添加此等级':'添加此会员'),f.submitting);
+      title='确认添加'; body=`<div class="report"><h3>${esc(f.product.name)}</h3><p>${esc(f.product.institution)} · ${esc(f.product.subtype||'会籍')}</p></div><p class="muted">这里只记录你当前持有的会籍 / 等级，不会自动创建奖励追踪或提醒。</p>`;
+      footer=backNext('add-membership-submit',f.submitting?'保存中…':(f.product.subtype==='等级'?'添加此等级':'添加此会员'),f.submitting);
     }else if(f.step==='success'){
       title='添加成功'; body=`<div class="success"><div class="success-icon">✓</div><h2>产品已加入 NextBonus</h2><p>产品和本次需要的追踪状态已经一起保存。</p><div class="actions two"><button class="btn primary" data-action="add-view-product">查看产品详情</button><button class="btn secondary" data-action="add-another">再添加一个产品</button></div></div>`;
     }
@@ -871,20 +865,32 @@
 
   function submitAddedProduct(){
     const f=state.addFlow; if(!f||f.submitting||f.committed) return;
+    const lifecycle=window.NextBonusProductLifecycleCore;
+    if(!lifecycle) throw new Error('Product Lifecycle Core unavailable');
     f.submitting=true;
-    const now=Date.now(), type=f.category==='信用卡'?'信用卡':f.category==='其他'?'会籍':'银行和券商账户';
-    const p={id:`p-local-${now}`,offerId:f.product.offerId||null,type,name:f.product.name,institution:f.product.institution,instance:f.category==='信用卡'?(f.last4?`•••• ${f.last4}`:'账户 1'):(f.nickname||f.product.subtype||'主账户'),art:f.product.art||'bank',cardImageLocal:f.product.cardImageLocal||null,opened:f.opened||'',anniversary:f.opened?formatAnniversary(f.opened):'—',annualFee:f.category==='信用卡'?(f.product.annualFee||'以产品规则为准'):'—',status:'正常',earning:f.product.earning||'—',addedAt:now};
-    state.products.push(p); f.savedProductId=p.id;
+    const type=f.category==='信用卡'?'信用卡':f.category==='其他'?'会籍':'银行和券商账户';
+    const p=lifecycle.createUserProduct(state,{
+      idPrefix:'p-local',offerId:f.product.offerId||null,type,name:f.product.name,institution:f.product.institution,
+      instance:f.category==='信用卡'?(f.last4?`•••• ${f.last4}`:'账户 1'):(f.nickname||f.product.subtype||'主账户'),
+      art:f.product.art||'bank',cardImageLocal:f.product.cardImageLocal||null,opened:f.opened||'',
+      annualFee:f.category==='信用卡'?(f.product.annualFee||'以产品规则为准'):'—',earning:f.product.earning||'—'
+    });
+    f.savedProductId=p.id;
     state.productSearch='';
     state.productSectionExpanded=state.productSectionExpanded||{};
     if(state.products.filter(x=>x.type===type).length>=8) state.productSectionExpanded[type]=true;
     if(f.track){
       const chosen=f.offer==='manual'?null:publicOfferChoices(f.product).find(x=>x.id===f.offer);
       const reward=f.offer==='manual'?f.reward:(chosen?.value||'开户 / 开卡奖励');
-      const due=f.offer==='manual'?f.tasks[0]?.due:'';
-      const a={id:`a-local-${now}`,productId:p.id,product:p.name,action:f.category==='信用卡'?'完成开卡奖励':'完成开户奖励条件',secondary:reward,time:due?`截止 ${shortDate(due)}`:'截止日期以所选奖励规则为准',dueDate:due||null,type:'bonus',summary:'这是你在添加产品时建立的奖励追踪。逐项完成条件即可。',key:reward,keySub:due?`最晚 ${shortDate(due)} 完成`:'按所选奖励规则',instruction:'完成以下条件',checklist:f.offer==='manual'?f.tasks.map(t=>({id:t.id,label:t.desc,done:false,dueDate:t.due})):[{id:'req1',label:'完成对应奖励条件',done:false}],primary:'我已完成',secondaryAction:null,completionKind:'completed'};
-      state.activeAttention.push(a);
-      if(chosen?.sourceOfferId && isSaved(chosen.sourceOfferId)) removeSaved(chosen.sourceOfferId);
+      const tasks=f.offer==='manual'?f.tasks.map(t=>({id:t.id,label:t.desc,dueDate:t.due})):null;
+      lifecycle.createBonusTracking(state,{
+        identity:p.id,productId:p.id,productName:p.name,productLabel:p.name,offerId:chosen?.sourceOfferId||f.product.offerId||null,
+        reward,requirement:chosen?.req||'完成对应奖励条件',tasks,anchorDate:f.opened||null,anchorKind:'user_product_opened_date',category:f.category,
+        dueDate:f.offer==='manual'?(f.tasks[0]?.due||null):null,
+        action:f.category==='信用卡'?'完成开卡奖励':'完成开户奖励条件',
+        summary:'这是你在添加产品时建立的奖励追踪。逐项完成条件即可。'
+      });
+      lifecycle.removeSavedOffer(state,chosen?.sourceOfferId||null);
     }
     f.committed=true; f.submitting=false; f.step='success';
   }
@@ -1028,14 +1034,10 @@
     if(action==='edit-change-target'){ state.editFlow.changeTargetId=el.dataset.id;state.editFlow.step='change-confirm';render();return; }
     if(action==='edit-change-confirm'){
       const f=state.editFlow,p=state.products.find(x=>x.id===f.productId),t=(catalog['信用卡']||[]).find(x=>x.id===f.changeTargetId); if(!p||!t||!f.changeDate)return;
-      const now=Date.now(), newId=`p-change-${now}`;
-      const ending=state.activeAttention.filter(a=>a.productId===p.id);
-      ending.forEach((a,i)=>state.attentionHistory.unshift({id:`h-stopped-${a.id}-${now}-${i}`,productId:p.id,product:attentionIdentity(a).name,productInstance:attentionIdentity(a).instance,action:a.action,time:a.time,dueDate:a.dueDate||null,result:'已结束',resultReason:'已更换产品',statusClass:'stopped',ended:formatLongDate(f.changeDate),correction:null,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:a}));
-      state.activeAttention=state.activeAttention.filter(a=>a.productId!==p.id);
-      const old={...p,status:'已更换产品',statusText:`已于 ${formatLongDate(f.changeDate)} 更换产品`,history:[...(p.history||[]),{date:f.changeDate,copy:`已更换为 ${t.name}`,targetProductId:newId}]};
-      state.products=state.products.filter(x=>x.id!==p.id); state.pastProducts.unshift(old);
-      const np={id:newId,offerId:t.offerId||null,type:'信用卡',name:t.name,institution:t.institution,instance:p.instance,cardImageLocal:t.cardImageLocal||null,opened:f.changeDate,anniversary:formatAnniversary(f.changeDate),annualFee:t.annualFee||'—',status:'正常',earning:t.earning||'—',addedAt:now,history:[{date:f.changeDate,copy:`由 ${p.name} 更换而来`,targetProductId:p.id}]};
-      state.products.push(np); state.currentProductId=np.id; state.productSearch=''; state.editFlow=null; render(); toast('产品已更换'); return;
+      const lifecycle=window.NextBonusProductLifecycleCore;
+      if(!lifecycle) throw new Error('Product Lifecycle Core unavailable');
+      const result=lifecycle.convertProduct(state,{sourceProductId:p.id,target:t,effectiveDate:f.changeDate,endedLabel:formatLongDate(f.changeDate),statusText:`已于 ${formatLongDate(f.changeDate)} 更换产品`});
+      state.currentProductId=result.product.id; state.productSearch=''; state.editFlow=null; render(); toast('产品已更换'); return;
     }
     if(action==='save-edit-product'){ const f=state.editFlow,p=state.products.find(x=>x.id===el.dataset.id); if(!f||!p)return; const ins=document.getElementById('edit-instance')?.value??f.instance; const status=document.getElementById('edit-status')?.value??f.status; const opened=document.getElementById('edit-opened')?.value??f.opened; p.instance=p.type==='信用卡'?(ins?`•••• ${ins}`:p.instance):(ins||p.instance);p.status=status;p.opened=opened;p.anniversary=opened?formatAnniversary(opened):'—'; if(f.pendingBonus&&!state.activeAttention.some(a=>a.productId===p.id&&a.type==='bonus')){ const now=Date.now(),due=f.pendingBonus.kind==='manual'?f.pendingBonus.tasks[0]?.due:null; state.activeAttention.push({id:`a-edit-${now}`,productId:p.id,product:p.name,action:'完成开卡奖励',secondary:f.pendingBonus.reward,time:due?`截止 ${shortDate(due)}`:'截止日期以所选奖励规则为准',dueDate:due,type:'bonus',summary:'这是你在编辑产品时补充建立的开卡奖励追踪。',key:f.pendingBonus.reward,keySub:due?`最晚 ${shortDate(due)} 完成`:'按所选奖励规则',instruction:'完成以下条件',checklist:f.pendingBonus.kind==='manual'?f.pendingBonus.tasks.map(t=>({id:t.id,label:t.desc,done:false,dueDate:t.due})):[{id:'req1',label:f.pendingBonus.req||'完成对应奖励条件',done:false}],primary:'我已完成',secondaryAction:null,completionKind:'completed'}); if(f.pendingBonus.sourceOfferId&&isSaved(f.pendingBonus.sourceOfferId))removeSaved(f.pendingBonus.sourceOfferId); } if(status==='已关闭'){ state.products=state.products.filter(x=>x.id!==p.id);p.statusText=`已于 ${formatLongDate(localDateISO())}关闭`;state.pastProducts.unshift(p);const stopped=state.activeAttention.filter(a=>a.productId===p.id);state.activeAttention=state.activeAttention.filter(a=>a.productId!==p.id);stopped.forEach(a=>state.attentionHistory.unshift({id:`h-stop-${a.id}-${Date.now()}`,productId:p.id,product:attentionIdentity(a).name,productInstance:attentionIdentity(a).instance,action:a.action,time:a.time,dueDate:a.dueDate,result:'已结束',resultReason:'产品已关闭',statusClass:'stopped',ended:historyDateLabel(),correction:null,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:a}));state.currentProductId=p.id;} state.editFlow=null;render();toast('已保存');return; }
     if(action==='remove-product-request'){ state.modal={type:'remove-product-confirm',productId:el.dataset.id};render();return; }
@@ -1055,9 +1057,7 @@
     if(action==='add-more-filter-close'){ state.addFlow.moreFilterOpen=false;render();return; }
     if(action==='add-clear-search'){ state.addFlow.search='';state.addFlow.reportStatus=null;render();return; }
     if(action==='add-report-missing'){ state.addFlow.reportStatus='loading';render();setTimeout(()=>{if(state.addFlow){state.addFlow.reportStatus='submitted';render();}},150);return; }
-    if(action==='add-product-select'){ const f=state.addFlow; const next=(catalog[f.category]||[]).find(x=>x.id===el.dataset.id); if(f.product?.id!==next?.id) resetAddAfterProduct(f); f.product=next; f.allowDuplicate=false; if(f.category==='其他') f.step='membership-confirm'; else f.step='info';render();return; }
-    if(action==='add-view-existing'){ const id=el.dataset.id;state.addFlow=null;state.currentProductId=id;state.route='product-detail';render();window.scrollTo(0,0);return; }
-    if(action==='add-override-duplicate'){ state.addFlow.allowDuplicate=true;render();return; }
+    if(action==='add-product-select'){ const f=state.addFlow; const next=(catalog[f.category]||[]).find(x=>x.id===el.dataset.id); if(f.product?.id!==next?.id) resetAddAfterProduct(f); f.product=next; if(f.category==='其他') f.step='membership-confirm'; else f.step='info';render();return; }
     if(action==='add-clear-opened'){ state.addFlow.opened='';render();return; }
     if(action==='add-to-track'){ state.addFlow.step='track';render();return; }
     if(action==='add-track-choice'){ state.addFlow.track=el.dataset.value==='yes';render();return; }
@@ -1069,9 +1069,8 @@
     if(action==='delete-task'){ state.addFlow.tasks=state.addFlow.tasks.filter(t=>t.id!==el.dataset.id);render();return; }
     if(action==='add-manual-submit'){ state.addFlow.track=true;state.addFlow.offer='manual';submitAddedProduct();render();return; }
     if(action==='add-membership-submit'){ submitAddedProduct();render();return; }
-    if(action==='add-membership-update'){ const f=state.addFlow,p=state.products.find(x=>x.id===el.dataset.id);if(p&&f?.product){p.name=f.product.name;p.instance=f.product.name.replace(/^.*Honors\s+/,'').replace(/\s+Status$/,'').replace(/^.*Hyatt\s+/,'');p.addedAt=Date.now();state.productSearch='';f.savedProductId=p.id;f.committed=true;f.step='success';render();}return; }
     if(action==='add-view-product'){ state.currentProductId=state.addFlow.savedProductId;state.addFlow=null;state.route='product-detail';render();return; }
-    if(action==='add-another'){ state.addFlow={step:'category',category:null,product:null,search:'',filter:'全部',moreFilterOpen:false,reportStatus:null,last4:'',nickname:'',opened:'',track:null,offer:null,reward:'',tasks:[{id:'t1',desc:'',due:''}],savedProductId:null,allowDuplicate:false,submitting:false,committed:false};render();return; }
+    if(action==='add-another'){ state.addFlow={step:'category',category:null,product:null,search:'',filter:'全部',moreFilterOpen:false,reportStatus:null,last4:'',nickname:'',opened:'',track:null,offer:null,reward:'',tasks:[{id:'t1',desc:'',due:''}],savedProductId:null,submitting:false,committed:false};render();return; }
   });
 
   document.addEventListener('input', e => {
@@ -1080,7 +1079,7 @@
     if(e.target.id==='add-search' && state.addFlow){ state.addFlow.search=e.target.value; render(); focusEnd('add-search'); }
     if(e.target.id==='add-last4' && state.addFlow){ state.addFlow.last4=e.target.value.replace(/\D/g,'').slice(0,4); }
     if(e.target.id==='add-nickname' && state.addFlow){ state.addFlow.nickname=e.target.value; }
-    if(e.target.id==='add-opened' && state.addFlow){ state.addFlow.opened=e.target.value; }
+    if(e.target.id==='add-opened' && state.addFlow){ state.addFlow.opened=e.target.value; const clear=e.target.closest('.date-field-row')?.querySelector('[data-action="add-clear-opened"]'); if(clear) clear.disabled=!e.target.value; }
     if(e.target.id==='add-reward' && state.addFlow){ state.addFlow.reward=e.target.value; updateManualSubmit(); }
     if(e.target.id==='edit-instance' && state.editFlow){ state.editFlow.instance=e.target.value; }
     if(e.target.id==='edit-opened' && state.editFlow){ state.editFlow.opened=e.target.value; }
