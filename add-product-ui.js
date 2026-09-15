@@ -15,7 +15,6 @@
   const ui = {
     query:'',
     filter:'全部',
-    reportStatus:null,
     selectedProduct:null,
     tracking:false,
     offerChoice:null
@@ -43,7 +42,6 @@
   function resetUi(){
     ui.query='';
     ui.filter='全部';
-    ui.reportStatus=null;
     ui.selectedProduct=null;
     ui.tracking=false;
     ui.offerChoice=null;
@@ -84,11 +82,8 @@
 
     const items=visibleEntries();
     const itemHtml=items.map(({category,product})=>`<button class="option-row" type="button" data-nb-add-product-id="${esc(product.id)}" data-nb-add-category="${esc(category)}">${product.cardImageLocal?`<span class="add-card-art"><img src="${esc(product.cardImageLocal)}" alt="${esc(product.name)}" /></span>`:`<div class="mini-art ${esc(product.art||'bank')}"></div>`}<span class="option-main"><span class="option-title">${esc(product.name)}</span><span class="option-sub">${esc(product.institution)}${product.subtype?` · ${esc(product.subtype)}`:''}</span></span><span>›</span></button>`).join('');
-    const missingHtml=ui.reportStatus==='submitted'
-      ? '<div class="submitted-note">已收到，谢谢</div>'
-      : `<button class="btn secondary" type="button" data-nb-report-missing ${ui.reportStatus==='loading'?'disabled':''}>${ui.reportStatus==='loading'?'提交中…':'反馈缺少产品'}</button>`;
 
-    body.innerHTML=`<div class="search-wrap"><span class="search-icon">⌕</span><input id="nb-add-search" class="search" value="${esc(ui.query)}" placeholder="搜索信用卡、银行账户、券商或会籍" />${ui.query?'<button class="search-clear" type="button" data-nb-clear-search>×</button>':''}</div><div class="filters nb-add-filter-row">${FILTERS.map(([label])=>`<button class="pill ${ui.filter===label?'active':''}" type="button" data-nb-add-filter="${esc(label)}">${esc(label)}</button>`).join('')}</div>${items.length?`<div class="option-list">${itemHtml}</div>`:`<div class="empty"><h3>没有找到这个产品</h3><p>换个关键词试试，或者告诉我们缺少哪个产品。</p>${missingHtml}</div>`}`;
+    body.innerHTML=`<div class="search-wrap"><span class="search-icon">⌕</span><input id="nb-add-search" class="search" value="${esc(ui.query)}" placeholder="搜索信用卡、银行账户、券商或会籍" />${ui.query?'<button class="search-clear" type="button" data-nb-clear-search>×</button>':''}</div><div class="filters nb-add-filter-row">${FILTERS.map(([label])=>`<button class="pill ${ui.filter===label?'active':''}" type="button" data-nb-add-filter="${esc(label)}">${esc(label)}</button>`).join('')}</div>${items.length?`<div class="option-list">${itemHtml}</div>`:`<div class="empty"><h3>没有找到这个产品</h3><p>换个关键词试试。</p></div>`}`;
     if(footer) footer.innerHTML='<button class="btn secondary" data-action="add-back">返回</button><span></span>';
     modal.classList.add('nb-add-product-ready');
   }
@@ -303,7 +298,6 @@
       event.preventDefault();
       event.stopImmediatePropagation();
       ui.filter=filter.dataset.nbAddFilter;
-      ui.reportStatus=null;
       const modal=root.querySelector('.add-product-modal');
       if(modal) renderUnifiedSelector(modal);
       return;
@@ -312,22 +306,8 @@
       event.preventDefault();
       event.stopImmediatePropagation();
       ui.query='';
-      ui.reportStatus=null;
       const modal=root.querySelector('.add-product-modal');
       if(modal) renderUnifiedSelector(modal);
-      return;
-    }
-    if(target.closest?.('[data-nb-report-missing]')){
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      ui.reportStatus='loading';
-      const modal=root.querySelector('.add-product-modal');
-      if(modal) renderUnifiedSelector(modal);
-      setTimeout(()=>{
-        ui.reportStatus='submitted';
-        const current=root.querySelector('.add-product-modal.nb-unified-selector');
-        if(current) renderUnifiedSelector(current);
-      },150);
       return;
     }
     if(target.closest?.('[data-nb-exit-continue]')){
@@ -371,7 +351,6 @@
   document.addEventListener('input',event=>{
     if(event.target.id!=='nb-add-search') return;
     ui.query=event.target.value;
-    ui.reportStatus=null;
     const modal=root.querySelector('.add-product-modal.nb-unified-selector');
     if(modal){
       renderUnifiedSelector(modal);
