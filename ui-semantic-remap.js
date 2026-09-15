@@ -71,12 +71,31 @@
     nodes.forEach(node => mark(node, mobileQuery.matches ? 'title3' : desktopDiscoverValueType(node), null));
   }
 
+  function syncMobileProductDetailHierarchy(root = document) {
+    const rules = [
+      ['.v4-product-detail-page .v4-pd-title-row h1', 'title2', null, 'title2', null],
+      ['.v4-product-detail-page .v4-pd-status>span', 'subheadline', 'secondary', 'subheadline', null],
+      ['.v4-product-detail-page .v4-pd-status>strong', 'subheadline', 'success', 'subheadline', null],
+      ['.v4-product-detail-page .v4-pd-facts small', 'caption1', 'secondary', 'caption1', 'secondary'],
+      ['.v4-product-detail-page .v4-pd-facts strong', 'body', null, 'body', null],
+      ['.v4-product-detail-page .v4-pd-earning b', 'callout', null, 'title3', null],
+      ['.v4-product-detail-page .v4-pd-earning small', 'caption1', 'secondary', 'caption1', 'secondary']
+    ];
+    rules.forEach(([selector, mobileType, mobileTone, desktopType, desktopTone]) => {
+      const type = mobileQuery.matches ? mobileType : desktopType;
+      const tone = mobileQuery.matches ? mobileTone : desktopTone;
+      root.querySelectorAll?.(selector).forEach(node => mark(node, type, tone));
+      if (root.matches?.(selector)) mark(root, type, tone);
+    });
+  }
+
   function sync(root = document) {
     RULES.forEach(([selector, type, tone]) => {
       root.querySelectorAll?.(selector).forEach(node => mark(node, type, tone));
       if (root.matches?.(selector)) mark(root, type, tone);
     });
     syncDiscoverValueHierarchy(root);
+    syncMobileProductDetailHierarchy(root);
   }
 
   let queued = false;
