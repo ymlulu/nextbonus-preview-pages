@@ -4,6 +4,8 @@
   const TYPE_ATTR = 'data-nb-type';
   const TONE_ATTR = 'data-nb-tone';
   const EXEMPT_ATTR = 'data-nb-typography-exempt';
+  const MOBILE_QUERY = '(max-width:780px)';
+  const mobileQuery = window.matchMedia(MOBILE_QUERY);
 
   // Page-level semantic corrections only. This file never defines font size,
   // weight, line-height or tracking; those stay owned by the fixed text styles.
@@ -55,11 +57,26 @@
     else node.removeAttribute(TONE_ATTR);
   }
 
+  function desktopDiscoverValueType(node) {
+    if (node.matches('.fallback-offer-card .primary-value')) return 'display-value-compact';
+    if (node.classList.contains('is-short')) return 'display-value';
+    return 'display-value-compact';
+  }
+
+  function syncDiscoverValueHierarchy(root = document) {
+    const selector = '.discover-page .nb-offer-card .nb-primary-value,.discover-page .fallback-offer-card .primary-value';
+    const nodes = [];
+    root.querySelectorAll?.(selector).forEach(node => nodes.push(node));
+    if (root.matches?.(selector)) nodes.push(root);
+    nodes.forEach(node => mark(node, mobileQuery.matches ? 'title2' : desktopDiscoverValueType(node), null));
+  }
+
   function sync(root = document) {
     RULES.forEach(([selector, type, tone]) => {
       root.querySelectorAll?.(selector).forEach(node => mark(node, type, tone));
       if (root.matches?.(selector)) mark(root, type, tone);
     });
+    syncDiscoverValueHierarchy(root);
   }
 
   let queued = false;
@@ -79,6 +96,7 @@
   if (app) new MutationObserver(schedule).observe(app, { childList:true, subtree:true });
   const handoff = document.getElementById('nb-application-handoff-root');
   if (handoff) new MutationObserver(schedule).observe(handoff, { childList:true, subtree:true });
+  mobileQuery.addEventListener?.('change', schedule);
 
   window.NextBonusSemanticTypography = Object.freeze({ sync, rules: RULES.map(rule => [...rule]) });
 })();
