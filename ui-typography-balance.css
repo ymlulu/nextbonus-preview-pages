@@ -1,7 +1,8 @@
-/* NextBonus V1 Apple-balanced hierarchy
-   Final visual tuning layer: light, but never weak. Keep the Apple text-style
-   scale from ui-typography.css while restoring readable emphasis where context
-   matters. No layout or business logic lives here. */
+/* NextBonus V1 fixed semantic typography
+   Non-marketing App UI uses a closed text-style system: selecting a type style
+   fixes size, line-height, weight, style and tracking together. Components may
+   still choose semantic tone/state, but may not tune weight locally. Marketing
+   artwork/posters remain exempt through data-nb-typography-exempt="marketing". */
 
 :root{
   --nb-label-secondary-strong:rgba(60,60,67,.72);
@@ -13,22 +14,55 @@
   --nb-label-tertiary-strong:rgba(235,235,245,.42);
 }
 
-/* App shell: Apple sidebars are quiet, but labels still read as controls. */
-.nav-item:not(.login-item)[data-nb-type]{
-  font-weight:500!important;
-  color:var(--nb-label-primary)!important;
-}
-.nav-item:not(.login-item).active[data-nb-type]{
-  font-weight:600!important;
-  color:var(--nb-system-blue)!important;
-}
+/* Fixed text-style weights. The #app scope intentionally wins over old
+   component-level declarations and the earlier temporary emphasis layer. */
+#app [data-nb-type="large-title"],
+#nb-application-handoff-root [data-nb-type="large-title"]{font-weight:600!important}
+#app [data-nb-type="title1"],
+#nb-application-handoff-root [data-nb-type="title1"]{font-weight:500!important}
+#app [data-nb-type="title2"],
+#nb-application-handoff-root [data-nb-type="title2"]{font-weight:600!important}
+#app [data-nb-type="title3"],
+#nb-application-handoff-root [data-nb-type="title3"]{font-weight:600!important}
+#app [data-nb-type="headline"],
+#nb-application-handoff-root [data-nb-type="headline"]{font-weight:600!important}
+#app [data-nb-type="body"],
+#nb-application-handoff-root [data-nb-type="body"]{font-weight:400!important}
+#app [data-nb-type="callout"],
+#nb-application-handoff-root [data-nb-type="callout"]{font-weight:500!important}
+#app [data-nb-type="subheadline"],
+#nb-application-handoff-root [data-nb-type="subheadline"]{font-weight:400!important}
+#app [data-nb-type="footnote"],
+#nb-application-handoff-root [data-nb-type="footnote"]{font-weight:400!important}
+#app [data-nb-type="caption1"],
+#nb-application-handoff-root [data-nb-type="caption1"]{font-weight:400!important}
+#app [data-nb-type="caption2"],
+#nb-application-handoff-root [data-nb-type="caption2"]{font-weight:500!important}
+#app [data-nb-type="display-value"],
+#app [data-nb-type="display-value-compact"],
+#app [data-nb-type="result-value"],
+#nb-application-handoff-root [data-nb-type="display-value"],
+#nb-application-handoff-root [data-nb-type="display-value-compact"],
+#nb-application-handoff-root [data-nb-type="result-value"]{font-weight:700!important}
 
-/* Page titles stay size-led, but gain enough weight to anchor the canvas. */
-[data-nb-emphasis="true"][data-nb-type="title1"]{font-weight:500!important}
-[data-nb-emphasis="true"][data-nb-type="title2"]{font-weight:600!important}
-[data-nb-emphasis="true"][data-nb-type="title3"]{font-weight:500!important}
+/* State/tone may change color, never type weight. */
+.nav-item:not(.login-item)[data-nb-type]{color:var(--nb-label-primary)!important}
+.nav-item:not(.login-item).active[data-nb-type]{color:var(--nb-system-blue)!important}
 
-/* Product/card names are scan targets and should never look washed out. */
+.discover-page .pill[data-nb-type],
+.add-product-modal .pill[data-nb-type],
+.add-more-filter button[data-nb-type],
+.tab[data-nb-type],
+.mock-tabs .tab[data-nb-type],
+.mock-filter-select[data-nb-type],
+.mock-status-select[data-nb-type]{color:var(--nb-label-secondary-strong)!important}
+.discover-page .pill.active[data-nb-type],
+.add-product-modal .pill.active[data-nb-type],
+.add-more-filter button.active[data-nb-type],
+.tab.active[data-nb-type],
+.mock-tabs .tab.active[data-nb-type]{color:var(--nb-system-blue)!important}
+
+/* Product/card names are scan targets; metadata stays subordinate. */
 .nb-offer-card .nb-offer-name[data-nb-type],
 .fallback-offer-card .offer-name[data-nb-type],
 .nb-watchlist-copy strong[data-nb-type],
@@ -39,57 +73,19 @@
 .v4-pd-title-row h1[data-nb-type],
 .pd-name[data-nb-type],
 .overview-name[data-nb-type],
-.nb-account-row strong[data-nb-type]{
-  font-weight:600!important;
-  color:var(--nb-label-primary)!important;
-}
+.nb-account-row strong[data-nb-type]{color:var(--nb-label-primary)!important}
 
-/* Section labels should be visible without becoming dashboard-style bold. */
-.nb-watchlist-section-head h2[data-nb-type],
-.nb-watchlist-history-head strong[data-nb-type],
-.v4-section-head h2[data-nb-type],
-.mock-section-title[data-nb-type],
-.v4-pd-section .v4-section-head h2[data-nb-type],
-.nb-account-section .v4-section-head h2[data-nb-type],
-.nb-account-notice .v4-section-head h2[data-nb-type]{font-weight:600!important}
-
-/* Filters and tabs: readable controls, still subordinate to content. */
-.discover-page .pill[data-nb-type],
-.add-product-modal .pill[data-nb-type],
-.add-more-filter button[data-nb-type],
-.tab[data-nb-type],
-.mock-tabs .tab[data-nb-type],
-.mock-filter-select[data-nb-type],
-.mock-status-select[data-nb-type]{
-  font-weight:500!important;
-  color:var(--nb-label-secondary-strong)!important;
-}
-.discover-page .pill.active[data-nb-type],
-.add-product-modal .pill.active[data-nb-type],
-.add-more-filter button.active[data-nb-type],
-.tab.active[data-nb-type],
-.mock-tabs .tab.active[data-nb-type]{
-  font-weight:600!important;
-  color:var(--nb-system-blue)!important;
-}
-
-/* Attention: action is focal, product remains clearly readable rather than faint. */
+/* Attention: action is focal; product context remains clearly readable. */
 .att-product-copy strong[data-nb-type],
-.att-product[data-nb-type]{
-  font-weight:500!important;
-  color:var(--nb-label-secondary-strong)!important;
-}
+.att-product[data-nb-type]{color:var(--nb-label-secondary-strong)!important}
 .att-action-cell strong[data-nb-type],
-.att-action[data-nb-type]{
-  font-weight:600!important;
-  color:var(--nb-label-primary)!important;
-}
+.att-action[data-nb-type]{color:var(--nb-label-primary)!important}
 .att-product-copy small[data-nb-type],
 .att-action-cell small[data-nb-type],
 .att-time[data-nb-type],
 .history-status[data-nb-type]{color:var(--nb-label-secondary-strong)!important}
 
-/* Supporting text: keep Apple hierarchy, but reserve tertiary for truly optional copy. */
+/* Supporting text: reserve tertiary for genuinely optional information. */
 .nb-watchlist-header p[data-nb-type],
 .nb-watchlist-copy small[data-nb-type],
 .v4-products-head>div>div[data-nb-type],
@@ -105,8 +101,7 @@
 .nb-account-row span[data-nb-type],
 .nb-account-notice p[data-nb-type]{color:var(--nb-label-secondary-strong)!important}
 
-/* Assessment / Offer Detail: readability first. The prior pass pushed too much
-   decision-support copy into tertiary, which made the panel feel disabled. */
+/* Assessment / Offer Detail: decision support must remain readable. */
 .v4-decision-copy[data-nb-type],
 .decision-brand-copy[data-nb-type],
 .decision-sub[data-nb-type],
@@ -115,25 +110,14 @@
 .result-meta[data-nb-type],
 .v4-metric .metric-label[data-nb-type],
 .mock-result-block .metric-label[data-nb-type],
-.metric-label[data-nb-type]{
-  color:var(--nb-label-secondary-strong)!important;
-}
-.v4-metric .metric-value[data-nb-type],
-.mock-result-block .metric-value[data-nb-type],
-.metric-value[data-nb-type]{
-  font-weight:600!important;
-  color:var(--nb-label-primary)!important;
-}
+.metric-label[data-nb-type],
 .v4-metric .metric-sub[data-nb-type],
 .result-disclaimer[data-nb-type],
 .v4-result-note[data-nb-type],
 .v4-security-line[data-nb-type],
 .v4-trust-row b[data-nb-type],
 .v4-trust-row small[data-nb-type],
-.detail-trust-row span[data-nb-type]{
-  color:var(--nb-label-secondary-strong)!important;
-}
-
+.detail-trust-row span[data-nb-type],
 .assessment-help[data-nb-type],
 .assessment-footnote[data-nb-type],
 .v5-short-summary[data-nb-type],
@@ -145,11 +129,9 @@
 .nb-oh-empty[data-nb-type],
 .nb-oh-axis[data-nb-type]{color:var(--nb-label-secondary-strong)!important}
 
-.assessment-choice[data-nb-type],
-.assessment-subq-title[data-nb-type],
-.assessment-result-reasons h3[data-nb-type],
-.canonical-modal-body h2[data-nb-type],
-.canonical-modal-body h3[data-nb-type]{font-weight:600!important}
+.v4-metric .metric-value[data-nb-type],
+.mock-result-block .metric-value[data-nb-type],
+.metric-value[data-nb-type]{color:var(--nb-label-primary)!important}
 
 /* Tiny metadata can stay light, but not disappear. */
 .nb-offer-card .nb-provider-text[data-nb-type],
