@@ -1,5 +1,5 @@
 /* NextBonus V1 Typography Foundation
-   Apple HIG semantic text styles are the single source of truth for App UI.
+   Apple HIG semantic text styles and semantic colors are the source of truth for App UI.
    Desktop follows macOS defaults; <=780px follows iOS/iPadOS default Large text styles.
    Marketing artwork/posters intentionally stay outside this system. */
 
@@ -22,10 +22,22 @@
   --nb-display-value-compact-size:20px; --nb-display-value-compact-leading:24px;
   --nb-result-value-size:30px; --nb-result-value-leading:34px;
 
-  --nb-label-primary:var(--text,#0b173a);
-  --nb-label-secondary:#6e6e73;
-  --nb-label-tertiary:#86868b;
-  --nb-label-link:var(--blue,#0877ff);
+  /* Apple semantic label hierarchy for the current light UI.
+     Label prominence is independent from text style: a Caption can be primary,
+     and a Headline can be secondary. */
+  --nb-label-primary:#000000;
+  --nb-label-secondary:rgba(60,60,67,.60);
+  --nb-label-tertiary:rgba(60,60,67,.30);
+  --nb-label-quaternary:rgba(60,60,67,.18);
+  --nb-label-placeholder:rgba(60,60,67,.30);
+
+  /* Apple-style semantic system colors for current light UI. */
+  --nb-system-blue:#0088ff;
+  --nb-system-green:#34c759;
+  --nb-system-orange:#ff8d28;
+  --nb-system-red:#ff383c;
+  --nb-system-gray:#8e8e93;
+  --nb-label-link:var(--nb-system-blue);
 
   --nb-space-1:4px;
   --nb-space-2:8px;
@@ -36,6 +48,21 @@
   --nb-primary-canvas:1080px;
 }
 
+/* Reserved adaptive palette. It only activates when NextBonus explicitly supports
+   a dark app surface; OS dark preference alone does not flip text onto a light V1 canvas. */
+:root[data-nb-appearance="dark"]{
+  --nb-label-primary:#ffffff;
+  --nb-label-secondary:rgba(235,235,245,.60);
+  --nb-label-tertiary:rgba(235,235,245,.30);
+  --nb-label-quaternary:rgba(235,235,245,.18);
+  --nb-label-placeholder:rgba(235,235,245,.30);
+  --nb-system-blue:#0091ff;
+  --nb-system-green:#30d158;
+  --nb-system-orange:#ff9230;
+  --nb-system-red:#ff4245;
+  --nb-system-gray:#98989d;
+}
+
 html,body,button,input,select,textarea{font-family:var(--nb-font-system)}
 body{
   font-size:var(--nb-body-size)!important;
@@ -43,6 +70,7 @@ body{
   font-weight:var(--nb-body-weight)!important;
   font-style:normal!important;
   letter-spacing:normal!important;
+  color:var(--nb-label-primary)!important;
 }
 
 [data-nb-type]{
@@ -50,6 +78,7 @@ body{
   font-style:normal!important;
   letter-spacing:normal!important;
 }
+[data-nb-type]:not([data-nb-tone]){color:var(--nb-label-primary)!important}
 [data-nb-type="large-title"]{font-size:var(--nb-large-title-size)!important;line-height:var(--nb-large-title-leading)!important;font-weight:var(--nb-large-title-weight)!important}
 [data-nb-type="title1"]{font-size:var(--nb-title1-size)!important;line-height:var(--nb-title1-leading)!important;font-weight:var(--nb-title1-weight)!important}
 [data-nb-type="title2"]{font-size:var(--nb-title2-size)!important;line-height:var(--nb-title2-leading)!important;font-weight:var(--nb-title2-weight)!important}
@@ -80,7 +109,13 @@ body{
 [data-nb-tone="primary"]{color:var(--nb-label-primary)!important}
 [data-nb-tone="secondary"]{color:var(--nb-label-secondary)!important}
 [data-nb-tone="tertiary"]{color:var(--nb-label-tertiary)!important}
-[data-nb-tone="link"]{color:var(--nb-label-link)!important}
+[data-nb-tone="quaternary"]{color:var(--nb-label-quaternary)!important}
+[data-nb-tone="link"],[data-nb-tone="info"]{color:var(--nb-system-blue)!important}
+[data-nb-tone="success"]{color:var(--nb-system-green)!important}
+[data-nb-tone="warning"]{color:var(--nb-system-orange)!important}
+[data-nb-tone="critical"]{color:var(--nb-system-red)!important}
+[data-nb-type][aria-disabled="true"],button[data-nb-type]:disabled{color:var(--nb-label-tertiary)!important}
+input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!important;opacity:1}
 
 .discover-page,
 .wishlist-page.nb-watchlist-page,
