@@ -64,6 +64,11 @@
     });
   }
 
+  function selectorRenderKey(items){
+    const catalogKey=(items||[]).map(({category,product})=>`${category}:${product.id}`).join('|');
+    return JSON.stringify([ui.query,ui.filter,catalogKey]);
+  }
+
   function setProgressLabels(modal){
     const labels=['选择产品','基本信息','奖励','完成'];
     modal.querySelectorAll('.add-progress-labels b').forEach((node,index)=>{
@@ -81,10 +86,23 @@
     if(!body) return;
 
     const items=visibleEntries();
+    const renderKey=selectorRenderKey(items);
+    const alreadyRendered=modal.dataset.nbSelectorRenderKey===renderKey &&
+      !!body.querySelector('#nb-add-search') &&
+      !!body.querySelector('.nb-add-filter-row');
+    if(alreadyRendered){
+      modal.classList.add('nb-add-product-ready');
+      return;
+    }
+
     const itemHtml=items.map(({category,product})=>`<button class="option-row" type="button" data-nb-add-product-id="${esc(product.id)}" data-nb-add-category="${esc(category)}">${product.cardImageLocal?`<span class="add-card-art"><img src="${esc(product.cardImageLocal)}" alt="${esc(product.name)}" /></span>`:`<div class="mini-art ${esc(product.art||'bank')}"></div>`}<span class="option-main"><span class="option-title">${esc(product.name)}</span><span class="option-sub">${esc(product.institution)}${product.subtype?` · ${esc(product.subtype)}`:''}</span></span><span>›</span></button>`).join('');
 
     body.innerHTML=`<div class="search-wrap"><span class="search-icon">⌕</span><input id="nb-add-search" class="search" value="${esc(ui.query)}" placeholder="搜索信用卡、银行账户、券商或会籍" />${ui.query?'<button class="search-clear" type="button" data-nb-clear-search>×</button>':''}</div><div class="filters nb-add-filter-row">${FILTERS.map(([label])=>`<button class="pill ${ui.filter===label?'active':''}" type="button" data-nb-add-filter="${esc(label)}">${esc(label)}</button>`).join('')}</div>${items.length?`<div class="option-list">${itemHtml}</div>`:`<div class="empty"><h3>没有找到这个产品</h3><p>换个关键词试试。</p></div>`}`;
-    if(footer) footer.innerHTML='<button class="btn secondary" data-action="add-back">返回</button><span></span>';
+    if(footer && footer.dataset.nbSelectorFooter!=='1'){
+      footer.innerHTML='<button class="btn secondary" data-action="add-back">返回</button><span></span>';
+      footer.dataset.nbSelectorFooter='1';
+    }
+    modal.dataset.nbSelectorRenderKey=renderKey;
     modal.classList.add('nb-add-product-ready');
   }
 
@@ -365,8 +383,21 @@
 
   let queued=false;
   let observer=null;
+  function mutationTouchesAddProduct(mutations){
+    const touchesNode=node=>{
+      if(!(node instanceof Element)) return false;
+      return node.matches?.('.add-product-modal') || !!node.querySelector?.('.add-product-modal');
+    };
+    return mutations.some(mutation=>
+      mutation.target instanceof Element && !!mutation.target.closest?.('.add-product-modal') ||
+      [...mutation.addedNodes].some(touchesNode) ||
+      [...mutation.removedNodes].some(touchesNode)
+    );
+  }
   const startObserving=()=>{
-    if(!observer) observer=new MutationObserver(schedule);
+    if(!observer) observer=new MutationObserver(mutations=>{
+      if(mutationTouchesAddProduct(mutations)) schedule();
+    });
     observer.observe(root,{childList:true,subtree:true});
   };
   const schedule=()=>{
