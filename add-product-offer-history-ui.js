@@ -56,16 +56,29 @@
     if(validContainer(current,context,offerId)&&current.dataset.nbReviewedLoadToken===token)renderChoices(current,context,offerId,result);
   }
   function enhance(){const modal=app.querySelector('.add-product-modal');if(modal&&isAddOfferStage(modal)){const offerId=offerIdFromAdd(modal);if(offerId)enhanceContainer(modal,'add',offerId);}const edit=app.querySelector('.edit-product-page');if(edit&&isEditOfferStage(edit)){const offerId=offerIdFromEdit(edit);if(offerId)enhanceContainer(edit,'edit',offerId);}}
+  let queued=false;
+  function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;enhance();});}
   function clearAfterSuccessfulAction(action,offerId){setTimeout(()=>{if(action==='add-offer-next'){const modal=app.querySelector('.add-product-modal');if(modal?.querySelector('[data-action="add-view-product"]'))history.clear(offerId);return;}if(action==='edit-bonus-use'){const page=app.querySelector('.edit-product-page');if(page&&!isEditOfferStage(page))history.clear(offerId);}},0);}
+
+  // Selection interception is the only capture-phase DOM bridge left here.
+  // It maps reviewed rows to the canonical app action, then schedules one
+  // deterministic enhancement after app.js finishes its synchronous render.
   document.addEventListener('click',event=>{
-    const current=event.target.closest?.('[data-nb-current-offer]');if(current){event.preventDefault();event.stopImmediatePropagation();const offerId=current.dataset.nbCurrentOffer,context=current.dataset.nbReviewedContext||'add';history.clear(offerId);trigger(actionFor(context),{id:`current-${offerId}`});return;}
-    const reviewed=event.target.closest?.('[data-nb-reviewed-offer]');if(reviewed){event.preventDefault();event.stopImmediatePropagation();const offerId=reviewed.dataset.nbReviewedSource,context=reviewed.dataset.nbReviewedContext||'add';const choice=history.activate(offerId,reviewed.dataset.nbReviewedOffer);if(choice)trigger(actionFor(context),{id:`current-${offerId}`});return;}
-    const manual=event.target.closest?.('[data-nb-reviewed-manual]');if(manual){event.preventDefault();event.stopImmediatePropagation();const container=manual.closest('.add-product-modal,.edit-product-page'),offerId=container?.dataset.nbReviewedOfferId,context=manual.dataset.nbReviewedContext||'add';if(offerId)history.clear(offerId);trigger(actionFor(context),{id:'manual'});return;}
-    const action=event.target.closest?.('[data-action]');if(!action)return;const add=action.closest('.add-product-modal'),edit=action.closest('.edit-product-page'),offerId=add?.dataset.nbReviewedOfferId||edit?.dataset.nbReviewedOfferId;
-    if(action.dataset.action==='add-back'&&offerId){history.clear(offerId);return;}if(action.dataset.action==='edit-back'&&offerId){history.clear(offerId);return;}if(['add-close','add-discard','add-another','open-add-product','edit-exit'].includes(action.dataset.action)){history.clear();return;}if(['add-offer-next','edit-bonus-use'].includes(action.dataset.action)&&offerId&&history.current(offerId))clearAfterSuccessfulAction(action.dataset.action,offerId);
+    const current=event.target.closest?.('[data-nb-current-offer]');if(current){event.preventDefault();event.stopImmediatePropagation();const offerId=current.dataset.nbCurrentOffer,context=current.dataset.nbReviewedContext||'add';history.clear(offerId);trigger(actionFor(context),{id:`current-${offerId}`});schedule();return;}
+    const reviewed=event.target.closest?.('[data-nb-reviewed-offer]');if(reviewed){event.preventDefault();event.stopImmediatePropagation();const offerId=reviewed.dataset.nbReviewedSource,context=reviewed.dataset.nbReviewedContext||'add';const choice=history.activate(offerId,reviewed.dataset.nbReviewedOffer);if(choice){trigger(actionFor(context),{id:`current-${offerId}`});schedule();}return;}
+    const manual=event.target.closest?.('[data-nb-reviewed-manual]');if(manual){event.preventDefault();event.stopImmediatePropagation();const container=manual.closest('.add-product-modal,.edit-product-page'),offerId=container?.dataset.nbReviewedOfferId,context=manual.dataset.nbReviewedContext||'add';if(offerId)history.clear(offerId);trigger(actionFor(context),{id:'manual'});schedule();return;}
   },true);
-  let queued=false,observer=null;
-  const startObserving=()=>{if(!observer)observer=new MutationObserver(schedule);observer.observe(app,{childList:true,subtree:true});};
-  const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;observer?.disconnect();enhance();startObserving();});};
-  startObserving();schedule();
+
+  // No MutationObserver: only known state transitions can request an enhancement.
+  document.addEventListener('click',event=>{
+    const action=event.target.closest?.('[data-action]');if(!action)return;
+    const add=action.closest('.add-product-modal'),edit=action.closest('.edit-product-page'),offerId=add?.dataset.nbReviewedOfferId||edit?.dataset.nbReviewedOfferId;
+    if(action.dataset.action==='add-back'&&offerId){history.clear(offerId);schedule();return;}
+    if(action.dataset.action==='edit-back'&&offerId){history.clear(offerId);schedule();return;}
+    if(['add-close','add-discard','add-another','open-add-product','edit-exit'].includes(action.dataset.action)){history.clear();return;}
+    if(['add-offer-next','edit-bonus-use'].includes(action.dataset.action)&&offerId&&history.current(offerId))clearAfterSuccessfulAction(action.dataset.action,offerId);
+    if(['add-track-next','add-offer-choice','edit-bonus-open','edit-bonus-choice','edit-back'].includes(action.dataset.action))schedule();
+  });
+
+  schedule();
 })(window);

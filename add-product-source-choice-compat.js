@@ -69,7 +69,7 @@
     const title=current.querySelector('.option-title');
     const sub=current.querySelector('.option-sub');
     if(title&&title.textContent!==offer.primaryValue) title.textContent=offer.primaryValue||'当前奖励';
-    if(sub&&sub.textContent!==offer.primaryRequirement) sub.textContent=offer.primaryRequirement||'';
+    if(sub&&sub.textContent!==offer.primaryRequirement&&!sub.textContent.startsWith('当前公开 · ')) sub.textContent=offer.primaryRequirement||'';
 
     modal.querySelector('.nb-current-offer-note')?.remove();
   }
@@ -89,6 +89,7 @@
       const context=current.dataset.nbReviewedContext||'add';
       window.NextBonusReviewedOfferHistory?.clear?.(offerId);
       triggerAppAction(context==='edit'?'edit-bonus-choice':'add-offer-choice',{id:`current-${offerId}`});
+      schedule();
       return;
     }
 
@@ -100,6 +101,7 @@
       const context=reviewed.dataset.nbReviewedContext||'add';
       const choice=window.NextBonusReviewedOfferHistory?.activate?.(offerId,reviewed.dataset.nbReviewedOffer);
       if(choice) triggerAppAction(context==='edit'?'edit-bonus-choice':'add-offer-choice',{id:`current-${offerId}`});
+      schedule();
       return;
     }
 
@@ -112,6 +114,7 @@
       const context=manual.dataset.nbReviewedContext||'add';
       if(offerId) window.NextBonusReviewedOfferHistory?.clear?.(offerId);
       triggerAppAction(context==='edit'?'edit-bonus-choice':'add-offer-choice',{id:'manual'});
+      schedule();
       return;
     }
 
@@ -120,9 +123,10 @@
     const action=event.target.closest?.('[data-action]');
     if(action?.dataset.action==='add-product-select') selectedProductId=action.dataset.id||selectedProductId;
     if(['add-another','add-close','add-discard'].includes(action?.dataset.action)) selectedProductId=null;
-    schedule();
+    if(['add-product-select','add-track-next','add-offer-choice','add-back','open-add-product'].includes(action?.dataset.action)) schedule();
   },true);
 
-  new MutationObserver(schedule).observe(root,{childList:true,subtree:true});
+  // Compatibility sync is event-driven. A continuous observer here used to
+  // compete with reviewed Offer decoration and could make the Offer list churn.
   schedule();
 })();
