@@ -58,6 +58,15 @@
   }
 
   document.addEventListener('click',event=>{
+    const infoContinue=event.target.closest?.('[data-action="add-to-track"]');
+    if(infoContinue && root.contains(infoContinue) && infoContinue.closest('.add-product-modal')){
+      if(infoContinue.disabled) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      triggerAppAction('add-to-track');
+      return;
+    }
+
     const button=event.target.closest?.('[data-action="add-track-next"],[data-action="add-offer-next"]');
     if(!button || !root.contains(button) || isSubmitting(button)) return;
 
