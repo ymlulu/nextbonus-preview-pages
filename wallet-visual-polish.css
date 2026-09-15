@@ -118,4 +118,43 @@
     right:7px;
     bottom:6px;
   }
+
+  /* Wallet's Attention block is only a preview. On mobile, lead with the task,
+     then keep product context + deadline compact underneath. */
+  .v4-products-page .v4-pp-attention-row{
+    grid-template-columns:minmax(0,1fr) auto 18px;
+    grid-template-areas:
+      "action action chev"
+      "product time chev";
+    gap:4px 8px;
+    align-items:start;
+    padding:9px 2px;
+  }
+
+  .v4-products-page .v4-pp-action{
+    grid-area:action;
+    min-width:0;
+    white-space:normal;
+    overflow:visible;
+    text-overflow:clip;
+  }
+
+  .v4-products-page .v4-pp-product{
+    grid-area:product;
+    min-width:0;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .v4-products-page .v4-pp-time{
+    grid-area:time;
+    align-self:start;
+    justify-self:end;
+  }
+
+  .v4-products-page .v4-pp-chevron{
+    grid-area:chev;
+    align-self:center;
+  }
 }

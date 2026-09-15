@@ -64,4 +64,26 @@
   .wishlist-page.nb-watchlist-page .nb-watchlist-list,
   .wishlist-page.nb-watchlist-page .nb-watchlist-history-body{border-radius:14px}
   .wishlist-page.nb-watchlist-page .nb-watchlist-item{padding:14px 14px}
+
+  /* Inside the 已关注 section, "已关注" is already implied by the section
+     heading. Use that scarce trailing space for the Offer value instead. */
+  .wishlist-page.nb-watchlist-page .nb-watchlist-section.saved .nb-watchlist-item{
+    grid-template-columns:48px minmax(0,1fr) auto 16px;
+  }
+
+  .wishlist-page.nb-watchlist-page .nb-watchlist-section.saved .nb-watchlist-value{
+    display:block;
+    grid-column:3;
+    max-width:126px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .wishlist-page.nb-watchlist-page .nb-watchlist-section.saved .nb-watchlist-status{
+    display:none;
+  }
+
+  .wishlist-page.nb-watchlist-page .nb-watchlist-section.saved .nb-watchlist-chevron{
+    grid-column:4;
+  }
 }
