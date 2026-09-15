@@ -1,0 +1,114 @@
+/* Wallet / Product Detail attention-dot presentation.
+   Product-level dot = there is a new Attention the user has not viewed in this product.
+   Detail-level dot = the concrete Attention is still active.
+   Typography is assigned through ui-semantic-remap.js and the centralized
+   typography stylesheets; this file only owns layout / dot presentation. */
+
+.nb-attention-dot{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:#ff3b30;
+  box-shadow:0 0 0 2px rgba(255,255,255,.92);
+  flex:0 0 auto;
+}
+
+.v4-owned-product-card{
+  position:relative;
+}
+
+.v4-owned-product-card > .nb-wallet-attention-dot{
+  position:absolute;
+  top:9px;
+  right:9px;
+  z-index:5;
+  width:9px;
+  height:9px;
+}
+
+.v4-owned-product-card.credit-tile > .nb-wallet-attention-dot{
+  top:7px;
+  right:7px;
+}
+
+.v4-pd-facts strong > .nb-detail-attention-dot,
+.v4-benefit-row strong > .nb-detail-attention-dot{
+  margin-left:7px;
+  vertical-align:middle;
+  transform:translateY(-1px);
+}
+
+.nb-attention-reward-block{
+  margin-top:18px;
+}
+
+.nb-attention-reward-list{
+  border-top:1px solid rgba(60,60,67,.08);
+}
+
+.nb-attention-reward-row,
+.nb-detail-attention-strip{
+  width:100%;
+  border:0;
+  background:transparent;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto auto;
+  align-items:center;
+  gap:10px;
+  padding:12px 0;
+  text-align:left;
+  cursor:pointer;
+  border-bottom:1px solid rgba(60,60,67,.08);
+}
+
+.nb-attention-reward-row .nb-detail-attention-dot,
+.nb-detail-attention-strip .nb-detail-attention-dot{
+  width:8px;
+  height:8px;
+  box-shadow:none;
+}
+
+.nb-inline-attention-copy{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.nb-inline-attention-copy small{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.nb-inline-attention-time{
+  white-space:nowrap;
+}
+
+.nb-detail-attention-strips{
+  margin:4px 0 18px;
+  border-top:1px solid rgba(60,60,67,.08);
+}
+
+@media(max-width:780px){
+  .v4-owned-product-card > .nb-wallet-attention-dot{
+    top:7px;
+    right:7px;
+  }
+
+  .nb-attention-reward-row,
+  .nb-detail-attention-strip{
+    grid-template-columns:auto minmax(0,1fr) auto;
+    grid-template-areas:
+      "dot copy chev"
+      "dot time chev";
+    gap:3px 8px;
+  }
+
+  .nb-attention-reward-row .nb-detail-attention-dot,
+  .nb-detail-attention-strip .nb-detail-attention-dot{grid-area:dot;align-self:start;margin-top:5px}
+  .nb-inline-attention-copy{grid-area:copy}
+  .nb-inline-attention-time{grid-area:time}
+  .nb-inline-attention-chevron{grid-area:chev;align-self:center}
+}

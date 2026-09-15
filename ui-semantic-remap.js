@@ -25,6 +25,11 @@
     ['.v4-pp-time', 'caption1', 'secondary'],
     ['.credit-products .owned-product-meta small', 'caption1', 'on-accent'],
 
+    /* Product Detail attention rows reuse centralized typography. */
+    ['.nb-inline-attention-copy strong', 'headline', null],
+    ['.nb-inline-attention-copy small,.nb-inline-attention-time', 'caption1', 'secondary'],
+    ['.nb-inline-attention-chevron', 'title3', 'secondary'],
+
     /* Attention page: keep product/action hierarchy explicit and time subordinate. */
     ['.att-product-copy strong,.att-product', 'callout', 'secondary'],
     ['.att-action-cell strong,.att-action', 'headline', null],
