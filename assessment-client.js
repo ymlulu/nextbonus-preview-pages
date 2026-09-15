@@ -61,6 +61,9 @@
     getQuestionnaire(productId,locale='zh-CN'){
       return call('getProductAssessment',{product_id:productId,locale});
     },
+    getOfferHistory(productId,evaluationDate){
+      return call('getOfferHistory',{product_id:productId,evaluation_date:evaluationDate});
+    },
     evaluate({productId,evaluationDate,answers,locale='zh-CN'}){
       return call('evaluate',{request:{product_id:productId,evaluation_date:evaluationDate,answers,locale}});
     }
