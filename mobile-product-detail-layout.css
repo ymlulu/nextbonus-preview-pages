@@ -1,0 +1,55 @@
+/* Mobile Product Detail layout repair.
+   Presentation only: restore the intended single-column mobile flow after the
+   later desktop calibration rules in styles.css override the earlier media query. */
+
+@media(max-width:780px){
+  .v4-product-detail-page{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+  }
+
+  .v4-product-detail-page .v4-pd-overview{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:18px;
+    width:100%;
+    min-width:0;
+    padding:14px;
+  }
+
+  .v4-product-detail-page .v4-pd-left,
+  .v4-product-detail-page .v4-pd-right{
+    width:100%;
+    min-width:0;
+  }
+
+  .v4-product-detail-page .v4-pd-left{
+    align-items:center;
+  }
+
+  .v4-product-detail-page .v4-pd-card,
+  .v4-product-detail-page .v4-pd-card.credit-card-art{
+    width:min(100%,320px);
+    max-width:320px;
+    margin:0 auto;
+  }
+
+  .v4-product-detail-page .v4-pd-right{
+    padding-top:0;
+  }
+
+  .v4-product-detail-page .v4-pd-title-row,
+  .v4-product-detail-page .v4-pd-title-row>div{
+    min-width:0;
+  }
+
+  .v4-product-detail-page .v4-pd-facts{
+    grid-template-columns:minmax(0,1fr);
+  }
+
+  .v4-product-detail-page .v4-pd-earning{
+    grid-template-columns:minmax(0,1fr);
+    min-width:0;
+  }
+}
