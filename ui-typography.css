@@ -22,20 +22,26 @@
   --nb-display-value-compact-size:20px; --nb-display-value-compact-leading:24px;
   --nb-result-value-size:30px; --nb-result-value-leading:34px;
 
-  /* Apple semantic label hierarchy for the current light UI.
-     Label prominence is independent from text style: a Caption can be primary,
-     and a Headline can be secondary. */
+  /* Apple semantic foreground hierarchy for the current light UI. */
   --nb-label-primary:#000000;
   --nb-label-secondary:rgba(60,60,67,.60);
   --nb-label-tertiary:rgba(60,60,67,.30);
   --nb-label-quaternary:rgba(60,60,67,.18);
   --nb-label-placeholder:rgba(60,60,67,.30);
+  --nb-label-on-accent:#ffffff;
 
-  /* Apple-style semantic system colors for current light UI. */
-  --nb-system-blue:#0088ff;
-  --nb-system-green:#34c759;
-  --nb-system-orange:#ff8d28;
+  /* Apple 2026 default-light adaptable system colors. */
   --nb-system-red:#ff383c;
+  --nb-system-orange:#ff8d28;
+  --nb-system-yellow:#ffcc00;
+  --nb-system-green:#34c759;
+  --nb-system-mint:#00c8b3;
+  --nb-system-teal:#00c3d0;
+  --nb-system-cyan:#00c0e8;
+  --nb-system-blue:#0088ff;
+  --nb-system-indigo:#6155f5;
+  --nb-system-purple:#cb30e0;
+  --nb-system-pink:#ff2d55;
   --nb-system-gray:#8e8e93;
   --nb-label-link:var(--nb-system-blue);
 
@@ -48,18 +54,26 @@
   --nb-primary-canvas:1080px;
 }
 
-/* Reserved adaptive palette. It only activates when NextBonus explicitly supports
-   a dark app surface; OS dark preference alone does not flip text onto a light V1 canvas. */
+/* Reserved adaptive palette. It activates only if NextBonus explicitly enables
+   a dark app surface; OS preference alone does not invert the current light V1 canvas. */
 :root[data-nb-appearance="dark"]{
   --nb-label-primary:#ffffff;
   --nb-label-secondary:rgba(235,235,245,.60);
   --nb-label-tertiary:rgba(235,235,245,.30);
   --nb-label-quaternary:rgba(235,235,245,.18);
   --nb-label-placeholder:rgba(235,235,245,.30);
-  --nb-system-blue:#0091ff;
-  --nb-system-green:#30d158;
-  --nb-system-orange:#ff9230;
+  --nb-label-on-accent:#ffffff;
   --nb-system-red:#ff4245;
+  --nb-system-orange:#ff9230;
+  --nb-system-yellow:#ffd600;
+  --nb-system-green:#30d158;
+  --nb-system-mint:#00dac3;
+  --nb-system-teal:#00d2e0;
+  --nb-system-cyan:#3cd3fe;
+  --nb-system-blue:#0091ff;
+  --nb-system-indigo:#6d7cff;
+  --nb-system-purple:#db34f2;
+  --nb-system-pink:#ff375f;
   --nb-system-gray:#98989d;
 }
 
@@ -78,7 +92,6 @@ body{
   font-style:normal!important;
   letter-spacing:normal!important;
 }
-[data-nb-type]:not([data-nb-tone]){color:var(--nb-label-primary)!important}
 [data-nb-type="large-title"]{font-size:var(--nb-large-title-size)!important;line-height:var(--nb-large-title-leading)!important;font-weight:var(--nb-large-title-weight)!important}
 [data-nb-type="title1"]{font-size:var(--nb-title1-size)!important;line-height:var(--nb-title1-leading)!important;font-weight:var(--nb-title1-weight)!important}
 [data-nb-type="title2"]{font-size:var(--nb-title2-size)!important;line-height:var(--nb-title2-leading)!important;font-weight:var(--nb-title2-weight)!important}
@@ -106,6 +119,7 @@ body{
 [data-nb-emphasis="true"][data-nb-type="caption1"]{font-weight:var(--nb-caption1-emphasis)!important}
 [data-nb-emphasis="true"][data-nb-type="caption2"]{font-weight:var(--nb-caption2-emphasis)!important}
 
+/* Semantic tones are independent from type size. */
 [data-nb-tone="primary"]{color:var(--nb-label-primary)!important}
 [data-nb-tone="secondary"]{color:var(--nb-label-secondary)!important}
 [data-nb-tone="tertiary"]{color:var(--nb-label-tertiary)!important}
@@ -114,8 +128,113 @@ body{
 [data-nb-tone="success"]{color:var(--nb-system-green)!important}
 [data-nb-tone="warning"]{color:var(--nb-system-orange)!important}
 [data-nb-tone="critical"]{color:var(--nb-system-red)!important}
+[data-nb-tone="on-accent"]{color:var(--nb-label-on-accent)!important}
 [data-nb-type][aria-disabled="true"],button[data-nb-type]:disabled{color:var(--nb-label-tertiary)!important}
 input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!important;opacity:1}
+
+/* Legacy color migration -------------------------------------------------
+   Old component files still contain historical color literals so the PR can stay
+   low-risk, but every current user-visible text state below is re-bound here to an
+   Apple semantic role. Marketing/poster artwork is deliberately not included. */
+
+/* App shell and common controls */
+.nav-item{color:var(--nb-label-primary)!important}
+.nav-item:hover{color:var(--nb-label-primary)!important}
+.nav-item.active{color:var(--nb-system-blue)!important}
+.nav-item.login-item,.nav-item.login-item:hover,.nav-badge{color:var(--nb-label-on-accent)!important}
+.btn{color:var(--nb-label-primary)!important}
+.btn.primary,.mock-add-btn{color:var(--nb-label-on-accent)!important}
+.btn.ghost,.link-btn,.mock-link{color:var(--nb-system-blue)!important}
+.btn.danger{color:var(--nb-system-red)!important}
+.btn:disabled{color:var(--nb-label-tertiary)!important}
+.search-icon,.search-clear{color:var(--nb-label-secondary)!important}
+.pill{color:var(--nb-label-primary)!important}
+.pill.active,.pill-icon,.mock-bookmark.saved{color:var(--nb-system-blue)!important}
+.cat-银行 .pill-icon{color:var(--nb-system-green)!important}
+.cat-券商 .pill-icon{color:var(--nb-system-purple)!important}
+.cat-羊毛省钱 .pill-icon{color:var(--nb-system-orange)!important}
+.cat-旅行 .pill-icon{color:var(--nb-system-blue)!important}
+.cat-购物 .pill-icon{color:var(--nb-system-pink)!important}
+.cat-生活 .pill-icon{color:var(--nb-system-cyan)!important}
+
+/* Discover / Offer cards */
+.nb-offer-card .nb-provider-text,.fallback-offer-card .provider{color:var(--nb-label-secondary)!important}
+.nb-offer-card .nb-offer-name,.fallback-offer-card .offer-name,.nb-offer-card .nb-primary-value,.fallback-offer-card .primary-value{color:var(--nb-label-primary)!important}
+.nb-offer-card .nb-requirement,.fallback-offer-card .requirement,.nb-offer-card .nb-tag,.fallback-offer-card .soft-tag{color:var(--nb-label-secondary)!important}
+.nb-offer-card .nb-status-tag,.fallback-offer-card .status-tag{color:var(--nb-system-orange)!important}
+.nb-offer-card .nb-tag.value{color:var(--nb-system-blue)!important}
+.nb-offer-card .nb-tag.attribute{color:var(--nb-system-purple)!important}
+
+/* Primary pages / Wallet / Attention */
+.mock-page-title,.mock-section-title,.owned-product-copy strong,.v4-pp-product,.att-product-copy strong,.att-action-cell strong{color:var(--nb-label-primary)!important}
+.mock-page-count,.section-count,.owned-product-copy small,.v4-pp-action,.v4-pp-time,.att-product-copy small,.att-action-cell small{color:var(--nb-label-secondary)!important}
+.attention-count-dot,.success-dot{color:var(--nb-label-on-accent)!important}
+.success-empty{color:var(--nb-label-primary)!important}
+.success-empty span{color:var(--nb-label-secondary)!important}
+.att-time-due{color:var(--nb-system-red)!important}
+.att-time-info,.mock-tabs .tab.active,.active-filter-chip{color:var(--nb-system-blue)!important}
+.att-time-soft,.mock-tabs .tab{color:var(--nb-label-secondary)!important}
+
+/* Watchlist */
+.nb-watchlist-copy strong,.nb-watchlist-value,.nb-watchlist-history-head{color:var(--nb-label-primary)!important}
+.nb-watchlist-header p,.nb-watchlist-provider,.nb-watchlist-copy small,.nb-watchlist-status,.nb-watchlist-history-head small{color:var(--nb-label-secondary)!important}
+.nb-watchlist-section-head p,.nb-watchlist-section-empty,.nb-watchlist-empty p,.nb-watchlist-chevron,.nb-watchlist-history-chevron{color:var(--nb-label-tertiary)!important}
+.nb-watchlist-status.tone-active{color:var(--nb-system-blue)!important}
+.nb-watchlist-status.tone-pending{color:var(--nb-system-orange)!important}
+.nb-watchlist-status.tone-success{color:var(--nb-system-green)!important}
+.nb-watchlist-status.tone-danger{color:var(--nb-system-red)!important}
+
+/* Product detail */
+.detail-back,.mock-back,.v4-pd-status,.pd-status-strip,.pd-id,.pd-inline-note{color:var(--nb-label-secondary)!important}
+.detail-back:hover,.v4-pd-status>strong,.pd-status-strip strong,.fact-value,.v4-pd-facts strong{color:var(--nb-label-primary)!important}
+.v4-pd-actions button,.pd-quick-actions button,.v4-pd-edit,.pd-edit,.official-link{color:var(--nb-system-blue)!important}
+.v4-pd-actions button span,.pd-quick-actions button span,.fact-label,.v4-pd-facts small,.v4-pd-att-copy small,.v4-pd-att-time,.v4-feature-benefit small,.v4-benefit-row small,.timeline-date{color:var(--nb-label-secondary)!important}
+
+/* Offer Detail decision rail */
+.decision-brand-title,.mock-result-block .recommendation,.v4-recommendation,.recommendation{color:var(--nb-system-blue)!important}
+.decision-brand-copy,.decision-sub,.result-meta,.v4-result-meta,.metric-label,.v4-metric .metric-label,.v4-no-action-note{color:var(--nb-label-secondary)!important}
+.metric-value,.v4-metric .metric-value{color:var(--nb-label-primary)!important}
+.v4-metric .metric-sub,.result-disclaimer,.v4-result-note,.v4-security-line,.detail-trust-row span{color:var(--nb-label-tertiary)!important}
+.detail-save.saved,.v4-detail-save.saved{color:var(--nb-system-blue)!important}
+
+/* Bank-bonus right rail */
+.nb-bank-brand strong,.nb-bank-reward-label,.nb-bank-reward-value,.nb-bank-tier,.nb-bank-tier strong,.nb-bank-flow h2,.nb-bank-step-title{color:var(--nb-label-primary)!important}
+.nb-bank-brand small,.nb-bank-save,.nb-bank-tier-head,.nb-bank-step-card ul,.nb-bank-eligibility-copy{color:var(--nb-label-secondary)!important}
+.nb-bank-save.saved,.nb-bank-reward-value b,.nb-bank-step-time{color:var(--nb-system-blue)!important}
+.nb-bank-tier.best strong{color:var(--nb-system-orange)!important}
+.nb-best-pill,.nb-bank-step-num,.nb-bank-cta{color:var(--nb-label-on-accent)!important}
+.nb-bank-deadline{color:var(--nb-label-tertiary)!important}
+
+/* Deal / remaining Offer rails. Reward branding is normalized to Label;
+   urgency/status and interactive accents use system semantic colors. */
+.deal-brand strong,.deal-value,.deal-value-card.pink .deal-value,.deal-value-card.orange .deal-value,.deal-section-title,.deal-time-card,.deal-step-copy b,.deal-terms summary,
+.remaining-head strong,.remaining-reward-value,.remaining-reward-top.green .remaining-reward-value,.remaining-section-title,.remaining-tier,.remaining-tier.best strong,.remaining-step-title,.remaining-eligibility summary{color:var(--nb-label-primary)!important}
+.deal-brand small,.deal-save,.deal-value-label,.deal-value-sub,.deal-step-copy small,.deal-terms-copy,
+.remaining-head small,.remaining-save,.remaining-reward-label,.remaining-reward-sub,.remaining-tier-head,.remaining-step-card ul,.remaining-eligibility-copy{color:var(--nb-label-secondary)!important}
+.deal-save.saved,.remaining-save.saved,.remaining-time{color:var(--nb-system-blue)!important}
+.deal-urgent{color:var(--nb-system-red)!important}
+.deal-step-num,.deal-step-num.pink,.deal-step-num.orange,.deal-cta,.remaining-num,.remaining-num.green,.remaining-cta,.remaining-cta.green{color:var(--nb-label-on-accent)!important}
+.remaining-deadline{color:var(--nb-label-tertiary)!important}
+
+/* Account detail */
+.nb-account-section .v4-section-head h2,.nb-account-notice .v4-section-head h2,.nb-account-row strong{color:var(--nb-label-primary)!important}
+.nb-account-row span,.nb-account-notice p{color:var(--nb-label-secondary)!important}
+.nb-account-source{color:var(--nb-label-tertiary)!important}
+
+/* Assessment chart text */
+.nb-oh-stat-value,.nb-oh-title,.nb-oh-details{color:var(--nb-label-primary)!important}
+.nb-oh-stat-name,.nb-oh-ranges button,.nb-oh-note,.nb-oh-empty{color:var(--nb-label-secondary)!important}
+.nb-oh-ranges button.active{color:var(--nb-system-blue)!important}
+
+/* Application handoff */
+#nb-application-handoff-root .nb-ah-banner strong,#nb-application-handoff-root .nb-ah-title,#nb-application-handoff-root .nb-ah-field label,#nb-application-handoff-root .nb-ah-result{color:var(--nb-label-primary)!important}
+#nb-application-handoff-root .nb-ah-banner p,#nb-application-handoff-root .nb-ah-success p,#nb-application-handoff-root .nb-ah-sub,#nb-application-handoff-root .nb-ah-note,#nb-application-handoff-root .nb-ah-close{color:var(--nb-label-secondary)!important}
+#nb-application-handoff-root .nb-ah-success strong,#nb-application-handoff-root [data-result="approved"]{color:var(--nb-system-green)!important}
+#nb-application-handoff-root [data-result="pending"]{color:var(--nb-system-orange)!important}
+#nb-application-handoff-root [data-result="denied"]{color:var(--nb-system-red)!important}
+#nb-application-handoff-root .nb-ah-btn.primary{color:var(--nb-label-on-accent)!important}
+#nb-application-handoff-root .nb-ah-btn.secondary{color:var(--nb-label-primary)!important}
+#nb-application-handoff-root .nb-ah-btn.ghost{color:var(--nb-label-secondary)!important}
 
 .discover-page,
 .wishlist-page.nb-watchlist-page,
