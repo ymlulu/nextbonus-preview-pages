@@ -1,0 +1,114 @@
+/* Wallet V1 visual polish.
+   Presentation only: reduce section chrome and make existing product identity
+   easier to scan without changing typography, data, or interaction behavior. */
+
+/* Search stays an input, but no longer competes with the product groups. */
+.v4-products-page .v4-product-search .search{
+  box-shadow:none;
+}
+
+/* Product category headings do the grouping; the whole category does not need
+   to read as another large card. */
+.v4-products-page .credit-products,
+.v4-products-page .account-products,
+.v4-products-page .membership-products,
+.v4-products-page .other-products{
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  background:transparent;
+  padding-left:0;
+  padding-right:0;
+  padding-top:12px;
+  padding-bottom:15px;
+  margin-bottom:5px;
+  border-bottom:1px solid rgba(60,60,67,.10);
+}
+
+.v4-products-page .other-products{
+  border-bottom:0;
+}
+
+.v4-products-page .credit-products .v4-section-head,
+.v4-products-page .account-products .v4-section-head,
+.v4-products-page .membership-products .v4-section-head,
+.v4-products-page .other-products .v4-section-head{
+  margin-bottom:9px;
+}
+
+/* Credit-card art remains useful recognition, but the existing product name and
+   instance now stay visible underneath as a stable identity anchor. */
+.v4-products-page .credit-products .v4-owned-product-card{
+  text-align:left;
+}
+
+.v4-products-page .credit-products .owned-product-meta{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  margin-top:7px;
+  padding:0 2px;
+}
+
+.v4-products-page .credit-products .owned-product-meta strong,
+.v4-products-page .credit-products .owned-product-meta small{
+  display:block;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.v4-products-page .credit-products .owned-product-meta small{
+  margin-top:2px;
+}
+
+/* Keep the card itself visually calm; identity text, not elevation, carries the
+   distinction between similar products. */
+.v4-products-page .credit-products .v4-owned-product-card:hover .v4-owned-product-art{
+  transform:translateY(-1px);
+  filter:drop-shadow(0 4px 8px rgba(24,44,78,.07));
+}
+
+/* Non-card products remain compact info tiles, with flatter chrome so a row of
+   accounts/memberships does not become another wall of cards. */
+.v4-products-page .account-products .v10-info-tile,
+.v4-products-page .membership-products .v10-info-tile,
+.v4-products-page .other-products .v10-info-tile{
+  box-shadow:none;
+  border-color:rgba(60,60,67,.11);
+}
+
+.v4-products-page .account-products .v10-info-tile:hover,
+.v4-products-page .membership-products .v10-info-tile:hover,
+.v4-products-page .other-products .v10-info-tile:hover{
+  box-shadow:0 3px 10px rgba(28,49,84,.035);
+  transform:translateY(-1px);
+}
+
+.v4-products-page .v10-info-logo{
+  border-color:rgba(60,60,67,.08);
+  background:rgba(118,118,128,.04);
+}
+
+/* Past products belong to the page flow rather than a separate visual card. */
+.v4-products-page .v4-past-products{
+  padding-left:0;
+  padding-right:0;
+}
+
+@media(max-width:780px){
+  .v4-products-page .credit-products,
+  .v4-products-page .account-products,
+  .v4-products-page .membership-products,
+  .v4-products-page .other-products{
+    padding-left:0;
+    padding-right:0;
+    padding-top:10px;
+    padding-bottom:13px;
+  }
+
+  .v4-products-page .credit-products .owned-product-meta{
+    margin-top:6px;
+  }
+}
