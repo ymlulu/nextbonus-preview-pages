@@ -10,7 +10,7 @@
   --nb-title1-size:22px; --nb-title1-leading:26px; --nb-title1-weight:400; --nb-title1-emphasis:700;
   --nb-title2-size:17px; --nb-title2-leading:22px; --nb-title2-weight:400; --nb-title2-emphasis:700;
   --nb-title3-size:15px; --nb-title3-leading:20px; --nb-title3-weight:400; --nb-title3-emphasis:600;
-  --nb-headline-size:13px; --nb-headline-leading:16px; --nb-headline-weight:700; --nb-headline-emphasis:800;
+  --nb-headline-size:13px; --nb-headline-leading:16px; --nb-headline-weight:700; --nb-headline-emphasis:700;
   --nb-body-size:13px; --nb-body-leading:16px; --nb-body-weight:400; --nb-body-emphasis:600;
   --nb-callout-size:12px; --nb-callout-leading:15px; --nb-callout-weight:400; --nb-callout-emphasis:600;
   --nb-subheadline-size:11px; --nb-subheadline-leading:14px; --nb-subheadline-weight:400; --nb-subheadline-emphasis:600;
@@ -147,7 +147,7 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 .btn.ghost,.link-btn,.mock-link{color:var(--nb-system-blue)!important}
 .btn.danger{color:var(--nb-system-red)!important}
 .btn:disabled{color:var(--nb-label-tertiary)!important}
-.search-icon,.search-clear{color:var(--nb-label-secondary)!important}
+.search-icon,.search-clear,.close-btn{color:var(--nb-label-secondary)!important}
 .pill{color:var(--nb-label-primary)!important}
 .pill.active,.pill-icon,.mock-bookmark.saved{color:var(--nb-system-blue)!important}
 .cat-银行 .pill-icon{color:var(--nb-system-green)!important}
@@ -156,6 +156,13 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 .cat-旅行 .pill-icon{color:var(--nb-system-blue)!important}
 .cat-购物 .pill-icon{color:var(--nb-system-pink)!important}
 .cat-生活 .pill-icon{color:var(--nb-system-cyan)!important}
+.page-title,.section-title,.collapse-head,.confirm-copy,.product-name,.overview-name,.benefit-title,.timeline-copy,.label,.option-title,.category-title,.task-head,.success h2,.report h3{color:var(--nb-label-primary)!important}
+.eyebrow,.page-subtitle,.count-soft,.muted,.decision-note,.login-card p,.attention-compact-empty,.product-meta,.benefit-short,.benefit-detail,.hint,.option-sub,.category-sub,.success p,.report p{color:var(--nb-label-secondary)!important}
+.benefit-detail dt,.legal,.prototype-note{color:var(--nb-label-tertiary)!important}
+.timeline-item.clickable .timeline-copy,.show-more,.option-tag{color:var(--nb-system-blue)!important}
+.tab{color:var(--nb-label-secondary)!important}.tab.active{color:var(--nb-label-primary)!important}
+.success-icon{color:var(--nb-system-green)!important}
+.toast{color:var(--nb-label-on-accent)!important}.toast button{color:var(--nb-system-blue)!important}
 
 /* Discover / Offer cards */
 .nb-offer-card .nb-provider-text,.fallback-offer-card .provider{color:var(--nb-label-secondary)!important}
@@ -168,12 +175,20 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 /* Primary pages / Wallet / Attention */
 .mock-page-title,.mock-section-title,.owned-product-copy strong,.v4-pp-product,.att-product-copy strong,.att-action-cell strong{color:var(--nb-label-primary)!important}
 .mock-page-count,.section-count,.owned-product-copy small,.v4-pp-action,.v4-pp-time,.att-product-copy small,.att-action-cell small{color:var(--nb-label-secondary)!important}
+.v4-pp-time.tone-urgent{color:var(--nb-system-red)!important}
+.v4-pp-time.tone-soon{color:var(--nb-system-orange)!important}
 .attention-count-dot,.success-dot{color:var(--nb-label-on-accent)!important}
 .success-empty{color:var(--nb-label-primary)!important}
 .success-empty span{color:var(--nb-label-secondary)!important}
 .att-time-due{color:var(--nb-system-red)!important}
-.att-time-info,.mock-tabs .tab.active,.active-filter-chip{color:var(--nb-system-blue)!important}
-.att-time-soft,.mock-tabs .tab{color:var(--nb-label-secondary)!important}
+.att-time-info,.mock-tabs .tab.active,.active-filter-chip,.att-thumb{color:var(--nb-system-blue)!important}
+.att-time-soft,.mock-tabs .tab,.attention-summary,.key-card .muted,.attention-row .chev{color:var(--nb-label-secondary)!important}
+.mock-filter-select,.mock-status-select,.product-sort-menu button{color:var(--nb-label-primary)!important}
+.history-status{color:var(--nb-label-secondary)!important}
+.history-status.used{color:var(--nb-system-green)!important}
+.history-status.skipped{color:var(--nb-system-orange)!important}
+.history-status.expired{color:var(--nb-label-tertiary)!important}
+.history-status.stopped{color:var(--nb-system-red)!important}
 
 /* Watchlist */
 .nb-watchlist-copy strong,.nb-watchlist-value,.nb-watchlist-history-head{color:var(--nb-label-primary)!important}
@@ -185,16 +200,23 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 .nb-watchlist-status.tone-danger{color:var(--nb-system-red)!important}
 
 /* Product detail */
+.v4-pd-title-row h1,.pd-name,.overview-name,.v4-pd-earning b{color:var(--nb-label-primary)!important}
 .detail-back,.mock-back,.v4-pd-status,.pd-status-strip,.pd-id,.pd-inline-note{color:var(--nb-label-secondary)!important}
-.detail-back:hover,.v4-pd-status>strong,.pd-status-strip strong,.fact-value,.v4-pd-facts strong{color:var(--nb-label-primary)!important}
+.detail-back:hover,.pd-status-strip strong,.fact-value,.v4-pd-facts strong{color:var(--nb-label-primary)!important}
+.v4-pd-status>strong{color:var(--nb-system-green)!important}
+.v4-pd-status>b.past+strong{color:var(--nb-label-tertiary)!important}
 .v4-pd-actions button,.pd-quick-actions button,.v4-pd-edit,.pd-edit,.official-link{color:var(--nb-system-blue)!important}
-.v4-pd-actions button span,.pd-quick-actions button span,.fact-label,.v4-pd-facts small,.v4-pd-att-copy small,.v4-pd-att-time,.v4-feature-benefit small,.v4-benefit-row small,.timeline-date{color:var(--nb-label-secondary)!important}
+.v4-pd-actions button span,.pd-quick-actions button span,.fact-label,.v4-pd-facts small,.v4-pd-att-copy small,.v4-pd-att-time,.v4-feature-benefit small,.v4-benefit-row small,.timeline-date,.v4-pd-earning small{color:var(--nb-label-secondary)!important}
+.v4-pd-att-time.urgent{color:var(--nb-system-red)!important}
+.v4-pp-chevron,.v4-pd-att-chevron,.v4-feature-benefit>b,.v4-benefit-row>b,.owned-product-chevron{color:var(--nb-label-secondary)!important}
 
 /* Offer Detail decision rail */
 .decision-brand-title,.mock-result-block .recommendation,.v4-recommendation,.recommendation{color:var(--nb-system-blue)!important}
 .decision-brand-copy,.decision-sub,.result-meta,.v4-result-meta,.metric-label,.v4-metric .metric-label,.v4-no-action-note{color:var(--nb-label-secondary)!important}
 .metric-value,.v4-metric .metric-value{color:var(--nb-label-primary)!important}
-.v4-metric .metric-sub,.result-disclaimer,.v4-result-note,.v4-security-line,.detail-trust-row span{color:var(--nb-label-tertiary)!important}
+.tone-green{color:var(--nb-system-green)!important}.tone-blue{color:var(--nb-system-blue)!important}.tone-orange{color:var(--nb-system-orange)!important}
+.v4-metric-icon{color:var(--nb-system-blue)!important}
+.v4-metric .metric-sub,.result-disclaimer,.v4-result-note,.v4-security-line,.detail-trust-row span,.v4-trust-row b,.v4-trust-row small{color:var(--nb-label-tertiary)!important}
 .detail-save.saved,.v4-detail-save.saved{color:var(--nb-system-blue)!important}
 
 /* Bank-bonus right rail */
@@ -220,6 +242,13 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 .nb-account-section .v4-section-head h2,.nb-account-notice .v4-section-head h2,.nb-account-row strong{color:var(--nb-label-primary)!important}
 .nb-account-row span,.nb-account-notice p{color:var(--nb-label-secondary)!important}
 .nb-account-source{color:var(--nb-label-tertiary)!important}
+
+/* Assessment visual layer */
+.assessment-choice,.assessment-subq-title,.v5-tip-list strong,.assessment-result-reasons h3{color:var(--nb-label-primary)!important}
+.assessment-help,.assessment-footnote,.v5-short-summary,.v5-reassess,.v5-report-summary,.v5-tip-list p,.assessment-inline-number label,.assessment-result-reasons p{color:var(--nb-label-secondary)!important}
+.assessment-subq-title>span,.v5-reassess:hover{color:var(--nb-system-blue)!important}
+.v5-primary-alert{color:var(--nb-system-red)!important}
+.assessment-choice.selected .assessment-mark,.add-progress span.done{color:var(--nb-label-on-accent)!important}
 
 /* Assessment chart text */
 .nb-oh-stat-value,.nb-oh-title,.nb-oh-details{color:var(--nb-label-primary)!important}
