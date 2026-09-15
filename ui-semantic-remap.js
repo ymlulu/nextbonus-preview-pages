@@ -19,10 +19,11 @@
     ['.nb-watchlist-status,.nb-watchlist-count,.nb-watchlist-history-head small', 'caption2', 'secondary'],
     ['.nb-watchlist-value', 'headline', null],
 
-    /* Wallet Attention preview: action is focal, product is context. */
+    /* Wallet: Attention action is focal; card suffix sits on artwork. */
     ['.v4-pp-product', 'callout', 'secondary'],
     ['.v4-pp-action', 'headline', null],
     ['.v4-pp-time', 'caption1', 'secondary'],
+    ['.credit-products .owned-product-meta small', 'caption1', 'on-accent'],
 
     /* Attention page: keep product/action hierarchy explicit and time subordinate. */
     ['.att-product-copy strong,.att-product', 'callout', 'secondary'],
