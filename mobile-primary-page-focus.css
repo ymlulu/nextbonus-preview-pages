@@ -3,9 +3,9 @@
 
 @media(max-width:780px){
   /* Discover: preserve two-column browsing, but keep each Offer Card compact.
-     The body uses only the space needed for name -> value -> requirement -> tags. */
+     Mobile scan order is artwork -> product name -> reward -> tags. */
   .discover-page .offer-card.nb-offer-card{
-    height:286px;
+    height:266px;
     aspect-ratio:auto;
   }
 
@@ -27,8 +27,8 @@
   }
 
   .discover-page .nb-offer-card .nb-card-body{
-    height:148px;
-    flex:0 0 148px;
+    height:128px;
+    flex:0 0 128px;
     padding:10px 10px 9px;
   }
 
@@ -40,8 +40,9 @@
     margin-top:4px;
   }
 
-  .discover-page .nb-offer-card .nb-requirement{
-    margin-top:4px;
+  .discover-page .nb-offer-card .nb-requirement,
+  .discover-page .fallback-offer-card .requirement{
+    display:none;
   }
 
   .discover-page .nb-offer-card .nb-tag-row{
