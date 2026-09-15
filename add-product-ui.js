@@ -21,7 +21,7 @@
   };
 
   function esc(value=''){
-    return String(value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    return String(value).replace(/[&<>'\"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[char]));
   }
 
   function ensureStyles(){
@@ -282,9 +282,11 @@
     ui.selectedProduct=entry;
     ui.tracking=false;
     ui.offerChoice=null;
+    // Delegate both transitions directly to the canonical Add Product engine.
+    // Querying/clicking the temporary product DOM after add-category is racy
+    // because app.js replaces the modal synchronously during that first action.
     triggerAppAction('add-category',{category});
-    const option=[...root.querySelectorAll('[data-action="add-product-select"]')].find(node=>node.dataset.id===id);
-    if(option) option.click();
+    triggerAppAction('add-product-select',{id});
   }
 
   function showExitConfirm(){
