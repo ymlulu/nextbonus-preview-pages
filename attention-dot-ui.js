@@ -3,6 +3,7 @@
 
   const STATE_KEY = 'nextbonus-local-v8-state';
   const SEEN_KEY = 'nextbonus-attention-product-seen-v1';
+  const GLOBAL_ONLY_TYPES = new Set(['change', 'news']);
   let queued = false;
 
   function readJson(key, fallback) {
@@ -49,6 +50,12 @@
     return list.filter(isActiveNow);
   }
 
+  // V1 keeps product surfaces focused on things the user can actually act on.
+  // News / rule-change style reminders stay in the global Reminder page only.
+  function isProductSurfaceAttention(item) {
+    return !GLOBAL_ONLY_TYPES.has(item?.type);
+  }
+
   function attentionSignature(item) {
     return [
       item?.id || '',
@@ -60,13 +67,13 @@
   }
 
   function activeForProduct(state, productId) {
-    return activeAttention(state).filter(item => item.productId === productId);
+    return activeAttention(state).filter(item => item.productId === productId && isProductSurfaceAttention(item));
   }
 
   function pruneSeen(state) {
     const seen = readJson(SEEN_KEY, {});
     const activeByProduct = new Map();
-    activeAttention(state).forEach(item => {
+    activeAttention(state).filter(isProductSurfaceAttention).forEach(item => {
       if (!activeByProduct.has(item.productId)) activeByProduct.set(item.productId, new Set());
       activeByProduct.get(item.productId).add(attentionSignature(item));
     });
@@ -272,8 +279,9 @@
     const page = document.querySelector('.v4-product-detail-page');
     if (!page) return;
 
-    // Product Detail no longer carries a second full reminder list. Attention is
-    // reflected at the actual reward / benefit / fee / update location instead.
+    // Product Detail no longer carries a second full reminder list. Actionable
+    // Attention is reflected at the actual reward / benefit / fee location.
+    // News / rule-change reminders remain on the global Reminder page in V1.
     page.querySelectorAll('.v4-pd-attention').forEach(node => node.remove());
 
     const productId = state.currentProductId;
