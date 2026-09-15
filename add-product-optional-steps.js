@@ -19,25 +19,30 @@
     return null;
   }
 
+  function labelFor(action,selected){
+    if(action==='add-track-next'){
+      if(!selected) return '跳过并添加到钱包';
+      if(selected.dataset.value==='no') return '添加到钱包';
+      return '继续';
+    }
+    if(action==='add-offer-next'){
+      if(!selected) return '跳过并添加到钱包';
+      if(selected.dataset.id==='manual') return '继续';
+      return '添加到钱包';
+    }
+    return '';
+  }
+
   function refreshOptionalActions(){
     OPTIONAL_ACTIONS.forEach(action=>{
       const button=root.querySelector(`[data-action="${action}"]`);
       if(!button || isSubmitting(button)) return;
-      button.disabled=false;
-      button.removeAttribute('disabled');
-      button.setAttribute('aria-disabled','false');
+      if(button.disabled) button.disabled=false;
+      if(button.hasAttribute('disabled')) button.removeAttribute('disabled');
+      if(button.getAttribute('aria-disabled')!=='false') button.setAttribute('aria-disabled','false');
 
-      const selected=selectedChoice(action);
-      if(action==='add-track-next'){
-        if(!selected) button.textContent='跳过并添加到钱包';
-        else if(selected.dataset.value==='no') button.textContent='添加到钱包';
-        else button.textContent='继续';
-      }
-      if(action==='add-offer-next'){
-        if(!selected) button.textContent='跳过并添加到钱包';
-        else if(selected.dataset.id==='manual') button.textContent='继续';
-        else button.textContent='添加到钱包';
-      }
+      const label=labelFor(action,selectedChoice(action));
+      if(label && button.textContent!==label) button.textContent=label;
     });
   }
 
