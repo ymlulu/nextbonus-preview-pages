@@ -74,11 +74,12 @@
     const info = offerInfo(item.offerId);
     if(!info) return '';
     const [label,tone] = statusView(item);
+    const isSavedRow = item.stage === 'saved';
     const date = item.stage === 'history' ? formatDate(item.completedAt || item.updatedAt) : '';
     const meta = item.stage === 'history'
       ? [label, date].filter(Boolean).join(' · ')
       : info.fact.primaryRequirement || '';
-    return `<article class="nb-watchlist-item" data-action="open-offer" data-id="${esc(item.offerId)}" tabindex="0" role="button" aria-label="${esc(info.product.name)}">
+    return `<article class="nb-watchlist-item${isSavedRow?' is-saved':''}" data-action="open-offer" data-id="${esc(item.offerId)}" tabindex="0" role="button" aria-label="${esc(info.product.name)}">
       ${thumb(info)}
       <span class="nb-watchlist-copy">
         <span class="nb-watchlist-provider">${esc(info.product.provider || '')}</span>
@@ -86,7 +87,7 @@
         <small>${esc(meta)}</small>
       </span>
       <span class="nb-watchlist-value">${esc(info.fact.primaryValue || '')}</span>
-      <span class="nb-watchlist-status tone-${esc(tone)}">${esc(label)}</span>
+      ${isSavedRow?'':`<span class="nb-watchlist-status tone-${esc(tone)}">${esc(label)}</span>`}
       <span class="nb-watchlist-chevron" aria-hidden="true">›</span>
     </article>`;
   }
