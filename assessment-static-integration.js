@@ -29,6 +29,37 @@ function valid(q,answers){return leaves(q,answers).every(p=>{
   if(p.number_id&&value===p.number_when){const n=answers[p.number_id];return Number.isInteger(n)&&n>=(p.min??1)&&n<=(p.max??Number.MAX_SAFE_INTEGER);}
   return true;
 });}
+function unknownOption(q){return (q.options||[]).find(o=>o.value==='UNKNOWN')||null;}
+function hasChoice(q,answers){
+  if(!Object.prototype.hasOwnProperty.call(answers,q.id))return false;
+  const value=answers[q.id],options=q.options||[];
+  return q.type==='multi'?Array.isArray(value):options.some(o=>o.value===value);
+}
+function uncertainMap(draft){
+  if(!draft.uncertain||typeof draft.uncertain!=='object'||Array.isArray(draft.uncertain))draft.uncertain={};
+  return draft.uncertain;
+}
+function resolved(q,draft){
+  const uncertain=uncertainMap(draft);
+  return leaves(q,draft.answers).every(p=>valid(p,draft.answers)||uncertain[p.id]===true);
+}
+function fillUnanswered(q,draft){
+  const uncertain=uncertainMap(draft);
+  for(const p of leaves(q,draft.answers)){
+    if(valid(p,draft.answers)){delete uncertain[p.id];continue;}
+    if(hasChoice(p,draft.answers))continue;
+    const fallback=unknownOption(p);
+    if(fallback){
+      draft.answers[p.id]=p.type==='multi'?[fallback.value]:fallback.value;
+      delete uncertain[p.id];
+    }else{
+      delete draft.answers[p.id];
+      uncertain[p.id]=true;
+    }
+    if(p.number_id)delete draft.answers[p.number_id];
+  }
+  return draft;
+}
 function resultState(result){
   const d=result.dimensions,p=result.report,c=result.decision;
   return {canonicalResult:result,meta:result.evaluation_date,recommendation:c.recommended_action,shortSummary:c.summary,
@@ -65,20 +96,22 @@ async function open(restart=false){
   }
   function draft(){return ui.context().draft;}
   function steps(){return stepsFor(session.contract).filter(q=>visible(q,draft().answers));}
-  function questionHtml(q,a){
+  function questionHtml(q,a,uncertain){
     if(!visible(q,a))return '';
-    if(q.type==='group')return `<div class="assessment-compound">${q.subs.map(p=>`<section>${questionHtml(p,a)}</section>`).join('')}</div>`;
-    const selected=a[q.id],multi=q.type==='multi';
-    return `<h3>${esc(q.title)}</h3><div class="assessment-choices">${q.options.map(o=>{const on=multi?Array.isArray(selected)&&selected.includes(o.value):selected===o.value;return `<button class="assessment-choice ${on?'selected':''}" aria-pressed="${on}" data-answer="${esc(q.id)}" data-value="${esc(o.value)}">${esc(o.label)}</button>`;}).join('')}${multi&&q.none_option?`<button class="assessment-choice ${Array.isArray(selected)&&!selected.length?'selected':''}" data-answer="${esc(q.id)}" data-none="true" aria-pressed="${Array.isArray(selected)&&!selected.length}">${esc(q.none_option)}</button>`:''}</div>${q.number_id&&selected===q.number_when?`<label>${esc(q.number_label)}<input class="input" type="number" step="1" min="${q.min??1}" ${q.max!=null?`max="${q.max}"`:''} data-number="${esc(q.number_id)}" value="${esc(a[q.number_id])}" /></label>`:''}`;
+    if(q.type==='group')return `<div class="assessment-compound">${q.subs.map(p=>`<section>${questionHtml(p,a,uncertain)}</section>`).join('')}</div>`;
+    const selected=a[q.id],multi=q.type==='multi',isUncertain=uncertain[q.id]===true,hasCanonicalUnknown=!!unknownOption(q);
+    return `<h3>${esc(q.title)}</h3><div class="assessment-choices">${q.options.map(o=>{const on=multi?Array.isArray(selected)&&selected.includes(o.value):selected===o.value;return `<button class="assessment-choice ${on?'selected':''}" aria-pressed="${on}" data-answer="${esc(q.id)}" data-value="${esc(o.value)}">${esc(o.label)}</button>`;}).join('')}${multi&&q.none_option?`<button class="assessment-choice ${Array.isArray(selected)&&!selected.length?'selected':''}" data-answer="${esc(q.id)}" data-none="true" aria-pressed="${Array.isArray(selected)&&!selected.length}">${esc(q.none_option)}</button>`:''}${!hasCanonicalUnknown?`<button class="assessment-choice ${isUncertain?'selected':''}" data-uncertain="${esc(q.id)}" aria-pressed="${isUncertain}">不确定</button>`:''}</div>${q.number_id&&selected===q.number_when?`<label>${esc(q.number_label)}<input class="input" type="number" step="1" min="${q.min??1}" ${q.max!=null?`max="${q.max}"`:''} data-number="${esc(q.number_id)}" value="${esc(a[q.number_id])}" /></label>`:''}`;
   }
-  function renderQuestion(){const d=draft(),list=steps();d.step=Math.min(d.step,list.length-1);ui.saveDraft(d);const q=list[d.step];
-    paint(`<h2 id="assessment-modal-title">${esc(session.contract.product.name)}</h2><p>${d.step+1} / ${list.length}</p><progress value="${d.step+1}" max="${list.length}" aria-label="评估进度"></progress>${q.type==='group'?`<h3>${esc(q.title)}</h3>`:''}${questionHtml(q,d.answers)}<p role="alert" class="canonical-error"></p><footer><button class="btn secondary" data-modal-action="back" ${d.step===0?'disabled':''}>返回</button><button class="btn primary" data-modal-action="next" ${valid(q,d.answers)?'':'disabled'}>${d.step===list.length-1?'查看结果':'继续'}</button></footer>`);}
+  function renderQuestion(){const d=draft(),list=steps();d.step=Math.min(d.step,list.length-1);const uncertain=uncertainMap(d);ui.saveDraft(d);const q=list[d.step];
+    paint(`<h2 id="assessment-modal-title">${esc(session.contract.product.name)}</h2><p>${d.step+1} / ${list.length}</p><progress value="${d.step+1}" max="${list.length}" aria-label="评估进度"></progress>${q.type==='group'?`<h3>${esc(q.title)}</h3>`:''}${questionHtml(q,d.answers,uncertain)}<p role="alert" class="canonical-error"></p><footer><button class="btn secondary" data-modal-action="back" ${d.step===0?'disabled':''}>返回</button><button class="btn primary" data-modal-action="next">${d.step===list.length-1?'查看结果':'继续'}</button></footer>`);}
   async function load(fresh){const token=++session.token;session.busy=true;paint('<h2 id="assessment-modal-title">正在加载评估…</h2>');
     try{const contract=await root.AssessmentClient.getQuestionnaire(productId);if(active!==session||token!==session.token)return;
-      session.contract=contract;const old=draft();ui.saveDraft(!fresh&&old?.offerId===session.offerId&&old?.contractVersion===contract.contract_version&&old?.releaseId===contract.release_id?old:{offerId:session.offerId,contractVersion:contract.contract_version,releaseId:contract.release_id,step:0,answers:{}});renderQuestion();
+      session.contract=contract;const old=draft(),keep=!fresh&&old?.offerId===session.offerId&&old?.contractVersion===contract.contract_version&&old?.releaseId===contract.release_id;
+      const next=keep?old:{offerId:session.offerId,contractVersion:contract.contract_version,releaseId:contract.release_id,step:0,answers:{},uncertain:{}};
+      uncertainMap(next);ui.saveDraft(next);renderQuestion();
     }catch(e){if(active===session&&token===session.token)paint(`<h2 id="assessment-modal-title">暂时无法加载评估</h2><p role="alert">${esc(e.message)}</p><button class="btn primary" data-modal-action="retry">重试</button>`);}
     finally{if(active===session&&token===session.token)session.busy=false;}}
-  async function submit(){const d=draft(),all=steps();prune(stepsFor(session.contract),d.answers);const missing=all.findIndex(q=>!valid(q,d.answers));if(missing>=0){d.step=missing;ui.saveDraft(d);renderQuestion();return;}
+  async function submit(){const d=draft();prune(stepsFor(session.contract),d.answers);const all=stepsFor(session.contract).filter(q=>visible(q,d.answers)),missing=all.findIndex(q=>!resolved(q,d));if(missing>=0){d.step=missing;ui.saveDraft(d);renderQuestion();return;}
     session.busy=true;const token=++session.token;const button=dialog.querySelector('[data-modal-action="next"]');button.disabled=true;button.textContent='正在生成…';
     try{const result=await root.AssessmentClient.evaluate({productId,evaluationDate:localDate(),answers:d.answers});if(active!==session||token!==session.token)return;
       ui.saveResult(session.offerId,resultState(result));paintReport(result);
@@ -90,14 +123,17 @@ async function open(restart=false){
     if(action==='report-cta'){runReportCta(button.dataset.dest);return;}
     if(action==='restart'||action==='retry'){load(action==='restart');return;}
     if(action==='back'){const d=draft();d.step--;ui.saveDraft(d);renderQuestion();return;}
-    if(action==='next'){const d=draft();if(!valid(steps()[d.step],d.answers))return;if(d.step===steps().length-1)submit();else{d.step++;ui.saveDraft(d);renderQuestion();}return;}
-    if(button.dataset.answer){const d=draft(),q=leaves(steps()[d.step],d.answers).find(p=>p.id===button.dataset.answer),value=button.dataset.value;
+    if(action==='next'){const d=draft(),list=steps(),q=list[d.step];fillUnanswered(q,d);prune(stepsFor(session.contract),d.answers);ui.saveDraft(d);
+      if(!resolved(q,d)){renderQuestion();dialog.querySelector('[role="alert"]').textContent='请完成当前输入，或选择“不确定”。';return;}
+      const updated=steps();if(d.step===updated.length-1)submit();else{d.step++;ui.saveDraft(d);renderQuestion();}return;}
+    if(button.dataset.uncertain){const d=draft(),q=leaves(steps()[d.step],d.answers).find(p=>p.id===button.dataset.uncertain);if(!q)return;const uncertain=uncertainMap(d);uncertain[q.id]=true;delete d.answers[q.id];if(q.number_id)delete d.answers[q.number_id];prune(stepsFor(session.contract),d.answers);ui.saveDraft(d);renderQuestion();dialog.querySelector(`[data-uncertain="${q.id}"]`)?.focus();return;}
+    if(button.dataset.answer){const d=draft(),q=leaves(steps()[d.step],d.answers).find(p=>p.id===button.dataset.answer),value=button.dataset.value;if(!q)return;const uncertain=uncertainMap(d);delete uncertain[q.id];
       if(q.type==='multi'){const values=Array.isArray(d.answers[q.id])?d.answers[q.id]:[];d.answers[q.id]=button.dataset.none?[]:(q.exclusive||[]).includes(value)?[value]:values.includes(value)?values.filter(v=>v!==value):[...values.filter(v=>!(q.exclusive||[]).includes(v)),value];}
       else d.answers[q.id]=value;prune(stepsFor(session.contract),d.answers);ui.saveDraft(d);renderQuestion();dialog.querySelector(`[data-answer="${q.id}"]`)?.focus();}
   });
-  dialog.addEventListener('input',e=>{if(session.busy||!e.target.dataset.number)return;const d=draft(),input=e.target;d.answers[input.dataset.number]=input.value===''?null:Number(input.value);ui.saveDraft(d);dialog.querySelector('[data-modal-action="next"]').disabled=!valid(steps()[d.step],d.answers);});
+  dialog.addEventListener('input',e=>{if(session.busy||!e.target.dataset.number)return;const d=draft(),input=e.target;d.answers[input.dataset.number]=input.value===''?null:Number(input.value);ui.saveDraft(d);});
   paint('<h2 id="assessment-modal-title">申请评估</h2>');dialog.showModal();
   if(!restart&&context.result?.canonicalResult)paintReport(context.result.canonicalResult);else await load(restart);
 }
-root.NBStaticAssessmentIntegration=Object.freeze({productMap:{...MAP},mode:'modal',open,stepsFor,visible,prune,valid,resultState,reportHtml,localDate});
+root.NBStaticAssessmentIntegration=Object.freeze({productMap:{...MAP},mode:'modal',open,stepsFor,visible,prune,valid,unknownOption,hasChoice,resolved,fillUnanswered,resultState,reportHtml,localDate});
 })(window);
