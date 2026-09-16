@@ -4,6 +4,7 @@
   const LEGACY_KEY = 'nextbonus-local-v8-state';
   let historyOpen = false;
   let lastLegacySnapshot = null;
+  let queued = false;
 
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, c => ({
     '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'
@@ -177,12 +178,13 @@
     renameToast();
   }
 
-  function schedule(){
-    if(window.NextBonusUICommit){
-      window.NextBonusUICommit.schedule('watchlist');
-      return;
-    }
-    queueMicrotask(enhance);
+  function queueEnhance(){
+    if(queued) return;
+    queued = true;
+    requestAnimationFrame(()=>{
+      queued = false;
+      enhance();
+    });
   }
 
   document.addEventListener('click',event=>{
@@ -194,25 +196,21 @@
     const page = document.querySelector('.wishlist-page');
     if(page) page.classList.remove('nb-watchlist-rendered');
     renderWatchlistPage();
-    window.NextBonusUICommit?.schedule('watchlist-history');
   },true);
 
-  if(window.NextBonusUICommit){
-    window.NextBonusUICommit.register('watchlist-ui',enhance);
-  }else if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded',enhance,{once:true});
-  }else{
-    enhance();
-  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',enhance,{once:true});
+  else enhance();
 
-  window.addEventListener('storage',schedule);
+  const app = document.getElementById('app');
+  if(app) new MutationObserver(queueEnhance).observe(app,{childList:true,subtree:true});
+  const toast = document.getElementById('toast-root');
+  if(toast) new MutationObserver(queueEnhance).observe(toast,{childList:true,subtree:true,characterData:true});
 
   window.NextBonusWatchlistUI = Object.freeze({
     refresh(){
       const page = document.querySelector('.wishlist-page');
       if(page) page.classList.remove('nb-watchlist-rendered');
       enhance();
-      window.NextBonusUICommit?.schedule('watchlist-refresh');
     }
   });
 })();
