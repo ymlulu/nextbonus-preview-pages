@@ -1,19 +1,17 @@
-/* NextBonus Offer Detail content-driven flow contract.
-   Applies to every current Offer Detail variant: credit-card assessment, bank bonus,
-   brokerage, remaining bank offers and deal offers.
-
-   Rule: the 760px reference height is a poster baseline, never a clipping boundary for
-   decision content. The right rail grows with its content and the page scrolls normally. */
+/* NextBonus Offer Detail overflow + CTA contract.
+   Desktop keeps the approved 760px two-column card. The right rail is its own scroll
+   container: content may grow naturally, but the card itself must not stretch down the
+   page. Mobile/tablet remain normal document flow. */
 
 /* Shared desktop shell --------------------------------------------------- */
 @media (min-width:1181px){
   .v4-offer-detail-page .v4-offer-detail-grid{
-    height:auto !important;
+    height:760px !important;
     min-height:760px !important;
-    align-items:start !important;
+    max-height:760px !important;
+    align-items:stretch !important;
   }
 
-  /* Keep the approved poster composition at its reference height. */
   .v4-offer-detail-page .v4-offer-poster-shell{
     height:760px !important;
     min-height:760px !important;
@@ -21,74 +19,71 @@
     overflow:hidden !important;
   }
 
-  /* The decision rail may be taller than the poster. Never create an inner scrollbar. */
+  /* Keep the Offer Detail card shape. Overflow belongs to the decision rail, not the
+     whole page. Flex children are protected from shrinking below their content height. */
   .v4-offer-detail-page .v4-decision-panel{
-    height:auto !important;
+    box-sizing:border-box;
+    height:760px !important;
     min-height:760px !important;
-    max-height:none !important;
-    overflow:visible !important;
+    max-height:760px !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain;
+    scrollbar-gutter:stable;
   }
 
-  /* Desktop CTA behavior: keep an action visible at the bottom edge of the viewport
-     while the real CTA is still below the fold. The JS dock mirrors the real action and
-     disappears exactly when the original reaches the same viewport position, so both
-     visually merge into a single CTA instead of overlapping. */
+  .v4-offer-detail-page .v4-decision-panel::-webkit-scrollbar{width:8px}
+  .v4-offer-detail-page .v4-decision-panel::-webkit-scrollbar-thumb{
+    background:rgba(120,136,160,.22);
+    border-radius:999px;
+  }
+  .v4-offer-detail-page .v4-decision-panel::-webkit-scrollbar-track{background:transparent}
+
+  /* Desktop CTA dock mirrors the real CTA while it is below the visible part of the
+     scroll rail. JS aligns this dock with the rail's visible bottom edge and removes it
+     exactly when the real CTA reaches the same position. */
   .nb-offer-cta-dock{
     position:fixed;
     z-index:65;
     opacity:0;
     pointer-events:none;
     transform:translateY(8px);
-    transition:opacity .14s ease,transform .14s ease;
-    filter:drop-shadow(0 10px 26px rgba(20,35,60,.13));
+    transition:opacity .12s ease,transform .12s ease;
+    filter:drop-shadow(0 10px 24px rgba(20,35,60,.14));
   }
   .nb-offer-cta-dock.is-visible{
     opacity:1;
     pointer-events:auto;
     transform:none;
   }
-  .nb-offer-cta-dock-content{
-    margin:0 !important;
-  }
+  .nb-offer-cta-dock-content{margin:0 !important}
   .nb-offer-cta-dock .v4-detail-actions{
     display:grid;
     grid-template-columns:repeat(2,minmax(0,1fr));
     gap:9px;
+    padding:8px;
+    border-radius:12px;
+    background:rgba(255,255,255,.96);
+    backdrop-filter:blur(10px);
+    box-shadow:0 0 0 1px rgba(225,232,242,.9);
   }
-  .nb-offer-cta-dock .v4-detail-actions.single{
-    grid-template-columns:1fr;
-  }
-  .nb-offer-cta-dock :where(
-    .mm-cta,
-    .nb-bank-cta,
-    .remaining-cta,
-    .deal-cta
-  ){
+  .nb-offer-cta-dock .v4-detail-actions.single{grid-template-columns:1fr}
+  .nb-offer-cta-dock :where(.mm-cta,.nb-bank-cta,.remaining-cta,.deal-cta){
     margin-top:0 !important;
   }
 }
 
-/* The right rail always owns its natural height. This also overrides any legacy
-   variant-specific fixed-height contract injected after the base stylesheet. */
-.v4-offer-detail-page .v4-decision-panel{
-  height:auto !important;
-  max-height:none !important;
-  overflow:visible !important;
-  min-width:0;
-}
-
 /* Grid/flex children are allowed to shrink to the rail width instead of widening it. */
+.v4-offer-detail-page .v4-decision-panel,
 .v4-offer-detail-page .v4-decision-panel *,
 .v4-offer-detail-page .v4-decision-panel *::before,
 .v4-offer-detail-page .v4-decision-panel *::after{
   min-width:0;
 }
 
-/* Offer Detail right rails are flex columns. Default flex-shrink previously compressed
-   reward and step cards to match the poster height, which caused the visible clipping. */
-.v4-offer-detail-page .v4-decision-panel > *{
-  flex-shrink:0 !important;
-}
+/* The original clipping bug came from flex-shrink inside the fixed-height desktop rail.
+   Keep the rail fixed, but never compress its business-content children to make them fit. */
+.v4-offer-detail-page .v4-decision-panel > *{flex-shrink:0 !important}
 
 /* Dynamic cards grow vertically with copy. Rounded parent cards may still mask their
    corners; only fixed/clamped content heights are neutralized here. */
@@ -158,40 +153,21 @@
 }
 
 /* Header rows: keep the save button intact, but let brand text wrap if space gets tight. */
-.v4-offer-detail-page :where(
-  .mm-head,
-  .nb-bank-head,
-  .remaining-head,
-  .deal-head
-){
+.v4-offer-detail-page :where(.mm-head,.nb-bank-head,.remaining-head,.deal-head){
   flex-wrap:wrap;
   align-items:flex-start;
 }
-
-.v4-offer-detail-page :where(
-  .mm-head-brand,
-  .nb-bank-brand,
-  .remaining-head-brand,
-  .deal-brand
-){
+.v4-offer-detail-page :where(.mm-head-brand,.nb-bank-brand,.remaining-head-brand,.deal-brand){
   flex:1 1 180px;
   min-width:0;
 }
-
-.v4-offer-detail-page :where(
-  .mm-save,
-  .nb-bank-save,
-  .remaining-save,
-  .deal-save
-){
+.v4-offer-detail-page :where(.mm-save,.nb-bank-save,.remaining-save,.deal-save){
   flex:0 0 auto !important;
   white-space:nowrap !important;
 }
 
 /* Long reward/value rows may wrap rather than overflow horizontally. */
-.v4-offer-detail-page .nb-bank-reward-value{
-  flex-wrap:wrap;
-}
+.v4-offer-detail-page .nb-bank-reward-value{flex-wrap:wrap}
 
 /* Tier table cells can wrap. Recommendation/status pills remain readable and move to the
    next visual line inside their own cell when necessary instead of covering the amount. */
@@ -207,7 +183,6 @@
   min-width:0;
   overflow-wrap:break-word;
 }
-
 .v4-offer-detail-page .mm-tier > span:last-child,
 .v4-offer-detail-page .nb-bank-tier > span:last-child{
   display:flex;
@@ -216,7 +191,6 @@
   gap:6px;
   flex-wrap:wrap;
 }
-
 .v4-offer-detail-page :where(.mm-pill,.nb-best-pill){
   float:none !important;
   flex:0 0 auto !important;
@@ -225,37 +199,20 @@
 }
 
 /* Step headings can wrap independently while the time/status pill stays whole. */
-.v4-offer-detail-page :where(
-  .mm-step-title,
-  .nb-bank-step-title,
-  .remaining-step-title
-){
+.v4-offer-detail-page :where(.mm-step-title,.nb-bank-step-title,.remaining-step-title){
   flex-wrap:wrap;
   align-items:flex-start;
 }
-
 .v4-offer-detail-page :where(
   .mm-step-title > span:first-child,
   .nb-bank-step-title > span:first-child,
   .remaining-step-title > span:first-child
-){
-  flex:1 1 160px;
-}
-
-.v4-offer-detail-page :where(
-  .mm-time,
-  .nb-bank-step-time,
-  .remaining-time,
-  .deal-urgent
-){
+){flex:1 1 160px}
+.v4-offer-detail-page :where(.mm-time,.nb-bank-step-time,.remaining-time,.deal-urgent){
   flex:0 0 auto !important;
   white-space:nowrap !important;
 }
-
-.v4-offer-detail-page .deal-time-card{
-  flex-wrap:wrap;
-  align-items:flex-start;
-}
+.v4-offer-detail-page .deal-time-card{flex-wrap:wrap;align-items:flex-start}
 
 /* Disclosure rows also need to survive narrow widths without hiding their chevron. */
 .v4-offer-detail-page :where(
@@ -263,19 +220,13 @@
   .nb-bank-eligibility summary,
   .remaining-eligibility summary,
   .deal-terms summary
-){
-  gap:8px;
-  align-items:flex-start;
-}
-
+){gap:8px;align-items:flex-start}
 .v4-offer-detail-page :where(
   .mm-eligibility summary::after,
   .nb-bank-eligibility summary::after,
   .remaining-eligibility summary::after,
   .deal-terms summary::after
-){
-  flex:0 0 auto;
-}
+){flex:0 0 auto}
 
 /* CTAs may become two lines on a narrow viewport, but their text must remain visible. */
 .v4-offer-detail-page :where(
@@ -290,18 +241,20 @@
   text-align:center;
 }
 
-/* Stacked/tablet layouts do not need to imitate a 760px right rail. */
+/* Tablet/mobile: normal page flow; no desktop inner-scroll card or floating CTA. */
 @media(max-width:1180px){
   .v4-offer-detail-page .v4-offer-detail-grid{
     height:auto !important;
     min-height:0 !important;
+    max-height:none !important;
   }
   .v4-offer-detail-page .v4-decision-panel{
+    height:auto !important;
     min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
   }
-  .nb-offer-cta-dock{
-    display:none !important;
-  }
+  .nb-offer-cta-dock{display:none !important}
 }
 
 /* Very narrow phones: keep two-column tier tables useful without forcing horizontal scroll. */
