@@ -83,21 +83,11 @@
     syncVisibleCopy();
   }
 
-  let queued = false;
-  function schedule() {
-    if (queued) return;
-    queued = true;
-    requestAnimationFrame(() => {
-      queued = false;
-      sync();
-    });
-  }
-
-  if (document.readyState === 'loading') {
+  if(window.NextBonusUICommit){
+    window.NextBonusUICommit.register('navigation-ia',sync);
+  }else if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', sync, { once:true });
   } else {
     sync();
   }
-
-  if (root) new MutationObserver(schedule).observe(root, { childList:true, subtree:true });
 })();
