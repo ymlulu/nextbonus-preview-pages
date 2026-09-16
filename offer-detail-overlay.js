@@ -1,10 +1,10 @@
 (() => {
   'use strict';
 
-  const RESUME_KEY = 'nextbonus-offer-overlay-resume-v1';
   const STATE_KEY = 'nextbonus-local-v8-state';
   const DESKTOP_MIN = 1181;
   const CTA_SELECTOR = '.v4-detail-actions,.nb-bank-cta,.mm-cta,.remaining-cta,.deal-cta';
+  const bridge = window.NBOfferOverlayBridge || null;
 
   const app = document.getElementById('app');
   if(!app) return;
@@ -30,29 +30,19 @@
 
   function inferSource(){
     const saved = readState();
-    return saved.routeSource === 'wishlist' ? 'wishlist' : 'discover';
+    return saved.offerOverlay?.source || saved.routeSource === 'wishlist' || saved.route === 'wishlist' ? 'wishlist' : 'discover';
   }
 
   function inferOfferId(node){
     const saved = readState();
+    if(saved.offerOverlay?.offerId) return saved.offerOverlay.offerId;
     if(saved.currentOfferId) return saved.currentOfferId;
     const bookmark = node?.querySelector?.('[data-action="bookmark"][data-id]');
     return bookmark?.dataset?.id || null;
   }
 
-  function saveResume(){
-    if(!currentOfferId) return;
-    try{
-      sessionStorage.setItem(RESUME_KEY, JSON.stringify({
-        offerId: currentOfferId,
-        source: baseSource,
-        scrollY: baseScrollY
-      }));
-    }catch(_err){}
-  }
-
-  function clearResume(){
-    try{sessionStorage.removeItem(RESUME_KEY);}catch(_err){}
+  function currentOverlayInfo(){
+    return history.state?.nbOfferOverlay || bridge?.getActive?.() || readState().offerOverlay || null;
   }
 
   function captureBaseFromOpen(event){
@@ -60,9 +50,9 @@
     if(!trigger || overlay) return;
     baseHtml = app.innerHTML;
     baseScrollY = window.scrollY || 0;
-    baseSource = inferSource();
+    const saved = readState();
+    baseSource = saved.route === 'wishlist' || saved.routeSource === 'wishlist' ? 'wishlist' : 'discover';
     currentOfferId = trigger.dataset.id;
-    saveResume();
   }
 
   function ensureOverlay(){
@@ -78,9 +68,9 @@
         <div class="nb-offer-detail-host"></div>
       </div>`;
     frame = overlay.querySelector('.nb-offer-detail-frame');
-    overlay.querySelector('.nb-offer-detail-close').addEventListener('click', closeOverlay);
+    overlay.querySelector('.nb-offer-detail-close').addEventListener('click', requestClose);
     overlay.addEventListener('click', event => {
-      if(event.target === overlay) closeOverlay();
+      if(event.target === overlay) requestClose();
     });
     document.body.appendChild(overlay);
     document.body.classList.add('nb-offer-overlay-open');
@@ -100,10 +90,9 @@
     const scroll = panel.querySelector(':scope > .nb-offer-panel-scroll');
     const dock = panel.querySelector(':scope > .nb-offer-panel-dock');
     if(!scroll || !dock) return;
+    const sentinel = scroll.querySelector('.nb-offer-cta-sentinel');
     const target = dock.querySelector(CTA_SELECTOR) || scroll.querySelector(CTA_SELECTOR);
-    if(target && ctaSentinel?.isConnected){
-      ctaSentinel.replaceWith(target);
-    }
+    if(target && sentinel?.isConnected) sentinel.replaceWith(target);
     const nodes = [...scroll.childNodes];
     panel.replaceChildren(...nodes);
   }
@@ -144,6 +133,10 @@
       ctaDock = existingDock;
       ctaSentinel = existingScroll.querySelector('.nb-offer-cta-sentinel');
       ctaTarget = existingDock.querySelector(CTA_SELECTOR) || existingScroll.querySelector(CTA_SELECTOR);
+      if(panelScroll && !panelScroll.dataset.overlayScrollReady){
+        panelScroll.dataset.overlayScrollReady = '1';
+        panelScroll.addEventListener('scroll', updateCTAState, {passive:true});
+      }
       updateCTAState();
       return;
     }
@@ -170,6 +163,7 @@
 
     panel.append(scroll,dock);
     panelScroll = scroll;
+    panelScroll.dataset.overlayScrollReady = '1';
     ctaSentinel = sentinel;
     ctaTarget = target;
     ctaDock = dock;
@@ -204,8 +198,11 @@
       ensureOverlay();
       disconnectPanel();
       currentOfferId = inferOfferId(node) || currentOfferId;
-      baseSource = baseSource || inferSource();
-      saveResume();
+      const info = currentOverlayInfo();
+      if(info){
+        baseSource = info.source === 'wishlist' ? 'wishlist' : 'discover';
+        if(baseHtml == null) baseScrollY = Number(info.scrollY || 0);
+      }
 
       if(detail && detail !== node) detail.remove();
       detail = node;
@@ -221,9 +218,23 @@
         panelObserver.observe(watchPanel,{childList:true,subtree:true});
       }
       mountPanelCTA();
+      bridge?.endRestore?.();
     }finally{
       reconciling = false;
     }
+  }
+
+  function syncOverlaySavedState(){
+    if(!detail || !currentOfferId) return;
+    const saved = readState();
+    const isSaved = (saved.savedOfferIds||[]).includes(currentOfferId) || (saved.unavailableSavedIds||[]).includes(currentOfferId);
+    const escaped = window.CSS?.escape ? CSS.escape(currentOfferId) : currentOfferId.replace(/[^a-zA-Z0-9_-]/g,'');
+    detail.querySelectorAll(`[data-action="bookmark"][data-id="${escaped}"]`).forEach(button => {
+      button.classList.toggle('saved',isSaved);
+      const text = button.querySelector('span');
+      if(text) text.textContent = isSaved ? '已收藏' : '收藏';
+      else if(button.classList.contains('mm-save') || button.classList.contains('nb-bank-save') || button.classList.contains('remaining-save') || button.classList.contains('deal-save')) button.textContent = `♡ ${isSaved?'已收藏':'收藏'}`;
+    });
   }
 
   function reconcile(){
@@ -248,19 +259,20 @@
     requestAnimationFrame(reconcile);
   }
 
-  function syncOverlaySavedState(){
-    if(!detail || !currentOfferId) return;
-    const saved = readState();
-    const isSaved = (saved.savedOfferIds||[]).includes(currentOfferId) || (saved.unavailableSavedIds||[]).includes(currentOfferId);
-    detail.querySelectorAll(`[data-action="bookmark"][data-id="${CSS.escape(currentOfferId)}"]`).forEach(button => {
-      button.classList.toggle('saved',isSaved);
-      const text = button.querySelector('span');
-      if(text) text.textContent = isSaved ? '已收藏' : '收藏';
-      else if(button.classList.contains('mm-save') || button.classList.contains('nb-bank-save') || button.classList.contains('remaining-save') || button.classList.contains('deal-save')) button.textContent = `♡ ${isSaved?'已收藏':'收藏'}`;
-    });
+  function teardownOverlay(){
+    if(!overlay) return;
+    disconnectPanel();
+    overlay.remove();
+    overlay = null;
+    frame = null;
+    detail = null;
+    document.body.classList.remove('nb-offer-overlay-open');
+    removePromotedModals();
+    baseHtml = null;
+    currentOfferId = null;
   }
 
-  function fireBackToSource(){
+  function fireBackToSourceFallback(){
     const button = document.createElement('button');
     button.type = 'button';
     button.hidden = true;
@@ -270,20 +282,19 @@
     button.remove();
   }
 
-  function closeOverlay(){
-    if(!overlay) return;
-    disconnectPanel();
-    clearResume();
-    overlay.remove();
-    overlay = null;
-    frame = null;
-    detail = null;
-    document.body.classList.remove('nb-offer-overlay-open');
-    removePromotedModals();
-    fireBackToSource();
+  function requestClose(){
+    const info = history.state?.nbOfferOverlay || bridge?.getActive?.();
+    if(info && history.length > 1){
+      history.back();
+      return;
+    }
+
+    /* Defensive fallback for a legacy/stale history entry. Normal navigation always
+       closes through popstate so mobile Back and the visible close button are identical. */
+    bridge?.clear?.();
+    teardownOverlay();
+    fireBackToSourceFallback();
     requestAnimationFrame(() => window.scrollTo({top:baseScrollY,behavior:'instant'}));
-    baseHtml = null;
-    currentOfferId = null;
   }
 
   function suspendForLogin(){
@@ -302,37 +313,49 @@
     const action = event.target.closest?.('[data-action="assessment-start"]');
     if(!action) return;
     if(readState().loggedIn) return;
-    saveResume();
     requestAnimationFrame(suspendForLogin);
   }
 
-  function restoreFromRefresh(){
-    let resume = null;
-    try{resume = JSON.parse(sessionStorage.getItem(RESUME_KEY) || 'null');}catch(_err){}
-    if(!resume?.offerId) return;
+  function openFromHistory(info){
+    if(!info?.offerId) return;
+    if(overlay && currentOfferId === info.offerId) return;
 
-    currentOfferId = resume.offerId;
-    baseSource = resume.source === 'wishlist' ? 'wishlist' : 'discover';
-    baseScrollY = Number(resume.scrollY || 0);
+    if(overlay) teardownOverlay();
+    currentOfferId = info.offerId;
+    baseSource = info.source === 'wishlist' ? 'wishlist' : 'discover';
+    baseScrollY = Number(info.scrollY || 0);
     baseHtml = app.innerHTML;
+    bridge?.beginRestore?.(info);
+
     requestAnimationFrame(() => {
       const trigger = document.createElement('button');
       trigger.type = 'button';
       trigger.hidden = true;
       trigger.dataset.action = 'open-offer';
-      trigger.dataset.id = resume.offerId;
+      trigger.dataset.id = info.offerId;
       app.appendChild(trigger);
       trigger.click();
       trigger.remove();
-      clearResume();
+    });
+  }
+
+  function handleHistoryChange(event){
+    const info = event.detail?.overlay || null;
+    requestAnimationFrame(() => {
+      if(!info){
+        if(overlay) teardownOverlay();
+        return;
+      }
+      openFromHistory(info);
     });
   }
 
   document.addEventListener('click',captureBaseFromOpen,true);
   document.addEventListener('click',maybeSuspendForAssessment,true);
   document.addEventListener('keydown',event => {
-    if(event.key === 'Escape' && overlay) closeOverlay();
+    if(event.key === 'Escape' && overlay) requestClose();
   });
+  window.addEventListener('nb:offer-overlay-history',handleHistoryChange);
   window.addEventListener('resize',() => {
     if(window.innerWidth < DESKTOP_MIN && detail){
       const panel = detail.querySelector('.v4-decision-panel');
@@ -344,6 +367,8 @@
   },{passive:true});
 
   new MutationObserver(schedule).observe(app,{childList:true,subtree:true});
-  restoreFromRefresh();
+
+  const initial = currentOverlayInfo();
+  if(initial) openFromHistory(initial);
   schedule();
 })();
