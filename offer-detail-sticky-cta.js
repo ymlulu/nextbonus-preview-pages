@@ -2,7 +2,7 @@
   'use strict';
 
   const DESKTOP_MIN = 1181;
-  const BOTTOM_GAP = 16;
+  const BOTTOM_INSET = 12;
   const TARGET_SELECTOR = [
     '.v4-detail-actions',
     '.nb-bank-cta',
@@ -13,6 +13,7 @@
 
   let dock = null;
   let currentTarget = null;
+  let currentPanel = null;
   let currentSignature = '';
   let queued = false;
 
@@ -24,7 +25,7 @@
   }
 
   function stripDuplicateIds(root){
-    if(root.removeAttribute) root.removeAttribute('id');
+    root.removeAttribute?.('id');
     root.querySelectorAll?.('[id]').forEach(node => node.removeAttribute('id'));
   }
 
@@ -33,6 +34,7 @@
     dock = document.createElement('div');
     dock.className = 'nb-offer-cta-dock';
     dock.setAttribute('aria-label', 'Offer 操作');
+    dock.setAttribute('aria-hidden', 'true');
 
     dock.addEventListener('click', event => {
       if(!currentTarget) return;
@@ -70,44 +72,65 @@
     stripDuplicateIds(clone);
     clone.classList.add('nb-offer-cta-dock-content');
 
-    const el = ensureDock();
-    el.replaceChildren(clone);
+    ensureDock().replaceChildren(clone);
   }
 
-  function findTarget(){
+  function detachPanelListener(){
+    if(currentPanel) currentPanel.removeEventListener('scroll', schedule);
+    currentPanel = null;
+  }
+
+  function attachPanelListener(panel){
+    if(panel === currentPanel) return;
+    detachPanelListener();
+    currentPanel = panel;
+    currentPanel.addEventListener('scroll', schedule, {passive:true});
+  }
+
+  function findContext(){
     const page = document.querySelector('.v4-offer-detail-page');
     if(!page) return null;
     const panel = page.querySelector('.v4-decision-panel');
     if(!panel) return null;
-    return panel.querySelector(TARGET_SELECTOR);
+    const target = panel.querySelector(TARGET_SELECTOR);
+    if(!target) return null;
+    return {page,panel,target};
   }
 
   function update(){
     queued = false;
 
     if(window.innerWidth < DESKTOP_MIN){
-      hideDock();
-      return;
-    }
-
-    const target = findTarget();
-    if(!target || !target.isConnected){
+      detachPanelListener();
       currentTarget = null;
       currentSignature = '';
       hideDock();
       return;
     }
 
-    syncClone(target);
-
-    const rect = target.getBoundingClientRect();
-    if(rect.width <= 0 || rect.height <= 0){
+    const context = findContext();
+    if(!context){
+      detachPanelListener();
+      currentTarget = null;
+      currentSignature = '';
       hideDock();
       return;
     }
 
-    const dockingTop = window.innerHeight - BOTTOM_GAP - rect.height;
-    const shouldFloat = rect.top > dockingTop + 1;
+    const {panel,target} = context;
+    attachPanelListener(panel);
+    syncClone(target);
+
+    const panelRect = panel.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    if(panelRect.width <= 0 || panelRect.height <= 0 || targetRect.height <= 0){
+      hideDock();
+      return;
+    }
+
+    const dockHeight = Math.max(targetRect.height, 44);
+    const mergeTop = panelRect.bottom - BOTTOM_INSET - dockHeight;
+    const shouldFloat = targetRect.top > mergeTop + 1;
 
     if(!shouldFloat){
       hideDock();
@@ -115,9 +138,10 @@
     }
 
     const el = ensureDock();
-    el.style.left = `${Math.round(rect.left)}px`;
-    el.style.width = `${Math.round(rect.width)}px`;
-    el.style.bottom = `${BOTTOM_GAP}px`;
+    el.style.left = `${Math.round(panelRect.left)}px`;
+    el.style.width = `${Math.round(panelRect.width)}px`;
+    el.style.top = `${Math.round(panelRect.bottom - BOTTOM_INSET - dockHeight)}px`;
+    el.style.bottom = 'auto';
     el.classList.add('is-visible');
     el.setAttribute('aria-hidden', 'false');
   }
@@ -130,9 +154,11 @@
 
   window.addEventListener('scroll', schedule, {passive:true});
   window.addEventListener('resize', schedule, {passive:true});
+  window.addEventListener('pageshow', schedule);
+  window.addEventListener('load', schedule);
   document.addEventListener('DOMContentLoaded', schedule);
 
-  new MutationObserver(schedule).observe(document.documentElement, {
+  new MutationObserver(schedule).observe(document.getElementById('app') || document.documentElement, {
     childList:true,
     subtree:true,
     characterData:true,
