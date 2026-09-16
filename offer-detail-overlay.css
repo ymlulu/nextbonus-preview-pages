@@ -1,0 +1,180 @@
+/* Offer Detail presentation layer -------------------------------------------------
+   Offer Detail is an overlay above its source page, not a standalone full-canvas page.
+   Desktop keeps the approved two-column composition; the right rail owns its scroll and
+   the CTA lives in a permanent bottom dock until its in-flow sentinel reaches it. */
+
+body.nb-offer-overlay-open{overflow:hidden}
+
+.nb-offer-detail-overlay{
+  position:fixed;
+  inset:0;
+  z-index:80;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  background:rgba(18,24,34,.38);
+  backdrop-filter:blur(8px);
+}
+
+.nb-offer-detail-frame{
+  position:relative;
+  width:min(1210px,calc(100vw - 48px));
+  height:min(760px,calc(100vh - 48px));
+  max-height:760px;
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 28px 90px rgba(18,28,45,.24);
+  overflow:visible;
+}
+
+.nb-offer-detail-host,
+.nb-offer-detail-host > .v4-offer-detail-page,
+.nb-offer-detail-host .v4-offer-detail-grid{
+  width:100%;
+  height:100%;
+  max-width:none !important;
+  margin:0 !important;
+}
+
+.nb-offer-detail-host .v4-offer-detail-grid{
+  min-height:0 !important;
+  max-height:none !important;
+  align-items:stretch !important;
+}
+
+.nb-offer-detail-host .v4-offer-poster-shell,
+.nb-offer-detail-host .v4-decision-panel{
+  height:100% !important;
+  min-height:0 !important;
+  max-height:none !important;
+}
+
+.nb-offer-detail-close{
+  position:absolute;
+  z-index:8;
+  top:-14px;
+  right:-14px;
+  width:34px;
+  height:34px;
+  border:1px solid rgba(224,229,237,.95);
+  border-radius:50%;
+  background:rgba(255,255,255,.98);
+  box-shadow:0 6px 20px rgba(20,30,45,.14);
+  color:#5f6876;
+  font-size:22px;
+  line-height:1;
+  display:grid;
+  place-items:center;
+  padding:0 0 2px;
+}
+
+.nb-offer-detail-host .v4-decision-panel{
+  position:relative !important;
+  display:block !important;
+  overflow:hidden !important;
+}
+
+.nb-offer-panel-scroll{
+  position:absolute;
+  inset:0;
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding:inherit;
+  scrollbar-gutter:stable;
+}
+
+.nb-offer-panel-scroll::-webkit-scrollbar{width:8px}
+.nb-offer-panel-scroll::-webkit-scrollbar-thumb{
+  background:rgba(120,136,160,.22);
+  border-radius:999px;
+}
+.nb-offer-panel-scroll::-webkit-scrollbar-track{background:transparent}
+
+.nb-offer-panel-dock{
+  position:absolute;
+  z-index:6;
+  left:18px;
+  right:18px;
+  bottom:14px;
+  min-height:var(--nb-cta-height,44px);
+  display:flex;
+  align-items:stretch;
+  pointer-events:auto;
+}
+
+.nb-offer-panel-dock::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:-16px -8px -8px;
+  background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.93) 34%,#fff 58%);
+  pointer-events:none;
+}
+
+.nb-offer-panel-dock.is-merged{
+  pointer-events:none;
+}
+.nb-offer-panel-dock.is-merged::before{display:none}
+
+.nb-offer-panel-dock > *{
+  width:100% !important;
+  margin:0 !important;
+}
+
+.nb-offer-panel-dock .v4-detail-actions{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+.nb-offer-panel-dock .v4-detail-actions.single{grid-template-columns:1fr}
+
+.nb-offer-cta-sentinel{
+  width:100%;
+  pointer-events:none;
+}
+
+/* The old body-level CTA clone is retired. Keep it hidden if a stale cached script exists. */
+.nb-offer-cta-dock{display:none !important}
+
+/* Promoted app confirmation modals must sit above the Offer Detail overlay. */
+.nb-promoted-app-modal{z-index:120 !important}
+
+@media(max-width:1180px){
+  body.nb-offer-overlay-open{overflow:hidden}
+  .nb-offer-detail-overlay{
+    padding:0;
+    align-items:stretch;
+    background:#fff;
+    backdrop-filter:none;
+  }
+  .nb-offer-detail-frame{
+    width:100%;
+    height:100%;
+    max-height:none;
+    border-radius:0;
+    box-shadow:none;
+    overflow:auto;
+  }
+  .nb-offer-detail-close{
+    position:fixed;
+    top:12px;
+    right:12px;
+  }
+  .nb-offer-detail-host,
+  .nb-offer-detail-host > .v4-offer-detail-page,
+  .nb-offer-detail-host .v4-offer-detail-grid{
+    height:auto;
+    min-height:100%;
+  }
+  .nb-offer-detail-host .v4-offer-detail-grid{
+    grid-template-columns:1fr !important;
+  }
+  .nb-offer-detail-host .v4-offer-poster-shell,
+  .nb-offer-detail-host .v4-decision-panel{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
+  }
+}
