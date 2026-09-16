@@ -28,44 +28,6 @@
     max-height:none !important;
     overflow:visible !important;
   }
-
-  /* Desktop CTA behavior: keep an action visible at the bottom edge of the viewport
-     while the real CTA is still below the fold. The JS dock mirrors the real action and
-     disappears exactly when the original reaches the same viewport position, so both
-     visually merge into a single CTA instead of overlapping. */
-  .nb-offer-cta-dock{
-    position:fixed;
-    z-index:65;
-    opacity:0;
-    pointer-events:none;
-    transform:translateY(8px);
-    transition:opacity .14s ease,transform .14s ease;
-    filter:drop-shadow(0 10px 26px rgba(20,35,60,.13));
-  }
-  .nb-offer-cta-dock.is-visible{
-    opacity:1;
-    pointer-events:auto;
-    transform:none;
-  }
-  .nb-offer-cta-dock-content{
-    margin:0 !important;
-  }
-  .nb-offer-cta-dock .v4-detail-actions{
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:9px;
-  }
-  .nb-offer-cta-dock .v4-detail-actions.single{
-    grid-template-columns:1fr;
-  }
-  .nb-offer-cta-dock :where(
-    .mm-cta,
-    .nb-bank-cta,
-    .remaining-cta,
-    .deal-cta
-  ){
-    margin-top:0 !important;
-  }
 }
 
 /* The right rail always owns its natural height. This also overrides any legacy
@@ -298,9 +260,6 @@
   }
   .v4-offer-detail-page .v4-decision-panel{
     min-height:0 !important;
-  }
-  .nb-offer-cta-dock{
-    display:none !important;
   }
 }
 
