@@ -16,6 +16,7 @@
   let currentOfferId = null;
   let reconcileQueued = false;
   let reconciling = false;
+  let closing = false;
   let panelObserver = null;
   let panelScroll = null;
   let ctaSentinel = null;
@@ -201,6 +202,50 @@
     requestAnimationFrame(() => window.scrollTo({top:baseScrollY,behavior:'instant'}));
   }
 
+  function prepareBaseBeforeReveal(){
+    if(baseSource !== 'wishlist' || baseHtml == null) return;
+
+    // Keep the Offer overlay covering the page while the source view is rebuilt.
+    // The captured HTML already contains the fully-finalized Watchlist shell, so
+    // restoring it avoids exposing app.js's legacy wishlist markup for a frame.
+    app.innerHTML = baseHtml;
+
+    // Re-render only the Watchlist body from current state so changes made inside
+    // Offer Detail (for example bookmark state) are reflected before reveal.
+    window.NextBonusWatchlistUI?.refresh?.();
+    window.scrollTo({top:baseScrollY,behavior:'instant'});
+  }
+
+  function revealBaseAfterSettle(){
+    if(!overlay){
+      closing = false;
+      return;
+    }
+
+    // popstate is dispatched before app.js has finished rebuilding the source page.
+    // Move preparation to the microtask checkpoint, then keep the overlay mounted
+    // through one full animation frame so route-scoped copy/layout runtimes can settle.
+    queueMicrotask(() => {
+      if(!overlay){
+        closing = false;
+        return;
+      }
+
+      prepareBaseBeforeReveal();
+      const y = baseScrollY;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if(!overlay){
+            closing = false;
+            return;
+          }
+          teardownOverlay();
+          window.scrollTo({top:y,behavior:'instant'});
+        });
+      });
+    });
+  }
+
   function promoteAppModal(){
     const modal = app.querySelector(':scope > .modal-backdrop, .shell + .modal-backdrop');
     if(!modal) return;
@@ -271,6 +316,7 @@
     removePromotedModals();
     baseHtml = null;
     currentOfferId = null;
+    closing = false;
   }
 
   function fireLegacyBackFallback(){
@@ -284,16 +330,20 @@
   }
 
   function requestClose(){
+    if(closing) return;
+    closing = true;
+
     const info = history.state?.nbOfferOverlay || bridge?.getActive?.();
     if(info && history.length > 1){
       history.back();
       return;
     }
+
+    // Fallback navigation must also happen while the overlay is still mounted.
+    // Otherwise the app's source-page reconstruction becomes visible mid-transition.
     bridge?.clear?.();
-    const y = baseScrollY;
-    teardownOverlay();
     fireLegacyBackFallback();
-    requestAnimationFrame(() => window.scrollTo({top:y,behavior:'instant'}));
+    revealBaseAfterSettle();
   }
 
   function suspendForLogin(){
@@ -304,6 +354,7 @@
     detail = null;
     document.body.classList.remove('nb-offer-overlay-open');
     removePromotedModals();
+    closing = false;
   }
 
   function maybeSuspendForAssessment(event){
@@ -315,6 +366,7 @@
 
   function openFromHistory(info){
     if(!info?.offerId) return;
+    closing = false;
     if(overlay && currentOfferId === info.offerId) return;
     if(overlay) teardownOverlay();
 
@@ -338,13 +390,13 @@
 
   function onOverlayHistory(event){
     const info = event.detail?.overlay || null;
-    requestAnimationFrame(() => {
-      if(!info){
-        if(overlay) teardownOverlay();
-        return;
-      }
-      openFromHistory(info);
-    });
+    if(!info){
+      if(overlay) revealBaseAfterSettle();
+      else closing = false;
+      return;
+    }
+
+    requestAnimationFrame(() => openFromHistory(info));
   }
 
   function handleBreakpointChange(){
