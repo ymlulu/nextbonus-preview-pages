@@ -4,6 +4,7 @@
   const MOBILE_QUERY='(max-width:780px)';
   const mobileQuery=window.matchMedia(MOBILE_QUERY);
   let selectedId=null;
+  let queued=false;
 
   function walletGrid(){
     return document.querySelector('.v4-products-page .credit-products .v4-owned-product-grid');
@@ -14,6 +15,7 @@
   }
 
   function sync(){
+    queued=false;
     const grid=walletGrid();
     if(!grid) return;
 
@@ -39,11 +41,9 @@
   }
 
   function schedule(){
-    if(window.NextBonusUICommit){
-      window.NextBonusUICommit.schedule('mobile-wallet-stack');
-      return;
-    }
-    queueMicrotask(sync);
+    if(queued) return;
+    queued=true;
+    requestAnimationFrame(sync);
   }
 
   function onCardClick(event){
@@ -79,11 +79,9 @@
   document.addEventListener('click',onOutsideClick,false);
   mobileQuery.addEventListener?.('change',schedule);
 
-  if(window.NextBonusUICommit){
-    window.NextBonusUICommit.register('mobile-wallet-stack',sync);
-  }else if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',sync,{once:true});
-  }else{
-    sync();
-  }
+  const app=document.getElementById('app');
+  if(app) new MutationObserver(schedule).observe(app,{childList:true,subtree:true});
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',schedule,{once:true});
+  else schedule();
 })();
