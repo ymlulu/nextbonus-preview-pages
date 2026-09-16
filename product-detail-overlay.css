@@ -1,0 +1,86 @@
+/* Product Detail presentation layer.
+   Wallet stays visually present beneath the detail. The detail DOM itself is moved into
+   this overlay; it is never cloned into a second interactive copy. */
+
+body.nb-product-overlay-open{overflow:hidden}
+
+.nb-product-detail-overlay{
+  position:fixed;
+  inset:0;
+  z-index:76;
+  display:grid;
+  place-items:start center;
+  padding:28px 42px;
+  overflow:auto;
+  background:rgba(15,26,47,.24);
+  backdrop-filter:blur(2.4px);
+}
+
+.nb-product-detail-panel{
+  position:relative;
+  width:min(1180px,calc(100vw - 104px));
+  max-height:calc(100vh - 56px);
+  overflow:auto;
+  background:#fff;
+  border:1px solid rgba(226,232,240,.96);
+  border-radius:22px;
+  box-shadow:0 28px 90px rgba(16,28,52,.26);
+  overscroll-behavior:contain;
+}
+
+.nb-product-detail-host>.content,
+.nb-product-detail-host>.edit-product-page{
+  max-width:none!important;
+  margin:0!important;
+  padding:26px 28px 34px;
+}
+
+.nb-product-detail-close{
+  position:sticky;
+  z-index:8;
+  top:12px;
+  float:right;
+  margin:12px 12px -44px 0;
+  width:34px;
+  height:34px;
+  border:1px solid rgba(224,229,237,.95);
+  border-radius:50%;
+  background:rgba(255,255,255,.98);
+  box-shadow:0 6px 20px rgba(20,30,45,.14);
+  color:#5f6876;
+  font-size:22px;
+  line-height:1;
+  display:grid;
+  place-items:center;
+  padding:0 0 2px;
+  cursor:pointer;
+}
+
+@media(max-width:780px){
+  .nb-product-detail-overlay{
+    padding:0;
+    display:block;
+    background:#fff;
+    backdrop-filter:none;
+  }
+  .nb-product-detail-panel{
+    width:100%;
+    min-height:100%;
+    max-height:none;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+    overflow:visible;
+  }
+  .nb-product-detail-host>.content,
+  .nb-product-detail-host>.edit-product-page{
+    padding:0;
+  }
+  .nb-product-detail-close{
+    position:fixed;
+    top:12px;
+    right:12px;
+    margin:0;
+    float:none;
+  }
+}
