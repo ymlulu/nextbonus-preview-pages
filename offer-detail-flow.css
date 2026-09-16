@@ -1,0 +1,113 @@
+/* NextBonus Offer Detail content-driven flow contract.
+   Dynamic decision content must never be compressed just to match the poster height.
+   The design height is a baseline, not a clipping boundary. */
+
+/* The right rail owns its natural height. Keep poster masking separate from decision content. */
+.v4-offer-detail-page .v4-decision-panel{
+  height:auto !important;
+  max-height:none !important;
+  overflow:visible !important;
+}
+
+/* Offer Detail right rails are flex columns. The previous default flex-shrink behavior
+   could compress reward/step cards to fit the poster height and then clip their contents. */
+.v4-offer-detail-page .v4-decision-panel > *{
+  flex-shrink:0 !important;
+  min-width:0;
+}
+
+/* Dynamic content cards may grow vertically with their copy. Rounded containers may still
+   use overflow:hidden for corner masking; only fixed/clamped heights are removed here. */
+.v4-offer-detail-page :where(
+  .v4-result-card,
+  .mm-reward,
+  .mm-stack > div,
+  .mm-step-card,
+  .nb-bank-reward,
+  .nb-bank-step-card,
+  .remaining-reward,
+  .remaining-step-card,
+  .deal-value-card,
+  .deal-time-card,
+  .deal-step-copy
+){
+  height:auto !important;
+  max-height:none !important;
+  min-width:0;
+}
+
+/* Critical offer facts must remain fully readable. Never ellipsize or line-clamp them. */
+.v4-offer-detail-page :where(
+  .v4-recommendation,
+  .v4-result-note,
+  .v5-short-summary,
+  .v5-primary-alert,
+  .mm-reward-label,
+  .mm-reward-value,
+  .mm-tier,
+  .mm-step-title,
+  .mm-step-card li,
+  .nb-bank-reward-label,
+  .nb-bank-reward-value,
+  .nb-bank-tier,
+  .nb-bank-step-title,
+  .nb-bank-step-card li,
+  .remaining-reward-label,
+  .remaining-reward-value,
+  .remaining-reward-sub,
+  .remaining-tier,
+  .remaining-step-title,
+  .remaining-step-card li,
+  .deal-value-label,
+  .deal-value,
+  .deal-value-sub,
+  .deal-step-copy b,
+  .deal-step-copy small
+){
+  white-space:normal !important;
+  max-height:none !important;
+  text-overflow:clip !important;
+  -webkit-line-clamp:unset !important;
+  overflow-wrap:break-word;
+}
+
+/* A long step title may wrap while the time/status pill remains intact. */
+.v4-offer-detail-page :where(
+  .mm-step-title,
+  .nb-bank-step-title,
+  .remaining-step-title
+){
+  flex-wrap:wrap;
+  align-items:flex-start;
+}
+
+.v4-offer-detail-page :where(
+  .mm-time,
+  .nb-bank-step-time,
+  .remaining-time,
+  .deal-urgent
+){
+  flex:0 0 auto !important;
+  white-space:nowrap !important;
+}
+
+/* Grid cells must be allowed to wrap instead of forcing the rail wider than its column. */
+.v4-offer-detail-page :where(
+  .mm-tier-head span,
+  .mm-tier span,
+  .nb-bank-tier-head span,
+  .nb-bank-tier span,
+  .remaining-tier-head span,
+  .remaining-tier span,
+  .mm-stack > div
+){
+  min-width:0;
+  overflow-wrap:break-word;
+}
+
+/* On stacked/tablet layouts there is no reason for the decision rail to imitate a 760px poster. */
+@media(max-width:1180px){
+  .v4-offer-detail-page .v4-decision-panel{
+    min-height:0 !important;
+  }
+}
