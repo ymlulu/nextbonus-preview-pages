@@ -181,7 +181,7 @@
   function queueEnhance(){
     if(queued) return;
     queued = true;
-    requestAnimationFrame(()=>{
+    queueMicrotask(()=>{
       queued = false;
       enhance();
     });
@@ -189,20 +189,31 @@
 
   document.addEventListener('click',event=>{
     const toggle = event.target.closest('[data-nb-watchlist-action="toggle-history"]');
-    if(!toggle) return;
-    event.preventDefault();
-    event.stopPropagation();
-    historyOpen = !historyOpen;
-    const page = document.querySelector('.wishlist-page');
-    if(page) page.classList.remove('nb-watchlist-rendered');
-    renderWatchlistPage();
+    if(toggle){
+      event.preventDefault();
+      event.stopPropagation();
+      historyOpen = !historyOpen;
+      const page = document.querySelector('.wishlist-page');
+      if(page) page.classList.remove('nb-watchlist-rendered');
+      renderWatchlistPage();
+      return;
+    }
+    queueEnhance();
   },true);
 
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',enhance,{once:true});
-  else enhance();
+  window.addEventListener('popstate',queueEnhance);
+  window.addEventListener('pageshow',queueEnhance);
+  window.addEventListener('storage',event=>{
+    if(!event.key || event.key===LEGACY_KEY) queueEnhance();
+  });
 
-  const app = document.getElementById('app');
-  if(app) new MutationObserver(queueEnhance).observe(app,{childList:true,subtree:true});
+  // This script is loaded at the end of <body>, after app.js has rendered the
+  // current route, so finalize the initial page immediately instead of waiting
+  // for DOMContentLoaded or another animation frame.
+  enhance();
+
+  // Toast copy can change outside a route transition. Keep this observer scoped
+  // to the toast root only; it no longer watches or owns #app rendering.
   const toast = document.getElementById('toast-root');
   if(toast) new MutationObserver(queueEnhance).observe(toast,{childList:true,subtree:true,characterData:true});
 
