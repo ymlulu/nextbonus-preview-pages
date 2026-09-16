@@ -1,12 +1,16 @@
 (() => {
   'use strict';
 
-  const SEEN_KEY = 'nextbonus-onboarding-v1-seen';
-  const PENDING_KEY = 'nextbonus-onboarding-v1-pending';
+  const SEEN_KEY = 'nextbonus-onboarding-v2-seen';
+  const PENDING_KEY = 'nextbonus-onboarding-v2-pending';
   const PAGE_COUNT = 6;
+  const SPRITE_SOURCE = 'onboarding.css?v=20260916-1';
   let page = 0;
   let overlay = null;
   let frame = null;
+  let art = null;
+  let spriteImg = null;
+  let spriteUrl = null;
   let dots = null;
   let prevButton = null;
   let nextButton = null;
@@ -22,6 +26,57 @@
 
   function safeRemove(key){
     try { localStorage.removeItem(key); } catch (e) {}
+  }
+
+  function decodeBase64Image(base64){
+    const raw = atob(base64);
+    const bytes = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i += 1) bytes[i] = raw.charCodeAt(i);
+    return new Blob([bytes], {type:'image/webp'});
+  }
+
+  async function hydrateArtwork(){
+    if (!art || spriteImg) return;
+    const response = await fetch(SPRITE_SOURCE, {cache:'no-store'});
+    if (!response.ok) throw new Error(`Onboarding artwork source failed: ${response.status}`);
+    const css = await response.text();
+    const match = css.match(/data:image\/webp;base64,([A-Za-z0-9+/=]+)/);
+    if (!match) throw new Error('Onboarding artwork payload missing');
+
+    const blob = decodeBase64Image(match[1]);
+    spriteUrl = URL.createObjectURL(blob);
+    spriteImg = document.createElement('img');
+    spriteImg.alt = '';
+    spriteImg.setAttribute('aria-hidden', 'true');
+    Object.assign(spriteImg.style, {
+      position:'absolute',
+      left:'0',
+      top:'0',
+      width:'100%',
+      height:'600%',
+      maxWidth:'none',
+      display:'block',
+      objectFit:'fill',
+      pointerEvents:'none',
+      userSelect:'none',
+      willChange:'transform',
+      transition:'transform .18s ease'
+    });
+
+    const loaded = new Promise((resolve, reject) => {
+      spriteImg.onload = resolve;
+      spriteImg.onerror = reject;
+    });
+    spriteImg.src = spriteUrl;
+    art.appendChild(spriteImg);
+    await loaded;
+    art.style.backgroundImage = 'none';
+    positionArtwork();
+  }
+
+  function positionArtwork(){
+    if (!spriteImg) return;
+    spriteImg.style.transform = `translateY(-${page * (100 / PAGE_COUNT)}%)`;
   }
 
   function build(){
@@ -47,6 +102,7 @@
     document.body.classList.add('nb-onboarding-open');
 
     frame = overlay.querySelector('.nb-onboarding-frame');
+    art = overlay.querySelector('.nb-onboarding-art');
     dots = overlay.querySelector('.nb-onboarding-dots');
     prevButton = overlay.querySelector('.nb-onboarding-prev');
     nextButton = overlay.querySelector('.nb-onboarding-next');
@@ -66,7 +122,9 @@
     });
 
     go(0);
-    requestAnimationFrame(() => overlay.classList.add('is-visible'));
+    hydrateArtwork()
+      .catch((error) => console.error('[NextBonus onboarding]', error))
+      .finally(() => requestAnimationFrame(() => overlay?.classList.add('is-visible')));
   }
 
   function go(nextPage){
@@ -75,6 +133,7 @@
 
     frame.dataset.page = String(page + 1);
     overlay.dataset.page = String(page + 1);
+    positionArtwork();
 
     const allDots = [...dots.querySelectorAll('.nb-onboarding-dot')];
     allDots.forEach((dot, index) => {
@@ -102,10 +161,16 @@
     const node = overlay;
     overlay = null;
     frame = null;
+    art = null;
+    spriteImg = null;
     dots = null;
     prevButton = null;
     nextButton = null;
     startButton = null;
+    if (spriteUrl) {
+      URL.revokeObjectURL(spriteUrl);
+      spriteUrl = null;
+    }
     window.setTimeout(() => node.remove(), 180);
   }
 
