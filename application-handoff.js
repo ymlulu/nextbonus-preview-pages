@@ -6,19 +6,28 @@
   const SUCCESS_KEY = 'nextbonus-application-handoff-success-v1';
   const ROOT_ID = 'nb-application-handoff-root';
   const STYLE_ID = 'nb-application-handoff-style';
+  const RETURN_SETTLE_MS = 90;
+  const FOCUS_FALLBACK_MS = 140;
+  const RETURN_DEDUPE_MS = 1200;
   const UNRESOLVED_STATUSES = new Set([
-    'awaiting_result', 'deferred', 'pending',
-    'approved_needs_login'
+    'awaiting_result', 'deferred', 'pending', 'approved_needs_login'
   ]);
 
   const clone = value => value == null ? value : JSON.parse(JSON.stringify(value));
   const nowIso = () => new Date().toISOString();
-  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
   const today = () => {
     const d = new Date();
     const pad = n => String(n).padStart(2, '0');
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   };
+
+  let viewState = { attemptId:null, mode:null };
+  let returnTimer = null;
+  let returnCycle = { attemptId:null, away:false, resumedAt:0 };
+  let successTimer = null;
 
   function readJson(key, fallback) {
     try {
@@ -41,7 +50,7 @@
     const store = readJson(HANDOFF_KEY, null);
     return store && Array.isArray(store.attempts)
       ? store
-      : { schemaVersion: 1, activeId: null, attempts: [] };
+      : { schemaVersion:1, activeId:null, attempts:[] };
   }
 
   function saveStore(store) {
@@ -53,24 +62,34 @@
     return store.attempts.find(x => x.id === store.activeId) || null;
   }
 
+  function visibleOfferId(state) {
+    if (!state) return null;
+    return state.offerOverlay?.offerId || (state.route === 'offer-detail' ? state.currentOfferId : null);
+  }
+
   function attemptForCurrentView() {
     const state = appState();
     const store = handoffStore();
-    const active = store.attempts.find(attempt => attempt.id === store.activeId) || null;
+    let active = store.attempts.find(attempt => attempt.id === store.activeId) || null;
+
     if (active && !UNRESOLVED_STATUSES.has(active.status)) {
       store.activeId = null;
       saveStore(store);
+      active = null;
     }
-    if (state?.route === 'offer-detail' && state.currentOfferId) {
+
+    const offerId = visibleOfferId(state);
+    if (offerId) {
       const matching = store.attempts.find(attempt =>
-        attempt.offerId === state.currentOfferId && UNRESOLVED_STATUSES.has(attempt.status)
+        attempt.offerId === offerId && UNRESOLVED_STATUSES.has(attempt.status)
       ) || null;
       if (matching && store.activeId !== matching.id) {
         store.activeId = matching.id;
         saveStore(store);
       }
-      return matching;
+      if (matching) return matching;
     }
+
     return active && UNRESOLVED_STATUSES.has(active.status) ? active : null;
   }
 
@@ -78,23 +97,30 @@
     const store = handoffStore();
     const index = store.attempts.findIndex(x => x.id === id);
     if (index < 0) return null;
-    store.attempts[index] = { ...store.attempts[index], ...patch, updatedAt: nowIso() };
+    store.attempts[index] = { ...store.attempts[index], ...patch, updatedAt:nowIso() };
     saveStore(store);
     return store.attempts[index];
+  }
+
+  function resetView(attemptId = null, mode = null) {
+    viewState = { attemptId, mode };
   }
 
   function finishAttempt(id, status) {
     const store = handoffStore();
     const index = store.attempts.findIndex(x => x.id === id);
-    if (index >= 0) store.attempts[index] = { ...store.attempts[index], status, updatedAt: nowIso() };
+    if (index >= 0) {
+      store.attempts[index] = { ...store.attempts[index], status, updatedAt:nowIso() };
+    }
     if (store.activeId === id) store.activeId = null;
     saveStore(store);
+    resetView();
     render();
   }
 
   function currentContext() {
     const state = appState();
-    const offerId = state?.currentOfferId;
+    const offerId = state?.offerOverlay?.offerId || state?.currentOfferId;
     const offer = offerId ? window.NextBonusOfferData?.[offerId] : null;
     const productId = offer?.productId || null;
     const product = productId ? window.NextBonusOfferProducts?.[productId] : null;
@@ -103,50 +129,65 @@
     return {
       productId,
       offerId,
-      offerVersionId: offer.offerVersionId || `preview-current:${offerId}`,
-      productName: product.name,
-      issuer: product.provider,
-      category: product.category,
-      applicationUrl: offer.applyUrl,
-      reward: offer.primaryValue || '',
-      requirement: offer.primaryRequirement || '',
-      assessmentId: assessment?.id || assessment?.assessmentId || null,
-      assessmentSnapshot: clone(assessment)
+      offerVersionId:offer.offerVersionId || `preview-current:${offerId}`,
+      productName:product.name,
+      issuer:product.provider,
+      category:product.category,
+      applicationUrl:offer.applyUrl,
+      reward:offer.primaryValue || '',
+      requirement:offer.primaryRequirement || '',
+      assessmentId:assessment?.id || assessment?.assessmentId || null,
+      assessmentSnapshot:clone(assessment)
     };
+  }
+
+  function markOutboundAttempt(attempt) {
+    if (!attempt) return;
+    returnCycle = { attemptId:attempt.id, away:true, resumedAt:0 };
+    resetView(attempt.id, null);
   }
 
   function startHandoff() {
     const context = currentContext();
     if (!context) return null;
+
     const store = handoffStore();
-    const current = store.attempts.find(x => x.id === store.activeId);
-    if (current && current.offerId === context.offerId && UNRESOLVED_STATUSES.has(current.status)) {
-      render();
-      return current;
+    const current = store.attempts.find(x => x.id === store.activeId) || null;
+    const stamp = nowIso();
+
+    if (current && current.offerId === context.offerId && current.status === 'awaiting_result') {
+      const refreshed = updateAttempt(current.id, {
+        applicationClickedAt:stamp,
+        leftForApplicationAt:stamp,
+        returnedAt:null
+      }) || current;
+      markOutboundAttempt(refreshed);
+      return refreshed;
     }
+
     const idBase = `app-${Date.now()}`;
     let id = idBase;
     let suffix = 1;
     while (store.attempts.some(attempt => attempt.id === id)) id = `${idBase}-${suffix++}`;
+
     const attempt = {
       id,
       ...context,
-      applicationClickedAt: nowIso(),
-      status: 'awaiting_result',
-      // startHandoff runs only after app.js has opened (or confirmed opening)
-      // the external application page. Persist this before relying on blur.
-      leftForApplicationAt: nowIso(),
-      returnedAt: null,
-      resultConfirmedAt: null,
-      anchorDate: null,
-      createdUserProductId: null,
-      createdAt: nowIso(),
-      updatedAt: nowIso()
+      applicationClickedAt:stamp,
+      status:'awaiting_result',
+      leftForApplicationAt:stamp,
+      returnedAt:null,
+      resultConfirmedAt:null,
+      anchorDate:null,
+      createdUserProductId:null,
+      createdAt:stamp,
+      updatedAt:stamp
     };
+
     store.attempts.unshift(attempt);
     store.activeId = id;
     saveStore(store);
-    render();
+    markOutboundAttempt(attempt);
     return attempt;
   }
 
@@ -175,17 +216,20 @@
   }
 
   function verifiedFollowup(attempt) {
-    const entry = window.NextBonusApplicationFollowupRegistry?.find?.({ productId: attempt.productId, issuer: attempt.issuer }) || null;
+    const entry = window.NextBonusApplicationFollowupRegistry?.find?.({
+      productId:attempt.productId,
+      issuer:attempt.issuer
+    }) || null;
     return entry?.verificationStatus === 'verified' ? entry : null;
   }
 
   function banner(attempt) {
     const copy = {
-      awaiting_result: ['申请页面已打开','回来后告诉 NextBonus 申请结果，后续条件就可以接着追踪。'],
-      deferred: ['待确认申请结果','申请上下文已经保存，之后回来不需要重新选择产品或 Offer。'],
-      pending: ['申请还在审核中','NextBonus 已保留这次申请上下文，你可以随时回来更新结果。'],
-      denied: ['这次申请没有通过','如果后续结果变化，可以回来更新；已核验的后续处理入口也会显示在这里。'],
-      approved_needs_login: ['已通过 · 待保存','登录后即可把产品和本次奖励追踪一起加入“我的”。']
+      awaiting_result:['申请页面已打开','回来后告诉 NextBonus 申请结果，后续条件就可以接着追踪。'],
+      deferred:['待确认申请结果','申请上下文已经保存，之后回来不需要重新选择产品或 Offer。'],
+      pending:['申请还在审核中','NextBonus 已保留这次申请上下文，你可以随时回来更新结果。'],
+      denied:['这次申请没有通过','如果后续结果变化，可以回来更新；已核验的后续处理入口也会显示在这里。'],
+      approved_needs_login:['已通过 · 待保存','登录后即可把产品和本次奖励追踪一起加入“我的”。']
     }[attempt.status];
     if (!copy) return '';
     return `<div class="nb-ah-banner"><strong>${esc(copy[0])}</strong><p>${esc(attempt.productName)} · ${esc(copy[1])}</p><div class="nb-ah-row"><button class="nb-ah-btn secondary" data-handoff-action="open">${attempt.status === 'denied' ? '查看后续' : '更新结果'}</button></div></div>`;
@@ -207,7 +251,9 @@
     if (pending && entry?.applicationStatusPhone) external.push(`<a class="nb-ah-btn secondary" href="tel:${esc(entry.applicationStatusPhone)}">拨打申请状态电话</a>`);
     if (!pending && entry?.reconsiderationPhone) external.push(`<a class="nb-ah-btn secondary" href="tel:${esc(entry.reconsiderationPhone)}">拨打 Recon 电话</a>`);
     const guidance = entry ? (pending ? entry.pendingGuidance : entry.reconGuidance) : null;
-    const guidanceItems = Array.isArray(guidance) ? guidance : typeof guidance === 'string' && guidance.trim() ? [guidance] : [];
+    const guidanceItems = Array.isArray(guidance)
+      ? guidance
+      : typeof guidance === 'string' && guidance.trim() ? [guidance] : [];
     return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">${title}</div><div class="nb-ah-sub">${esc(attempt.productName)}</div></div><button class="nb-ah-close" data-handoff-action="hide">×</button></div><div class="nb-ah-body">${specific}${external.length ? `<div class="nb-ah-row" style="justify-content:flex-start;margin-top:14px">${external.join('')}</div>` : ''}${guidanceItems.length ? `<ul>${guidanceItems.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div><div class="nb-ah-foot"><button class="nb-ah-btn ghost" data-handoff-action="hide">稍后确认</button><div class="nb-ah-row"><button class="nb-ah-btn secondary" data-handoff-action="result" data-result="${pending ? 'denied' : 'pending'}">${pending ? '改为未通过' : '状态有变化'}</button><button class="nb-ah-btn primary" data-handoff-action="result" data-result="approved">已通过</button></div></div></div></div>`;
   }
 
@@ -215,25 +261,59 @@
     return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">登录后保存到“我的”</div><div class="nb-ah-sub">${esc(attempt.productName)} 已确认通过</div></div><button class="nb-ah-close" data-handoff-action="hide">×</button></div><div class="nb-ah-body"><div class="nb-ah-note">“直接申请”本身不要求登录；但创建 UserProduct、奖励追踪和任务属于个人数据，需要登录后保存。</div></div><div class="nb-ah-foot"><button class="nb-ah-btn secondary" data-handoff-action="hide">稍后处理</button><button class="nb-ah-btn primary" data-handoff-action="login">登录并继续</button></div></div></div>`;
   }
 
+  function defaultModeFor(attempt) {
+    return attempt?.status === 'awaiting_result' && attempt.returnedAt ? 'choice' : null;
+  }
 
+  function htmlForMode(attempt, mode) {
+    if (mode === 'choice') return choiceModal(attempt);
+    if (mode === 'pending') return followupModal(attempt, 'pending');
+    if (mode === 'denied') return followupModal(attempt, 'denied');
+    if (mode === 'login') return loginModal(attempt);
+    return banner(attempt);
+  }
 
-  function render(mode = null) {
+  function commitRoot(root, signature, html) {
+    if (root.dataset.nbRenderSignature === signature) return;
+    root.innerHTML = html;
+    root.dataset.nbRenderSignature = signature;
+  }
+
+  function render(mode) {
     ensureStyles();
     const root = ensureRoot();
     const success = readJson(SUCCESS_KEY, null);
+
     if (success) {
       localStorage.removeItem(SUCCESS_KEY);
-      root.innerHTML = `<div class="nb-ah-success"><strong>已添加到“我的”</strong><p>${esc(success.productName)} 已保存；本次 Offer 的条件已经开始追踪。你现在看到的是新产品详情。</p></div>`;
-      setTimeout(() => { root.innerHTML = ''; }, 6000);
+      resetView();
+      const signature = `success:${success.productId || success.productName || 'done'}`;
+      commitRoot(root, signature, `<div class="nb-ah-success"><strong>已添加到“我的”</strong><p>${esc(success.productName)} 已保存；本次 Offer 的条件已经开始追踪。你现在看到的是新产品详情。</p></div>`);
+      clearTimeout(successTimer);
+      successTimer = setTimeout(() => {
+        if (root.dataset.nbRenderSignature === signature) {
+          root.innerHTML = '';
+          delete root.dataset.nbRenderSignature;
+        }
+      }, 6000);
       return;
     }
+
     const attempt = attemptForCurrentView();
-    if (!attempt) { root.innerHTML = ''; return; }
-    if (mode === 'choice') root.innerHTML = choiceModal(attempt);
-    else if (mode === 'pending') root.innerHTML = followupModal(attempt, 'pending');
-    else if (mode === 'denied') root.innerHTML = followupModal(attempt, 'denied');
-    else if (mode === 'login') root.innerHTML = loginModal(attempt);
-    else root.innerHTML = banner(attempt);
+    if (!attempt) {
+      resetView();
+      commitRoot(root, 'empty', '');
+      return;
+    }
+
+    if (viewState.attemptId !== attempt.id) {
+      viewState = { attemptId:attempt.id, mode:defaultModeFor(attempt) };
+    }
+    if (mode !== undefined) viewState.mode = mode;
+
+    const effectiveMode = viewState.mode;
+    const signature = `${attempt.id}|${attempt.status}|${effectiveMode || 'banner'}|${attempt.returnedAt || ''}|${attempt.resultConfirmedAt || ''}`;
+    commitRoot(root, signature, htmlForMode(attempt, effectiveMode));
   }
 
   function showAttempt(attempt) {
@@ -248,17 +328,29 @@
     return Object.values(window.NextBonusProductCatalog || {}).flat().find(x => x.offerId === attempt.offerId) || {};
   }
 
+  function clearOverlayHistoryMarker() {
+    window.NBOfferOverlayBridge?.clear?.();
+    const current = history.state;
+    if (!current?.nbOfferOverlay) return;
+    const clean = { ...current };
+    delete clean.nbOfferOverlay;
+    history.replaceState(clean, '', location.href);
+  }
 
   function commitApproved(attempt, anchorDate) {
     const state = appState();
     if (!state) throw new Error('state unavailable');
     const lifecycle = window.NextBonusProductLifecycleCore;
     if (!lifecycle) throw new Error('Product Lifecycle Core unavailable');
+
     const next = clone(state);
     const fact = window.NextBonusOfferData?.[attempt.offerId] || {};
     const entity = window.NextBonusOfferProducts?.[attempt.productId] || {};
     const catalog = catalogProduct(attempt);
-    const type = entity.category === '信用卡' ? '信用卡' : (entity.category === '银行' || entity.category === '券商') ? '银行和券商账户' : '其他';
+    const type = entity.category === '信用卡'
+      ? '信用卡'
+      : (entity.category === '银行' || entity.category === '券商') ? '银行和券商账户' : '其他';
+
     const result = lifecycle.commitApplicationApproval(next, {
       applicationHandoffId:attempt.id,
       offerId:attempt.offerId,
@@ -275,6 +367,9 @@
       reward:attempt.reward || fact.primaryValue || '当前奖励',
       requirement:attempt.requirement || fact.primaryRequirement || '完成当前 Offer 对应的奖励条件'
     });
+
+    clearOverlayHistoryMarker();
+    delete next.offerOverlay;
     next.currentProductId = result.product.id;
     next.route = 'product-detail';
     next.routeSource = 'products';
@@ -285,11 +380,21 @@
 
   function completeApproved(attempt, anchorDate) {
     const product = commitApproved(attempt, anchorDate);
-    updateAttempt(attempt.id, { status: 'approved', anchorDate, createdUserProductId: product.id, resultConfirmedAt: attempt.resultConfirmedAt || nowIso() });
+    updateAttempt(attempt.id, {
+      status:'approved',
+      anchorDate,
+      createdUserProductId:product.id,
+      resultConfirmedAt:attempt.resultConfirmedAt || nowIso()
+    });
     const store = handoffStore();
     store.activeId = null;
     saveStore(store);
-    writeJson(SUCCESS_KEY, { productId: product.id, productName: product.name, createdAt: nowIso() });
+    resetView();
+    writeJson(SUCCESS_KEY, {
+      productId:product.id,
+      productName:product.name,
+      createdAt:nowIso()
+    });
     location.reload();
   }
 
@@ -298,25 +403,88 @@
       const loggedIn = !!appState()?.loggedIn;
       const anchorDate = attempt.anchorDate || today();
       const confirmedAt = nowIso();
-      const confirmed = updateAttempt(attempt.id, { ...(loggedIn ? {} : { status: 'approved_needs_login' }), anchorDate, resultConfirmedAt: confirmedAt }) || { ...attempt, anchorDate, resultConfirmedAt: confirmedAt };
+      const confirmed = updateAttempt(attempt.id, {
+        ...(loggedIn ? {} : { status:'approved_needs_login' }),
+        anchorDate,
+        resultConfirmedAt:confirmedAt
+      }) || { ...attempt, anchorDate, resultConfirmedAt:confirmedAt };
+
       if (loggedIn) {
-        try { completeApproved(confirmed, anchorDate); }
-        catch (_) { updateAttempt(attempt.id, { status: 'deferred' }); render('choice'); }
-      } else render('login');
+        try {
+          completeApproved(confirmed, anchorDate);
+        } catch (_) {
+          updateAttempt(attempt.id, { status:'deferred' });
+          render('choice');
+        }
+      } else {
+        render('login');
+      }
     } else if (result === 'pending') {
-      updateAttempt(attempt.id, { status: 'pending', resultConfirmedAt: nowIso() });
+      updateAttempt(attempt.id, { status:'pending', resultConfirmedAt:nowIso() });
       render('pending');
     } else if (result === 'denied') {
-      updateAttempt(attempt.id, { status: 'denied', resultConfirmedAt: nowIso() });
+      updateAttempt(attempt.id, { status:'denied', resultConfirmedAt:nowIso() });
       render('denied');
     }
   }
 
+  function markAway() {
+    const attempt = activeAttempt();
+    if (!attempt || attempt.status !== 'awaiting_result') return;
+    returnCycle.attemptId = attempt.id;
+    returnCycle.away = true;
+    if (!attempt.leftForApplicationAt) {
+      updateAttempt(attempt.id, { leftForApplicationAt:nowIso() });
+    }
+  }
+
+  function resumeFromApplication() {
+    returnTimer = null;
+    if (document.hidden) return;
+
+    const attempt = activeAttempt();
+    if (!attempt || attempt.status !== 'awaiting_result' || !attempt.leftForApplicationAt) return;
+
+    const now = Date.now();
+    if (returnCycle.attemptId === attempt.id && now - returnCycle.resumedAt < RETURN_DEDUPE_MS) {
+      render('choice');
+      return;
+    }
+
+    const updated = attempt.returnedAt
+      ? attempt
+      : updateAttempt(attempt.id, { returnedAt:nowIso() }) || attempt;
+
+    returnCycle = { attemptId:attempt.id, away:false, resumedAt:now };
+    resetView(updated.id, 'choice');
+    requestAnimationFrame(() => {
+      render('choice');
+      window.dispatchEvent(new CustomEvent('nb:application-returned', {
+        detail:{ attemptId:updated.id, offerId:updated.offerId }
+      }));
+    });
+  }
+
+  function scheduleReturn(source) {
+    if (document.hidden) return;
+    const attempt = activeAttempt();
+    if (!attempt || attempt.status !== 'awaiting_result' || !attempt.leftForApplicationAt) return;
+
+    if (attempt.returnedAt) {
+      resetView(attempt.id, 'choice');
+      render('choice');
+      return;
+    }
+
+    if (returnTimer) return;
+    const delay = source === 'focus' ? FOCUS_FALLBACK_MS : RETURN_SETTLE_MS;
+    returnTimer = setTimeout(resumeFromApplication, delay);
+  }
+
   document.addEventListener('click', event => {
     const appAction = event.target.closest('[data-action]')?.dataset.action;
+
     if (appAction === 'direct-apply') {
-      // app.js renders the risk confirmation synchronously. Create the handoff in
-      // this same click task only when no confirmation remains, before blur/hidden.
       if (!document.querySelector('[data-action="apply-confirm"]')) startHandoff();
     } else if (appAction === 'apply-confirm') {
       startHandoff();
@@ -324,8 +492,11 @@
       setTimeout(() => {
         const attempt = activeAttempt();
         if (attempt?.status === 'approved_needs_login' && appState()?.loggedIn) {
-          try { completeApproved(attempt, attempt.anchorDate || today()); }
-          catch (_) { render('login'); }
+          try {
+            completeApproved(attempt, attempt.anchorDate || today());
+          } catch (_) {
+            render('login');
+          }
         }
       }, 0);
     }
@@ -339,56 +510,64 @@
     const attempt = activeAttempt();
     if (!attempt) return;
     const action = control.dataset.handoffAction;
-    if (action === 'open') showAttempt(attempt);
-    else if (action === 'hide') render();
-    else if (action === 'defer') { if (['awaiting_result','deferred'].includes(attempt.status)) updateAttempt(attempt.id, { status: 'deferred' }); render(); }
-    else if (action === 'not-submitted') finishAttempt(attempt.id, 'not_submitted');
-    else if (action === 'result') handleResult(attempt, control.dataset.result);
-    else if (action === 'external' && control.dataset.url) window.open(control.dataset.url, '_blank', 'noopener,noreferrer');
-    else if (action === 'login') {
-      updateAttempt(attempt.id, { status: 'approved_needs_login' });
+
+    if (action === 'open') {
+      showAttempt(attempt);
+    } else if (action === 'hide') {
+      resetView(attempt.id, null);
+      render();
+    } else if (action === 'defer') {
+      if (['awaiting_result','deferred'].includes(attempt.status)) {
+        updateAttempt(attempt.id, { status:'deferred' });
+      }
+      resetView(attempt.id, null);
+      render();
+    } else if (action === 'not-submitted') {
+      finishAttempt(attempt.id, 'not_submitted');
+    } else if (action === 'result') {
+      handleResult(attempt, control.dataset.result);
+    } else if (action === 'external' && control.dataset.url) {
+      window.open(control.dataset.url, '_blank', 'noopener,noreferrer');
+    } else if (action === 'login') {
+      updateAttempt(attempt.id, { status:'approved_needs_login' });
+      resetView(attempt.id, null);
       render();
       document.querySelector('[data-action="nav"][data-route="login"]')?.click();
     }
   });
 
-  window.addEventListener('blur', () => {
-    const attempt = activeAttempt();
-    if (attempt?.status === 'awaiting_result') updateAttempt(attempt.id, { leftForApplicationAt: attempt.leftForApplicationAt || nowIso() });
-  });
-
-  window.addEventListener('focus', () => {
-    const attempt = activeAttempt();
-    if (attempt?.status === 'awaiting_result' && attempt.leftForApplicationAt) {
-      updateAttempt(attempt.id, { returnedAt: nowIso() });
-      render('choice');
-    }
-  });
+  /* Application return lifecycle has one owner. blur/hidden only mark outbound state;
+     visible/pageshow/focus all coalesce into one resumeFromApplication() call. */
+  window.addEventListener('blur', markAway, { passive:true });
+  window.addEventListener('pagehide', markAway, { passive:true });
 
   document.addEventListener('visibilitychange', () => {
-    const attempt = activeAttempt();
-    if (!attempt) return;
-    if (document.hidden && attempt.status === 'awaiting_result') {
-      updateAttempt(attempt.id, { leftForApplicationAt: attempt.leftForApplicationAt || nowIso() });
-    } else if (!document.hidden && attempt.status === 'awaiting_result' && attempt.leftForApplicationAt) {
-      updateAttempt(attempt.id, { returnedAt: nowIso() });
-      render('choice');
-    }
+    if (document.hidden) markAway();
+    else scheduleReturn('visibility');
   });
 
-  window.addEventListener('pageshow', () => render());
-  window.addEventListener('popstate', () => setTimeout(() => render(), 0));
+  window.addEventListener('pageshow', () => scheduleReturn('pageshow'), { passive:true });
+  window.addEventListener('focus', () => scheduleReturn('focus'), { passive:true });
+
+  /* popstate is intentionally not observed here. Navigation belongs to the app/overlay
+     router; the application-result UI must not compete with Offer Detail history. */
   window.addEventListener('storage', event => {
     if ([APP_STATE_KEY, HANDOFF_KEY, SUCCESS_KEY].includes(event.key)) render();
   });
 
   window.NextBonusApplicationHandoff = Object.freeze({
-    start: startHandoff,
-    active: activeAttempt,
-    open() { showAttempt(attemptForCurrentView()); },
-    reset() {
+    start:startHandoff,
+    active:activeAttempt,
+    open(){ showAttempt(attemptForCurrentView()); },
+    markAway,
+    resume:resumeFromApplication,
+    reset(){
+      clearTimeout(returnTimer);
+      returnTimer = null;
       localStorage.removeItem(HANDOFF_KEY);
       localStorage.removeItem(SUCCESS_KEY);
+      resetView();
+      returnCycle = { attemptId:null, away:false, resumedAt:0 };
       render();
     }
   });
