@@ -1,10 +1,13 @@
 (() => {
   'use strict';
 
-  const SEEN_KEY = 'nextbonus-onboarding-v2-seen';
-  const PENDING_KEY = 'nextbonus-onboarding-v2-pending';
+  const SEEN_KEY = 'nextbonus-onboarding-v3-seen';
+  const PENDING_KEY = 'nextbonus-onboarding-v3-pending';
   const PAGE_COUNT = 6;
-  const SPRITE_SOURCE = 'onboarding.css?v=20260916-1';
+  const CHUNK_COUNT = 9;
+  const CHUNK_BASE = 'assets/onboarding/sprite-';
+  const ASSET_VERSION = '20260917-1';
+
   let page = 0;
   let overlay = null;
   let frame = null;
@@ -16,17 +19,9 @@
   let nextButton = null;
   let startButton = null;
 
-  function safeGet(key){
-    try { return localStorage.getItem(key); } catch (e) { return null; }
-  }
-
-  function safeSet(key, value){
-    try { localStorage.setItem(key, value); } catch (e) {}
-  }
-
-  function safeRemove(key){
-    try { localStorage.removeItem(key); } catch (e) {}
-  }
+  function safeGet(key){ try { return localStorage.getItem(key); } catch (e) { return null; } }
+  function safeSet(key, value){ try { localStorage.setItem(key, value); } catch (e) {} }
+  function safeRemove(key){ try { localStorage.removeItem(key); } catch (e) {} }
 
   function decodeBase64Image(base64){
     const raw = atob(base64);
@@ -35,42 +30,45 @@
     return new Blob([bytes], {type:'image/webp'});
   }
 
+  async function loadSpriteBase64(){
+    const urls = Array.from({length: CHUNK_COUNT}, (_, i) =>
+      `${CHUNK_BASE}${String(i).padStart(2, '0')}.txt?v=${ASSET_VERSION}`
+    );
+    const chunks = await Promise.all(urls.map(async (url) => {
+      const response = await fetch(url, {cache:'no-store'});
+      if (!response.ok) throw new Error(`Artwork chunk failed: ${url} (${response.status})`);
+      return (await response.text()).trim();
+    }));
+    const base64 = chunks.join('');
+    if (base64.length < 70000) throw new Error(`Artwork payload incomplete: ${base64.length}`);
+    return base64;
+  }
+
   async function hydrateArtwork(){
     if (!art || spriteImg) return;
-    const response = await fetch(SPRITE_SOURCE, {cache:'no-store'});
-    if (!response.ok) throw new Error(`Onboarding artwork source failed: ${response.status}`);
-    const css = await response.text();
-    const match = css.match(/data:image\/webp;base64,([A-Za-z0-9+/=]+)/);
-    if (!match) throw new Error('Onboarding artwork payload missing');
-
-    const blob = decodeBase64Image(match[1]);
+    const base64 = await loadSpriteBase64();
+    const blob = decodeBase64Image(base64);
     spriteUrl = URL.createObjectURL(blob);
+
     spriteImg = document.createElement('img');
     spriteImg.alt = '';
     spriteImg.setAttribute('aria-hidden', 'true');
     Object.assign(spriteImg.style, {
-      position:'absolute',
-      left:'0',
-      top:'0',
-      width:'100%',
-      height:'600%',
-      maxWidth:'none',
-      display:'block',
-      objectFit:'fill',
-      pointerEvents:'none',
-      userSelect:'none',
-      willChange:'transform',
-      transition:'transform .18s ease'
+      position:'absolute', left:'0', top:'0', width:'100%', height:'600%', maxWidth:'none',
+      display:'block', objectFit:'fill', pointerEvents:'none', userSelect:'none',
+      willChange:'transform', transition:'transform .18s ease'
     });
 
     const loaded = new Promise((resolve, reject) => {
       spriteImg.onload = resolve;
-      spriteImg.onerror = reject;
+      spriteImg.onerror = () => reject(new Error('Decoded onboarding artwork could not be displayed'));
     });
+
     spriteImg.src = spriteUrl;
     art.appendChild(spriteImg);
     await loaded;
     art.style.backgroundImage = 'none';
+    art.classList.add('is-loaded');
     positionArtwork();
   }
 
@@ -117,26 +115,27 @@
     startButton.addEventListener('click', finish);
     dots.addEventListener('click', (event) => {
       const dot = event.target.closest('[data-page]');
-      if (!dot) return;
-      go(Number(dot.dataset.page));
+      if (dot) go(Number(dot.dataset.page));
     });
 
     go(0);
     hydrateArtwork()
-      .catch((error) => console.error('[NextBonus onboarding]', error))
-      .finally(() => requestAnimationFrame(() => overlay?.classList.add('is-visible')));
+      .then(() => requestAnimationFrame(() => overlay?.classList.add('is-visible')))
+      .catch((error) => {
+        console.error('[NextBonus onboarding]', error);
+        if (art) art.innerHTML = '<div style="position:absolute;inset:0;display:grid;place-items:center;font:600 18px -apple-system,BlinkMacSystemFont,\'PingFang SC\',sans-serif;color:#50688d">Onboarding 图片加载失败，请刷新重试</div>';
+        requestAnimationFrame(() => overlay?.classList.add('is-visible'));
+      });
   }
 
   function go(nextPage){
     page = Math.max(0, Math.min(PAGE_COUNT - 1, nextPage));
     if (!frame) return;
-
     frame.dataset.page = String(page + 1);
     overlay.dataset.page = String(page + 1);
     positionArtwork();
 
-    const allDots = [...dots.querySelectorAll('.nb-onboarding-dot')];
-    allDots.forEach((dot, index) => {
+    [...dots.querySelectorAll('.nb-onboarding-dot')].forEach((dot, index) => {
       const active = index === page;
       dot.classList.toggle('is-active', active);
       dot.setAttribute('aria-selected', active ? 'true' : 'false');
@@ -159,30 +158,13 @@
     overlay.classList.remove('is-visible');
     document.body.classList.remove('nb-onboarding-open');
     const node = overlay;
-    overlay = null;
-    frame = null;
-    art = null;
-    spriteImg = null;
-    dots = null;
-    prevButton = null;
-    nextButton = null;
-    startButton = null;
-    if (spriteUrl) {
-      URL.revokeObjectURL(spriteUrl);
-      spriteUrl = null;
-    }
+    overlay = frame = art = spriteImg = dots = prevButton = nextButton = startButton = null;
+    if (spriteUrl) { URL.revokeObjectURL(spriteUrl); spriteUrl = null; }
     window.setTimeout(() => node.remove(), 180);
   }
 
-  function shouldShow(){
-    return !safeGet(SEEN_KEY);
-  }
-
-  function open(){
-    if (!shouldShow()) return;
-    safeSet(PENDING_KEY, '1');
-    build();
-  }
+  function shouldShow(){ return !safeGet(SEEN_KEY); }
+  function open(){ if (shouldShow()) { safeSet(PENDING_KEY, '1'); build(); } }
 
   document.addEventListener('click', (event) => {
     const login = event.target.closest('[data-action="login-success"]');
@@ -193,13 +175,8 @@
 
   document.addEventListener('keydown', (event) => {
     if (!overlay) return;
-    if (event.key === 'ArrowRight' && page < PAGE_COUNT - 1) {
-      event.preventDefault();
-      go(page + 1);
-    } else if (event.key === 'ArrowLeft' && page > 0) {
-      event.preventDefault();
-      go(page - 1);
-    }
+    if (event.key === 'ArrowRight' && page < PAGE_COUNT - 1) { event.preventDefault(); go(page + 1); }
+    else if (event.key === 'ArrowLeft' && page > 0) { event.preventDefault(); go(page - 1); }
   });
 
   if (safeGet(PENDING_KEY) && shouldShow()) {
