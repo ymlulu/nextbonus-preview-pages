@@ -2,7 +2,7 @@
   'use strict';
   const PRODUCT_MAP=Object.freeze({'chase-sapphire':'chase_sapphire_preferred','amex-gold':'amex_gold','amex-platinum':'amex_platinum','bilt-palladium':'bilt_palladium','capitalone-venturex':'capital_one_venture_x','citi-strata':'citi_strata_elite'});
   const RECENT_MONTH_WINDOW=24;
-  const cache=new Map(),pending=new Map(),active=new Map();
+  const cache=new Map(),pending=new Map();
   const canonicalSource=root.NextBonusOfferData||{};
   function localDate(date=new Date()){const pad=value=>String(value).padStart(2,'0');return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}`;}
   function monthIndex(value){const match=String(value||'').match(/^(\d{4})-(\d{2})/);if(!match)return null;const month=Number(match[2]);if(month<1||month>12)return null;return Number(match[1])*12+(month-1);}
@@ -51,12 +51,14 @@
     if(cache.has(offerId))return cache.get(offerId);if(pending.has(offerId))return pending.get(offerId);
     const promise=(async()=>{try{if(!root.AssessmentClient?.getOfferHistory)throw new Error('Reviewed Offer History API is unavailable');const evaluationDate=localDate();const payload=await root.AssessmentClient.getOfferHistory(productId,evaluationDate);const result={supported:true,status:'ready',productId,snapshot:payload?.snapshot||null,offerTimingId:payload?.offer_timing_id||null,choices:normalize(payload,offerId,evaluationDate)};cache.set(offerId,result);return result;}catch(error){const result={supported:true,status:'error',productId,choices:[],error:error?.message||'Offer History unavailable'};cache.set(offerId,result);return result;}finally{pending.delete(offerId);}})();pending.set(offerId,promise);return promise;
   }
-  function activate(offerId,choiceId){const result=cache.get(offerId),choice=result?.choices?.find(item=>item.id===choiceId)||null;if(choice)active.set(offerId,choice);else active.delete(offerId);return choice;}
-  function clear(offerId){if(offerId)active.delete(offerId);else active.clear();}
-  function current(offerId){return active.get(offerId)||null;} function cached(offerId){return cache.get(offerId)||null;} function isSupported(offerId){return !!PRODUCT_MAP[offerId];}
-  if(typeof Proxy==='function'){
-    const adapterTarget={...canonicalSource};
-    root.NextBonusOfferData=new Proxy(adapterTarget,{get(target,prop,receiver){const base=Reflect.get(target,prop,receiver);if(typeof prop!=='string'||!base)return base;const choice=active.get(prop);return choice?{...base,primaryValue:choice.value,primaryRequirement:choice.requirement}:base;}});
+  function cached(offerId){return cache.get(offerId)||null;}
+  function isSupported(offerId){return !!PRODUCT_MAP[offerId];}
+  function resolve(offerId,choiceId){
+    if(!offerId||!choiceId)return null;
+    const current=canonicalSource[offerId];
+    if(choiceId===`current-${offerId}`&&current)return {id:choiceId,offerId,value:String(current.primaryValue||''),requirement:String(current.primaryRequirement||''),source:'current-offer'};
+    const choice=cache.get(offerId)?.choices?.find(item=>item.id===choiceId)||null;
+    return choice?{...choice,offerId}:null;
   }
-  root.NextBonusReviewedOfferHistory=Object.freeze({productMap:{...PRODUCT_MAP},load,activate,clear,current,cached,isSupported});
+  root.NextBonusReviewedOfferHistory=Object.freeze({productMap:{...PRODUCT_MAP},load,cached,isSupported,resolve});
 })(window);

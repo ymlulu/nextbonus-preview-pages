@@ -35,8 +35,10 @@
 
   function cardmemberYear(value, anchorValue) {
     const date = asDate(value);
-    const anchor = asDate(anchorValue || currentProductOpened());
-    if (!date || !anchor) return null;
+    const resolvedAnchor = anchorValue || currentProductOpened();
+    if (!date || !resolvedAnchor) return null;
+    const anchor = asDate(resolvedAnchor);
+    if (!anchor) return null;
     let start = anniversaryInYear(anchor, date.getFullYear());
     if (date < start) start = anniversaryInYear(anchor, date.getFullYear() - 1);
     const next = anniversaryInYear(anchor, start.getFullYear() + 1);

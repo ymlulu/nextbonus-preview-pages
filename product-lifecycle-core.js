@@ -76,7 +76,7 @@
     const derivedPlan = (!Array.isArray(spec.tasks) && spec.requirement && spec.anchorDate && rules?.buildPlan)
       ? rules.buildPlan(spec.requirement, spec.anchorDate, {category: spec.category || product?.type || ''})
       : null;
-    const rawTasks = Array.isArray(spec.tasks) && spec.tasks.length
+    const rawTasks = Array.isArray(spec.tasks)
       ? spec.tasks
       : derivedPlan?.tasks?.length
         ? derivedPlan.tasks
@@ -90,7 +90,7 @@
       status: task.status || 'pending'
     }));
     const dueDate = spec.dueDate || derivedPlan?.dueDate || tasks.find(task => task.dueDate)?.dueDate || null;
-    const reward = spec.reward || '开户 / 开卡奖励';
+    const reward = spec.preserveEmptyReward ? String(spec.reward ?? '') : (spec.reward || '开户 / 开卡奖励');
 
     if(spec.persistTracking !== false){
       const tracking = {

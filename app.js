@@ -227,6 +227,7 @@
     </button>`;
   }
 
+  // Shared shell only. Route markup lives in pages/*/page.js.
   function renderShell(content){
     const activeCount=currentActiveAttention().length;
     const badge = activeCount ? String(activeCount) : '';
@@ -249,23 +250,19 @@
     </div>`;
   }
 
+  function pageContext(){
+    const ctx={ state, categories, offers, esc, currentOffer, currentProduct, isSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, productPageAttentionItem, productSection, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, attentionItem, openLogin, productCardDisplay, productTimelineItems, editProductPage, shortBrand, formatLongDate, earningBlock, pdAttentionItem, benefitsFor, benefitCard, timelineFor };
+    ctx.renderRoute=route=>window.NextBonusPageRegistry.render(route,ctx);
+    return ctx;
+  }
+
   function render(){
-    let content = '';
-    switch(state.route){
-      case 'discover': content=discoverPage(); break;
-      case 'wishlist': content=wishlistPage(); break;
-      case 'products': content=productsPage(); break;
-      case 'attention': content=attentionPage(); break;
-      case 'login': content=loginPage(); break;
-      case 'offer-detail': content=offerDetailPage(); break;
-      case 'product-detail': content=productDetailPage(); break;
-      default: content=discoverPage();
-    }
-    document.getElementById('app').innerHTML = renderShell(content) + renderModal();
+    if(!window.NextBonusPageRegistry) throw new Error('Page Registry unavailable');
+    const content=window.NextBonusPageRegistry.render(state.route,pageContext());
+    document.getElementById('app').innerHTML=renderShell(content)+renderModal();
     persist();
     syncBrowserHistory();
   }
-
   function captureScroll(route=state.route){
     const primary=route==='offer-detail' ? state.routeSource : route==='product-detail' ? 'products' : route;
     if(['discover','wishlist','products','attention'].includes(primary)){
@@ -372,17 +369,6 @@
     return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17l-5.5-3.7-5.5 3.7v-17z" ${saved?'fill="currentColor"':'fill="none"'}></path></svg>`;
   }
 
-  function discoverPage(){
-    const q=state.offerSearch.trim().toLowerCase();
-    const list=offers.filter(o=> (state.offerCategory==='全部'||o.category===state.offerCategory) && (!q || `${o.name} ${o.provider} ${o.value} ${o.requirement}`.toLowerCase().includes(q)));
-    return `<div class="content discover-page">
-      <div class="discover-search-row">
-        <div class="search-wrap"><span class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg></span><input id="offer-search" class="search" value="${esc(state.offerSearch)}" placeholder="搜索信用卡、银行、券商或优惠…" />${state.offerSearch?`<button class="search-clear" data-action="clear-offer-search" aria-label="清除搜索">×</button>`:''}</div>
-      </div>
-      <div class="filters">${categories.map(c=>`<button class="pill cat-${c} ${state.offerCategory===c?'active':''}" data-action="offer-category" data-category="${c}"><span class="pill-icon">${categoryIcon(c)}</span><span>${c}</span></button>`).join('')}</div>
-      ${list.length?`<div class="offer-grid">${list.map(offerCard).join('')}</div>`:`<div class="empty compact-empty"><h3>没有匹配的内容</h3><p>换一个关键词或分类试试。</p></div>`}
-    </div>`;
-  }
 
   function offerCard(o){
     const saved=isSaved(o.id);
@@ -408,26 +394,7 @@
     </article>`;
   }
 
-  function wishlistPage(){
-    if(!state.loggedIn) return loginPage();
-    const index=new Map(state.savedOfferIds.map((id,i)=>[id,i]));
-    const priority=o=>{
-      if(['新奖励'].includes(o.status)) return 1;
-      if(['今日截止','即将结束'].includes(o.status)) return 2;
-      if(o.status) return 3;
-      return 4;
-    };
-    const active=state.savedOfferIds.map(id=>offers.find(o=>o.id===id)).filter(Boolean).sort((a,b)=>priority(a)-priority(b)||(index.get(b.id)??0)-(index.get(a.id)??0));
-    const unavailable=state.unavailableSavedIds.map(id=>offers.find(o=>o.id===id)).filter(Boolean);
-    const count=active.length+unavailable.length;
-    const empty=count===0;
-    return `<div class="content wishlist-page">
-      <div class="mock-page-top wishlist-head"><div><h1 class="mock-page-title">收藏</h1><div class="mock-page-subtitle">你收藏、还没决定的 Offer。</div></div><div class="mock-page-count">共 ${count} 个收藏</div></div>
-      ${empty?`<div class="empty mock-empty-state"><div class="empty-icon">♡</div><h3>还没有收藏的内容</h3><p>看到感兴趣的优惠时，点一下收藏，就可以稍后回来继续看。</p><button class="mock-add-btn" data-action="nav" data-route="discover">去发现</button></div>`:
-      `<div class="offer-grid wishlist-grid">${active.map(offerCard).join('')}</div>
-       ${unavailable.length?`<section class="wishlist-unavailable"><button class="past-products-head" data-action="toggle-unavailable"><span>已结束或不可用 <b>${unavailable.length}</b></span><span class="chev ${state.wishlistUnavailableOpen?'up':''}">›</span></button>${state.wishlistUnavailableOpen?`<div class="offer-grid wishlist-grid unavailable-grid">${unavailable.map(o=>offerCard({...o,status:'已结束或不可用'})).join('')}</div>`:''}</section>`:''}`}
-    </div>`;
-  }
+
   function posterData(offer){
     const custom=posterSets[offer.id];
     if(custom) return custom.map((item,index)=>index===0?{...item,title:offer.value,copy:offer.requirement}:item);
@@ -463,43 +430,6 @@
   }
 
 
-  function offerDetailPage(){
-    const o=currentOffer();
-    const supportsAssessment=!!window.NBStaticAssessmentIntegration?.productMap?.[o.id];
-    const isEnded=state.unavailableSavedIds.includes(o.id);
-    const r=supportsAssessment?offerResult(o):null;
-    const isPlat=o.id==='amex-platinum';
-    const posterIndex=((state.posterIndex||0)%2+2)%2;
-    const posterSrc=posterIndex===0?'assets/offer-detail/amex-platinum-poster.png':'assets/offer-detail/amex-platinum-poster-2.png';
-    const resultHtml=isEnded
-      ? `<div class="v4-result-card is-ended"><div class="v4-result-meta">当前状态</div><div class="v4-recommendation ended">当前奖励已结束</div><div class="v4-result-note">这次收藏机会已经结束或当前不可用。旧信息只作为历史参考，不再作为当前申请建议。</div></div>`
-      : supportsAssessment
-        ? `<div class="v4-result-card ${r.isSample?'is-sample':'is-final'}"><div class="v4-result-meta">${esc(r.meta)}</div><div class="v4-recommendation">${esc(r.recommendation)}</div>${!r.isSample?`<div class="v5-short-summary">${esc(r.shortSummary)}</div>`:''}${r.primaryAlert?`<div class="v5-primary-alert">! ${esc(r.primaryAlert)}</div>`:''}<div class="v4-metric-grid">${metric('开卡奖励评级',r.bonus,r.isSample)}${metric('获批可能性',r.approval,r.isSample)}${metric('能否拿奖励',r.eligible,r.isSample)}${metric('长期持有价值',r.longTerm,r.isSample)}</div>${r.isSample?`<div class="v4-result-note">ⓘ 以上为示例结果，仅供参考。完成评估后将根据你的实际情况生成结果。</div>`:''}</div>`
-        : `<div class="v4-result-card assessment-unavailable"><div class="v4-result-meta">当前状态</div><div class="v4-recommendation neutral">暂未提供申请评估</div><div class="v4-result-note">当前没有已冻结的个性化评估流程，因此不显示推测性的评分或结论。</div></div>`;
-    const actions=[];
-    if(!isEnded && supportsAssessment) actions.push(`<button class="btn primary" data-action="assessment-start">${state.assessmentResults[o.id]?'查看完整分析':'开始申请评估'} <span>→</span></button>`);
-    if(!isEnded && o.applyUrl) actions.push(`<button class="btn secondary" data-action="direct-apply">直接申请</button>`);
-    return `<div class="content v4-offer-detail-page">
-      <div class="v4-offer-detail-grid">
-        <section class="v4-offer-poster-shell">
-          ${isPlat?`<div class="v4-reference-poster"><img src="${posterSrc}" alt="AMEX Platinum 海报" /><button class="poster-hotspot prev" data-action="poster-step" data-dir="-1" aria-label="上一张海报"></button><button class="poster-hotspot next" data-action="poster-step" data-dir="1" aria-label="下一张海报"></button></div>`:genericPoster(o)}
-        </section>
-        <aside class="v4-decision-panel">
-          <button class="v4-detail-save ${isSaved(o.id)?'saved':''}" data-action="bookmark" data-id="${o.id}">♡ <span>${isSaved(o.id)?'已收藏':'收藏'}</span></button>
-          <div class="v4-nb-logo"><img src="assets/offer-detail/nb-logo-ref.png" alt="NextBonus" /></div>
-          <h1>NextBonus 申请建议</h1>
-          <p class="v4-decision-copy">${supportsAssessment&&!isEnded?'基于你已确认的信息与当前规则，判断这张卡现在是否适合申请。':isEnded?'这次机会已不再作为当前申请建议。':'只有存在已冻结评估规则时，才显示个性化申请结论。'}</p>
-          ${resultHtml}
-          ${actions.length?`<div class="v4-detail-actions ${actions.length===1?'single':''}">${actions.join('')}</div>`:''}
-          ${!isEnded&&supportsAssessment&&state.assessmentResults[o.id]?`<button class="v5-reassess" data-action="assessment-restart">重新评估</button>`:''}
-          ${!isEnded&&!actions.length?`<div class="v4-no-action-note">当前暂未提供可执行的申请入口。</div>`:''}
-          <div class="v4-security-line">♙ <span>安全、免费、不会影响你的信用评分</span></div>
-          <div class="v4-trust-row"><span>▤<b>个性化分析</b><small>结合已确认信息</small></span><span>◉<b>规则拆分</b><small>申请与奖励分开判断</small></span><span>☼<b>固定输出</b><small>同样输入得到同样结果</small></span><span>♢<b>隐私安全</b><small>只保存评估所需的信息</small></span></div>
-        </aside>
-      </div>
-    </div>`;
-  }
-
 
   function productPageAttentionItem(a){
     const expanded=state.expandedAttentionId===a.id;
@@ -521,21 +451,6 @@
       const aa=attentionPriority(a), bb=attentionPriority(b);
       return aa[0]-bb[0] || String(aa[1]).localeCompare(String(bb[1])) || String(aa[2]).localeCompare(String(bb[2]));
     });
-  }
-  function productsPage(){
-    if(!state.loggedIn) return loginPage();
-    const q=state.productSearch.trim().toLowerCase();
-    const current=state.products.filter(p=>!q || `${p.name} ${p.institution} ${p.instance}`.toLowerCase().includes(q));
-    const grouped=['信用卡','银行和券商账户','会籍','其他'].map(type=>[type,current.filter(p=>p.type===type)]).filter(([,arr])=>arr.length);
-    const allActive=activeAttentionSorted();
-    const top3=allActive.slice(0,3);
-    return `<div class="content products-page v4-products-page">
-      <div class="v4-products-head"><div><h1>我的产品</h1><div>${state.products.length} 个产品</div></div><button class="mock-add-btn v4-add-product" data-action="open-add-product">＋ <span>添加产品</span></button></div>
-      <div class="product-tools v4-product-search"><div class="search-wrap"><span class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg></span><input id="product-search" class="search" value="${esc(state.productSearch)}" placeholder="搜索你的产品、银行、信用卡或账户…" />${state.productSearch?`<button class="search-clear" data-action="clear-product-search">×</button>`:''}</div></div>
-      <section class="v4-product-section-card v4-needs-attention"><div class="v4-section-head"><h2>需要关注 <span class="attention-count-dot">${allActive.length}</span></h2><button class="mock-link" data-action="open-all-attention">全部提醒　&gt;</button></div>${top3.length?`<div class="v4-pp-attention-list">${top3.map(productPageAttentionItem).join('')}</div>`:`<div class="attention-zero-state">目前没有需要处理的事项</div>`}</section>
-      ${grouped.length?grouped.map(([type,arr])=>productSection(type,arr)).join(''):(state.products.length===0&&!state.productSearch?`<div class="empty section"><h3>还没有添加产品</h3><p>把你正在持有的信用卡、银行账户、券商账户或会籍加入 NextBonus。</p><button class="btn primary" data-action="open-add-product">添加产品</button></div>`:`<div class="empty section"><h3>没有匹配的产品</h3><p>清除搜索词后可恢复全部当前产品。</p></div>`)}
-      ${state.pastProducts.length?`<section class="v4-product-section-card v4-past-products"><button class="v4-past-head" data-action="toggle-past"><span>历史产品 <b>${state.pastProducts.length}</b></span><span class="chev ${state.pastOpen?'up':''}">›</span></button>${state.pastOpen?`<div class="v4-past-list">${state.pastProducts.map(p=>`<button class="v4-past-row" data-action="open-product" data-id="${p.id}"><span>${esc(p.name)} ${esc(p.instance||'')}</span><small>${esc(p.statusText||p.status)}</small><b>›</b></button>`).join('')}</div>`:''}</section>`:''}
-    </div>`;
   }
 
   function sortProducts(type,arr){
@@ -662,28 +577,6 @@
     (p.history||[]).forEach(x=>items.push(x));
     return items.sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
   }
-  function productDetailPage(){
-    if(!state.loggedIn){ openLogin('product-detail',null,'products'); return ''; }
-    const p=currentProduct();
-    if(state.editFlow && state.editFlow.productId===p.id) return editProductPage(p);
-    const related=activeAttentionSorted(currentActiveAttention().filter(a=>a.productId===p.id));
-    const top=related.slice(0,3);
-    const isPast=state.pastProducts.some(x=>x.id===p.id);
-    const detailArt=productCardDisplay(p,true);
-    const timeline=productTimelineItems(p);
-    return `<div class="content v4-product-detail-page">
-      <section class="v4-pd-overview">
-        <div class="v4-pd-left"><div class="v4-pd-card ${p.type==='信用卡'?'credit-card-art':''}">${detailArt.primarySrc?`<img src="${detailArt.primarySrc}"${detailArt.fallbackAttr} alt="${esc(p.name)}" />`:`<span class="fallback-brand large">${esc(shortBrand(p.institution))}</span>`}</div>${(p.phone||p.loginUrl)?`<div class="v4-pd-actions">${p.phone?`<button data-action="product-call" data-phone="${esc(p.phone)}">☎ <span>致电</span></button>`:''}${p.phone&&p.loginUrl?'<i></i>':''}${p.loginUrl?`<button data-action="product-login-external" data-url="${esc(p.loginUrl)}">↗ <span>登录</span></button>`:''}</div>`:''}</div>
-        <div class="v4-pd-right"><div class="v4-pd-title-row"><div><h1>${esc(p.name)}</h1><div class="v4-pd-status"><span>${esc(p.instance||'')}</span>${p.instance?'<i></i>':''}<b class="${isPast?'past':''}"></b><strong>${isPast?'历史产品':esc(p.status||'不确定')}</strong></div></div>${isPast?'':`<button class="v4-pd-edit" data-action="edit-product">✎　编辑</button>`}</div>
-          <div class="v4-pd-facts"><div><span class="fact-icon">▣</span><span><small>${p.type==='信用卡'?'开卡日期':'开户日期'}</small><strong>${p.opened?formatLongDate(p.opened):'未填写'}</strong></span></div>${p.type==='信用卡'?`<div><span class="fact-icon">♙</span><span><small>周年日</small><strong>${esc(p.anniversary||'—')}</strong></span></div><div><span class="fact-icon">$</span><span><small>年费</small><strong>${esc(p.annualFee||'—')}</strong></span></div>`:''}</div>
-          ${earningBlock(p)}
-        </div>
-      </section>
-      ${related.length?`<section class="v4-pd-section v4-pd-attention"><div class="v4-section-head"><h2>需要关注 <span class="attention-count-dot">${related.length}</span></h2>${related.length>3?`<button class="mock-link" data-action="attention-for-product" data-id="${p.id}">查看全部 ${related.length}</button>`:''}</div><div class="v4-pd-attention-list">${top.map(pdAttentionItem).join('')}</div></section>`:''}
-      <section class="v4-pd-section v4-pd-benefits"><div class="v4-section-head"><h2>福利</h2></div>${benefitsFor(p).length?`<div class="benefit-grid pd-benefit-grid">${benefitsFor(p).map(benefitCard).join('')}</div>`:`<div class="timeline-empty">暂时没有可展示的结构化福利信息</div>`}</section>
-      <section class="v4-pd-section v4-pd-history"><button class="v4-past-head" data-action="toggle-product-history"><span>历史记录 <b>${timeline.length}</b></span><span class="chev ${state.productHistoryOpen?'up':''}">›</span></button>${state.productHistoryOpen?timelineFor(p,timeline):''}</section>
-    </div>`;
-  }
 
   function fact(label,value){ return `<div><div class="fact-label">${esc(label)}</div><div class="fact-value">${esc(value)}</div></div>`; }
   function benefitsFor(p){
@@ -712,22 +605,6 @@
     return `<div class="timeline">${items.map(x=>`<div class="timeline-item ${x.correctable||x.targetProductId?'clickable':''}" ${x.correctable?`data-action="history-deeplink" data-product="${p.id}" data-history-id="${x.historyId}"`:x.targetProductId?`data-action="open-product" data-id="${x.targetProductId}"`:''}><div class="timeline-date">${esc(x.date)}</div><div class="timeline-copy">${esc(x.copy)}${x.correctable||x.targetProductId?' ›':''}</div></div>`).join('')}</div>`;
   }
 
-  function attentionPage(){
-    if(!state.loggedIn) return loginPage();
-    const productOptions=uniqueAttentionProducts();
-    const af=state.attentionProductFilter;
-    const active=activeAttentionSorted(currentActiveAttention().filter(a=>af==='all'||a.productId===af));
-    let hist=state.attentionHistory.filter(a=>af==='all'||a.productId===af);
-    if(state.historyStatusFilter!=='all') hist=hist.filter(h=>historyBucket(h)===state.historyStatusFilter);
-    hist=hist.sort((a,b)=>String(historyDateISO(b.ended)||b.dueDate||'').localeCompare(String(historyDateISO(a.ended)||a.dueDate||''))||String(b.id).localeCompare(String(a.id)));
-    const visible=Math.max(20,state.historyVisibleCount||20), shownHist=hist.slice(0,visible), hasMore=hist.length>shownHist.length;
-    return `<div class="content narrow attention-page"><div class="mock-page-top attention-top"><div><h1 class="mock-page-title">全部提醒</h1></div><select class="select mock-filter-select" id="attention-product-filter"><option value="all">全部产品</option>${productOptions.map(p=>`<option value="${p.id}" ${af===p.id?'selected':''}>${esc(p.label)}</option>`).join('')}</select></div>
-      <div class="attention-toolbar"><div class="tabs mock-tabs"><button class="tab ${state.attentionTab==='active'?'active':''}" data-action="attention-tab" data-tab="active">待处理 (${active.length})</button><button class="tab ${state.attentionTab==='history'?'active':''}" data-action="attention-tab" data-tab="history">历史记录</button></div>${state.attentionTab==='history'?`<select class="select mock-status-select" id="history-status-filter"><option value="all">全部状态</option><option value="completed" ${state.historyStatusFilter==='completed'?'selected':''}>已完成</option><option value="skipped" ${state.historyStatusFilter==='skipped'?'selected':''}>本期已忽略</option><option value="expired" ${state.historyStatusFilter==='expired'?'selected':''}>已到期</option><option value="stopped" ${state.historyStatusFilter==='stopped'?'selected':''}>已结束</option></select>`:''}</div>
-      ${af!=='all'?`<div class="active-filter-chip">已筛选当前产品 <button data-action="clear-attention-filter">清除筛选</button></div>`:''}
-      ${state.attentionTab==='active'?`<div class="attention-box all-attention-box">${active.length?active.map(a=>attentionItem(a,false)).join(''):`<div class="attention-compact-empty success-empty"><span class="success-dot">✓</span><div><strong>目前没有需要处理的事项</strong></div></div>`}</div>`:
-      `<div class="attention-box all-attention-box history-attention-box">${shownHist.length?shownHist.map(h=>attentionItem(h,true)).join(''):`<div class="attention-compact-empty">还没有历史记录</div>`}</div>${hasMore?`<div class="load-more-wrap"><button class="btn secondary" data-action="history-load-more">加载更多</button></div>`:''}`}
-    </div>`;
-  }
 
   function uniqueAttentionProducts(){
     const map=new Map(); [...currentActiveAttention(),...state.attentionHistory].forEach(a=>{ if(!map.has(a.productId)) map.set(a.productId,{id:a.productId,label:attentionDisplayLabel(a)}); }); return [...map.values()];
@@ -736,10 +613,7 @@
     if(h.statusClass==='skipped') return 'skipped'; if(h.statusClass==='expired') return 'expired'; if(h.statusClass==='stopped') return 'stopped'; return 'completed';
   }
 
-  function loginPage(){
-    if(state.loggedIn){ state.route=state.returnSource||'discover'; return discoverPage(); }
-    return `<div class="content narrow login-page"><div class="login-wrap"><div class="login-card mock-login-card"><div class="login-logo"><span class="nb-mini">NB</span></div><h1>登录 NextBonus</h1><p>继续查看你的收藏、产品和提醒。</p><div class="login-actions"><button class="btn primary login-primary" data-action="login-success">继续登录</button><button class="btn secondary" data-action="login-cancel">返回</button></div><div class="legal">登录后将回到你刚才想去的位置。</div></div></div></div>`;
-  }
+
   function editFlowDirty(f){
     if(!f) return false;
     const p=state.products.find(x=>x.id===f.productId); if(!p) return false;
@@ -750,8 +624,8 @@
     const f=state.editFlow;
     if(f.step==='bonus-select'){
       const prod=(catalog['信用卡']||[]).find(x=>x.offerId===p.offerId) || {name:p.name,offerId:p.offerId};
-      const choices=publicOfferChoices(prod);
-      return `<div class="content narrow edit-product-page"><button class="detail-back" data-action="edit-back">‹ 返回编辑产品</button><div class="page-head"><div><h1 class="page-title">选择你申请时的奖励</h1><p class="page-subtitle">选择与你当时实际申请最匹配的一项。</p></div></div><div class="option-list">${choices.map((x,i)=>`<button class="option-row ${f.bonusChoice===x.id?'selected':''}" data-action="edit-bonus-choice" data-id="${x.id}"><span class="radio-dot"></span><span class="option-main"><span class="option-title">${esc(x.value)}</span><span class="option-sub">${esc(x.req)}</span></span>${i===0?'<span class="option-tag">最常见</span>':''}</button>`).join('')}<button class="option-row ${f.bonusChoice==='manual'?'selected':''}" data-action="edit-bonus-choice" data-id="manual"><span class="radio-dot"></span><span class="option-main"><span class="option-title">手动添加奖励条件</span><span class="option-sub">列表里没有你实际申请时的奖励</span></span></button></div><div class="edit-footer"><button class="btn primary" data-action="edit-bonus-use" ${f.bonusChoice?'':'disabled'}>${f.bonusChoice==='manual'?'继续':'使用这个奖励'}</button></div></div>`;
+      const choices=offerChoicesFor(prod).choices;
+      return `<div class="content narrow edit-product-page"><button class="detail-back" data-action="edit-back">‹ 返回编辑产品</button><div class="page-head"><div><h1 class="page-title">选择你申请时的奖励</h1><p class="page-subtitle">选择与你当时实际申请最匹配的一项。</p></div></div><div class="option-list">${choices.map(x=>`<button class="option-row ${f.bonusChoice===x.id?'selected':''}" data-action="edit-bonus-choice" data-id="${x.id}"><span class="radio-dot"></span><span class="option-main"><span class="option-title">${esc(x.value)}</span><span class="option-sub">${esc(x.kind==='current'?`当前公开 · ${x.req}`:`${x.dateLabel||'历史奖励'} · ${x.req}`)}</span></span></button>`).join('')}<button class="option-row ${f.bonusChoice==='manual'?'selected':''}" data-action="edit-bonus-choice" data-id="manual"><span class="radio-dot"></span><span class="option-main"><span class="option-title">手动添加奖励条件</span><span class="option-sub">列表里没有你实际申请时的奖励</span></span></button></div><div class="edit-footer"><button class="btn primary" data-action="edit-bonus-use" ${f.bonusChoice?'':'disabled'}>${f.bonusChoice==='manual'?'继续':'使用这个奖励'}</button></div></div>`;
     }
     if(f.step==='bonus-manual'){
       const valid=f.bonusReward.trim()&&f.bonusTasks.length&&f.bonusTasks.every(t=>t.desc.trim()&&t.due);
@@ -769,9 +643,52 @@
     return `<div class="content narrow edit-product-page"><button class="detail-back" data-action="edit-exit">‹ 返回产品详情</button><div class="page-head"><div><h1 class="page-title">编辑产品</h1><p class="page-subtitle">${esc(p.name)}</p></div></div><div class="edit-panel"><div class="form-group"><label class="label">卡号后四位 / 账户识别</label><input class="input" id="edit-instance" value="${esc(f.instance)}" /></div><div class="form-group"><label class="label">账户状态</label><select class="select" id="edit-status"><option ${f.status==='正常'?'selected':''}>正常</option><option ${f.status==='已关闭'?'selected':''}>已关闭</option><option ${f.status==='不确定'?'selected':''}>不确定</option></select></div><div class="form-group"><label class="label">${p.type==='信用卡'?'开卡日期':'开户日期'}</label><input type="date" class="input" id="edit-opened" value="${esc(f.opened)}" /></div>${p.type==='信用卡'?`<button class="option-row" data-action="edit-bonus-open"><span class="option-main"><span class="option-title">开卡奖励</span><span class="option-sub">${f.pendingBonus?esc(f.pendingBonus.reward):tracked?'正在追踪 / 已有记录':'未添加'}</span></span><span>›</span></button>`:''}<button class="option-row" style="margin-top:10px" data-action="edit-change-open"><span class="option-main"><span class="option-title">已变更为其他产品</span><span class="option-sub">只显示已确认可变更目标</span></span><span>›</span></button><div class="edit-footer split"><button class="btn danger" data-action="remove-product-request" data-id="${p.id}">从 NextBonus 中移除</button><button class="btn primary" data-action="save-edit-product" data-id="${p.id}">保存</button></div></div></div>`;
   }
 
+  function offerChoicesFor(prod){
+    const source=prod?.offerId||null,offer=source?window.NextBonusOfferData?.[source]:null;
+    if(!source||!offer)return {status:'unsupported',choices:[]};
+    const current={id:`current-${source}`,kind:'current',sourceOfferId:source,value:String(offer.primaryValue||''),req:String(offer.primaryRequirement||''),dateLabel:'当前公开'};
+    const history=window.NextBonusReviewedOfferHistory,result=history?.cached?.(source)||null;
+    const duplicate=value=>String(value||'').toLowerCase().replace(/\s+/g,' ').trim();
+    const reviewed=(result?.choices||[]).filter(choice=>!(duplicate(choice.value)===duplicate(current.value)&&duplicate(choice.requirement)===duplicate(current.req))).map(choice=>({id:choice.id,kind:'reviewed',sourceOfferId:source,value:choice.value,req:choice.requirement,dateLabel:choice.dateLabel}));
+    return {status:result?.status||(history?.isSupported?.(source)?'loading':'unsupported'),choices:[current,...reviewed]};
+  }
+
+  function resolveOfferChoice(prod,choiceId){
+    if(!prod?.offerId||!choiceId||choiceId==='manual')return null;
+    return offerChoicesFor(prod).choices.find(choice=>choice.id===choiceId)||null;
+  }
+
+  async function ensureReviewedOfferHistory(prod){
+    const offerId=prod?.offerId,history=window.NextBonusReviewedOfferHistory;
+    if(!offerId||!history?.isSupported?.(offerId)||history.cached?.(offerId))return;
+    await history.load(offerId);
+  }
+
+  async function enterAddOfferStep(flow){
+    if(!flow||flow.offerLoading)return;
+    flow.offerLoading=true;render();
+    await ensureReviewedOfferHistory(flow.product);
+    if(state.addFlow!==flow)return;
+    flow.offerLoading=false;flow.step='offer';render();
+  }
+
+  async function enterEditBonusSelect(){
+    const flow=state.editFlow,p=flow&&state.products.find(item=>item.id===flow.productId);
+    if(!flow||!p||flow.offerLoading)return;
+    flow.offerLoading=true;render();
+    const prod=(catalog['信用卡']||[]).find(item=>item.offerId===p.offerId)||{name:p.name,offerId:p.offerId};
+    await ensureReviewedOfferHistory(prod);
+    if(state.editFlow!==flow)return;
+    flow.offerLoading=false;flow.step='bonus-select';render();
+  }
+
+  function addProductContext(){
+    return {flow:state.addFlow,catalog,esc,localDateISO,offerChoicesFor};
+  }
+
   function renderModal(){
     if(!state.modal && !state.addFlow) return '';
-    if(state.addFlow) return addProductModal();
+    if(state.addFlow) return window.NextBonusAddProductPage.render(addProductContext());
     const m=state.modal;
     if(m.type==='apply-risk') return `<div class="modal-backdrop"><div class="modal"><div class="modal-head"><div class="modal-title">确认继续申请</div><button class="close-btn" data-action="modal-close">×</button></div><div class="modal-body"><p class="confirm-copy">${esc(m.copy||'你可能无法获得当前开卡奖励。仍要继续申请吗？')}</p><p class="muted">这只是风险确认，不替你强制拦截申请。</p></div><div class="modal-foot"><button class="btn secondary" data-action="modal-close">返回</button><button class="btn primary" data-action="apply-confirm">继续申请</button></div></div></div>`;
     if(m.type==='simple') return `<div class="modal-backdrop"><div class="modal"><div class="modal-head"><div class="modal-title">${esc(m.title)}</div><button class="close-btn" data-action="modal-close">×</button></div><div class="modal-body"><p class="confirm-copy">${esc(m.copy)}</p>${m.detail?`<p class="muted">${esc(m.detail)}</p>`:''}</div><div class="modal-foot"><span></span><button class="btn primary" data-action="modal-close">知道了</button></div></div></div>`;
@@ -781,29 +698,8 @@
   }
 
   function openAddProduct(){
-    state.addFlow={step:'category',category:null,product:null,search:'',filter:'全部',moreFilterOpen:false,reportStatus:null,last4:'',nickname:'',opened:'',track:null,offer:null,reward:'',tasks:[{id:'t1',desc:'',due:''}],savedProductId:null,submitting:false,committed:false};
+    state.addFlow={step:'product',category:null,product:null,search:'',filter:'全部',last4:'',nickname:'',opened:'',track:null,offer:null,reward:'',tasks:[{id:'t1',desc:'',due:''}],savedProductId:null,submitting:false,committed:false,offerLoading:false};
     render();
-  }
-
-  function addProgress(step){
-    const order=['category','product','info','track','offer','manual','membership-confirm','success'];
-    let i=Math.max(0,order.indexOf(step));
-    let stage=step==='category'||step==='product'?1:step==='info'?2:step==='track'||step==='offer'||step==='manual'?3:4;
-    return `<div class="add-progress"><span class="${stage>=1?'done':''}">1</span><i></i><span class="${stage>=2?'done':''}">2</span><i></i><span class="${stage>=3?'done':''}">3</span><i></i><span class="${stage>=4?'done':''}">4</span></div><div class="add-progress-labels"><b>选择产品</b><b>账户信息</b><b>奖励追踪</b><b>完成</b></div>`;
-  }
-
-  function addFilterOptions(f){
-    if(f.category==='信用卡') return ['全部','American Express','Chase'];
-    if(f.category==='银行账户') return ['全部','Checking','Savings','CD'];
-    if(f.category==='券商账户') return ['全部','美国券商','国际券商'];
-    return ['全部','会籍','等级'];
-  }
-  function itemMatchesAddFilter(x,f){
-    if(!f.filter||f.filter==='全部') return true;
-    if(f.category==='信用卡') return x.institution===f.filter;
-    if(f.category==='银行账户') return (x.accountType||'Checking')===f.filter;
-    if(f.category==='券商账户') return (x.market||'美国券商')===f.filter;
-    return (x.subtype||'会籍')===f.filter;
   }
   function resetAddAfterCategory(f){
     f.product=null; f.last4=''; f.nickname=''; f.opened=''; f.track=null; f.offer=null; f.reward='';
@@ -814,54 +710,9 @@
     f.tasks=[{id:'t1',desc:'',due:''}]; f.savedProductId=null; f.submitting=false; f.committed=false;
   }
 
-  function addProductModal(){
-    const f=state.addFlow;
-    if(f._confirmClose){
-      return `<div class="modal-backdrop"><div class="modal"><div class="modal-head"><div class="modal-title">放弃修改？</div></div><div class="modal-body"><p class="confirm-copy">尚未提交的内容不会保存。</p><p class="muted">你可以继续编辑，或放弃本次添加流程并回到“我的产品”。</p></div><div class="modal-foot"><button class="btn secondary" data-action="add-continue-editing">继续编辑</button><button class="btn danger" data-action="add-discard">放弃并退出</button></div></div></div>`;
-    }
-    let body='', title='添加产品', footer='';
-    if(f.step==='category'){
-      title='选择产品类别'; body=`<div class="category-grid">${['信用卡','银行账户','券商账户','其他'].map(c=>`<button class="category-tile" data-action="add-category" data-category="${c}"><div class="category-icon">${c==='信用卡'?'▤':c==='银行账户'?'▦':c==='券商账户'?'↗':'◇'}</div><div class="category-title">${c}</div><div class="category-sub">${c==='其他'?'当前支持会籍 / 等级':'从产品库选择并添加到我的产品'}</div></button>`).join('')}</div>`;
-    }else if(f.step==='product'){
-      title='搜索并选择产品';
-      const source=(catalog[f.category]||[]), items=source.filter(x=>(!f.search||`${x.name} ${x.institution}`.toLowerCase().includes(f.search.toLowerCase()))&&itemMatchesAddFilter(x,f));
-      const filters=addFilterOptions(f);
-      body=`<div class="search-wrap"><span class="search-icon">⌕</span><input id="add-search" class="search" value="${esc(f.search)}" placeholder="搜索当前类别产品…" />${f.search?`<button class="search-clear" data-action="add-clear-search">×</button>`:''}</div><div class="filters">${filters.map(x=>`<button class="pill ${f.filter===x?'active':''}" data-action="add-filter" data-value="${esc(x)}">${esc(x)}</button>`).join('')}${f.category==='信用卡'?`<button class="pill ${!filters.includes(f.filter)?'active':''}" data-action="add-more-filter">更多</button>`:''}</div>${f.moreFilterOpen?`<div class="add-more-filter"><button data-action="add-filter" data-value="Citi">Citi</button><button data-action="add-filter" data-value="Capital One">Capital One</button><button data-action="add-filter" data-value="Bilt">Bilt</button><button data-action="add-more-filter-close">取消</button></div>`:''}<div class="option-list">${items.map(x=>`<button class="option-row" data-action="add-product-select" data-id="${x.id}">${x.cardImageLocal?`<span class="add-card-art"><img src="${x.cardImageLocal}" alt="${esc(x.name)}" /></span>`:`<div class="mini-art ${x.art}"></div>`}<span class="option-main"><span class="option-title">${esc(x.name)}</span><span class="option-sub">${esc(x.institution)}${x.subtype?` · ${esc(x.subtype)}`:''}</span></span><span>›</span></button>`).join('')}</div>${items.length?'':`<div class="empty"><h3>没有找到这个产品</h3><p>可以修改搜索词，或反馈缺少此产品。</p>${f.reportStatus==='submitted'?`<div class="submitted-note">已提交</div>`:`<button class="btn secondary" data-action="add-report-missing" ${f.reportStatus==='loading'?'disabled':''}>${f.reportStatus==='loading'?'提交中…':'反馈缺少此产品'}</button>`}</div>`}`;
-      footer=backOnly();
-    }else if(f.step==='info'){
-      title='填写最少账户信息';
-      const isCard=f.category==='信用卡';
-      body=`${isCard?`<div class="form-group"><label class="label">卡号后四位 <span class="muted">（可选）</span></label><input id="add-last4" class="input" maxlength="4" inputmode="numeric" value="${esc(f.last4)}" placeholder="例如 1005" /></div>`:`<div class="form-group"><label class="label">账户昵称 <span class="muted">（可选）</span></label><input id="add-nickname" class="input" value="${esc(f.nickname)}" placeholder="例如 主账户" /></div>`}<div class="form-group"><label class="label">${isCard?'开卡日期':'开户日期'} <span class="muted">（可选）</span></label><div class="date-field-row"><input id="add-opened" type="date" max="${localDateISO()}" class="input" value="${esc(f.opened)}" />${`<button class="btn secondary small" data-action="add-clear-opened" ${f.opened?'':'disabled'}>清除日期</button>`}</div></div><p class="hint">只收当前添加流程真正需要的最少信息，之后可以再编辑。</p>`;
-      footer=backNext('add-to-track','继续');
-    }else if(f.step==='track'){
-      title=f.category==='信用卡'?'是否追踪开卡奖励':'是否追踪开户奖励';
-      body=`<div class="option-list"><button class="option-row ${f.track===true?'selected':''}" data-action="add-track-choice" data-value="yes"><span class="radio-dot"></span><span class="option-main"><span class="option-title">是，追踪${f.category==='信用卡'?'开卡':'开户'}奖励</span><span class="option-sub">下一步选择你申请 / 开户时对应的奖励</span></span></button><button class="option-row ${f.track===false?'selected':''}" data-action="add-track-choice" data-value="no"><span class="radio-dot"></span><span class="option-main"><span class="option-title">否，只添加${f.category==='信用卡'?'这张卡':'账户'}</span><span class="option-sub">以后仍可从产品详情补开奖励追踪</span></span></button></div>`;
-      footer=backNext('add-track-next',f.submitting?'保存中…':'继续',f.track===null||f.submitting);
-    }else if(f.step==='offer'){
-      title='选择你申请时的奖励'; const olist=publicOfferChoices(f.product);
-      body=`<div class="option-list">${olist.map((x,i)=>`<button class="option-row ${f.offer===x.id?'selected':''}" data-action="add-offer-choice" data-id="${x.id}"><span class="radio-dot"></span><span class="option-main"><span class="option-title">${esc(x.value)}</span><span class="option-sub">${esc(x.req)}</span></span>${i===0?`<span class="option-tag">最常见</span>`:''}</button>`).join('')}<button class="option-row ${f.offer==='manual'?'selected':''}" data-action="add-offer-choice" data-id="manual"><span class="radio-dot"></span><span class="option-main"><span class="option-title">手动添加奖励条件</span><span class="option-sub">列表里没有你实际申请时的奖励</span></span></button></div>`;
-      footer=backNext('add-offer-next',f.submitting?'保存中…':'继续',!f.offer||f.submitting);
-    }else if(f.step==='manual'){
-      title='手动添加奖励条件';
-      body=`<div class="form-group"><label class="label">你会获得什么</label><textarea id="add-reward" class="textarea" placeholder="例如 $300 现金奖励 + 2 张房券">${esc(f.reward)}</textarea></div><div><label class="label">需要完成什么</label>${f.tasks.map((t,i)=>`<div class="task-card"><div class="task-head"><span>条件 ${i+1}</span><button class="icon-btn" data-action="delete-task" data-id="${t.id}" aria-label="删除条件">×</button></div><input class="input task-desc" data-id="${t.id}" value="${esc(t.desc)}" placeholder="例如 消费 $12,000" /><div style="height:8px"></div><div class="date-field-row"><input type="date" class="input task-due" data-id="${t.id}" value="${esc(t.due)}" />${t.due?`<button class="btn secondary small" data-action="clear-task-due" data-id="${t.id}">清除日期</button>`:''}</div></div>`).join('')}<button class="btn secondary small" data-action="add-task">+ 再添加一个条件</button></div>`;
-      const valid=f.reward.trim() && f.tasks.length && f.tasks.every(t=>t.desc.trim()&&t.due); footer=backNext('add-manual-submit',f.submitting?'保存中…':'继续',!valid||f.submitting);
-    }else if(f.step==='membership-confirm'){
-      title='确认添加'; body=`<div class="report"><h3>${esc(f.product.name)}</h3><p>${esc(f.product.institution)} · ${esc(f.product.subtype||'会籍')}</p></div><p class="muted">这里只记录你当前持有的会籍 / 等级，不会自动创建奖励追踪或提醒。</p>`;
-      footer=backNext('add-membership-submit',f.submitting?'保存中…':(f.product.subtype==='等级'?'添加此等级':'添加此会员'),f.submitting);
-    }else if(f.step==='success'){
-      title='添加成功'; body=`<div class="success"><div class="success-icon">✓</div><h2>产品已加入 NextBonus</h2><p>产品和本次需要的追踪状态已经一起保存。</p><div class="actions two"><button class="btn primary" data-action="add-view-product">查看产品详情</button><button class="btn secondary" data-action="add-another">再添加一个产品</button></div></div>`;
-    }
-    return `<div class="modal-backdrop add-product-backdrop"><div class="modal large add-product-modal"><div class="modal-head"><div><div class="modal-kicker">添加产品</div><div class="modal-title">${esc(title)}</div></div><button class="close-btn" data-action="add-close">×</button></div><div class="add-progress-wrap">${addProgress(f.step)}</div><div class="modal-body">${body}</div>${footer?`<div class="modal-foot">${footer}</div>`:''}</div></div>`;
-  }
 
-  function backOnly(){ return `<button class="btn secondary" data-action="add-back">返回</button><span></span>`; }
-  function backNext(action,label,disabled=false){ return `<button class="btn secondary" data-action="add-back">返回</button><button class="btn primary" data-action="${action}" ${disabled?'disabled':''}>${label}</button>`; }
-  function publicOfferChoices(prod){
-    const source=prod?.offerId||null;
-    const offer=source?window.NextBonusOfferData?.[source]:null;
-    if(!offer) return [];
-    return [{id:`current-${source}`,value:offer.primaryValue,req:offer.primaryRequirement,sourceOfferId:source}];
-  }
+
+
 
   function submitAddedProduct(){
     const f=state.addFlow; if(!f||f.submitting||f.committed) return;
@@ -880,13 +731,15 @@
     state.productSectionExpanded=state.productSectionExpanded||{};
     if(state.products.filter(x=>x.type===type).length>=8) state.productSectionExpanded[type]=true;
     if(f.track){
-      const chosen=f.offer==='manual'?null:publicOfferChoices(f.product).find(x=>x.id===f.offer);
-      const reward=f.offer==='manual'?f.reward:(chosen?.value||'开户 / 开卡奖励');
-      const tasks=f.offer==='manual'?f.tasks.map(t=>({id:t.id,label:t.desc,dueDate:t.due})):null;
+      const chosen=f.offer==='manual'?null:resolveOfferChoice(f.product,f.offer);
+      const manualEntries=f.offer==='manual'?(f.tasks||[]).filter(t=>String(t.desc||'').trim()||t.due):[];
+      const reward=f.offer==='manual'?String(f.reward||'').trim():(chosen?.value||'开户 / 开卡奖励');
+      const tasks=f.offer==='manual'?manualEntries.filter(t=>String(t.desc||'').trim()).map(t=>({id:t.id,label:String(t.desc||'').trim(),dueDate:t.due||null})):null;
+      const manualDue=f.offer==='manual'?(manualEntries.find(t=>t.due)?.due||null):null;
       lifecycle.createBonusTracking(state,{
         identity:p.id,productId:p.id,productName:p.name,productLabel:p.name,offerId:chosen?.sourceOfferId||f.product.offerId||null,
         reward,requirement:chosen?.req||'完成对应奖励条件',tasks,anchorDate:f.opened||null,anchorKind:'user_product_opened_date',category:f.category,
-        dueDate:f.offer==='manual'?(f.tasks[0]?.due||null):null,
+        dueDate:f.offer==='manual'?manualDue:null,preserveEmptyReward:f.offer==='manual',
         action:f.category==='信用卡'?'完成开卡奖励':'完成开户奖励条件',
         summary:'这是你在添加产品时建立的奖励追踪。逐项完成条件即可。'
       });
@@ -899,16 +752,15 @@
   function shortDate(date){ try{ const d=new Date(date+'T00:00:00'); return `${d.getMonth()+1}/${d.getDate()}`;}catch(e){return date;} }
 
   function goAddBack(){
-    const f=state.addFlow;
-    const map={product:'category',info:'product',track:'info',offer:'track',manual:'offer','membership-confirm':'product'};
-    if(map[f.step]) f.step=map[f.step]; else if(f.step==='category'){ state.addFlow=null; }
+    const f=state.addFlow;if(!f)return;
+    const map={info:'product',track:'info',offer:'track',manual:'offer','membership-confirm':'product'};
+    if(map[f.step])f.step=map[f.step];else if(f.step==='product'||f.step==='category')state.addFlow=null;
     render();
   }
-
   function closeAdd(){
     const f=state.addFlow;
-    const dirty=f && (f.last4||f.nickname||f.opened||f.offer||f.reward||f.tasks?.some(t=>t.desc||t.due));
-    if(dirty && f.step!=='success'){
+    const progressed=!!f && !['category','product','success'].includes(f.step);
+    if(progressed){
       f._confirmClose=true; render(); return;
     }
     state.addFlow=null; state.modal=null; render();
@@ -1023,9 +875,9 @@
     if(action==='edit-exit'){ if(editFlowDirty(state.editFlow)){state.modal={type:'discard-edit'};render();}else{state.editFlow=null;render();}return; }
     if(action==='edit-discard-confirm'){ state.modal=null;state.editFlow=null;render();return; }
     if(action==='edit-back'){ const f=state.editFlow;if(!f)return; f.step=f.step==='bonus-manual'?'bonus-select':f.step==='change-confirm'?'change-select':'main';render();return; }
-    if(action==='edit-bonus-open'){ state.editFlow.step='bonus-select';render();return; }
+    if(action==='edit-bonus-open'){ enterEditBonusSelect();return; }
     if(action==='edit-bonus-choice'){ state.editFlow.bonusChoice=el.dataset.id;render();return; }
-    if(action==='edit-bonus-use'){ const f=state.editFlow;if(f.bonusChoice==='manual'){f.step='bonus-manual';render();return;} const p=state.products.find(x=>x.id===f.productId);const prod=(catalog['信用卡']||[]).find(x=>x.offerId===p?.offerId)||{name:p?.name,offerId:p?.offerId};const c=publicOfferChoices(prod).find(x=>x.id===f.bonusChoice);if(c){f.pendingBonus={kind:'public',reward:c.value,req:c.req,sourceOfferId:c.sourceOfferId||null};f.step='main';render();}return; }
+    if(action==='edit-bonus-use'){ const f=state.editFlow;if(f.bonusChoice==='manual'){f.step='bonus-manual';render();return;} const p=state.products.find(x=>x.id===f.productId);const prod=(catalog['信用卡']||[]).find(x=>x.offerId===p?.offerId)||{name:p?.name,offerId:p?.offerId};const c=resolveOfferChoice(prod,f.bonusChoice);if(c){f.pendingBonus={kind:'public',reward:c.value,req:c.req,sourceOfferId:c.sourceOfferId||null};f.step='main';render();}return; }
     if(action==='edit-add-task'){ state.editFlow.bonusTasks.push({id:`e${Date.now()}`,desc:'',due:''});render();return; }
     if(action==='edit-delete-task'){ state.editFlow.bonusTasks=state.editFlow.bonusTasks.filter(t=>t.id!==el.dataset.id);render();return; }
     if(action==='edit-clear-task-due'){ const t=state.editFlow?.bonusTasks.find(x=>x.id===el.dataset.id);if(t)t.due='';render();return; }
@@ -1051,32 +903,30 @@
     if(action==='add-continue-editing'){ state.addFlow._confirmClose=false;render();return; }
     if(action==='add-discard'){ state.addFlow=null;state.modal=null;render();return; }
     if(action==='add-back'){ goAddBack();return; }
-    if(action==='add-category'){ const f=state.addFlow; const next=el.dataset.category; if(f.category!==next) resetAddAfterCategory(f); f.category=next; f.step='product';f.search='';f.filter='全部';f.moreFilterOpen=false;f.reportStatus=null;render();return; }
-    if(action==='add-filter'){ state.addFlow.filter=el.dataset.value;state.addFlow.moreFilterOpen=false;render();return; }
-    if(action==='add-more-filter'){ state.addFlow.moreFilterOpen=!state.addFlow.moreFilterOpen;render();return; }
-    if(action==='add-more-filter-close'){ state.addFlow.moreFilterOpen=false;render();return; }
+    if(action==='add-category'){ const f=state.addFlow; const next=el.dataset.category; if(f.category!==next) resetAddAfterCategory(f); f.category=next; f.step='product';f.search='';f.filter='全部';render();return; }
+    if(action==='add-filter'){ state.addFlow.filter=el.dataset.value;render();return; }
     if(action==='add-clear-search'){ state.addFlow.search='';state.addFlow.reportStatus=null;render();return; }
     if(action==='add-report-missing'){ state.addFlow.reportStatus='loading';render();setTimeout(()=>{if(state.addFlow){state.addFlow.reportStatus='submitted';render();}},150);return; }
-    if(action==='add-product-select'){ const f=state.addFlow; const next=(catalog[f.category]||[]).find(x=>x.id===el.dataset.id); if(f.product?.id!==next?.id) resetAddAfterProduct(f); f.product=next; if(f.category==='其他') f.step='membership-confirm'; else f.step='info';render();return; }
+    if(action==='add-product-select'){ const f=state.addFlow; const category=el.dataset.category||f.category; const next=(catalog[category]||[]).find(x=>x.id===el.dataset.id); if(!next)return; if(f.product?.id!==next.id) resetAddAfterProduct(f); f.category=category;f.product=next;void ensureReviewedOfferHistory(next);if(category==='其他')f.step='membership-confirm';else f.step='info';render();return; }
     if(action==='add-clear-opened'){ state.addFlow.opened='';render();return; }
     if(action==='add-to-track'){ state.addFlow.step='track';render();return; }
     if(action==='add-track-choice'){ state.addFlow.track=el.dataset.value==='yes';render();return; }
-    if(action==='add-track-next'){ const f=state.addFlow;if(f.track===true){f.step='offer';}else if(f.track===false){submitAddedProduct();}render();return; }
+    if(action==='add-track-next'){ const f=state.addFlow;if(f.track===true){enterAddOfferStep(f);return;}f.track=false;submitAddedProduct();render();return; }
     if(action==='add-offer-choice'){ state.addFlow.offer=el.dataset.id;render();return; }
-    if(action==='add-offer-next'){ const f=state.addFlow;if(f.offer==='manual'){f.step='manual';}else{f.track=true;submitAddedProduct();}render();return; }
+    if(action==='add-offer-next'){ const f=state.addFlow;if(f.offer==='manual'){f.step='manual';render();return;}if(!f.offer){f.track=false;}else{f.track=true;}submitAddedProduct();render();return; }
     if(action==='add-task'){ state.addFlow.tasks.push({id:`t${Date.now()}`,desc:'',due:''});render();return; }
     if(action==='clear-task-due'){ const t=state.addFlow.tasks.find(x=>x.id===el.dataset.id);if(t)t.due='';render();return; }
     if(action==='delete-task'){ state.addFlow.tasks=state.addFlow.tasks.filter(t=>t.id!==el.dataset.id);render();return; }
-    if(action==='add-manual-submit'){ state.addFlow.track=true;state.addFlow.offer='manual';submitAddedProduct();render();return; }
+    if(action==='add-manual-submit'){ const f=state.addFlow,has=!!String(f.reward||'').trim()||(f.tasks||[]).some(t=>String(t.desc||'').trim()||t.due);if(!has){f.track=false;f.offer=null;}else{f.track=true;f.offer='manual';}submitAddedProduct();render();return; }
     if(action==='add-membership-submit'){ submitAddedProduct();render();return; }
     if(action==='add-view-product'){ state.currentProductId=state.addFlow.savedProductId;state.addFlow=null;state.route='product-detail';render();return; }
-    if(action==='add-another'){ state.addFlow={step:'category',category:null,product:null,search:'',filter:'全部',moreFilterOpen:false,reportStatus:null,last4:'',nickname:'',opened:'',track:null,offer:null,reward:'',tasks:[{id:'t1',desc:'',due:''}],savedProductId:null,submitting:false,committed:false};render();return; }
+    if(action==='add-another'){ openAddProduct();return; }
   });
 
   document.addEventListener('input', e => {
     if(e.target.id==='offer-search'){ state.offerSearch=e.target.value; render(); focusEnd('offer-search'); }
     if(e.target.id==='product-search'){ state.productSearch=e.target.value; render(); focusEnd('product-search'); }
-    if(e.target.id==='add-search' && state.addFlow){ state.addFlow.search=e.target.value; render(); focusEnd('add-search'); }
+    if(e.target.id==='nb-add-search' && state.addFlow){ state.addFlow.search=e.target.value; render(); focusEnd('nb-add-search'); }
     if(e.target.id==='add-last4' && state.addFlow){ state.addFlow.last4=e.target.value.replace(/\D/g,'').slice(0,4); }
     if(e.target.id==='add-nickname' && state.addFlow){ state.addFlow.nickname=e.target.value; }
     if(e.target.id==='add-opened' && state.addFlow){ state.addFlow.opened=e.target.value; const clear=e.target.closest('.date-field-row')?.querySelector('[data-action="add-clear-opened"]'); if(clear) clear.disabled=!e.target.value; }
