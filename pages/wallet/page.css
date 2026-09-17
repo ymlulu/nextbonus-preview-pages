@@ -1,20 +1,9 @@
-/* Wallet V1 visual polish.
-   Presentation only: reduce section chrome and make existing product identity
-   easier to scan without changing typography, data, or interaction behavior. */
+/* Wallet page-owned presentation.
+   Presentation only: reduce section chrome and improve scanability without changing behavior. */
 
-/* Global reminder count already lives in the left navigation. Keep Wallet focused
-   on owned products and remove the duplicate Attention preview block. */
-.v4-products-page .v4-needs-attention{
-  display:none;
-}
+.v4-products-page .v4-needs-attention{display:none}
+.v4-products-page .v4-product-search .search{box-shadow:none}
 
-/* Search stays an input, but no longer competes with the product groups. */
-.v4-products-page .v4-product-search .search{
-  box-shadow:none;
-}
-
-/* Product category headings do the grouping; the whole category does not need
-   to read as another large card. */
 .v4-products-page .credit-products,
 .v4-products-page .account-products,
 .v4-products-page .membership-products,
@@ -30,25 +19,14 @@
   margin-bottom:5px;
   border-bottom:1px solid rgba(60,60,67,.10);
 }
-
-.v4-products-page .other-products{
-  border-bottom:0;
-}
+.v4-products-page .other-products{border-bottom:0}
 
 .v4-products-page .credit-products .v4-section-head,
 .v4-products-page .account-products .v4-section-head,
 .v4-products-page .membership-products .v4-section-head,
-.v4-products-page .other-products .v4-section-head{
-  margin-bottom:9px;
-}
+.v4-products-page .other-products .v4-section-head{margin-bottom:9px}
 
-/* Credit-card art remains the primary recognition cue. Keep the existing card
-   suffix, but overlay it on the art instead of repeating product identity below. */
-.v4-products-page .credit-products .v4-owned-product-card{
-  position:relative;
-  text-align:left;
-}
-
+.v4-products-page .credit-products .v4-owned-product-card{position:relative;text-align:left}
 .v4-products-page .credit-products .owned-product-meta{
   display:block;
   position:absolute;
@@ -59,11 +37,7 @@
   padding:0;
   pointer-events:none;
 }
-
-.v4-products-page .credit-products .owned-product-meta strong{
-  display:none;
-}
-
+.v4-products-page .credit-products .owned-product-meta strong{display:none}
 .v4-products-page .credit-products .owned-product-meta small{
   display:block;
   margin:0;
@@ -74,40 +48,25 @@
   -webkit-backdrop-filter:blur(6px);
   white-space:nowrap;
 }
-
-/* Keep the card itself visually calm; recognition comes from the artwork and
-   the small suffix overlay rather than extra elevation. */
 .v4-products-page .credit-products .v4-owned-product-card:hover .v4-owned-product-art{
   transform:translateY(-1px);
   filter:drop-shadow(0 4px 8px rgba(24,44,78,.07));
 }
 
-/* Non-card products remain compact info tiles, with flatter chrome so a row of
-   accounts/memberships does not become another wall of cards. */
 .v4-products-page .account-products .v10-info-tile,
 .v4-products-page .membership-products .v10-info-tile,
 .v4-products-page .other-products .v10-info-tile{
   box-shadow:none;
   border-color:rgba(60,60,67,.11);
 }
-
 .v4-products-page .account-products .v10-info-tile:hover,
 .v4-products-page .membership-products .v10-info-tile:hover,
 .v4-products-page .other-products .v10-info-tile:hover{
   box-shadow:0 3px 10px rgba(28,49,84,.035);
   transform:translateY(-1px);
 }
-
-.v4-products-page .v10-info-logo{
-  border-color:rgba(60,60,67,.08);
-  background:rgba(118,118,128,.04);
-}
-
-/* Past products belong to the page flow rather than a separate visual card. */
-.v4-products-page .v4-past-products{
-  padding-left:0;
-  padding-right:0;
-}
+.v4-products-page .v10-info-logo{border-color:rgba(60,60,67,.08);background:rgba(118,118,128,.04)}
+.v4-products-page .v4-past-products{padding-left:0;padding-right:0}
 
 @media(max-width:780px){
   .v4-products-page .credit-products,
@@ -119,9 +78,5 @@
     padding-top:10px;
     padding-bottom:13px;
   }
-
-  .v4-products-page .credit-products .owned-product-meta{
-    right:7px;
-    bottom:6px;
-  }
+  .v4-products-page .credit-products .owned-product-meta{right:7px;bottom:6px}
 }
