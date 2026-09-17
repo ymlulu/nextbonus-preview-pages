@@ -1,80 +1,73 @@
 (() => {
   'use strict';
 
-  const SEEN_KEY = 'nextbonus-onboarding-v3-seen';
-  const PENDING_KEY = 'nextbonus-onboarding-v3-pending';
+  const SEEN_KEY = 'nextbonus-onboarding-v4-seen';
+  const PENDING_KEY = 'nextbonus-onboarding-v4-pending';
   const PAGE_COUNT = 6;
-  const CHUNK_COUNT = 9;
-  const CHUNK_BASE = 'assets/onboarding/sprite-';
-  const ASSET_VERSION = '20260917-1';
+  const IMAGE_VERSION = '20260917-2';
+  const PAGES = [
+    'https://drive.google.com/thumbnail?id=1T07xF9nVgnKuDJnxl3yaesaaex6sOGua&sz=w1200',
+    'https://drive.google.com/thumbnail?id=1j2R45u2LQkJ7wdR00VSxg5Qi4QgnsmJo&sz=w1200',
+    'https://drive.google.com/thumbnail?id=1FGQBHtFvtYpzsEf4FGXdiaCuCnHob1kV&sz=w1200',
+    'https://drive.google.com/thumbnail?id=1njYrQehOwIMdKwGnzCJRrVj0qH0ckp2g&sz=w1200',
+    'https://drive.google.com/thumbnail?id=1E5AhMm143sqh2JnmSxsM4bh_l1jY-DBx&sz=w1200',
+    'https://drive.google.com/thumbnail?id=1jJp15_Tvs-Tc8TPEaE--YWt3PuJmTZ20&sz=w1200'
+  ];
 
   let page = 0;
   let overlay = null;
   let frame = null;
   let art = null;
-  let spriteImg = null;
-  let spriteUrl = null;
+  let image = null;
   let dots = null;
   let prevButton = null;
   let nextButton = null;
   let startButton = null;
+  const preloaded = new Set();
 
   function safeGet(key){ try { return localStorage.getItem(key); } catch (e) { return null; } }
   function safeSet(key, value){ try { localStorage.setItem(key, value); } catch (e) {} }
   function safeRemove(key){ try { localStorage.removeItem(key); } catch (e) {} }
 
-  function decodeBase64Image(base64){
-    const raw = atob(base64);
-    const bytes = new Uint8Array(raw.length);
-    for (let i = 0; i < raw.length; i += 1) bytes[i] = raw.charCodeAt(i);
-    return new Blob([bytes], {type:'image/webp'});
+  function imageUrl(index){
+    return `${PAGES[index]}&v=${IMAGE_VERSION}`;
   }
 
-  async function loadSpriteBase64(){
-    const urls = Array.from({length: CHUNK_COUNT}, (_, i) =>
-      `${CHUNK_BASE}${String(i).padStart(2, '0')}.txt?v=${ASSET_VERSION}`
-    );
-    const chunks = await Promise.all(urls.map(async (url) => {
-      const response = await fetch(url, {cache:'no-store'});
-      if (!response.ok) throw new Error(`Artwork chunk failed: ${url} (${response.status})`);
-      return (await response.text()).trim();
-    }));
-    const base64 = chunks.join('');
-    if (base64.length < 70000) throw new Error(`Artwork payload incomplete: ${base64.length}`);
-    return base64;
+  function preload(index){
+    if (index < 0 || index >= PAGE_COUNT || preloaded.has(index)) return;
+    preloaded.add(index);
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = imageUrl(index);
   }
 
-  async function hydrateArtwork(){
-    if (!art || spriteImg) return;
-    const base64 = await loadSpriteBase64();
-    const blob = decodeBase64Image(base64);
-    spriteUrl = URL.createObjectURL(blob);
-
-    spriteImg = document.createElement('img');
-    spriteImg.alt = '';
-    spriteImg.setAttribute('aria-hidden', 'true');
-    Object.assign(spriteImg.style, {
-      position:'absolute', left:'0', top:'0', width:'100%', height:'600%', maxWidth:'none',
-      display:'block', objectFit:'fill', pointerEvents:'none', userSelect:'none',
-      willChange:'transform', transition:'transform .18s ease'
-    });
-
-    const loaded = new Promise((resolve, reject) => {
-      spriteImg.onload = resolve;
-      spriteImg.onerror = () => reject(new Error('Decoded onboarding artwork could not be displayed'));
-    });
-
-    spriteImg.src = spriteUrl;
-    art.appendChild(spriteImg);
-    await loaded;
-    art.style.backgroundImage = 'none';
-    art.classList.add('is-loaded');
-    positionArtwork();
+  function showLoadError(){
+    if (!art) return;
+    art.classList.remove('is-loading');
+    art.classList.add('has-error');
+    let error = art.querySelector('.nb-onboarding-error');
+    if (!error) {
+      error = document.createElement('div');
+      error.className = 'nb-onboarding-error';
+      error.textContent = 'Onboarding 图片加载失败，请刷新重试';
+      art.appendChild(error);
+    }
   }
 
-  function positionArtwork(){
-    if (!spriteImg) return;
-    spriteImg.style.transform = `translateY(-${page * (100 / PAGE_COUNT)}%)`;
+  function renderArtwork(){
+    if (!image || !art) return;
+    art.classList.add('is-loading');
+    art.classList.remove('has-error');
+    art.querySelector('.nb-onboarding-error')?.remove();
+
+    image.onload = () => {
+      art.classList.remove('is-loading');
+      image.classList.add('is-ready');
+      preload(page + 1);
+    };
+    image.onerror = showLoadError;
+    image.classList.remove('is-ready');
+    image.src = imageUrl(page);
   }
 
   function build(){
@@ -87,7 +80,9 @@
     overlay.setAttribute('aria-label', 'NextBonus 首次登录介绍');
     overlay.innerHTML = `
       <div class="nb-onboarding-frame" data-page="1">
-        <div class="nb-onboarding-art" aria-hidden="true"></div>
+        <div class="nb-onboarding-art" aria-live="polite">
+          <img class="nb-onboarding-image" alt="NextBonus 新手介绍第 1 页" />
+        </div>
         <div class="nb-onboarding-controls" aria-label="Onboarding 导航">
           <button type="button" class="nb-onboarding-btn nb-onboarding-prev" aria-label="上一页">←&nbsp;&nbsp;上一步</button>
           <div class="nb-onboarding-dots" role="tablist" aria-label="Onboarding 页码"></div>
@@ -101,6 +96,7 @@
 
     frame = overlay.querySelector('.nb-onboarding-frame');
     art = overlay.querySelector('.nb-onboarding-art');
+    image = overlay.querySelector('.nb-onboarding-image');
     dots = overlay.querySelector('.nb-onboarding-dots');
     prevButton = overlay.querySelector('.nb-onboarding-prev');
     nextButton = overlay.querySelector('.nb-onboarding-next');
@@ -119,21 +115,17 @@
     });
 
     go(0);
-    hydrateArtwork()
-      .then(() => requestAnimationFrame(() => overlay?.classList.add('is-visible')))
-      .catch((error) => {
-        console.error('[NextBonus onboarding]', error);
-        if (art) art.innerHTML = '<div style="position:absolute;inset:0;display:grid;place-items:center;font:600 18px -apple-system,BlinkMacSystemFont,\'PingFang SC\',sans-serif;color:#50688d">Onboarding 图片加载失败，请刷新重试</div>';
-        requestAnimationFrame(() => overlay?.classList.add('is-visible'));
-      });
+    requestAnimationFrame(() => overlay?.classList.add('is-visible'));
   }
 
   function go(nextPage){
     page = Math.max(0, Math.min(PAGE_COUNT - 1, nextPage));
     if (!frame) return;
+
     frame.dataset.page = String(page + 1);
     overlay.dataset.page = String(page + 1);
-    positionArtwork();
+    image.alt = `NextBonus 新手介绍第 ${page + 1} 页`;
+    renderArtwork();
 
     [...dots.querySelectorAll('.nb-onboarding-dot')].forEach((dot, index) => {
       const active = index === page;
@@ -158,13 +150,23 @@
     overlay.classList.remove('is-visible');
     document.body.classList.remove('nb-onboarding-open');
     const node = overlay;
-    overlay = frame = art = spriteImg = dots = prevButton = nextButton = startButton = null;
-    if (spriteUrl) { URL.revokeObjectURL(spriteUrl); spriteUrl = null; }
+    overlay = null;
+    frame = null;
+    art = null;
+    image = null;
+    dots = null;
+    prevButton = null;
+    nextButton = null;
+    startButton = null;
     window.setTimeout(() => node.remove(), 180);
   }
 
   function shouldShow(){ return !safeGet(SEEN_KEY); }
-  function open(){ if (shouldShow()) { safeSet(PENDING_KEY, '1'); build(); } }
+  function open(){
+    if (!shouldShow()) return;
+    safeSet(PENDING_KEY, '1');
+    build();
+  }
 
   document.addEventListener('click', (event) => {
     const login = event.target.closest('[data-action="login-success"]');
@@ -175,8 +177,13 @@
 
   document.addEventListener('keydown', (event) => {
     if (!overlay) return;
-    if (event.key === 'ArrowRight' && page < PAGE_COUNT - 1) { event.preventDefault(); go(page + 1); }
-    else if (event.key === 'ArrowLeft' && page > 0) { event.preventDefault(); go(page - 1); }
+    if (event.key === 'ArrowRight' && page < PAGE_COUNT - 1) {
+      event.preventDefault();
+      go(page + 1);
+    } else if (event.key === 'ArrowLeft' && page > 0) {
+      event.preventDefault();
+      go(page - 1);
+    }
   });
 
   if (safeGet(PENDING_KEY) && shouldShow()) {
