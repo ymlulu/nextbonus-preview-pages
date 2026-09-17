@@ -1,17 +1,17 @@
 (() => {
   'use strict';
 
-  const SEEN_KEY = 'nextbonus-onboarding-v4-seen';
-  const PENDING_KEY = 'nextbonus-onboarding-v4-pending';
+  const SEEN_KEY = 'nextbonus-onboarding-v5-seen';
+  const PENDING_KEY = 'nextbonus-onboarding-v5-pending';
   const PAGE_COUNT = 6;
-  const IMAGE_VERSION = '20260917-2';
+  const IMAGE_VERSION = '20260917-3';
   const PAGES = [
-    'https://drive.google.com/thumbnail?id=1T07xF9nVgnKuDJnxl3yaesaaex6sOGua&sz=w1200',
-    'https://drive.google.com/thumbnail?id=1j2R45u2LQkJ7wdR00VSxg5Qi4QgnsmJo&sz=w1200',
-    'https://drive.google.com/thumbnail?id=1FGQBHtFvtYpzsEf4FGXdiaCuCnHob1kV&sz=w1200',
-    'https://drive.google.com/thumbnail?id=1njYrQehOwIMdKwGnzCJRrVj0qH0ckp2g&sz=w1200',
-    'https://drive.google.com/thumbnail?id=1E5AhMm143sqh2JnmSxsM4bh_l1jY-DBx&sz=w1200',
-    'https://drive.google.com/thumbnail?id=1jJp15_Tvs-Tc8TPEaE--YWt3PuJmTZ20&sz=w1200'
+    'assets/onboarding/p1.webp',
+    'assets/onboarding/p2.webp',
+    'assets/onboarding/p3.webp',
+    'assets/onboarding/p4.webp',
+    'assets/onboarding/p5.webp',
+    'assets/onboarding/p6.webp'
   ];
 
   let page = 0;
@@ -30,7 +30,7 @@
   function safeRemove(key){ try { localStorage.removeItem(key); } catch (e) {} }
 
   function imageUrl(index){
-    return `${PAGES[index]}&v=${IMAGE_VERSION}`;
+    return `${PAGES[index]}?v=${IMAGE_VERSION}`;
   }
 
   function preload(index){
