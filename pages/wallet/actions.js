@@ -1,0 +1,46 @@
+(() => {
+  'use strict';
+  const events=window.NextBonusEvents;
+  if(!events) throw new Error('Page event registry unavailable');
+
+  events.register('products',{
+    click({event,ctx}){
+      const el=event.target.closest?.('[data-action]');
+      if(!el) return false;
+      const action=el.dataset.action;
+      if(action==='wallet-clear-product-search'){
+        ctx.state.productSearch='';
+        return {render:true,focusId:'wallet-search'};
+      }
+      if(action==='wallet-toggle-past'){
+        ctx.state.pastOpen=!ctx.state.pastOpen;
+        return {render:true};
+      }
+      if(action==='toggle-product-section'){
+        const type=el.dataset.type;
+        ctx.state.productSectionExpanded=ctx.state.productSectionExpanded||{};
+        ctx.state.productSectionExpanded[type]=!ctx.state.productSectionExpanded[type];
+        ctx.state.productSortPicker=null;
+        return {render:true};
+      }
+      if(action==='toggle-product-sort'){
+        const type=el.dataset.type;
+        ctx.state.productSortPicker=ctx.state.productSortPicker===type?null:type;
+        return {render:true};
+      }
+      if(action==='product-sort'){
+        const type=el.dataset.type;
+        ctx.state.productSorts=ctx.state.productSorts||{};
+        ctx.state.productSorts[type]=el.dataset.value;
+        ctx.state.productSortPicker=null;
+        return {render:true};
+      }
+      return false;
+    },
+    input({event,ctx}){
+      if(event.target?.id!=='wallet-search') return false;
+      ctx.state.productSearch=event.target.value;
+      return {render:true,focusId:'wallet-search'};
+    }
+  });
+})();
