@@ -409,3 +409,10 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 /* Tabs rely on selection color/indicator, not heavy text. */
 .tab[data-nb-type],.mock-tabs .tab[data-nb-type]{font-weight:400!important}
 .tab.active[data-nb-type],.mock-tabs .tab.active[data-nb-type]{font-weight:500!important}
+
+/* Offer Detail overlay close control typography stays centralized. */
+.nb-offer-detail-close{
+  color:#5f6876;
+  font-size:22px;
+  line-height:1;
+}

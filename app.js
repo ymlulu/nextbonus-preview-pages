@@ -700,8 +700,6 @@
     if(action==='open-offer'){ captureScroll(); state.currentOfferId=el.dataset.id; state.routeSource=state.route==='wishlist'?'wishlist':'discover'; state.posterIndex=0; state.route='offer-detail'; render(); window.scrollTo(0,0); return; }
     if(action==='toggle-unavailable'){ state.wishlistUnavailableOpen=!state.wishlistUnavailableOpen; render(); return; }
     if(action==='back-offer-list'){ const target=state.routeSource==='wishlist'?'wishlist':'discover'; state.route=target; render(); restoreScroll(target); return; }
-    if(action==='poster'){ state.posterIndex=Number(el.dataset.index); render(); return; }
-    if(action==='poster-step'){ state.posterIndex=((state.posterIndex||0)+Number(el.dataset.dir)+2)%2; render(); return; }
     if(action==='assessment-start'){
       const supported=!!window.NBStaticAssessmentIntegration?.productMap?.[state.currentOfferId];
       if(!supported) return;
