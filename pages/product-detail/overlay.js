@@ -163,6 +163,23 @@
   document.addEventListener('keydown',event=>{ if(event.key==='Escape'&&overlay) requestClose(); });
   window.addEventListener('popstate',onHistory);
 
+  function renderSurface(markup,ctx){
+    lastContext=ctx||lastContext;
+    ensureOverlay();
+    if(!host) return null;
+    host.innerHTML=markup;
+    detail=host.querySelector('.v4-product-detail-page,.edit-product-page');
+    if(detail){
+      currentProductId=mountedProductId(detail);
+      detail.classList.add('nb-product-overlay-detail');
+      openingFromHistory=false;
+      document.dispatchEvent(new CustomEvent('nb:product-detail-mounted',{detail:{productId:currentProductId}}));
+    }
+    return host;
+  }
+
+  window.NextBonusEvents?.registerRenderSurface?.('product-detail',renderSurface);
+
   window.NextBonusProductDetailOverlay=Object.freeze({
     close:requestClose,
     afterAppRender(ctx){

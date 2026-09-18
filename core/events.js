@@ -3,6 +3,7 @@
 
   const supported=new Set(['click','input','change']);
   const handlers=new Map();
+  const renderSurfaces=new Map();
   let active=null;
 
   function register(route,owner){
@@ -23,11 +24,28 @@
     active={route,context};
   }
 
+  function registerRenderSurface(route,renderer){
+    if(!route||typeof renderer!=='function') throw new TypeError('A route and render surface are required');
+    renderSurfaces.set(route,renderer);
+    return ()=>{
+      if(renderSurfaces.get(route)===renderer) renderSurfaces.delete(route);
+    };
+  }
+
   function renderActive(route,context,focusId){
-    const main=document.querySelector?.('.main');
-    if(!main||!window.NextBonusPageRegistry) return;
-    main.innerHTML=window.NextBonusPageRegistry.render(route,context);
-    window.NextBonusUIFinalize?.run?.(main);
+    if(!window.NextBonusPageRegistry) return;
+    const markup=window.NextBonusPageRegistry.render(route,context);
+    const surface=renderSurfaces.get(route);
+    let root=null;
+    if(surface){
+      root=surface(markup,context)||null;
+    }else{
+      const main=document.querySelector?.('.main');
+      if(!main) return;
+      main.innerHTML=markup;
+      root=main;
+    }
+    if(root) window.NextBonusUIFinalize?.run?.(root);
     window.NextBonusStorage?.save?.(context.state);
     if(focusId){
       requestAnimationFrame(()=>{
@@ -60,6 +78,7 @@
   window.NextBonusEvents=Object.freeze({
     register,
     bind,
+    registerRenderSurface,
     dispatch,
     has:(route,type)=>typeof handlers.get(route)?.[type]==='function',
     routes:()=>[...handlers.keys()]

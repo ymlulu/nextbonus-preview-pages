@@ -359,6 +359,26 @@
   window.addEventListener('popstate',onHistory);
   window.addEventListener('resize',handleBreakpointChange,{passive:true});
 
+  function renderSurface(markup,ctx){
+    lastContext=ctx||lastContext;
+    ensureOverlay();
+    const host=overlay?.querySelector('.nb-offer-detail-host');
+    if(!host) return null;
+    disconnectPanelRuntime();
+    host.innerHTML=markup;
+    detail=host.querySelector('.v4-offer-detail-page');
+    if(detail){
+      currentOfferId=offerIdFrom(detail)||currentOfferId;
+      detail.classList.add('nb-overlay-detail');
+      openingFromHistory=false;
+      if(layoutMode==='desktop') mountDesktopCTA();
+      syncFollowState();
+    }
+    return host;
+  }
+
+  window.NextBonusEvents?.registerRenderSurface?.('offer-detail',renderSurface);
+
   window.NextBonusOfferDetailOverlay=Object.freeze({
     close:requestClose,
     afterAppRender(ctx){
