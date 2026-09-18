@@ -24,9 +24,9 @@
   }
 
   function startConfiguredHandoff(offerId){
-    const routing = window.NextBonusWatchlistFollowRouting;
-    if(!routing?.ready) return {ready:false, tracked:false};
-    const policy = routing.policyFor?.(offerId);
+    const policyApi = window.NextBonusWatchlistPolicy;
+    if(!policyApi?.isReady) return {ready:false, tracked:false};
+    const policy = policyApi.policyFor?.(offerId);
     if(policy?.followUpMode !== 'application') return {ready:true, tracked:false};
 
     const state = readAppState();
@@ -76,9 +76,17 @@
   document.addEventListener('click',event=>{
     const direct = event.target.closest?.('[data-action="direct-apply"]');
     if(direct){
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      beginApplication({source:'offer-detail'});
+      // app.js owns the current risk-confirmation orchestration. If the click
+      // just opened that modal, wait for apply-confirm before tracking.
+      if(!document.querySelector('[data-action="apply-confirm"]')){
+        waitForConfiguredHandoff(currentOfferId());
+      }
+      return;
+    }
+
+    const confirm = event.target.closest?.('[data-action="apply-confirm"]');
+    if(confirm){
+      waitForConfiguredHandoff(currentOfferId());
       return;
     }
 
@@ -89,7 +97,7 @@
       closeAssessmentDialog(reportCta);
       beginApplication({source:'assessment-full-report'});
     }
-  },true);
+  });
 
   window.NextBonusApplicationEntry = Object.freeze({
     begin:beginApplication,

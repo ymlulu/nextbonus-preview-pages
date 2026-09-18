@@ -3,7 +3,7 @@
 
   const icons = {
     discover: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M15.7 8.3l-2.1 5.3-5.3 2.1 2.1-5.3 5.3-2.1z"></path></svg>',
-    saved: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17l-5.5-3.7-5.5 3.7v-17z"></path></svg>',
+    saved: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.5-5.4 9.2-5.4 9.2 5.4 9.2 5.4-3.5 5.4-9.2 5.4S2.8 12 2.8 12z"></path><circle cx="12" cy="12" r="2.6"></circle></svg>',
     products: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="6.5" width="17" height="12" rx="2.5"></rect><path d="M6 6.5V5.8A2.3 2.3 0 0 1 8.3 3.5h8.2"></path><path d="M15.5 11h5v3.5h-5a1.75 1.75 0 0 1 0-3.5z"></path></svg>',
     attention: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10a5 5 0 0 1 10 0v3.2l1.7 2.8H5.3L7 13.2V10z"></path><path d="M10 19h4"></path></svg>',
     login: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5.5A1.5 1.5 0 0 0 4 5.5v13A1.5 1.5 0 0 0 5.5 20H10"></path><path d="M13 8l4 4-4 4M17 12H8"></path></svg>',
@@ -480,10 +480,6 @@
     clearTimeout(window.__nbToast); window.__nbToast=setTimeout(()=>{root.innerHTML='';},5000);
   }
 
-  function showSimple(title,copy,detail=''){
-    state.modal={type:'simple',title,copy,detail}; render();
-  }
-
   document.addEventListener('click', e => {
     const el=e.target.closest('[data-action]'); if(!el) return;
     const action=el.dataset.action;
@@ -494,8 +490,6 @@
       else navigate(r,{source:r});
       return;
     }
-    if(action==='offer-category'){ state.offerCategory=el.dataset.category; render(); return; }
-    if(action==='clear-offer-search'){ state.offerSearch=''; render(); return; }
     if(action==='open-offer'){ captureScroll(); state.currentOfferId=el.dataset.id; state.routeSource=state.route==='wishlist'?'wishlist':'discover'; state.posterIndex=0; state.route='offer-detail'; render(); window.scrollTo(0,0); return; }
     if(action==='back-offer-list'){ const target=state.routeSource==='wishlist'?'wishlist':'discover'; state.route=target; render(); restoreScroll(target); return; }
     if(action==='direct-apply'){ const o=currentOffer(), r=state.assessmentResults[o.id]; if(!o.applyUrl)return; const appRestriction=!!(r&&['BLOCK','WAIT'].includes(r.internal?.appHard)); const bonusRestriction=!!(r&&(r.eligible==='不可以'||['BLOCK','WAIT'].includes(r.internal?.bonusHard))); const risky=appRestriction||bonusRestriction||!!(r&&r.recommendation==='暂不建议申请'); if(risky){state.modal={type:'apply-risk',copy:appRestriction?'按当前已知规则，你现在申请可能不符合申请限制。仍要继续申请吗？':'你可能无法获得当前开卡奖励。仍要继续申请吗？'};render();}else{window.open(o.applyUrl,'_blank','noopener,noreferrer');} return; }
@@ -505,12 +499,7 @@
     if(action==='login-cancel'){ const source=state.returnSource||'discover'; state.route=source; state.returnTarget=null;state.pendingIntent=null;state.returnSource=null;render(); if(['discover','wishlist','products','attention'].includes(source)) restoreScroll(source); return; }
     if(action==='toggle-account'){ state.accountMenu=!state.accountMenu; render(); return; }
     if(action==='logout'){ logout(); return; }
-    if(action==='clear-product-search'){ state.productSearch='';render();return; }
     if(action==='open-all-attention'){ navigate('attention',{tab:'active'}); return; }
-    if(action==='toggle-past'){ state.pastOpen=!state.pastOpen;render();return; }
-    if(action==='toggle-product-section'){ const t=el.dataset.type; state.productSectionExpanded=state.productSectionExpanded||{}; state.productSectionExpanded[t]=!state.productSectionExpanded[t]; state.productSortPicker=null; render(); return; }
-    if(action==='toggle-product-sort'){ const t=el.dataset.type; state.productSortPicker=state.productSortPicker===t?null:t; render(); return; }
-    if(action==='product-sort'){ const t=el.dataset.type; state.productSorts=state.productSorts||{}; state.productSorts[t]=el.dataset.value; state.productSortPicker=null; render(); return; }
     if(action==='open-product'){ captureScroll(); state.currentProductId=el.dataset.id; state.editFlow=null; state.route='product-detail'; state.productHistoryOpen=false;render();window.scrollTo(0,0);return; }
     if(action==='back-products'){ state.route='products';render();restoreScroll('products');return; }
     if(action==='toggle-attention'){ state.expandedAttentionId=state.expandedAttentionId===el.dataset.id?null:el.dataset.id;render();return; }
@@ -518,22 +507,12 @@
     if(action==='skip-attention'){ completeAttention(el.dataset.id,'skip');return; }
     if(action==='history-correction'){ historyCorrection(el.dataset.id);return; }
     if(action==='attention-for-product'){ state.attentionProductFilter=el.dataset.id;state.attentionTab='active';state.route='attention';render();window.scrollTo(0,0);return; }
-    if(action==='attention-tab'){ state.attentionTab=el.dataset.tab;state.expandedAttentionId=null;state.historyVisibleCount=20;render();return; }
-    if(action==='history-load-more'){ state.historyVisibleCount=(state.historyVisibleCount||20)+20;render();return; }
-    if(action==='clear-attention-filter'){ state.attentionProductFilter='all';render();return; }
     if(action==='history-deeplink'){ state.attentionProductFilter=el.dataset.product;state.attentionTab='history';state.historyStatusFilter='all';state.historyVisibleCount=20;state.route='attention'; const candidate=state.attentionHistory.find(h=>h.id===el.dataset.historyId);state.expandedAttentionId=candidate?.id||null;render();window.scrollTo(0,0);return; }
 
 
   });
 
-  document.addEventListener('input', e => {
-    if(e.target.id==='offer-search'){ state.offerSearch=e.target.value; render(); focusEnd('offer-search'); }
-    if(e.target.id==='product-search'){ state.productSearch=e.target.value; render(); focusEnd('product-search'); }
-  });
-
   document.addEventListener('change', e => {
-    if(e.target.id==='attention-product-filter'){ state.attentionProductFilter=e.target.value;state.expandedAttentionId=null;state.historyVisibleCount=20;render(); }
-    if(e.target.id==='history-status-filter'){ state.historyStatusFilter=e.target.value;state.expandedAttentionId=null;state.historyVisibleCount=20;render(); }
     if(e.target.matches('[data-action="checklist"]')){
       const a=state.activeAttention.find(x=>x.id===e.target.dataset.attention); const c=a?.checklist.find(x=>x.id===e.target.dataset.check); if(c)c.done=e.target.checked; render();
     }
@@ -556,8 +535,6 @@
     const primary=['discover','wishlist','products','attention'].includes(state.route)?state.route:null;
     if(primary) restoreScroll(primary); else window.scrollTo({top:0,behavior:'instant'});
   });
-
-  function focusEnd(id){ requestAnimationFrame(()=>{const el=document.getElementById(id);if(el){el.focus();const n=el.value.length;try{el.setSelectionRange(n,n);}catch(e){}}}); }
 
   render();
 })();

@@ -1,31 +1,230 @@
-/* Unified Offer Card renderer.
-   Runtime cards are composed from Product + Visual + Offer + Tag + Bookmark state.
-   Full-card mock screenshots are design references only and are not runtime data. */
-.offer-card.nb-offer-card{height:100%;display:flex;flex-direction:column;background:#fff}
-.nb-offer-card .nb-offer-visual{height:185px;position:relative;display:flex;align-items:center;justify-content:center;padding:32px 30px 25px;background:linear-gradient(145deg,#f7f9fc,#eef2f7);overflow:hidden}
-.nb-offer-card .nb-provider{position:absolute;left:15px;top:14px;z-index:2;height:28px;display:flex;align-items:center;max-width:118px}
-.nb-offer-card .nb-provider img{display:block;max-width:92px;max-height:25px;object-fit:contain}
-.nb-offer-card .nb-provider-text{font-size:12px;font-weight:800;letter-spacing:.04em;color:#566071;background:rgba(255,255,255,.88);border:1px solid rgba(220,225,233,.75);padding:4px 8px;border-radius:8px}
-.nb-offer-card .bookmark{right:13px;top:12px}
-.nb-offer-card .nb-main-art{width:174px;height:110px;display:flex;align-items:center;justify-content:center;margin-top:13px}
-.nb-offer-card .nb-main-art img{display:block;max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 13px 18px rgba(31,45,68,.15))}
-.nb-offer-card .nb-brand-art{width:174px;height:102px;border-radius:18px;display:grid;place-items:center;padding:18px;text-align:center;font-size:20px;font-weight:850;letter-spacing:-.4px;color:#183252;background:linear-gradient(145deg,#fff,#e8edf5);box-shadow:0 13px 25px rgba(31,45,68,.11)}
+/* Offer Card visual owner.
+   Consolidated from the retired ratio/calibration/refinement/cleanup layers.
+   Typography lives in ui/typography.css; Discover-only overrides stay page-owned. */
+
+.offer-card.nb-offer-card{
+  width:202px;
+  height:333px;
+  max-width:100%;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  background:#fff;
+}
+
+.nb-offer-card .nb-offer-visual{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:165px;
+  flex:0 0 165px;
+  padding:31px 14px 9px;
+  background:linear-gradient(145deg,#f7f9fc,#eef2f7);
+  overflow:hidden;
+}
+
+.nb-offer-card .nb-provider{
+  position:absolute;
+  left:13px;
+  top:10px;
+  z-index:2;
+  height:22px;
+  display:flex;
+  align-items:center;
+  max-width:118px;
+}
+.nb-offer-card .nb-provider img{
+  display:block;
+  max-width:72px;
+  max-height:20px;
+  object-fit:contain;
+}
+.nb-offer-card .nb-provider-text{
+  color:#6e6e73;
+  background:transparent;
+  border:0;
+  padding:0;
+  border-radius:8px;
+}
+
+.nb-offer-card .bookmark,
+.nb-offer-card .mock-bookmark{
+  position:absolute;
+  right:10px;
+  top:9px;
+  z-index:4;
+  width:30px;
+  height:32px;
+  padding:0;
+  border:0;
+  border-radius:9px;
+  background:transparent;
+  color:#667085;
+  display:grid;
+  place-items:center;
+  box-shadow:none;
+  transition:background .15s ease,color .15s ease,transform .12s ease;
+}
+.nb-offer-card .bookmark:hover,
+.nb-offer-card .mock-bookmark:hover{background:rgba(120,120,128,.09)}
+.nb-offer-card .bookmark:active,
+.nb-offer-card .mock-bookmark:active{transform:scale(.96)}
+.nb-offer-card .bookmark svg,
+.nb-offer-card .mock-bookmark svg{
+  width:18px;
+  height:18px;
+  display:block;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.nb-offer-card .bookmark.saved,
+.nb-offer-card .mock-bookmark.saved{
+  background:transparent;
+  color:#0a71ff;
+}
+.nb-offer-card .bookmark.saved:hover,
+.nb-offer-card .mock-bookmark.saved:hover{background:rgba(10,113,255,.08)}
+
+.nb-offer-card .nb-main-art{
+  width:168px;
+  height:106px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:7px;
+  overflow:hidden;
+  border-radius:12px;
+}
+.nb-offer-card .nb-main-art img{
+  display:block;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  filter:drop-shadow(0 13px 18px rgba(31,45,68,.15));
+  transform-origin:center;
+}
+
+.nb-offer-card .nb-brand-art{
+  width:168px;
+  height:101px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  padding:18px;
+  text-align:center;
+  color:#183252;
+  background:linear-gradient(145deg,#fff,#e8edf5);
+  box-shadow:0 13px 25px rgba(31,45,68,.11);
+}
 .nb-offer-card .nb-brand-art.green{background:linear-gradient(145deg,#0d2a1d,#95eab0);color:white}
 .nb-offer-card .nb-brand-art.purple{background:linear-gradient(145deg,#282040,#8b70c2);color:white}
 .nb-offer-card .nb-brand-art.blue{background:linear-gradient(145deg,#0e5fb7,#70b7ff);color:white}
 .nb-offer-card .nb-brand-art.bank{background:linear-gradient(145deg,#fff,#e4e9f1);color:#253955}
-.nb-offer-card .nb-status-tag{position:absolute;right:15px;bottom:12px;border-radius:999px;padding:5px 9px;background:#fff3e5;color:#a65c13;font-size:11px;font-weight:750;box-shadow:0 3px 10px rgba(80,55,25,.06)}
-.nb-offer-card .nb-card-body{padding:17px 18px 18px;display:flex;flex:1;flex-direction:column;min-height:162px}
-.nb-offer-card .nb-offer-name{font-weight:750;font-size:15px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#1c2534}
-.nb-offer-card .nb-primary-value{font-weight:850;font-size:26px;letter-spacing:-.7px;margin-top:9px;line-height:1.13;color:#142745}
-.nb-offer-card .nb-requirement{color:#697487;font-size:12.5px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:19px}
-.nb-offer-card .nb-tag-row{display:flex;gap:8px;margin-top:auto;padding-top:14px;min-height:38px}
-.nb-offer-card .nb-tag{border-radius:8px;padding:4px 8px;font-size:11px;background:#f3f5f8;color:#5c6675;font-weight:680}
-.nb-offer-card .nb-tag.value{background:#eef6ff;color:#2466a8}
-.nb-offer-card .nb-tag.attribute{background:#f5f3fb;color:#66558a}
+
+.nb-offer-card .nb-status-tag{
+  position:absolute;
+  right:10px;
+  bottom:6px;
+  border-radius:999px;
+  padding:3px 7px;
+  background:#fff3e5;
+  color:#a65c13;
+  box-shadow:0 3px 10px rgba(80,55,25,.06);
+}
+
+.nb-offer-card .nb-card-body{
+  height:168px;
+  min-height:0;
+  padding:12px 14px 12px;
+  display:flex;
+  flex:1;
+  flex-direction:column;
+}
+.nb-offer-card .nb-offer-name{
+  white-space:normal;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  color:#1c2534;
+}
+.nb-offer-card .nb-primary-value{
+  margin-top:8px;
+  color:#142745;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.nb-offer-card .nb-requirement{
+  color:#6e6e73;
+  margin-top:7px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  min-height:15px;
+}
+.nb-offer-card .nb-tag-row{
+  display:flex;
+  gap:6px;
+  margin-top:auto;
+  padding-top:9px;
+  min-height:27px;
+}
+.nb-offer-card .nb-tag{
+  border-radius:999px;
+  padding:4px 8px;
+  background:#f3f5f8;
+  color:#5c6675;
+}
+.nb-offer-card .nb-tag.value{background:#eef9f2;color:#268a52}
+.nb-offer-card .nb-tag.attribute{background:#eef5fd;color:#2b68a6}
 .nb-offer-card.is-unavailable{opacity:.72}
 
-@media(max-width:760px){
-  .nb-offer-card .nb-offer-visual{height:170px}
-  .nb-offer-card .nb-primary-value{font-size:23px}
+/* Product-art normalization */
+.offer-card[data-id="hsbc-checking"] .nb-main-art img,
+.offer-card[data-id="chase-checking"] .nb-main-art img{
+  filter:none;
+  transform:scale(.9);
+}
+.offer-card[data-id="usbank-checking"] .nb-main-art img,
+.offer-card[data-id="truist-checking"] .nb-main-art img{
+  filter:drop-shadow(0 10px 15px rgba(31,45,68,.12));
+  transform:scale(1);
+}
+.offer-card[data-id="moomoo"] .nb-main-art img,
+.offer-card[data-id="robinhood"] .nb-main-art img,
+.offer-card[data-id="travel-transfer"] .nb-main-art img,
+.offer-card[data-id="amazon-gift"] .nb-main-art img,
+.offer-card[data-id="panda-mobile"] .nb-main-art img{
+  filter:none;
+  transform:scale(1.08);
+}
+.offer-card[data-id="cashback-deal"] .nb-main-art img{
+  filter:none;
+  transform:scale(1);
+}
+
+@media(max-width:780px){
+  .offer-card.nb-offer-card{
+    width:100%;
+    height:auto;
+    aspect-ratio:202/333;
+  }
+  .nb-offer-card .nb-offer-visual{
+    height:auto;
+    flex-basis:52%;
+  }
+  .nb-offer-card .nb-card-body{
+    height:auto;
+    flex:1;
+  }
+}
+@media(max-width:520px){
+  .offer-card.nb-offer-card{max-width:202px}
 }

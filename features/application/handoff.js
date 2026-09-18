@@ -418,11 +418,7 @@
   document.addEventListener('click', event => {
     const appAction = event.target.closest('[data-action]')?.dataset.action;
 
-    if (appAction === 'direct-apply') {
-      if (!document.querySelector('[data-action="apply-confirm"]')) startHandoff();
-    } else if (appAction === 'apply-confirm') {
-      startHandoff();
-    } else if (appAction === 'login-success') {
+    if (appAction === 'login-success') {
       setTimeout(() => {
         const attempt = activeAttempt();
         if (attempt?.status === 'approved_needs_login' && appState()?.loggedIn) {
@@ -435,7 +431,7 @@
       }, 0);
     }
 
-    if (appAction && !['direct-apply','apply-confirm','login-success'].includes(appAction)) {
+    if (appAction && appAction !== 'login-success') {
       setTimeout(() => render(), 0);
     }
 
