@@ -27,6 +27,7 @@
     const main=document.querySelector?.('.main');
     if(!main||!window.NextBonusPageRegistry) return;
     main.innerHTML=window.NextBonusPageRegistry.render(route,context);
+    window.NextBonusUIFinalize?.run?.(main);
     window.NextBonusStorage?.save?.(context.state);
     if(focusId){
       requestAnimationFrame(()=>{
