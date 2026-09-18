@@ -75,7 +75,7 @@
   }
 
   function rewardChoiceReady(flow){
-    if(!flow?.offer) return false;
+    if(!flow) return false;
     if(flow.offer==='manual') return !!manualTrackingValid(flow);
     return true;
   }
