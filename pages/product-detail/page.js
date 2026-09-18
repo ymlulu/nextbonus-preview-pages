@@ -47,11 +47,13 @@
   }
 
   function pdAttentionItem(ctx,item){
-    const {state,esc,daysUntil,attentionExpanded}=ctx;
+    const {state,esc,daysUntil}=ctx;
     const expanded=state.expandedAttentionId===item.id;
     const days=daysUntil(item.dueDate);
     const time=days!==null&&days>=0&&item.type==='bonus'?`剩余 ${days} 天`:item.time;
-    return `<div class="v4-pd-attention-item"><button class="v4-pd-attention-row" data-action="toggle-attention" data-id="${item.id}" data-history="0"><span class="v4-pd-att-icon">${pdAttentionIcon(item)}</span><span class="v4-pd-att-copy"><strong>${esc(item.action)}</strong><small>${esc(item.secondary||'')}</small></span><span class="v4-pd-att-time ${days!==null&&days<=7?'urgent':''}">${esc(time)}</span><span class="v4-pd-att-chevron">›</span></button>${expanded?attentionExpanded(item,false):''}</div>`;
+    const details=window.NextBonusAttentionUI;
+    if(!details) throw new Error('Attention UI unavailable');
+    return `<div class="v4-pd-attention-item"><button class="v4-pd-attention-row" data-action="toggle-attention" data-id="${esc(item.id)}" data-history="0"><span class="v4-pd-att-icon">${pdAttentionIcon(item)}</span><span class="v4-pd-att-copy"><strong>${esc(item.action)}</strong><small>${esc(item.secondary||'')}</small></span><span class="v4-pd-att-time ${days!==null&&days<=7?'urgent':''}">${esc(time)}</span><span class="v4-pd-att-chevron">›</span></button>${expanded?details.expanded(ctx,item):''}</div>`;
   }
 
   function editProductPage(ctx,product){

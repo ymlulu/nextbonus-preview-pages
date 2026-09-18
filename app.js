@@ -124,7 +124,7 @@
   }
 
   function pageContext(){
-    const ctx={ state, categories, offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, productPageAttentionItem, productSection, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionItem, attentionExpanded, attentionIdentity, openLogin, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, completeAttention, historyCorrection, renderApp:render, persist:()=>storageCore.save(state) };
+    const ctx={ state, categories, offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionIdentity, openLogin, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, completeAttention, historyCorrection, renderApp:render, persist:()=>storageCore.save(state) };
     ctx.renderRoute=route=>window.NextBonusPageRegistry.render(route,ctx);
     return ctx;
   }
@@ -279,12 +279,6 @@
 
 
 
-  function productPageAttentionItem(a){
-    const expanded=state.expandedAttentionId===a.id;
-    const tone=a.id==='a-bonus-plat'?'urgent':a.id==='a-hilton-credit'?'soon':'normal';
-    return `<div class="v4-pp-attention-item"><button class="v4-pp-attention-row" data-action="toggle-attention" data-id="${a.id}" data-history="0"><span class="v4-pp-product">${esc(attentionDisplayLabel(a))}</span><span class="v4-pp-action">${esc(a.action)}</span><span class="v4-pp-time tone-${tone}">${esc(a.time)}</span><span class="v4-pp-chevron">›</span></button>${expanded?attentionExpanded(a,false):''}</div>`;
-  }
-
   function attentionPriority(a){
     const days=daysUntil(a.dueDate);
     let bucket=4;
@@ -301,29 +295,6 @@
     });
   }
 
-  function sortProducts(type,arr){
-    const mode=state.productSorts?.[type]||'default';
-    const copy=[...arr];
-    const stable=(a,b)=>String(a.name).localeCompare(String(b.name),'zh-CN')||String(a.id).localeCompare(String(b.id));
-    if(mode==='recent') return copy.sort((a,b)=>(Number(b.addedAt||0)-Number(a.addedAt||0))||stable(a,b));
-    if(mode==='date-desc') return copy.sort((a,b)=>String(b.opened||'').localeCompare(String(a.opened||''))||stable(a,b));
-    if(mode==='date-asc') return copy.sort((a,b)=>String(a.opened||'9999').localeCompare(String(b.opened||'9999'))||stable(a,b));
-    if(type==='信用卡') return copy.sort((a,b)=>String(a.institution).localeCompare(String(b.institution),'zh-CN')||stable(a,b));
-    if(type==='银行和券商账户') return copy.sort((a,b)=>String(a.institution).localeCompare(String(b.institution),'zh-CN')||stable(a,b));
-    return copy.sort(stable);
-  }
-  function productSection(type,arr){
-    const sorted=sortProducts(type,arr);
-    const expanded=!!state.productSectionExpanded?.[type];
-    const collapsible=arr.length>=8 && !state.productSearch;
-    const shown=collapsible&&!expanded?sorted.slice(0,5):sorted;
-    const hidden=Math.max(0,arr.length-shown.length);
-    const cls=type==='信用卡'?'credit-products':type==='银行和券商账户'?'account-products':type==='会籍'?'membership-products':'other-products';
-    const reliableDates=arr.filter(x=>x.opened).length===arr.length;
-    const sortOpen=state.productSortPicker===type;
-    return `<section class="v4-product-section-card v4-product-section ${cls}"><div class="v4-section-head"><h2>${type} <span class="section-count">${arr.length}</span></h2>${collapsible&&expanded?`<div class="product-sort-wrap"><button class="product-sort-button" data-action="toggle-product-sort" data-type="${type}">排序 ▾</button>${sortOpen?`<div class="product-sort-menu"><button data-action="product-sort" data-type="${type}" data-value="default">默认顺序</button><button data-action="product-sort" data-type="${type}" data-value="recent">最近添加</button>${reliableDates?`<button data-action="product-sort" data-type="${type}" data-value="date-desc">日期：最新优先</button><button data-action="product-sort" data-type="${type}" data-value="date-asc">日期：最早优先</button>`:''}</div>`:''}</div>`:''}</div><div class="v4-owned-product-grid ${type==='信用卡'&&shown.length>1?'nb-wallet-card-stack':''}">${shown.map(productTile).join('')}</div>${collapsible?`<button class="v4-show-more" data-action="toggle-product-section" data-type="${type}">${expanded?'收起':'再显示 '+hidden+' 个'} <span>${expanded?'⌃':'⌄'}</span></button>`:''}</section>`;
-  }
-
   function productCardDisplay(p, detail=false){
     const asset=window.NextBonusProductArtRegistry?.resolveProduct?.(p);
     const primarySrc=asset?.web||asset?.local||'';
@@ -332,37 +303,6 @@
     return {primarySrc,localSrc,fallbackAttr};
   }
 
-
-  const productTileCopy={
-    'p-chase-checking':['Chase','Total Checking'],
-    'p-fidelity':['Fidelity','Cash Management Account'],
-    'p-robinhood':['Robinhood','Brokerage Account'],
-    'p-truist':['Truist','One Checking'],
-    'p-usbank':['U.S. Bank','Smartly Checking'],
-    'p-wf-checking':['Wells Fargo','Everyday Checking'],
-    'p-delta-status':['Delta SkyMiles','Platinum'],
-    'p-hilton':['Hilton Honors','Diamond'],
-    'p-ihg':['IHG One Rewards','Platinum'],
-    'p-marriott-status':['Marriott Bonvoy','Titanium'],
-    'p-hyatt':['World of Hyatt','Globalist']
-  };
-  function productInfoTileCopy(p){
-    if(productTileCopy[p.id]) return productTileCopy[p.id];
-    if(p.type==='其他') return [p.name,p.instance||p.institution||''];
-    return [p.institution||p.name,p.instance||p.name||''];
-  }
-  function productTile(p){
-    const isCredit=p.type==='信用卡';
-    if(isCredit){
-      const art=productCardDisplay(p,false);
-      const fallbackLabel=shortBrand(p.institution||p.name);
-      const expanded=state.walletCardExpandedId===p.id;
-      return `<button class="v4-owned-product-card credit-tile ${expanded?'nb-wallet-card-expanded':''}" data-action="open-product" data-id="${p.id}" aria-label="${esc(p.name)}" aria-expanded="${expanded?'true':'false'}"><span class="v4-owned-product-art">${art.primarySrc?`<img src="${art.primarySrc}"${art.fallbackAttr} alt="${esc(p.name)}" />`:`<span class="fallback-brand">${esc(fallbackLabel)}</span>`}</span><span class="owned-product-meta"><strong>${esc(p.name)}</strong><small>${esc(p.instance||p.institution||'')}</small></span><span class="owned-product-chevron">›</span></button>`;
-    }
-    const [primary,secondary]=productInfoTileCopy(p);
-    const logo=window.NextBonusProductLogoRegistry?.resolve?.(p.id,p.offerId,p.name)||'';
-    return `<button class="v4-owned-product-card compact-tile v10-info-tile" data-action="open-product" data-id="${p.id}" aria-label="${esc(p.name)}"><span class="v10-info-logo" data-product-id="${esc(p.id)}">${logo?`<img src="${logo}" alt="" />`:`<span class="v10-logo-fallback">${esc(shortBrand(p.institution||p.name))}</span>`}</span><span class="v10-info-copy"><strong>${esc(primary)}</strong><small>${esc(secondary)}</small></span><span class="v10-info-chevron">›</span></button>`;
-  }
 
   function shortBrand(v){ return String(v||'NB').split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase().slice(0,3); }
   function attentionProduct(pId){ return state.products.find(p=>p.id===pId)||state.pastProducts.find(p=>p.id===pId)||null; }
@@ -373,31 +313,7 @@
     if(p) return {name:p.name||stripAttentionSnapshotInstance(a?.product),instance:p.instance||''};
     return {name:stripAttentionSnapshotInstance(a?.product),instance:a?.productInstance||snapshotAttentionInstance(a?.product)||''};
   }
-  function attentionDisplayName(a){ return attentionIdentity(a).name; }
-  function attentionDisplayInstance(a){ return attentionIdentity(a).instance; }
   function attentionDisplayLabel(a){ const x=attentionIdentity(a); return [x.name,x.instance].filter(Boolean).join(' '); }
-  function attentionThumb(a){
-    const p=attentionProduct(a.productId);
-    const asset=window.NextBonusProductArtRegistry?.resolveProduct?.(p)||window.NextBonusProductArtRegistry?.resolveByName?.(attentionDisplayName(a));
-    const src=asset?.web||asset?.local||'';
-    return src?`<img src="${src}" alt="" />`:`<span>${esc(shortBrand(p?.institution||a.product))}</span>`;
-  }
-
-  function attentionItem(a, history=false){
-    const expanded=state.expandedAttentionId===a.id;
-    const tone=a.time.includes('截止')?'due':a.time.includes('生效')?'info':'soft';
-    return `<div class="attention-item"><button class="attention-row ${history?'history-row':''}" data-action="toggle-attention" data-id="${a.id}" data-history="${history?'1':'0'}">
-      <span class="att-product-cell"><span class="att-thumb">${attentionThumb(a)}</span><span class="att-product-copy"><strong>${esc(attentionDisplayName(a))}</strong><small>${esc(attentionDisplayInstance(a))}</small></span></span>
-      <span class="att-action-cell"><strong>${esc(a.action)}</strong>${a.secondary?`<small>${esc(a.secondary)}</small>`:''}</span>
-      <span class="att-time att-time-${tone}">${esc(a.time)}</span>${history?`<span class="history-status ${a.statusClass||''}">${esc(a.result)}</span>`:''}<span class="chev ${expanded?'up':''}">›</span>
-    </button>${expanded?attentionExpanded(a,history):''}</div>`;
-  }
-  function attentionExpanded(a,history){
-    if(history){
-      return `<div class="attention-expanded"><div class="attention-expanded-inner"><div><p class="attention-summary">${esc(a.summary)}</p><div class="key-card"><strong>${esc(a.key)}</strong><span class="muted">${esc(a.keySub)}</span></div></div><div><div class="instruction-title">最终结果</div><p class="muted">${esc(a.result)} · ${esc(a.ended)}${a.resultReason?` · ${esc(a.resultReason)}`:''}</p>${a.correction?`<div class="attention-actions"><button class="btn secondary small" data-action="history-correction" data-id="${a.id}">${esc(a.correction)}</button></div>`:''}</div></div></div>`;
-    }
-    return `<div class="attention-expanded"><div class="attention-expanded-inner"><div><p class="attention-summary">${esc(a.summary)}</p><div class="key-card"><strong>${esc(a.key)}</strong><span class="muted">${esc(a.keySub)}</span></div></div><div><div class="instruction-title">${esc(a.instruction)}</div>${a.checklist?.length?`<div class="checklist">${a.checklist.map(c=>`<label class="check"><input type="checkbox" data-action="checklist" data-attention="${a.id}" data-check="${c.id}" ${c.done?'checked':''}/><span>${esc(c.label)}</span></label>`).join('')}</div>`:''}<div class="attention-actions">${(a.checklist?.length||0)<=1?`<button class="btn primary small" data-action="complete-attention" data-id="${a.id}">${esc(a.primary)}</button>`:''}${a.secondaryAction?`<button class="btn secondary small" data-action="skip-attention" data-id="${a.id}">${esc(a.secondaryAction)}</button>`:''}</div></div></div></div>`;
-  }
 
   function fact(label,value){ return `<div><div class="fact-label">${esc(label)}</div><div class="fact-value">${esc(value)}</div></div>`; }
   function historyDateISO(v){
