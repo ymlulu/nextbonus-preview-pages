@@ -313,7 +313,7 @@
       if(target.id==='add-opened'){
         flow.opened=target.value;
         const clear=target.closest('.date-field-row')?.querySelector('[data-action="add-clear-opened"]');
-        if(clear) clear.disabled=!target.value;
+        if(clear) clear.hidden=!target.value;
         return {handled:true};
       }
       if(target.id==='add-reward'){
