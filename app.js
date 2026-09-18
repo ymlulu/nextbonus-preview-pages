@@ -121,7 +121,7 @@
   }
 
   function pageContext(){
-    const ctx={ state, categories, offers, esc, currentOffer, currentProduct, isSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, productPageAttentionItem, productSection, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, attentionItem, openLogin, productCardDisplay, productTimelineItems, editProductPage, shortBrand, formatLongDate, earningBlock, pdAttentionItem, benefitsFor, benefitCard, timelineFor };
+    const ctx={ state, categories, offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, productPageAttentionItem, productSection, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionItem, attentionExpanded, attentionIdentity, openLogin, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, renderApp:render };
     ctx.renderRoute=route=>window.NextBonusPageRegistry.render(route,ctx);
     return ctx;
   }
@@ -419,45 +419,7 @@
     return `<div class="attention-expanded"><div class="attention-expanded-inner"><div><p class="attention-summary">${esc(a.summary)}</p><div class="key-card"><strong>${esc(a.key)}</strong><span class="muted">${esc(a.keySub)}</span></div></div><div><div class="instruction-title">${esc(a.instruction)}</div>${a.checklist?.length?`<div class="checklist">${a.checklist.map(c=>`<label class="check"><input type="checkbox" data-action="checklist" data-attention="${a.id}" data-check="${c.id}" ${c.done?'checked':''}/><span>${esc(c.label)}</span></label>`).join('')}</div>`:''}<div class="attention-actions"><button class="btn primary small" data-action="complete-attention" data-id="${a.id}">${esc(a.primary)}</button>${a.secondaryAction?`<button class="btn secondary small" data-action="skip-attention" data-id="${a.id}">${esc(a.secondaryAction)}</button>`:''}</div></div></div></div>`;
   }
 
-  function pdAttentionIcon(a){
-    if(a.type==='bonus') return '🎁';
-    if(a.type==='annual') return '▣';
-    if(a.type==='change') return '$';
-    return '•';
-  }
-
-  function pdAttentionItem(a){
-    const expanded=state.expandedAttentionId===a.id;
-    const days=daysUntil(a.dueDate);
-    const time=days!==null&&days>=0&&a.type==='bonus'?`剩余 ${days} 天`:a.time;
-    return `<div class="v4-pd-attention-item"><button class="v4-pd-attention-row" data-action="toggle-attention" data-id="${a.id}" data-history="0"><span class="v4-pd-att-icon">${pdAttentionIcon(a)}</span><span class="v4-pd-att-copy"><strong>${esc(a.action)}</strong><small>${esc(a.secondary||"")}</small></span><span class="v4-pd-att-time ${days!==null&&days<=7?"urgent":""}">${esc(time)}</span><span class="v4-pd-att-chevron">›</span></button>${expanded?attentionExpanded(a,false):""}</div>`;
-  }
-
-  function earningBlock(p){
-    const parts=String(p.earning||'—').split('·').map(x=>x.trim()).filter(Boolean).slice(0,3);
-    if(!parts.length || parts[0]==='—') return `<div class="v4-pd-earning single"><div><span class="earn-icon blue">•</span><span><b>—</b><small>消费回报</small></span></div></div>`;
-    return `<div class="v4-pd-earning ${parts.length===1?'single':''}">${parts.map((x,i)=>`${i?'<i></i>':''}<div><span class="earn-icon ${i===0?'blue':i===1?'purple':'green'}">${i===0?'✦':i===1?'▥':'♧'}</span><span><b>${esc(x)}</b><small>消费回报</small></span></div>`).join('')}</div>`;
-  }
-  function productTimelineItems(p){
-    const items=[];
-    if(p.opened) items.push({id:`open-${p.id}`,date:p.opened,copy:p.type==='信用卡'?'开卡':'开户'});
-    const history=state.attentionHistory.filter(h=>h.productId===p.id);
-    history.forEach(h=>items.push({id:`att-${h.id}`,date:historyDateISO(h.ended)||h.dueDate||'',copy:`${h.action} · ${h.result}${h.resultReason?` · ${h.resultReason}`:''}`,correctable:!!h.correction,historyId:h.id}));
-    (p.history||[]).forEach(x=>items.push(x));
-    return items.sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
-  }
-
   function fact(label,value){ return `<div><div class="fact-label">${esc(label)}</div><div class="fact-value">${esc(value)}</div></div>`; }
-  function benefitsFor(p){
-    // Product Detail may only show structured, source-backed benefit facts.
-    // When this local data set does not contain those facts, leave the section empty instead of guessing.
-    return Array.isArray(p.benefits) ? p.benefits : [];
-  }
-  function benefitCard(b){
-    const expanded=state.expandedBenefitId===b.id;
-    return `<div class="benefit-card ${b.detail?'clickable':''}" ${b.detail?`data-action="toggle-benefit" data-id="${b.id}" role="button" tabindex="0"`:''}><div class="benefit-head"><div><div class="benefit-title">${esc(b.title)}</div><div class="benefit-short">${esc(b.short)}</div></div>${b.detail?`<span class="chev ${expanded?'up':''}">›</span>`:''}</div>${expanded?`<div class="benefit-detail"><dl><dt>本期可用至</dt><dd>${esc(b.usable)}</dd><dt>下一期开始</dt><dd>${esc(b.next)}</dd><dt>适用条件</dt><dd>${esc(b.eligibility)}</dd><dt>需要提前登记</dt><dd>${esc(b.enroll)}</dd><dt>最后核验</dt><dd>2026.09.12</dd></dl>${b.officialUrl?`<button class="link-btn" data-action="official-rules" data-url="${esc(b.officialUrl)}" style="margin-top:10px">官方规则 ↗</button>`:''}</div>`:''}</div>`;
-  }
-
   function historyDateISO(v){
     if(!v) return '';
     const m=String(v).match(/([A-Za-z]{3})\s+(\d{1,2}),\s*(\d{4})/);
@@ -469,12 +431,6 @@
     const m=String(date).match(/^(\d{4})-(\d{2})-(\d{2})$/); if(!m) return date;
     return `${m[1]}年${Number(m[2])}月${Number(m[3])}日`;
   }
-  function timelineFor(p,items=productTimelineItems(p)){
-    if(!items.length) return `<div class="timeline-empty">还没有历史记录</div>`;
-    return `<div class="timeline">${items.map(x=>`<div class="timeline-item ${x.correctable||x.targetProductId?'clickable':''}" ${x.correctable?`data-action="history-deeplink" data-product="${p.id}" data-history-id="${x.historyId}"`:x.targetProductId?`data-action="open-product" data-id="${x.targetProductId}"`:''}><div class="timeline-date">${esc(x.date)}</div><div class="timeline-copy">${esc(x.copy)}${x.correctable||x.targetProductId?' ›':''}</div></div>`).join('')}</div>`;
-  }
-
-
   function uniqueAttentionProducts(){
     const map=new Map(); [...currentActiveAttention(),...state.attentionHistory].forEach(a=>{ if(!map.has(a.productId)) map.set(a.productId,{id:a.productId,label:attentionDisplayLabel(a)}); }); return [...map.values()];
   }
@@ -483,55 +439,11 @@
   }
 
 
-  function editFlowDirty(f){
-    if(!f) return false;
-    const p=state.products.find(x=>x.id===f.productId); if(!p) return false;
-    const originalInstance=(p.instance||'').replace('•••• ','');
-    return f.instance!==originalInstance || f.status!==(p.status||'不确定') || f.opened!==(p.opened||'') || !!f.pendingBonus;
-  }
-  function editProductPage(p){
-    const f=state.editFlow;
-    if(f.step==='bonus-select'){
-      const prod=(catalog['信用卡']||[]).find(x=>x.offerId===p.offerId) || {name:p.name,offerId:p.offerId};
-      const choices=offerChoicesFor(prod).choices;
-      return `<div class="content narrow edit-product-page"><button class="detail-back" data-action="edit-back">‹ 返回编辑产品</button><div class="page-head"><div><h1 class="page-title">选择你申请时的奖励</h1><p class="page-subtitle">选择与你当时实际申请最匹配的一项。</p></div></div><div class="option-list">${choices.map(x=>`<button class="option-row ${f.bonusChoice===x.id?'selected':''}" data-action="edit-bonus-choice" data-id="${x.id}"><span class="radio-dot"></span><span class="option-main"><span class="option-title">${esc(x.value)}</span><span class="option-sub">${esc(x.kind==='current'?`当前公开 · ${x.req}`:`${x.dateLabel||'历史奖励'} · ${x.req}`)}</span></span></button>`).join('')}<button class="option-row ${f.bonusChoice==='manual'?'selected':''}" data-action="edit-bonus-choice" data-id="manual"><span class="radio-dot"></span><span class="option-main"><span class="option-title">手动添加奖励条件</span><span class="option-sub">列表里没有你实际申请时的奖励</span></span></button></div><div class="edit-footer"><button class="btn primary" data-action="edit-bonus-use" ${f.bonusChoice?'':'disabled'}>${f.bonusChoice==='manual'?'继续':'使用这个奖励'}</button></div></div>`;
-    }
-    if(f.step==='bonus-manual'){
-      const valid=f.bonusReward.trim()&&f.bonusTasks.length&&f.bonusTasks.every(t=>t.desc.trim()&&t.due);
-      return `<div class="content narrow edit-product-page"><button class="detail-back" data-action="edit-back">‹ 返回奖励选择</button><div class="page-head"><div><h1 class="page-title">手动添加奖励条件</h1></div></div><div class="form-group"><label class="label">你会获得什么</label><textarea id="edit-bonus-reward" class="textarea">${esc(f.bonusReward)}</textarea></div><div>${f.bonusTasks.map((t,i)=>`<div class="task-card"><div class="task-head"><span>条件 ${i+1}</span><button class="icon-btn" data-action="edit-delete-task" data-id="${t.id}">×</button></div><input class="input edit-task-desc" data-id="${t.id}" value="${esc(t.desc)}" placeholder="需要完成什么"/><div style="height:8px"></div><div class="date-field-row"><input class="input edit-task-due" type="date" data-id="${t.id}" value="${esc(t.due)}"/>${t.due?`<button class="btn secondary small" data-action="edit-clear-task-due" data-id="${t.id}">清除日期</button>`:''}</div></div>`).join('')}<button class="btn secondary small" data-action="edit-add-task">+ 再添加一个条件</button></div><div class="edit-footer"><button class="btn primary" data-action="edit-bonus-manual-use" ${valid?'':'disabled'}>使用这些条件</button></div></div>`;
-    }
-    if(f.step==='change-select'){
-      const targets=(p.changeTargets||[]).map(id=>(catalog['信用卡']||[]).find(x=>x.id===id)).filter(Boolean);
-      return `<div class="content narrow edit-product-page"><button class="detail-back" data-action="edit-back">‹ 返回编辑产品</button><div class="page-head"><div><h1 class="page-title">更换产品</h1><p class="page-subtitle">当前产品：${esc(p.name)}</p></div></div>${targets.length?`<div class="option-list">${targets.map(x=>`<button class="option-row" data-action="edit-change-target" data-id="${x.id}"><span class="option-main"><span class="option-title">${esc(x.name)}</span><span class="option-sub">${esc(x.institution)}</span></span><span>›</span></button>`).join('')}</div>`:`<div class="empty"><h3>暂时没有可选择的变更产品</h3><p>这里只有已经明确维护为可变更目标的产品；不会根据名称或同一发卡行猜测。</p></div>`}</div>`;
-    }
-    if(f.step==='change-confirm'){
-      const t=(catalog['信用卡']||[]).find(x=>x.id===f.changeTargetId);
-      return `<div class="content narrow edit-product-page"><button class="detail-back" data-action="edit-back">‹ 返回选择产品</button><div class="page-head"><div><h1 class="page-title">确认更换产品</h1></div></div><div class="report"><h3>${esc(p.name)} → ${esc(t?.name||'')}</h3><p>原产品历史会保留；原产品后续新的福利和年费提醒会停止；旧奖励追踪不会迁移到新产品。</p></div><div class="form-group"><label class="label">变更生效日期</label><input id="edit-change-date" class="input" type="date" max="${localDateISO()}" value="${esc(f.changeDate)}"/></div><button class="btn primary" data-action="edit-change-confirm" ${f.changeDate?'':'disabled'}>确认更换产品</button></div>`;
-    }
-    const tracked=state.activeAttention.some(a=>a.productId===p.id&&a.type==='bonus') || state.attentionHistory.some(h=>h.productId===p.id&&/奖励/.test(h.action));
-    return `<div class="content narrow edit-product-page"><button class="detail-back" data-action="edit-exit">‹ 返回产品详情</button><div class="page-head"><div><h1 class="page-title">编辑产品</h1><p class="page-subtitle">${esc(p.name)}</p></div></div><div class="edit-panel"><div class="form-group"><label class="label">卡号后四位 / 账户识别</label><input class="input" id="edit-instance" value="${esc(f.instance)}" /></div><div class="form-group"><label class="label">账户状态</label><select class="select" id="edit-status"><option ${f.status==='正常'?'selected':''}>正常</option><option ${f.status==='已关闭'?'selected':''}>已关闭</option><option ${f.status==='不确定'?'selected':''}>不确定</option></select></div><div class="form-group"><label class="label">${p.type==='信用卡'?'开卡日期':'开户日期'}</label><input type="date" class="input" id="edit-opened" value="${esc(f.opened)}" /></div>${p.type==='信用卡'?`<button class="option-row" data-action="edit-bonus-open"><span class="option-main"><span class="option-title">开卡奖励</span><span class="option-sub">${f.pendingBonus?esc(f.pendingBonus.reward):tracked?'正在追踪 / 已有记录':'未添加'}</span></span><span>›</span></button>`:''}<button class="option-row" style="margin-top:10px" data-action="edit-change-open"><span class="option-main"><span class="option-title">已变更为其他产品</span><span class="option-sub">只显示已确认可变更目标</span></span><span>›</span></button><div class="edit-footer split"><button class="btn danger" data-action="remove-product-request" data-id="${p.id}">从 NextBonus 中移除</button><button class="btn primary" data-action="save-edit-product" data-id="${p.id}">保存</button></div></div></div>`;
-  }
-
-  function offerChoicesFor(prod){
-    const source=prod?.offerId||null,offer=source?window.NextBonusOfferData?.[source]:null;
-    if(!source||!offer)return {status:'unsupported',choices:[]};
-    const current={id:`current-${source}`,kind:'current',sourceOfferId:source,value:String(offer.primaryValue||''),req:String(offer.primaryRequirement||''),dateLabel:'当前公开'};
-    const history=window.NextBonusReviewedOfferHistory,result=history?.cached?.(source)||null;
-    const duplicate=value=>String(value||'').toLowerCase().replace(/\s+/g,' ').trim();
-    const reviewed=(result?.choices||[]).filter(choice=>!(duplicate(choice.value)===duplicate(current.value)&&duplicate(choice.requirement)===duplicate(current.req))).map(choice=>({id:choice.id,kind:'reviewed',sourceOfferId:source,value:choice.value,req:choice.requirement,dateLabel:choice.dateLabel}));
-    return {status:result?.status||(history?.isSupported?.(source)?'loading':'unsupported'),choices:[current,...reviewed]};
-  }
-
-  function resolveOfferChoice(prod,choiceId){
-    if(!prod?.offerId||!choiceId||choiceId==='manual')return null;
-    return offerChoicesFor(prod).choices.find(choice=>choice.id===choiceId)||null;
-  }
-
-  async function ensureReviewedOfferHistory(prod){
-    const offerId=prod?.offerId,history=window.NextBonusReviewedOfferHistory;
-    if(!offerId||!history?.isSupported?.(offerId)||history.cached?.(offerId))return;
-    await history.load(offerId);
-  }
+  const bonusOfferChoice=window.NextBonusBonusOfferChoice;
+  if(!bonusOfferChoice) throw new Error('Bonus offer choice feature unavailable');
+  function offerChoicesFor(prod){ return bonusOfferChoice.offerChoicesFor(prod); }
+  function resolveOfferChoice(prod,choiceId){ return bonusOfferChoice.resolveOfferChoice(prod,choiceId); }
+  async function ensureReviewedOfferHistory(prod){ return bonusOfferChoice.ensureReviewedOfferHistory(prod); }
 
   async function enterAddOfferStep(flow){
     if(!flow||flow.offerLoading)return;
@@ -539,16 +451,6 @@
     await ensureReviewedOfferHistory(flow.product);
     if(state.addFlow!==flow)return;
     flow.offerLoading=false;flow.step='offer';render();
-  }
-
-  async function enterEditBonusSelect(){
-    const flow=state.editFlow,p=flow&&state.products.find(item=>item.id===flow.productId);
-    if(!flow||!p||flow.offerLoading)return;
-    flow.offerLoading=true;render();
-    const prod=(catalog['信用卡']||[]).find(item=>item.offerId===p.offerId)||{name:p.name,offerId:p.offerId};
-    await ensureReviewedOfferHistory(prod);
-    if(state.editFlow!==flow)return;
-    flow.offerLoading=false;flow.step='bonus-select';render();
   }
 
   function addProductContext(){
@@ -735,35 +637,8 @@
     if(action==='attention-tab'){ state.attentionTab=el.dataset.tab;state.expandedAttentionId=null;state.historyVisibleCount=20;render();return; }
     if(action==='history-load-more'){ state.historyVisibleCount=(state.historyVisibleCount||20)+20;render();return; }
     if(action==='clear-attention-filter'){ state.attentionProductFilter='all';render();return; }
-    if(action==='toggle-benefit'){ state.expandedBenefitId=state.expandedBenefitId===el.dataset.id?null:el.dataset.id;render();return; }
-    if(action==='toggle-product-history'){ state.productHistoryOpen=!state.productHistoryOpen;render();return; }
     if(action==='history-deeplink'){ state.attentionProductFilter=el.dataset.product;state.attentionTab='history';state.historyStatusFilter='all';state.historyVisibleCount=20;state.route='attention'; const candidate=state.attentionHistory.find(h=>h.id===el.dataset.historyId);state.expandedAttentionId=candidate?.id||null;render();window.scrollTo(0,0);return; }
-    if(action==='edit-product'){ const p=currentProduct(); state.editFlow={productId:p.id,step:'main',instance:(p.instance||'').replace('•••• ',''),status:p.status||'不确定',opened:p.opened||'',pendingBonus:null,bonusChoice:null,bonusReward:'',bonusTasks:[{id:'e1',desc:'',due:''}],changeTargetId:null,changeDate:''};render();return; }
-    if(action==='edit-exit'){ if(editFlowDirty(state.editFlow)){state.modal={type:'discard-edit'};render();}else{state.editFlow=null;render();}return; }
-    if(action==='edit-discard-confirm'){ state.modal=null;state.editFlow=null;render();return; }
-    if(action==='edit-back'){ const f=state.editFlow;if(!f)return; f.step=f.step==='bonus-manual'?'bonus-select':f.step==='change-confirm'?'change-select':'main';render();return; }
-    if(action==='edit-bonus-open'){ enterEditBonusSelect();return; }
-    if(action==='edit-bonus-choice'){ state.editFlow.bonusChoice=el.dataset.id;render();return; }
-    if(action==='edit-bonus-use'){ const f=state.editFlow;if(f.bonusChoice==='manual'){f.step='bonus-manual';render();return;} const p=state.products.find(x=>x.id===f.productId);const prod=(catalog['信用卡']||[]).find(x=>x.offerId===p?.offerId)||{name:p?.name,offerId:p?.offerId};const c=resolveOfferChoice(prod,f.bonusChoice);if(c){f.pendingBonus={kind:'public',reward:c.value,req:c.req,sourceOfferId:c.sourceOfferId||null};f.step='main';render();}return; }
-    if(action==='edit-add-task'){ state.editFlow.bonusTasks.push({id:`e${Date.now()}`,desc:'',due:''});render();return; }
-    if(action==='edit-delete-task'){ state.editFlow.bonusTasks=state.editFlow.bonusTasks.filter(t=>t.id!==el.dataset.id);render();return; }
-    if(action==='edit-clear-task-due'){ const t=state.editFlow?.bonusTasks.find(x=>x.id===el.dataset.id);if(t)t.due='';render();return; }
-    if(action==='edit-bonus-manual-use'){ const f=state.editFlow;if(f.bonusReward.trim()&&f.bonusTasks.length&&f.bonusTasks.every(t=>t.desc.trim()&&t.due)){f.pendingBonus={kind:'manual',reward:f.bonusReward,tasks:structuredClone(f.bonusTasks),sourceOfferId:null};f.step='main';render();}return; }
-    if(action==='edit-change-open'){ state.editFlow.step='change-select';render();return; }
-    if(action==='edit-change-target'){ state.editFlow.changeTargetId=el.dataset.id;state.editFlow.step='change-confirm';render();return; }
-    if(action==='edit-change-confirm'){
-      const f=state.editFlow,p=state.products.find(x=>x.id===f.productId),t=(catalog['信用卡']||[]).find(x=>x.id===f.changeTargetId); if(!p||!t||!f.changeDate)return;
-      const lifecycle=window.NextBonusProductLifecycleCore;
-      if(!lifecycle) throw new Error('Product Lifecycle Core unavailable');
-      const result=lifecycle.convertProduct(state,{sourceProductId:p.id,target:t,effectiveDate:f.changeDate,endedLabel:formatLongDate(f.changeDate),statusText:`已于 ${formatLongDate(f.changeDate)} 更换产品`});
-      state.currentProductId=result.product.id; state.productSearch=''; state.editFlow=null; render(); toast('产品已更换'); return;
-    }
-    if(action==='save-edit-product'){ const f=state.editFlow,p=state.products.find(x=>x.id===el.dataset.id); if(!f||!p)return; const ins=document.getElementById('edit-instance')?.value??f.instance; const status=document.getElementById('edit-status')?.value??f.status; const opened=document.getElementById('edit-opened')?.value??f.opened; p.instance=p.type==='信用卡'?(ins?`•••• ${ins}`:p.instance):(ins||p.instance);p.status=status;p.opened=opened;p.anniversary=opened?formatAnniversary(opened):'—'; if(f.pendingBonus&&!state.activeAttention.some(a=>a.productId===p.id&&a.type==='bonus')){ const now=Date.now(),due=f.pendingBonus.kind==='manual'?f.pendingBonus.tasks[0]?.due:null; state.activeAttention.push({id:`a-edit-${now}`,productId:p.id,product:p.name,action:'完成开卡奖励',secondary:f.pendingBonus.reward,time:due?`截止 ${shortDate(due)}`:'截止日期以所选奖励规则为准',dueDate:due,type:'bonus',summary:'这是你在编辑产品时补充建立的开卡奖励追踪。',key:f.pendingBonus.reward,keySub:due?`最晚 ${shortDate(due)} 完成`:'按所选奖励规则',instruction:'完成以下条件',checklist:f.pendingBonus.kind==='manual'?f.pendingBonus.tasks.map(t=>({id:t.id,label:t.desc,done:false,dueDate:t.due})):[{id:'req1',label:f.pendingBonus.req||'完成对应奖励条件',done:false}],primary:'我已完成',secondaryAction:null,completionKind:'completed'}); if(f.pendingBonus.sourceOfferId&&isSaved(f.pendingBonus.sourceOfferId))removeSaved(f.pendingBonus.sourceOfferId); } if(status==='已关闭'){ state.products=state.products.filter(x=>x.id!==p.id);p.statusText=`已于 ${formatLongDate(localDateISO())}关闭`;state.pastProducts.unshift(p);const stopped=state.activeAttention.filter(a=>a.productId===p.id);state.activeAttention=state.activeAttention.filter(a=>a.productId!==p.id);stopped.forEach(a=>state.attentionHistory.unshift({id:`h-stop-${a.id}-${Date.now()}`,productId:p.id,product:attentionIdentity(a).name,productInstance:attentionIdentity(a).instance,action:a.action,time:a.time,dueDate:a.dueDate,result:'已结束',resultReason:'产品已关闭',statusClass:'stopped',ended:historyDateLabel(),correction:null,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:a}));state.currentProductId=p.id;} state.editFlow=null;render();toast('已保存');return; }
-    if(action==='remove-product-request'){ state.modal={type:'remove-product-confirm',productId:el.dataset.id};render();return; }
-    if(action==='remove-product-confirm'){ const id=el.dataset.id; state.products=state.products.filter(p=>p.id!==id);state.activeAttention=state.activeAttention.filter(a=>a.productId!==id);state.modal=null;state.editFlow=null;state.route='products';render();toast('已从 NextBonus 中移除');return; }
-    if(action==='product-call'){ const phone=el.dataset.phone;if(phone)navigator.clipboard?.writeText(phone);toast(phone?`客服电话 ${phone} 已复制`:'');return; }
-    if(action==='product-login-external'){ if(el.dataset.url)window.open(el.dataset.url,'_blank','noopener,noreferrer');return; }
-    if(action==='official-rules'){ e.stopPropagation();if(el.dataset.url)window.open(el.dataset.url,'_blank','noopener,noreferrer');return; }
+
 
     // Add Product actions
     if(action==='add-close'){ closeAdd();return; }
@@ -798,12 +673,6 @@
     if(e.target.id==='add-nickname' && state.addFlow){ state.addFlow.nickname=e.target.value; }
     if(e.target.id==='add-opened' && state.addFlow){ state.addFlow.opened=e.target.value; const clear=e.target.closest('.date-field-row')?.querySelector('[data-action="add-clear-opened"]'); if(clear) clear.disabled=!e.target.value; }
     if(e.target.id==='add-reward' && state.addFlow){ state.addFlow.reward=e.target.value; updateManualSubmit(); }
-    if(e.target.id==='edit-instance' && state.editFlow){ state.editFlow.instance=e.target.value; }
-    if(e.target.id==='edit-opened' && state.editFlow){ state.editFlow.opened=e.target.value; }
-    if(e.target.id==='edit-bonus-reward' && state.editFlow){ state.editFlow.bonusReward=e.target.value; updateEditManualSubmit(); }
-    if(e.target.classList.contains('edit-task-desc') && state.editFlow){ const t=state.editFlow.bonusTasks.find(x=>x.id===e.target.dataset.id);if(t)t.desc=e.target.value; updateEditManualSubmit(); }
-    if(e.target.classList.contains('edit-task-due') && state.editFlow){ const t=state.editFlow.bonusTasks.find(x=>x.id===e.target.dataset.id);if(t)t.due=e.target.value; updateEditManualSubmit(); }
-    if(e.target.id==='edit-change-date' && state.editFlow){ state.editFlow.changeDate=e.target.value; render(); return; }
     if(e.target.classList.contains('task-desc') && state.addFlow){ const t=state.addFlow.tasks.find(t=>t.id===e.target.dataset.id); if(t)t.desc=e.target.value; updateManualSubmit(); }
     if(e.target.classList.contains('task-due') && state.addFlow){ const t=state.addFlow.tasks.find(t=>t.id===e.target.dataset.id); if(t)t.due=e.target.value; updateManualSubmit(); }
   });
@@ -811,7 +680,6 @@
   document.addEventListener('change', e => {
     if(e.target.id==='attention-product-filter'){ state.attentionProductFilter=e.target.value;state.expandedAttentionId=null;state.historyVisibleCount=20;render(); }
     if(e.target.id==='history-status-filter'){ state.historyStatusFilter=e.target.value;state.expandedAttentionId=null;state.historyVisibleCount=20;render(); }
-    if(e.target.id==='edit-status' && state.editFlow){ state.editFlow.status=e.target.value; }
     if(e.target.matches('[data-action="checklist"]')){
       const a=state.activeAttention.find(x=>x.id===e.target.dataset.attention); const c=a?.checklist.find(x=>x.id===e.target.dataset.check); if(c)c.done=e.target.checked; render();
     }
@@ -821,13 +689,6 @@
     if(!state.addFlow) return;
     const valid=state.addFlow.reward.trim() && state.addFlow.tasks.length && state.addFlow.tasks.every(t=>t.desc.trim()&&t.due);
     const btn=document.querySelector('[data-action="add-manual-submit"]');
-    if(btn) btn.disabled=!valid;
-  }
-
-  function updateEditManualSubmit(){
-    if(!state.editFlow) return;
-    const valid=state.editFlow.bonusReward.trim() && state.editFlow.bonusTasks.length && state.editFlow.bonusTasks.every(t=>t.desc.trim()&&t.due);
-    const btn=document.querySelector('[data-action="edit-bonus-manual-use"]');
     if(btn) btn.disabled=!valid;
   }
 

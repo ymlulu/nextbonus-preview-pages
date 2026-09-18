@@ -416,3 +416,22 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
   font-size:22px;
   line-height:1;
 }
+
+/* Product Detail overlay close control typography stays centralized. */
+.nb-product-detail-close{
+  color:#5f6876;
+  font-size:22px;
+  line-height:1;
+}
+
+/* Product Detail non-text glyph presentation. */
+.fact-icon{color:#5b72a4!important;font-size:17px!important}
+.earn-icon{font-size:25px!important}
+.earn-icon.blue{color:#0877ff!important}
+.earn-icon.purple{color:#8b2cff!important}
+.earn-icon.green{color:#12be77!important}
+.v4-pd-att-icon{color:#0877ff!important;font-size:16px!important}
+.v4-pd-att-chevron{font-size:23px!important}
+.v4-feature-benefit>b{font-size:22px!important}
+.v4-benefit-row>b{font-size:20px!important}
+.v4-benefit-icon{font-size:14px!important;color:var(--nb-label-primary)!important}
