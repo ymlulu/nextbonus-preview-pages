@@ -12,7 +12,7 @@
   const RULES = [
     /* Discover: provider is context; status/tag is metadata. */
     ['.nb-offer-card .nb-provider-text,.fallback-offer-card .provider', 'caption1', 'secondary'],
-    ['.nb-offer-card .nb-status-tag,.nb-offer-card .nb-tag,.fallback-offer-card .status-tag,.fallback-offer-card .soft-tag', 'caption2', 'secondary'],
+    ['.nb-offer-card .nb-status-tag,.fallback-offer-card .status-tag,.fallback-offer-card .soft-tag', 'caption2', 'secondary'],
 
     /* Watchlist: product + reward are scan targets; requirement is supporting copy. */
     ['.nb-watchlist-copy strong', 'headline', null],
