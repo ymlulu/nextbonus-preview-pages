@@ -350,6 +350,41 @@ body.nb-offer-overlay-open{overflow:hidden}
   right:54px !important;
 }
 
+.nb-offer-detail-host .nb-follow-control{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:5px !important;
+  height:34px !important;
+  padding:0 8px !important;
+  border:0 !important;
+  border-radius:9px !important;
+  background:transparent !important;
+  color:#68758a !important;
+  box-shadow:none !important;
+  cursor:pointer;
+  transition:background .14s ease,color .14s ease,transform .12s ease;
+}
+.nb-offer-detail-host .nb-follow-control:hover{
+  background:rgba(120,120,128,.09) !important;
+}
+.nb-offer-detail-host .nb-follow-control:active{
+  transform:scale(.97);
+}
+.nb-offer-detail-host .nb-follow-control.saved{
+  color:#0a71ff !important;
+}
+.nb-offer-detail-host .nb-follow-control.saved:hover{
+  background:rgba(10,113,255,.08) !important;
+}
+.nb-offer-detail-host .nb-follow-glyph{
+  width:16px;
+  height:16px;
+  display:inline-grid;
+  place-items:center;
+  flex:0 0 auto;
+}
+
 .nb-offer-detail-host :where(.mm-head,.nb-bank-head,.remaining-head,.deal-head){
   padding-right:42px !important;
 }
