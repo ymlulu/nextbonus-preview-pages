@@ -178,11 +178,6 @@
     if(event.key === 'Escape' && overlay) requestClose();
   });
 
-  new MutationObserver(()=>{
-    reconcile();
-    openFromResume();
-  }).observe(root,{childList:true,subtree:true});
-
   window.addEventListener('popstate',()=>queueMicrotask(reconcile));
 
   if(document.readyState === 'loading'){
@@ -197,6 +192,10 @@
 
   window.NextBonusProductDetailOverlay = Object.freeze({
     close:requestClose,
+    afterAppRender(){
+      reconcile();
+      openFromResume();
+    },
     isOpen(){return !!overlay;},
     productId(){return currentProductId;}
   });
