@@ -209,6 +209,7 @@
     root.innerHTML = html;
     root.dataset.nbRenderSignature = signature;
     window.NextBonusUIFinalize?.schedule?.(document);
+    window.NextBonusApplicationReviewFlow?.afterHandoffRender?.();
   }
 
   function render(mode) {

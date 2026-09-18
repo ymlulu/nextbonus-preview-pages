@@ -152,15 +152,7 @@
     }
   }
 
-  const rootObserver = new MutationObserver(()=>queueMicrotask(suppressPassivePendingBanner));
-  function observeRoot(){
-    const root = document.getElementById(ROOT_ID);
-    if(root) rootObserver.observe(root,{childList:true,subtree:true});
-    suppressPassivePendingBanner();
-  }
+  suppressPassivePendingBanner();
 
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',observeRoot,{once:true});
-  else observeRoot();
-
-  window.NextBonusApplicationReviewFlow = Object.freeze({openApplicationReview,finishPendingSelection,finishDeniedSelection});
+  window.NextBonusApplicationReviewFlow = Object.freeze({openApplicationReview,finishPendingSelection,finishDeniedSelection,afterHandoffRender:suppressPassivePendingBanner});
 })();
