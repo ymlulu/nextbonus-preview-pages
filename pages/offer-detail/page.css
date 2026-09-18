@@ -295,9 +295,9 @@ body.nb-offer-overlay-open{overflow:hidden}
   width:min(1200px,calc(100vw - 96px));
   height:min(800px,calc(100vh - 80px));
   max-height:800px;
-  border:1px solid rgba(221,228,238,.88);
+  border:0;
   border-radius:22px;
-  background:#fff;
+  background:transparent;
   box-shadow:0 28px 80px rgba(18,28,45,.20);
   overflow:hidden;
 }
