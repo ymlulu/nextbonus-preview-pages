@@ -1,14 +1,26 @@
 (() => {
   'use strict';
   const events=window.NextBonusEvents;
-  if(!events) throw new Error('Page event registry unavailable');
+  if(!events)throw new Error('Page event registry unavailable');
 
   events.register('wishlist',{
     click({event,ctx}){
       const el=event.target.closest?.('[data-action]');
-      if(!el||el.dataset.action!=='watchlist-toggle-unavailable') return false;
-      ctx.state.wishlistUnavailableOpen=!ctx.state.wishlistUnavailableOpen;
-      return {render:true};
+      if(!el)return false;
+      const action=el.dataset.action;
+      if(action==='watchlist-history-toggle'){
+        ctx.state.watchlistHistoryOpen=!ctx.state.watchlistHistoryOpen;
+        return {render:true,preventDefault:true};
+      }
+      if(action==='watchlist-deal-complete'){
+        const result=window.NextBonusDealWatchlistLifecycle?.complete?.(el.dataset.id);
+        if(result){
+          ctx.toast?.('已完成');
+          return {render:true,preventDefault:true};
+        }
+        return {preventDefault:true};
+      }
+      return false;
     }
   });
 })();

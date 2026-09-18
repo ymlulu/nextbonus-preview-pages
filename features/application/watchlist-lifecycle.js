@@ -22,9 +22,9 @@
   };
 
   function isApplication(offerId) {
-    const routing = window.NextBonusWatchlistFollowRouting;
-    if (!routing?.ready) return false;
-    return routing.policyFor?.(offerId)?.followUpMode === 'application';
+    const policy = window.NextBonusWatchlistPolicy;
+    if (!policy?.isReady) return false;
+    return policy.policyFor?.(offerId)?.followUpMode === 'application';
   }
 
   function ensureLink(attempt, api, registry) {
@@ -89,8 +89,8 @@
 
   function sync() {
     const api = window.NextBonusWatchlistState;
-    const routing = window.NextBonusWatchlistFollowRouting;
-    if (!api || !routing?.ready) return false;
+    const policy = window.NextBonusWatchlistPolicy;
+    if (!api || !policy?.isReady) return false;
     const handoff = read(HANDOFF_KEY, null);
     if (!handoff || !Array.isArray(handoff.attempts)) return false;
     const registry = links();
@@ -98,7 +98,6 @@
     handoff.attempts.forEach(attempt => { if (syncAttempt(attempt, api, registry)) changed = true; });
     if (changed) {
       write(LINK_KEY, registry);
-      window.NextBonusWatchlistUI?.refresh?.();
     }
     return changed;
   }
@@ -117,7 +116,7 @@
   window.addEventListener('storage', event => { if (event.key === HANDOFF_KEY) queue(); });
 
   function boot() {
-    if (window.NextBonusWatchlistFollowRouting?.ready) sync();
+    if (window.NextBonusWatchlistPolicy?.isReady) sync();
     else setTimeout(boot, 25);
   }
 

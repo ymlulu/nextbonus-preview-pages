@@ -4,7 +4,7 @@
   const icons = {
     discover: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M15.7 8.3l-2.1 5.3-5.3 2.1 2.1-5.3 5.3-2.1z"></path></svg>',
     saved: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17l-5.5-3.7-5.5 3.7v-17z"></path></svg>',
-    products: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4"></circle><path d="M5.5 20c.5-4 2.8-6 6.5-6s6 2 6.5 6"></path></svg>',
+    products: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="6.5" width="17" height="12" rx="2.5"></rect><path d="M6 6.5V5.8A2.3 2.3 0 0 1 8.3 3.5h8.2"></path><path d="M15.5 11h5v3.5h-5a1.75 1.75 0 0 1 0-3.5z"></path></svg>',
     attention: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10a5 5 0 0 1 10 0v3.2l1.7 2.8H5.3L7 13.2V10z"></path><path d="M10 19h4"></path></svg>',
     login: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5.5A1.5 1.5 0 0 0 4 5.5v13A1.5 1.5 0 0 0 5.5 20H10"></path><path d="M13 8l4 4-4 4M17 12H8"></path></svg>',
     account: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4"></circle><path d="M5.5 20c.5-4 2.8-6 6.5-6s6 2 6.5 6"></path></svg>'
@@ -61,7 +61,7 @@
 
   function currentOffer(){ return offers.find(o=>o.id===state.currentOfferId) || offers[0]; }
   function currentProduct(){ return state.products.find(p=>p.id===state.currentProductId) || state.pastProducts.find(p=>p.id===state.currentProductId) || state.products[0]; }
-  function isSaved(id){ return state.savedOfferIds.includes(id) || state.unavailableSavedIds.includes(id); }
+  function isSaved(id){ return !!window.NextBonusWatchlistState?.getActive?.(id); }
 
   function localDateISO(date=new Date()){
     const pad=n=>String(n).padStart(2,'0');
@@ -101,18 +101,21 @@
   function renderShell(content){
     const activeCount=currentActiveAttention().length;
     const badge = activeCount ? String(activeCount) : '';
+    const watchlistProgress=window.NextBonusWatchlistState?.list?.('in_progress')?.length||0;
+    const watchlistBadge=watchlistProgress ? String(Math.min(watchlistProgress,99))+(watchlistProgress>99?'+':'') : '';
     const authItem = state.loggedIn
       ? `<div class="account-menu"><button class="nav-item" data-action="toggle-account"><span class="nav-icon">${icons.account}</span><span class="nav-label">账户</span></button>${state.accountMenu?`<div class="account-pop"><button data-action="logout">退出登录</button></div>`:''}</div>`
       : `<button class="nav-item login-item" data-action="nav" data-route="login"><span class="nav-icon">${icons.login}</span><span class="nav-label">登录</span></button>`;
     return `<div class="shell">
       <aside class="sidebar">
-        <div class="brand"><span class="brand-mark"><span class="nb-n">N</span><span class="nb-b">B</span></span><span class="brand-word">Next<span>Bonus</span></span></div>
+        <button class="brand" type="button" data-action="nav" data-route="discover" aria-label="返回发现"><span class="brand-mark"><span class="nb-n">N</span><span class="nb-b">B</span></span><span class="brand-word">Next<span>Bonus</span></span></button>
         <nav class="nav">
           ${navItem('discover','发现',icons.discover)}
-          ${navItem('wishlist','收藏',icons.saved)}
+          ${navItem('wishlist','关注',icons.saved,watchlistBadge)}
           <div class="nav-divider"></div>
-          ${navItem('products','我的',icons.products)}
+          ${navItem('products','钱包',icons.products)}
           ${navItem('attention','提醒',icons.attention,badge)}
+          <div class="nb-account-divider" aria-hidden="true"></div>
           ${authItem}
         </nav>
       </aside>
@@ -184,10 +187,10 @@
     const source=state.returnSource;
     state.returnTarget=null; state.pendingIntent=null; state.returnSource=null;
     if(intent?.type==='bookmark'){
-      addSaved(intent.offerId);
+      window.NextBonusWatchlistRouting?.followExplicitly?.(intent.offerId);
       state.currentOfferId=intent.offerId;
       state.route=source || target || 'discover';
-      toast('已收藏');
+      toast('已关注');
     }else if(intent?.type==='assessment'){
       state.currentOfferId=intent.offerId;
       state.route='offer-detail';
@@ -206,18 +209,13 @@
     render(); toast('已退出登录');
   }
 
-  function addSaved(id){
-    state.unavailableSavedIds=state.unavailableSavedIds.filter(x=>x!==id);
-    if(!state.savedOfferIds.includes(id)) state.savedOfferIds.push(id);
-  }
   function removeSaved(id){
-    state.savedOfferIds=state.savedOfferIds.filter(x=>x!==id);
-    state.unavailableSavedIds=state.unavailableSavedIds.filter(x=>x!==id);
+    window.NextBonusWatchlistRouting?.unfollowExplicitly?.(id);
   }
   function toggleSaved(id){
     if(!state.loggedIn){ openLogin(state.route,{type:'bookmark',offerId:id},state.route); return; }
-    if(isSaved(id)){ removeSaved(id); toast('已取消收藏'); }
-    else { addSaved(id); toast('已收藏'); }
+    if(isSaved(id)){ removeSaved(id); toast('已取消关注'); }
+    else { window.NextBonusWatchlistRouting?.followExplicitly?.(id); toast('已关注'); }
     render();
   }
 
@@ -235,35 +233,11 @@
     return icons[category]||'';
   }
 
-  function bookmarkIcon(saved){
-    return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17l-5.5-3.7-5.5 3.7v-17z" ${saved?'fill="currentColor"':'fill="none"'}></path></svg>`;
-  }
-
-
   function offerCard(o){
-    const saved=isSaved(o.id);
-    if(o.mockImage){
-      return `<article class="offer-card mock-visual-card" data-action="open-offer" data-id="${o.id}" tabindex="0" role="button" aria-label="${esc(o.name)}">
-        <img class="offer-card-mock" src="${esc(o.mockImage)}" alt="${esc(o.name)}" />
-        <button class="bookmark mock-bookmark ${saved?'saved':''}" data-action="bookmark" data-id="${o.id}" aria-label="${saved?'取消收藏':'收藏'}">${bookmarkIcon(saved)}</button>
-      </article>`;
-    }
-    return `<article class="offer-card fallback-offer-card" data-action="open-offer" data-id="${o.id}" tabindex="0" role="button">
-      <div class="offer-top">
-        <span class="provider">${esc(o.provider)}</span>
-        <button class="bookmark ${saved?'saved':''}" data-action="bookmark" data-id="${o.id}" aria-label="${saved?'取消收藏':'收藏'}">${bookmarkIcon(saved)}</button>
-        <div class="mock-card-art ${o.art}"></div>
-        ${o.status?`<span class="status-tag">${esc(o.status)}</span>`:''}
-      </div>
-      <div class="offer-body">
-        <div class="offer-name">${esc(o.name)}</div>
-        <div class="primary-value">${esc(o.value)}</div>
-        <div class="requirement">${esc(o.requirement||'')}</div>
-        <div class="tag-row">${o.tags.slice(0,2).map(t=>`<span class="soft-tag">${esc(t)}</span>`).join('')}</div>
-      </div>
-    </article>`;
+    const renderer=window.NextBonusOfferCard;
+    if(!renderer) throw new Error('Offer Card UI unavailable');
+    return renderer.render(o,{saved:isSaved(o.id),esc});
   }
-
 
   function posterData(offer){
     const custom=posterSets[offer.id];
@@ -343,7 +317,7 @@
     const cls=type==='信用卡'?'credit-products':type==='银行和券商账户'?'account-products':type==='会籍'?'membership-products':'other-products';
     const reliableDates=arr.filter(x=>x.opened).length===arr.length;
     const sortOpen=state.productSortPicker===type;
-    return `<section class="v4-product-section-card v4-product-section ${cls}"><div class="v4-section-head"><h2>${type} <span class="section-count">${arr.length}</span></h2>${collapsible&&expanded?`<div class="product-sort-wrap"><button class="product-sort-button" data-action="toggle-product-sort" data-type="${type}">排序 ▾</button>${sortOpen?`<div class="product-sort-menu"><button data-action="product-sort" data-type="${type}" data-value="default">默认顺序</button><button data-action="product-sort" data-type="${type}" data-value="recent">最近添加</button>${reliableDates?`<button data-action="product-sort" data-type="${type}" data-value="date-desc">日期：最新优先</button><button data-action="product-sort" data-type="${type}" data-value="date-asc">日期：最早优先</button>`:''}</div>`:''}</div>`:''}</div><div class="v4-owned-product-grid">${shown.map(productTile).join('')}</div>${collapsible?`<button class="v4-show-more" data-action="toggle-product-section" data-type="${type}">${expanded?'收起':'再显示 '+hidden+' 个'} <span>${expanded?'⌃':'⌄'}</span></button>`:''}</section>`;
+    return `<section class="v4-product-section-card v4-product-section ${cls}"><div class="v4-section-head"><h2>${type} <span class="section-count">${arr.length}</span></h2>${collapsible&&expanded?`<div class="product-sort-wrap"><button class="product-sort-button" data-action="toggle-product-sort" data-type="${type}">排序 ▾</button>${sortOpen?`<div class="product-sort-menu"><button data-action="product-sort" data-type="${type}" data-value="default">默认顺序</button><button data-action="product-sort" data-type="${type}" data-value="recent">最近添加</button>${reliableDates?`<button data-action="product-sort" data-type="${type}" data-value="date-desc">日期：最新优先</button><button data-action="product-sort" data-type="${type}" data-value="date-asc">日期：最早优先</button>`:''}</div>`:''}</div>`:''}</div><div class="v4-owned-product-grid ${type==='信用卡'&&shown.length>1?'nb-wallet-card-stack':''}">${shown.map(productTile).join('')}</div>${collapsible?`<button class="v4-show-more" data-action="toggle-product-section" data-type="${type}">${expanded?'收起':'再显示 '+hidden+' 个'} <span>${expanded?'⌃':'⌄'}</span></button>`:''}</section>`;
   }
 
   function productCardDisplay(p, detail=false){
@@ -378,11 +352,12 @@
     if(isCredit){
       const art=productCardDisplay(p,false);
       const fallbackLabel=shortBrand(p.institution||p.name);
-      return `<button class="v4-owned-product-card credit-tile" data-action="open-product" data-id="${p.id}" aria-label="${esc(p.name)}"><span class="v4-owned-product-art">${art.primarySrc?`<img src="${art.primarySrc}"${art.fallbackAttr} alt="${esc(p.name)}" />`:`<span class="fallback-brand">${esc(fallbackLabel)}</span>`}</span><span class="owned-product-meta"><strong>${esc(p.name)}</strong><small>${esc(p.instance||p.institution||'')}</small></span><span class="owned-product-chevron">›</span></button>`;
+      const expanded=state.walletCardExpandedId===p.id;
+      return `<button class="v4-owned-product-card credit-tile ${expanded?'nb-wallet-card-expanded':''}" data-action="open-product" data-id="${p.id}" aria-label="${esc(p.name)}" aria-expanded="${expanded?'true':'false'}"><span class="v4-owned-product-art">${art.primarySrc?`<img src="${art.primarySrc}"${art.fallbackAttr} alt="${esc(p.name)}" />`:`<span class="fallback-brand">${esc(fallbackLabel)}</span>`}</span><span class="owned-product-meta"><strong>${esc(p.name)}</strong><small>${esc(p.instance||p.institution||'')}</small></span><span class="owned-product-chevron">›</span></button>`;
     }
     const [primary,secondary]=productInfoTileCopy(p);
     const logo=window.NextBonusProductLogoRegistry?.resolve?.(p.id,p.offerId,p.name)||'';
-    return `<button class="v4-owned-product-card compact-tile v10-info-tile" data-action="open-product" data-id="${p.id}" aria-label="${esc(p.name)}"><span class="v10-info-logo">${logo?`<img src="${logo}" alt="" />`:`<span class="v10-logo-fallback">${esc(shortBrand(p.institution||p.name))}</span>`}</span><span class="v10-info-copy"><strong>${esc(primary)}</strong><small>${esc(secondary)}</small></span><span class="v10-info-chevron">›</span></button>`;
+    return `<button class="v4-owned-product-card compact-tile v10-info-tile" data-action="open-product" data-id="${p.id}" aria-label="${esc(p.name)}"><span class="v10-info-logo" data-product-id="${esc(p.id)}">${logo?`<img src="${logo}" alt="" />`:`<span class="v10-logo-fallback">${esc(shortBrand(p.institution||p.name))}</span>`}</span><span class="v10-info-copy"><strong>${esc(primary)}</strong><small>${esc(secondary)}</small></span><span class="v10-info-chevron">›</span></button>`;
   }
 
   function shortBrand(v){ return String(v||'NB').split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase().slice(0,3); }
@@ -463,7 +438,7 @@
     else if(a.completionKind==='viewed'){ result='已查看'; correction='撤销已查看'; }
     else if(a.completionKind==='confirmed'){ result='已了解'; correction='撤销确认'; }
     const identity=attentionIdentity(a);
-    const history={id:`h-${a.id}-${Date.now()}`,productId:a.productId,product:identity.name,productInstance:identity.instance,action:a.action,time:a.time,result,statusClass,ended:historyDateLabel(),correction,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:{...a,product:identity.name,productInstance:identity.instance}};
+    const history=window.NextBonusAttentionHistory.stamp({id:`h-${a.id}-${Date.now()}`,productId:a.productId,product:identity.name,productInstance:identity.instance,action:a.action,time:a.time,dueDate:a.dueDate||null,result,statusClass,ended:historyDateLabel(),correction,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:{...a,product:identity.name,productInstance:identity.instance}},'user');
     state.activeAttention.splice(idx,1); state.attentionHistory.unshift(history); state.expandedAttentionId=null;
     render(); toast(`${result} · `,()=>undoHistory(history.id,a));
   }
@@ -482,14 +457,15 @@
     const productStillCurrent=state.products.some(p=>p.id===h.productId);
     const today=localDateISO(), due=source.dueDate||h.dueDate||null;
     if(!productStillCurrent){
-      state.attentionHistory.unshift({...h,id:`h-recalc-${Date.now()}`,result:'已结束',statusClass:'stopped',resultReason:'产品已不在当前生命周期',correction:null,ended:historyDateLabel()});
+      state.attentionHistory.unshift(window.NextBonusAttentionHistory.stamp({...h,id:`h-recalc-${Date.now()}`,result:'已结束',statusClass:'stopped',resultReason:'产品已不在当前生命周期',correction:null,ended:historyDateLabel()},'system'));
       render(); toast('已重新计算：该事项当前已结束'); return;
     }
     if(due && due<today){
-      state.attentionHistory.unshift({...h,id:`h-recalc-${Date.now()}`,result:'已到期',statusClass:'expired',correction:null,ended:historyDateLabel()});
+      state.attentionHistory.unshift(window.NextBonusAttentionHistory.stamp({...h,id:`h-recalc-${Date.now()}`,result:'已到期',statusClass:'expired',correction:null,ended:historyDateLabel()},'system'));
       render(); toast('已重新计算：该事项已经到期'); return;
     }
     if(!state.activeAttention.find(a=>a.id===source.id)) state.activeAttention.push(source);
+    window.NextBonusAttentionHistory.addReopenEvent(state,h);
     state.expandedAttentionId=null; render(); toast('已重新计算：该事项重新进入待处理');
   }
 
@@ -517,7 +493,6 @@
     if(action==='offer-category'){ state.offerCategory=el.dataset.category; render(); return; }
     if(action==='clear-offer-search'){ state.offerSearch=''; render(); return; }
     if(action==='open-offer'){ captureScroll(); state.currentOfferId=el.dataset.id; state.routeSource=state.route==='wishlist'?'wishlist':'discover'; state.posterIndex=0; state.route='offer-detail'; render(); window.scrollTo(0,0); return; }
-    if(action==='toggle-unavailable'){ state.wishlistUnavailableOpen=!state.wishlistUnavailableOpen; render(); return; }
     if(action==='back-offer-list'){ const target=state.routeSource==='wishlist'?'wishlist':'discover'; state.route=target; render(); restoreScroll(target); return; }
     if(action==='direct-apply'){ const o=currentOffer(), r=state.assessmentResults[o.id]; if(!o.applyUrl)return; const appRestriction=!!(r&&['BLOCK','WAIT'].includes(r.internal?.appHard)); const bonusRestriction=!!(r&&(r.eligible==='不可以'||['BLOCK','WAIT'].includes(r.internal?.bonusHard))); const risky=appRestriction||bonusRestriction||!!(r&&r.recommendation==='暂不建议申请'); if(risky){state.modal={type:'apply-risk',copy:appRestriction?'按当前已知规则，你现在申请可能不符合申请限制。仍要继续申请吗？':'你可能无法获得当前开卡奖励。仍要继续申请吗？'};render();}else{window.open(o.applyUrl,'_blank','noopener,noreferrer');} return; }
     if(action==='apply-confirm'){ const o=currentOffer(); state.modal=null; render(); if(o.applyUrl) window.open(o.applyUrl,'_blank','noopener,noreferrer'); return; }

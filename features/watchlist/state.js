@@ -146,6 +146,30 @@
     };
   }
 
+  function repairStore(store) {
+    if (!store || !Array.isArray(store.items)) return store || emptyStore();
+
+    store.items.forEach(item => {
+      if (item?.stage === 'history' && item.sourceType === 'legacy_unavailable') {
+        item.sourceType = 'legacy_expired_history';
+        item.sourceId = item.sourceId || `legacy-expired:${item.offerId}`;
+        item.meta = { ...(item.meta || {}), migratedAsDurableHistory: true };
+      }
+    });
+
+    const lifecycleEnded = new Set(
+      store.items
+        .filter(item => item?.stage === 'history' && ['application', 'deal'].includes(item.sourceType))
+        .map(item => String(item.offerId))
+    );
+    store.items = store.items.filter(item => !(
+      item?.stage !== 'history' &&
+      item?.sourceType === 'legacy_saved' &&
+      lifecycleEnded.has(String(item.offerId))
+    ));
+    return store;
+  }
+
   function syncLegacyStateObject(legacyState) {
     const state = legacyState && typeof legacyState === 'object' ? legacyState : {};
     const saved = Array.isArray(state.savedOfferIds) ? state.savedOfferIds.map(String) : [];
@@ -153,6 +177,7 @@
     const savedSet = new Set(saved);
     const unavailableSet = new Set(unavailable.filter(id => !savedSet.has(id)));
     const store = readStore();
+    if (store.legacySyncedAt) return clone(store);
 
     store.items = store.items.filter(item => {
       if (item.sourceType === 'legacy_saved') return savedSet.has(item.offerId);
@@ -172,6 +197,7 @@
     });
 
     store.legacySyncedAt = nowIso();
+    repairStore(store);
     return saveStore(store);
   }
 
@@ -293,8 +319,21 @@
   }
 
   migrateExistingApplicationHistory();
+  let bootStore = repairStore(readStore());
   const legacy = readJson(LEGACY_APP_STATE_KEY, null);
-  if (legacy) syncLegacyStateObject(legacy);
+  if (legacy && !bootStore.legacySyncedAt) {
+    syncLegacyStateObject(legacy);
+    bootStore = readStore();
+  } else if (!legacy && !bootStore.items.length && !bootStore.legacySyncedAt) {
+    const seedItems = Array.isArray(window.NextBonusSeedData?.defaultWatchlist)
+      ? window.NextBonusSeedData.defaultWatchlist.map(normalizeItem).filter(Boolean)
+      : [];
+    bootStore.items.push(...seedItems);
+    bootStore.legacySyncedAt = nowIso();
+    saveStore(bootStore);
+  } else {
+    saveStore(bootStore);
+  }
 
   window.NextBonusWatchlistState = Object.freeze({
     STORE_KEY,

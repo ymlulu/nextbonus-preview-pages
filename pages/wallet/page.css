@@ -80,3 +80,88 @@
   }
   .v4-products-page .credit-products .owned-product-meta{right:7px;bottom:6px}
 }
+
+/* Product logo fitting belongs to Wallet presentation. */
+.v10-info-logo{padding:0;background:#fff;overflow:hidden}
+.v10-info-logo img{width:84%;height:84%;padding:0;object-fit:contain;transform-origin:center;border-radius:12px}
+.v10-info-logo[data-product-id="p-chase-checking"] img,
+.v10-info-logo[data-product-id="p-fidelity"] img,
+.v10-info-logo[data-product-id="p-robinhood"] img,
+.v10-info-logo[data-product-id="p-truist"] img,
+.v10-info-logo[data-product-id="p-usbank"] img,
+.v10-info-logo[data-product-id="p-wf-checking"] img,
+.v10-info-logo[data-product-id="p-hilton"] img,
+.v10-info-logo[data-product-id="p-ihg"] img,
+.v10-info-logo[data-product-id="p-marriott-status"] img,
+.v10-info-logo[data-product-id="p-hyatt"] img,
+.v10-info-logo[data-product-id="p-awardwallet"] img,
+.v10-info-logo[data-product-id="p-pointsyeah"] img,
+.v10-info-logo[data-product-id="p-cardpointers"] img,
+.v10-info-logo[data-product-id="p-maxrewards"] img,
+.v10-info-logo[data-product-id="p-rakuten"] img,
+.v10-info-logo[data-product-id="p-google-one"] img{width:78%;height:78%;transform:none}
+.v10-info-logo[data-product-id="p-delta-status"] img{transform:scale(1.30)}
+.v10-info-logo[data-product-id="p-topcashback"] img{transform:scale(1.22)}
+.v10-info-logo[data-product-id="p-rebatesme"] img{transform:scale(1.22)}
+.v10-info-logo[data-product-id="p-gocashback"] img{transform:scale(1.20)}
+.v10-info-logo[data-product-id="p-bilt-rent"] img{transform:scale(1.12)}
+
+
+/* Mobile Wallet card stack experiment.
+   Presentation only: keep the existing credit-card tiles, order and Product Detail routing. */
+
+@media(max-width:780px){
+  .v4-products-page .credit-products .v4-owned-product-grid.nb-wallet-card-stack{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0;
+    padding:2px 0 4px;
+    overflow:visible;
+  }
+
+  .v4-products-page .credit-products .nb-wallet-card-stack .v4-owned-product-card.credit-tile{
+    width:min(100%,360px);
+    margin:0 auto;
+    position:relative;
+    transition:margin .24s ease, transform .24s ease, filter .24s ease;
+    transform:translateZ(0);
+  }
+
+  /* Each following card advances only enough to expose a recognizable top strip. */
+  .v4-products-page .credit-products .nb-wallet-card-stack .v4-owned-product-card.credit-tile + .v4-owned-product-card.credit-tile{
+    margin-top:clamp(-172px,-44vw,-144px);
+  }
+
+  .v4-products-page .credit-products .nb-wallet-card-stack .v4-owned-product-card.credit-tile .v4-owned-product-art{
+    border-radius:13px;
+    filter:drop-shadow(0 5px 12px rgba(24,44,78,.10));
+  }
+
+  /* A selected card opens enough vertical space to reveal the full card.
+     Cards below it continue as a compact stack. */
+  .v4-products-page .credit-products .nb-wallet-card-stack .v4-owned-product-card.credit-tile.nb-wallet-card-expanded{
+    z-index:30!important;
+    margin-bottom:clamp(156px,44vw,184px);
+    transform:translateY(0);
+  }
+
+  .v4-products-page .credit-products .nb-wallet-card-stack .v4-owned-product-card.credit-tile.nb-wallet-card-expanded .v4-owned-product-art{
+    filter:drop-shadow(0 12px 22px rgba(24,44,78,.16));
+  }
+
+  .v4-products-page .credit-products .nb-wallet-card-stack .v4-owned-product-card.credit-tile:active .v4-owned-product-art{
+    transform:scale(.992);
+  }
+
+  /* Keep the suffix attached to the card artwork while cards overlap. */
+  .v4-products-page .credit-products .nb-wallet-card-stack .owned-product-meta{
+    z-index:3;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .v4-products-page .credit-products .nb-wallet-card-stack .v4-owned-product-card.credit-tile{
+    transition:none;
+  }
+}

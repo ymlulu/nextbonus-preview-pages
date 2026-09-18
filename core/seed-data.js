@@ -58,5 +58,13 @@ const defaultProducts = [
     {id:'h-stopped', productId:'p-old-card', product:'AMEX Green •••• 4481', action:'使用 CLEAR 报销', time:'本期截止 Mar 31', dueDate:'2026-03-31', result:'已结束', resultReason:'产品已关闭', statusClass:'stopped', ended:'Mar 01, 2026', correction:null, summary:'产品关闭后，未来周期福利提醒已经停止。', key:'CLEAR 报销', keySub:'产品生命周期结束', instruction:'历史记录'}
   ];
 
-  window.NextBonusSeedData=Object.freeze({defaultProducts,defaultPastProducts,defaultAttention,defaultHistory});
+
+  const defaultWatchlist = [
+    {id:'seed-watch-amex-platinum',offerId:'amex-platinum',stage:'saved',status:'saved',sourceType:'seed',sourceOrder:0},
+    {id:'seed-watch-hsbc-checking',offerId:'hsbc-checking',stage:'saved',status:'saved',sourceType:'seed',sourceOrder:1},
+    {id:'seed-watch-moomoo',offerId:'moomoo',stage:'saved',status:'saved',sourceType:'seed',sourceOrder:2},
+    {id:'seed-history-travel-transfer',offerId:'travel-transfer',stage:'history',status:'expired',sourceType:'seed',sourceOrder:3}
+  ];
+
+  window.NextBonusSeedData=Object.freeze({defaultProducts,defaultPastProducts,defaultAttention,defaultHistory,defaultWatchlist});
 })();

@@ -742,3 +742,15 @@ body .content > .offer-grid{justify-content:start}
   .other-products .v10-info-tile{grid-template-columns:44px minmax(0,1fr) 12px;min-height:70px;padding:8px 9px;gap:9px}
   .v10-info-logo{width:44px;height:44px;border-radius:9px}
 }
+
+
+/* App Shell / detail navigation owner */
+.brand[data-action="nav"]{cursor:pointer;user-select:none;border:0;background:transparent;padding:0;font:inherit;text-align:left}
+.brand[data-action="nav"]:focus-visible{outline:2px solid #3478f6;outline-offset:4px;border-radius:12px}
+.detail-back-nav{display:flex;align-items:center;margin:0 0 18px}
+.detail-back-button{appearance:none;border:0;background:transparent;padding:6px 4px;font:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:5px;border-radius:8px}
+.detail-back-button:hover{background:rgba(61,111,216,.07)}
+.detail-back-button:focus-visible{outline:2px solid #3478f6;outline-offset:2px}
+.nb-account-divider{display:none}
+@media(min-width:781px){.sidebar .nav{flex:1;min-height:0}.sidebar .nav>.nb-account-divider{display:block;flex:0 0 auto;height:1px;background:rgba(214,220,230,.82);margin:0 10px 10px;margin-top:auto}}
+@media(max-width:720px){.detail-back-nav{margin-bottom:14px}.detail-back-button{padding:8px 4px}}

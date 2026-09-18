@@ -309,7 +309,7 @@
     attention.completionTriggerCheckId=triggerId;
     syncChecklistTaskState(state,attention);
     const tracking=(state.offerTrackings||[]).find(item=>item.id===attention.trackingId);if(tracking)tracking.status='completed';
-    const historyItem={id:`h-${attention.id}-${Date.now()}`,productId:attention.productId,product:attention.product,productInstance:attention.productInstance||'',action:attention.action,time:attention.time,dueDate:attention.dueDate||null,result:'已完成',statusClass:'used',ended:historyDateLabel(),correction:'撤销完成',summary:attention.summary,key:attention.key,keySub:attention.keySub,instruction:attention.instruction,source:clone(attention)};
+    const historyItem=window.NextBonusAttentionHistory.stamp({id:`h-${attention.id}-${Date.now()}`,productId:attention.productId,product:attention.product,productInstance:attention.productInstance||'',action:attention.action,time:attention.time,dueDate:attention.dueDate||null,result:'已完成',statusClass:'used',ended:historyDateLabel(),correction:'撤销完成',summary:attention.summary,key:attention.key,keySub:attention.keySub,instruction:attention.instruction,source:clone(attention)},'user');
     state.activeAttention.splice(index,1);state.attentionHistory=[historyItem,...(state.attentionHistory||[])];
     writeJson(APP_STATE_KEY,state);window.location.reload();return true;
   }
@@ -328,6 +328,7 @@
     }
     state.attentionHistory.splice(index,1);
     if(!(state.activeAttention||[]).some(active=>active.id===source.id))state.activeAttention.push(source);
+    window.NextBonusAttentionHistory.addReopenEvent(state,item);
     syncChecklistTaskState(state,source);
     const tracking=(state.offerTrackings||[]).find(track=>track.id===source.trackingId);if(tracking)tracking.status='in_progress';
     writeJson(APP_STATE_KEY,state);window.location.reload();return true;

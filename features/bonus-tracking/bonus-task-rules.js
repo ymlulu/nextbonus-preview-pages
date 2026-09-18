@@ -127,12 +127,14 @@
     const dueDates=tasks.map(task=>task.dueDate).filter(Boolean);
     const distinct=[...new Set(dueDates)];
     const hasRelativeDeadline=tasks.some(task=>!!task.offset);
+    const unresolvedAnchorDate=hasRelativeDeadline&&!anchorValid;
     return{
-      tasks,
-      dueDate:distinct[0]||null,
-      distinctDueDates:distinct.length,
-      hasRelativeDeadline,
-      needsAnchorDate:hasRelativeDeadline&&!anchorValid
+      tasks:unresolvedAnchorDate?tasks.map(task=>({...task,dueDate:null})):tasks,
+      dueDate:unresolvedAnchorDate?null:(distinct[0]||null),
+      distinctDueDates:unresolvedAnchorDate?0:distinct.length,
+      hasRelativeDeadline:unresolvedAnchorDate?false:hasRelativeDeadline,
+      needsAnchorDate:false,
+      unresolvedAnchorDate
     };
   }
 

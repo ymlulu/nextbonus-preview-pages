@@ -20,13 +20,11 @@
   <link rel="stylesheet" href="pages/watchlist/page.css?v=20260917-1" />
   <link rel="stylesheet" href="pages/add-product/page.css?v=20260918-1" />
   <link rel="stylesheet" href="mobile-v1-fixes.css?v=20260915-1" />
-  <link rel="stylesheet" href="attention-history-events.css?v=20260915-1" />
   <link rel="stylesheet" href="pages/attention/page.css?v=20260917-1" />
   <link rel="stylesheet" href="pages/wallet/page.css?v=20260917-1" />
-  <link rel="stylesheet" href="mobile-wallet-card-stack.css?v=20260916-1" />
   <link rel="stylesheet" href="mobile-discover-attention-polish.css?v=20260915-2" />
-  <link rel="stylesheet" href="ui-typography.css?v=20260915-1" />
-  <link rel="stylesheet" href="ui-typography-balance.css?v=20260915-2" />
+  <link rel="stylesheet" href="ui/typography.css?v=20260918-1" />
+  <link rel="stylesheet" href="ui/typography-balance.css?v=20260918-1" />
   <link rel="stylesheet" href="mobile-primary-page-focus.css?v=20260915-2" />
   <link rel="stylesheet" href="pages/offer-detail/page.css?v=20260918-1" />
   <link rel="stylesheet" href="onboarding.css?v=20260917-4" />
@@ -36,16 +34,19 @@
   <div id="toast-root" aria-live="polite" aria-atomic="true"></div>
   <script src="boot-recovery.js?v=20260914-1"></script>
   <script src="product-logo-registry.js"></script>
-  <script src="product-logo-source-override.js"></script>
   <script src="offer-products.js"></script>
   <script src="offer-visuals.js?v=20260914-2"></script>
   <script src="offer-tags.js"></script>
   <script src="offer-data.js?v=20260914-2"></script>
-  <script src="watchlist-state.js?v=20260914-2"></script>
-  <script src="watchlist-state-compat.js?v=20260914-1"></script>
+  <script src="core/seed-data.js?v=20260917-1"></script>
+  <script src="features/watchlist/state.js?v=20260918-1"></script>
+  <script src="features/watchlist/policy.js?v=20260918-1"></script>
+  <script src="features/watchlist/routing.js?v=20260918-1"></script>
+  <script src="features/watchlist/deal-lifecycle.js?v=20260918-1"></script>
   <script src="credit-card-art.js?v=20260914-2"></script>
   <script src="offer-visual-source.js"></script>
-  <script src="product-art-runtime.js?v=20260914-2"></script>
+  <script src="ui/product-art.js?v=20260918-1"></script>
+  <script src="features/attention/history.js?v=20260918-1"></script>
   <script src="features/benefits/benefit-cycle.js?v=20260917-1"></script>
   <script src="benefit-attention.js?v=20260914-1"></script>
   <script src="features/assessment/client.js?v=20260918-1"></script>
@@ -55,19 +56,19 @@
   <script src="product-catalog.js?v=20260914-1"></script>
   <script src="features/assessment/contract.js?v=20260918-1"></script>
   <script src="features/product-lifecycle/product-lifecycle-core.js?v=20260917-1"></script>
-  <script src="bonus-anchor-policy.js?v=20260915-1"></script>
   <script src="pages/offer-detail/overlay-bootstrap.js?v=20260918-1"></script>
   <script src="pages/product-detail/overlay-bootstrap.js?v=20260918-1"></script>
-  <script src="core/seed-data.js?v=20260917-1"></script>
   <script src="core/state.js?v=20260917-1"></script>
   <script src="core/storage.js?v=20260917-1"></script>
   <script src="core/router.js?v=20260917-1"></script>
   <script src="core/page-registry.js?v=20260917-1"></script>
   <script src="core/events.js?v=20260918-1"></script>
+  <script src="ui/offer-card.js?v=20260918-1"></script>
   <script src="pages/discover/model.js?v=20260917-1"></script>
   <script src="pages/watchlist/model.js?v=20260917-1"></script>
   <script src="pages/wallet/model.js?v=20260917-1"></script>
   <script src="pages/attention/model.js?v=20260917-1"></script>
+  <script src="pages/attention/history-view.js?v=20260918-1"></script>
   <script src="pages/offer-detail/model.js?v=20260918-1"></script>
   <script src="pages/product-detail/model.js?v=20260918-1"></script>
   <script src="pages/add-product/model.js?v=20260918-1"></script>
@@ -90,33 +91,20 @@
   <script src="pages/add-product/page.js?v=20260918-1"></script>
   <script src="pages/add-product/actions.js?v=20260918-1"></script>
   <script src="app.js?v=20260916-1"></script>
-  <script src="offer-choice-guard.js"></script>
-  <script src="product-logo-runtime.js"></script>
-  <script src="product-logo-fit.js"></script>
   <script src="usbank-offer.js"></script>
   <script src="credit-card-product-facts.js?v=20260915-1"></script>
   <script src="credit-card-benefit-icons.js?v=20260915-1"></script>
   <script src="deal-offers.js"></script>
-  <script src="offer-card.js?v=20260914-1"></script>
-  <script src="offer-page-runtime.js?v=20260914-1"></script>
   <script src="pages/offer-detail/source-sync.js?v=20260918-1"></script>
-  <script src="offer-card-apple-refinement.js"></script>
-  <script src="navigation-enhancements.js?v=20260916-1"></script>
-  <script src="watchlist-ui.js?v=20260916-2"></script>
-  <script src="watchlist-follow-routing.js?v=20260914-2"></script>
-  <script src="watchlist-nav-badge.js?v=20260915-1"></script>
   <script src="features/application/handoff.js?v=20260918-1"></script>
   <script src="features/application/watchlist-lifecycle.js?v=20260918-1"></script>
   <script src="features/application/entry.js?v=20260918-1"></script>
   <script src="features/application/review-flow.js?v=20260918-1"></script>
-  <script src="user-facing-copy.js?v=20260915-1"></script>
-  <script src="navigation-ia.js?v=20260915-1"></script>
-  <script src="terminology-ui.js?v=20260915-2"></script>
-  <script src="bonus-task-runtime.js?v=20260915-3"></script>
-  <script src="attention-history-events.js?v=20260915-1"></script>
-  <script src="ui-typography.js?v=20260915-2"></script>
-  <script src="ui-semantic-remap.js?v=20260916-1"></script>
-  <script src="mobile-wallet-card-stack.js?v=20260916-1"></script>
+  <script src="ui/user-facing-copy.js?v=20260918-1"></script>
+  <script src="ui/terminology.js?v=20260918-1"></script>
+  <script src="features/bonus-tracking/runtime.js?v=20260918-1"></script>
+  <script src="ui/typography.js?v=20260918-1"></script>
+  <script src="ui/semantic-typography.js?v=20260918-1"></script>
   <script src="pages/product-detail/non-credit-facts.js?v=20260918-1"></script>
   <script src="pages/product-detail/overlay.js?v=20260918-1"></script>
   <script src="pages/offer-detail/overlay.js?v=20260918-1"></script>

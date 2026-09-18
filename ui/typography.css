@@ -439,3 +439,6 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 /* Assessment modal control typography. */
 .canonical-close{font-size:26px!important;line-height:1!important;color:var(--nb-label-secondary)!important}
 .canonical-error{color:var(--nb-system-red)!important}
+
+/* Detail navigation semantic text style. */
+.detail-back-button{color:#3f6fd8;font-size:14px;font-weight:600}

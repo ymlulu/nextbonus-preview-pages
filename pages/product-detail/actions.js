@@ -59,7 +59,7 @@
     state.activeAttention=state.activeAttention.filter(item=>item.productId!==product.id);
     stopped.forEach(item=>{
       const identity=ctx.attentionIdentity(item);
-      state.attentionHistory.unshift({
+      state.attentionHistory.unshift(window.NextBonusAttentionHistory.stamp({
         id:`h-stop-${item.id}-${Date.now()}`,
         productId:product.id,
         product:identity.name,
@@ -77,7 +77,7 @@
         keySub:item.keySub,
         instruction:item.instruction,
         source:item
-      });
+      },'system'));
     });
     state.currentProductId=product.id;
   }

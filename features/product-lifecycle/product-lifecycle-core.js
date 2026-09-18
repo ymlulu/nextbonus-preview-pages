@@ -11,8 +11,6 @@
     state.attentionHistory ||= [];
     state.offerTrackings ||= [];
     state.trackingTasks ||= [];
-    state.savedOfferIds ||= [];
-    state.unavailableSavedIds ||= [];
     return state;
   }
 
@@ -73,8 +71,8 @@
     const trackingId = spec.trackingId || `tracking-${token}`;
     const product = state.products.find(item => item.id === spec.productId) || null;
     const rules = window.NextBonusBonusTaskRules;
-    const derivedPlan = (!Array.isArray(spec.tasks) && spec.requirement && spec.anchorDate && rules?.buildPlan)
-      ? rules.buildPlan(spec.requirement, spec.anchorDate, {category: spec.category || product?.type || ''})
+    const derivedPlan = (!Array.isArray(spec.tasks) && spec.requirement && rules?.buildPlan)
+      ? rules.buildPlan(spec.requirement, spec.anchorDate || '', {category: spec.category || product?.type || ''})
       : null;
     const rawTasks = Array.isArray(spec.tasks)
       ? spec.tasks
@@ -105,10 +103,16 @@
         reward,
         createdAt: spec.createdAt || nowIso()
       };
+      if(derivedPlan?.unresolvedAnchorDate){
+        tracking.requirement=spec.requirement;
+        tracking.deadlineStatus='needs_anchor_date';
+      }
       state.offerTrackings.push(tracking);
       state.trackingTasks.push(...tasks);
     }
 
+    const missingAnchor=!!derivedPlan?.unresolvedAnchorDate;
+    const isCard=(spec.category || product?.type)==='信用卡';
     const attention = {
       id: spec.attentionId || `a-${token}`,
       ...(spec.applicationHandoffId ? {applicationHandoffId: spec.applicationHandoffId} : {}),
@@ -116,12 +120,12 @@
       product: spec.productLabel || spec.productName || '',
       action: spec.action || '完成开卡奖励',
       secondary: reward,
-      time: dueDate ? `截止 ${shortDate(dueDate)}` : '截止日期以所选奖励规则为准',
+      time: missingAnchor ? '截止日期暂时无法计算' : dueDate ? `截止 ${shortDate(dueDate)}` : '截止日期以所选奖励规则为准',
       dueDate,
       type: 'bonus',
-      summary: spec.summary || '奖励条件正在追踪中。',
+      summary: spec.summary || (missingAnchor ? `奖励条件已经保存。补充${isCard?'开卡':'开户'}日期后，NextBonus 会自动计算截止日期。` : '奖励条件正在追踪中。'),
       key: reward,
-      keySub: spec.keySub || (derivedPlan?.distinctDueDates > 1 ? `最早 ${shortDate(dueDate)} 截止；各项日期见任务` : dueDate ? `最晚 ${shortDate(dueDate)} 完成` : '按所选奖励规则'),
+      keySub: spec.keySub || (missingAnchor ? `补充${isCard?'开卡':'开户'}日期后自动计算` : derivedPlan?.distinctDueDates > 1 ? `最早 ${shortDate(dueDate)} 截止；各项日期见任务` : dueDate ? `最晚 ${shortDate(dueDate)} 完成` : '按所选奖励规则'),
       instruction: spec.instruction || '完成以下条件',
       checklist: tasks.map(task => ({id:task.id,label:task.description,done:false,...(task.dueDate?{dueDate:task.dueDate}:{})})),
       primary: '我已完成',
@@ -134,8 +138,7 @@
 
   function removeSavedOffer(state, offerId){
     if(!offerId) return;
-    state.savedOfferIds = (state.savedOfferIds || []).filter(id => id !== offerId);
-    state.unavailableSavedIds = (state.unavailableSavedIds || []).filter(id => id !== offerId);
+    window.NextBonusWatchlistState?.unfollow?.(offerId);
   }
 
   function commitApplicationApproval(state, spec={}){
@@ -188,25 +191,27 @@
     const target = spec.target;
     const newId = uniqueId('p-change', state, ['products','pastProducts']);
     const ending = state.activeAttention.filter(item => item.productId === source.id);
-    ending.forEach((item,index) => state.attentionHistory.unshift({
-      id:`h-stopped-${item.id}-${Date.now()}-${index}`,
-      productId:source.id,
-      product:item.product || source.name,
-      productInstance:source.instance || '',
-      action:item.action,
-      time:item.time,
-      dueDate:item.dueDate || null,
-      result:'已结束',
-      resultReason:'已更换产品',
-      statusClass:'stopped',
-      ended:spec.endedLabel || spec.effectiveDate,
-      correction:null,
-      summary:item.summary,
-      key:item.key,
-      keySub:item.keySub,
-      instruction:item.instruction,
-      source:item
-    }));
+    ending.forEach((item,index) => state.attentionHistory.unshift(
+      window.NextBonusAttentionHistory.stamp({
+        id:`h-stopped-${item.id}-${Date.now()}-${index}`,
+        productId:source.id,
+        product:item.product || source.name,
+        productInstance:source.instance || '',
+        action:item.action,
+        time:item.time,
+        dueDate:item.dueDate || null,
+        result:'已结束',
+        resultReason:'已更换产品',
+        statusClass:'stopped',
+        ended:spec.endedLabel || spec.effectiveDate,
+        correction:null,
+        summary:item.summary,
+        key:item.key,
+        keySub:item.keySub,
+        instruction:item.instruction,
+        source:item
+      },'system')
+    ));
     state.activeAttention = state.activeAttention.filter(item => item.productId !== source.id);
     const old = {
       ...source,

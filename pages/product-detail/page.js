@@ -83,7 +83,7 @@
 
     if(state.editFlow&&state.editFlow.productId===product.id) return editProductPage(ctx,product);
 
-    return `<div class="content v4-product-detail-page">
+    return `<div class="content v4-product-detail-page">\n      <div class="detail-back-nav"><button class="detail-back-button" type="button" data-action="back-products"><span aria-hidden="true">←</span><span>返回钱包</span></button></div>
       <section class="v4-pd-overview">
         <div class="v4-pd-left"><div class="v4-pd-card ${product.type==='信用卡'?'credit-card-art':''}">${detailArt.primarySrc?`<img src="${detailArt.primarySrc}"${detailArt.fallbackAttr} alt="${esc(product.name)}" />`:`<span class="fallback-brand large">${esc(shortBrand(product.institution))}</span>`}</div>${(product.phone||product.loginUrl)?`<div class="v4-pd-actions">${product.phone?`<button data-action="product-call" data-phone="${esc(product.phone)}">☎ <span>致电</span></button>`:''}${product.phone&&product.loginUrl?'<i></i>':''}${product.loginUrl?`<button data-action="product-login-external" data-url="${esc(product.loginUrl)}">↗ <span>登录</span></button>`:''}</div>`:''}</div>
         <div class="v4-pd-right"><div class="v4-pd-title-row"><div><h1>${esc(product.name)}</h1><div class="v4-pd-status"><span>${esc(product.instance||'')}</span>${product.instance?'<i></i>':''}<b class="${isPast?'past':''}"></b><strong>${isPast?'历史产品':esc(product.status||'不确定')}</strong></div></div>${isPast?'':`<button class="v4-pd-edit" data-action="edit-product">✎　编辑</button>`}</div>
@@ -91,8 +91,8 @@
           ${earningBlock(product,esc)}
         </div>
       </section>
-      ${related.length?`<section class="v4-pd-section v4-pd-attention"><div class="v4-section-head"><h2>需要关注 <span class="attention-count-dot">${related.length}</span></h2>${related.length>3?`<button class="mock-link" data-action="attention-for-product" data-id="${product.id}">查看全部 ${related.length}</button>`:''}</div><div class="v4-pd-attention-list">${top.map(item=>pdAttentionItem(ctx,item)).join('')}</div></section>`:''}
-      <section class="v4-pd-section v4-pd-benefits"><div class="v4-section-head"><h2>福利</h2></div>${benefits.length?`<div class="benefit-grid pd-benefit-grid">${benefits.map(item=>benefitCard(ctx,item)).join('')}</div>`:'<div class="timeline-empty">暂时没有可展示的结构化福利信息</div>'}</section>
+      ${related.length?`<section class="v4-pd-section v4-pd-attention"><div class="v4-section-head"><h2>待处理 <span class="attention-count-dot">${related.length}</span></h2>${related.length>3?`<button class="mock-link" data-action="attention-for-product" data-id="${product.id}">查看全部 ${related.length}</button>`:''}</div><div class="v4-pd-attention-list">${top.map(item=>pdAttentionItem(ctx,item)).join('')}</div></section>`:''}
+      <section class="v4-pd-section v4-pd-benefits"><div class="v4-section-head"><h2>福利</h2></div>${benefits.length?`<div class="benefit-grid pd-benefit-grid">${benefits.map(item=>benefitCard(ctx,item)).join('')}</div>`:'<div class="timeline-empty">暂时没有可展示的福利信息</div>'}</section>
       <section class="v4-pd-section v4-pd-history"><button class="v4-past-head" data-action="toggle-product-history"><span>历史记录 <b>${timeline.length}</b></span><span class="chev ${state.productHistoryOpen?'up':''}">›</span></button>${state.productHistoryOpen?timelineFor(ctx,product,timeline):''}</section>
     </div>`;
   });
