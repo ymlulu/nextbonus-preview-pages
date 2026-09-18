@@ -170,18 +170,21 @@
     updateCTAState();
   }
 
-  function syncBookmarkState(){
+  function syncFollowState(){
     if(!detail || !currentOfferId) return;
-    const saved = readState();
-    const isSaved = (saved.savedOfferIds||[]).includes(currentOfferId) || (saved.unavailableSavedIds||[]).includes(currentOfferId);
+    const isSaved = !!window.NextBonusWatchlistState?.getActive?.(currentOfferId);
     const escaped = window.CSS?.escape ? CSS.escape(currentOfferId) : currentOfferId.replace(/[^a-zA-Z0-9_-]/g,'');
     detail.querySelectorAll(`[data-action="bookmark"][data-id="${escaped}"]`).forEach(button => {
+      const label = isSaved ? '已关注' : '关注';
+      const hint = isSaved ? '已关注，点击取消' : '关注';
       button.classList.toggle('saved',isSaved);
-      const span = button.querySelector('span');
-      if(span) span.textContent = isSaved ? '已收藏' : '收藏';
-      else if(button.matches('.mm-save,.nb-bank-save,.remaining-save,.deal-save')){
-        button.textContent = `♡ ${isSaved ? '已收藏' : '收藏'}`;
-      }
+      button.setAttribute('aria-label',hint);
+      button.setAttribute('title',hint);
+      const glyph = button.querySelector('.nb-follow-glyph');
+      if(glyph) glyph.textContent = isSaved ? '✓' : '＋';
+      const spans = button.querySelectorAll('span');
+      const text = spans.length > 1 ? spans[spans.length-1] : null;
+      if(text) text.textContent = label;
     });
   }
 
@@ -192,16 +195,10 @@
   }
 
   function prepareBaseBeforeReveal(){
-    if(baseSource !== 'wishlist' || baseHtml == null) return;
-
-    // Keep the Offer overlay covering the page while the source view is rebuilt.
-    // The captured HTML already contains the fully-finalized Watchlist shell, so
-    // restoring it avoids exposing app.js's legacy wishlist markup for a frame.
-    app.innerHTML = baseHtml;
-
-    // Re-render only the Watchlist body from current state so changes made inside
-    // Offer Detail (for example bookmark state) are reflected before reveal.
-    window.NextBonusWatchlistUI?.refresh?.();
+    if(baseSource !== 'wishlist') return;
+    // Closing navigation has already re-rendered the current Watchlist from the
+    // formal state owner. Keep that fresh page in place instead of restoring the
+    // opening snapshot, which can contain an Offer that was just unfollowed.
     window.scrollTo({top:baseScrollY,behavior:'instant'});
   }
 
@@ -284,7 +281,7 @@
     }
     if(!detail) return;
     if(layoutMode === 'desktop') mountDesktopCTA();
-    syncBookmarkState();
+    syncFollowState();
   }
 
   function scheduleReconcile(){
