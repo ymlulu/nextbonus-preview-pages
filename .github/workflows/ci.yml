@@ -1,0 +1,49 @@
+name: NextBonus CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nextbonus-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-gate:
+    name: quality-gate
+    runs-on: ubuntu-latest
+    env:
+      CI_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: JavaScript syntax
+        run: node scripts/ci/check-js-syntax.mjs
+
+      - name: Index asset references
+        run: node scripts/ci/check-index-assets.mjs
+
+      - name: Architecture ownership
+        run: node scripts/ci/check-architecture.mjs
+
+      - name: Typography ownership
+        run: node scripts/ci/check-typography-drift.mjs
+
+      - name: Diff whitespace
+        if: env.CI_BASE_SHA != '' && env.CI_BASE_SHA != '0000000000000000000000000000000000000000'
+        run: git diff --check "$CI_BASE_SHA...HEAD"
