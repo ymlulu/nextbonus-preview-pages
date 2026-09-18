@@ -65,7 +65,7 @@
     overlay.setAttribute('aria-label','Offer Detail');
     overlay.innerHTML = `
       <div class="nb-offer-detail-frame">
-        <button class="nb-offer-detail-close" type="button" aria-label="关闭 Offer Detail">×</button>
+        <button class="nb-offer-detail-close" type="button" aria-label="关闭 Offer Detail"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 4 8 8M12 4l-8 8"></path></svg></button>
         <div class="nb-offer-detail-host"></div>
       </div>`;
     overlay.querySelector('.nb-offer-detail-close').addEventListener('click', requestClose);
