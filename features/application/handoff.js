@@ -208,6 +208,7 @@
     if (root.dataset.nbRenderSignature === signature) return;
     root.innerHTML = html;
     root.dataset.nbRenderSignature = signature;
+    window.NextBonusUIFinalize?.schedule?.(document);
   }
 
   function render(mode) {

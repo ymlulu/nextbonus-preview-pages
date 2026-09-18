@@ -307,22 +307,6 @@
     };
   }
 
-  let queued = false;
-  function schedule() {
-    if (queued) return;
-    queued = true;
-    requestAnimationFrame(() => {
-      queued = false;
-      sync();
-    });
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => sync(), { once:true });
-  else sync();
-
-  if (APP) new MutationObserver(schedule).observe(APP, { childList:true, subtree:true });
-  new MutationObserver(schedule).observe(document.body, { childList:true, subtree:true });
-
   window.NextBonusTypography = Object.freeze({ sync, audit, rules: RULES.map(rule => [...rule]) });
   ROOT.dataset.nbTypography = 'apple-fixed-v1';
 })();

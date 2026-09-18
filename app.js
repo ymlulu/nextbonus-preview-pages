@@ -134,6 +134,7 @@
     const ctx=pageContext();
     const content=window.NextBonusPageRegistry.render(state.route,ctx);
     document.getElementById('app').innerHTML=renderShell(content)+renderModal(ctx);
+    window.NextBonusUIFinalize?.schedule?.(document);
     storageCore.save(state);
     syncBrowserHistory();
   }

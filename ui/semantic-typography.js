@@ -98,24 +98,8 @@
     syncMobileProductDetailHierarchy(root);
   }
 
-  let queued = false;
-  function schedule() {
-    if (queued) return;
-    queued = true;
-    requestAnimationFrame(() => {
-      queued = false;
-      sync();
-    });
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => sync(), { once:true });
-  else sync();
-
-  const app = document.getElementById('app');
-  if (app) new MutationObserver(schedule).observe(app, { childList:true, subtree:true });
-  const handoff = document.getElementById('nb-application-handoff-root');
-  if (handoff) new MutationObserver(schedule).observe(handoff, { childList:true, subtree:true });
-  mobileQuery.addEventListener?.('change', schedule);
+  function syncForViewport(){ sync(document); }
+  mobileQuery.addEventListener?.('change', syncForViewport);
 
   window.NextBonusSemanticTypography = Object.freeze({ sync, rules: RULES.map(rule => [...rule]) });
 })();

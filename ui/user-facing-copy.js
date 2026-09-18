@@ -145,27 +145,5 @@
     hideInternalReleaseIds(root);
   }
 
-  let queued = false;
-  function schedule() {
-    if (queued) return;
-    queued = true;
-    requestAnimationFrame(() => {
-      queued = false;
-      polish(document.body);
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => polish(document.body), { once:true });
-  } else {
-    polish(document.body);
-  }
-
-  new MutationObserver(schedule).observe(document.documentElement, {
-    childList:true,
-    subtree:true,
-    characterData:true
-  });
-
   window.NextBonusUserFacingCopy = Object.freeze({ polish });
 })();
