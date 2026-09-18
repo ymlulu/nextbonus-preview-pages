@@ -230,6 +230,86 @@
 .add-info-fields .form-group{margin-bottom:0}
 .add-info-date-row{align-items:center}
 .add-info-clear-date{flex:0 0 auto}
+
+.add-product-modal[data-nb-stage="offer"] .add-product-body-inner{width:min(800px,100%)}
+.add-reward-flow{
+  display:grid;
+  gap:16px;
+  padding-top:4px;
+}
+.add-reward-product{
+  display:grid;
+  grid-template-columns:96px minmax(0,1fr);
+  align-items:center;
+  gap:16px;
+  padding:12px 14px;
+  border:1px solid #e4e9f0;
+  border-radius:12px;
+  background:#fbfcfe;
+}
+.add-reward-product-art{
+  width:96px;
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border-radius:9px;
+  background:transparent;
+}
+.add-reward-product-art img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+}
+.add-reward-product-art .mini-art{
+  width:76px;
+  height:48px;
+  box-shadow:none;
+}
+.add-reward-product-copy{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:4px;
+}
+.add-reward-intro{padding:0 2px}
+.add-reward-status{padding:0 2px}
+.add-reward-list{
+  display:block!important;
+  gap:0!important;
+  overflow:hidden;
+  border:1px solid #dfe5ed;
+  border-radius:12px;
+  background:#fff;
+}
+.add-product-modal .add-reward-row{
+  min-height:72px;
+  border:0;
+  border-bottom:1px solid #e8edf3;
+  border-radius:0;
+  padding:12px 14px;
+  background:#fff;
+}
+.add-product-modal .add-reward-row:hover{
+  border-color:#e8edf3;
+  background:#f8fafc;
+}
+.add-product-modal .add-reward-row.selected{background:#f3f8ff}
+.add-reward-meta{flex:0 0 auto;align-self:center}
+.add-manual-panel{
+  display:grid;
+  gap:16px;
+  padding:18px 18px 20px 48px;
+  border-bottom:1px solid #e8edf3;
+  background:#f8fbff;
+}
+.add-manual-panel .form-group{margin-bottom:0}
+.add-manual-panel .task-card{background:#fff}
+.add-product-modal .add-reward-skip{border-bottom:0}
 .add-product-confirm-modal{
   width:min(440px,calc(100vw - 44px));
   height:auto;
@@ -293,6 +373,17 @@
   }
   .add-info-product-art .mini-art{width:80px;height:50px}
   .add-info-fields{grid-template-columns:1fr;gap:16px}
+  .add-product-modal[data-nb-stage="offer"] .add-product-body-inner{width:100%}
+  .add-reward-flow{gap:14px;padding-top:2px}
+  .add-reward-product{
+    grid-template-columns:80px minmax(0,1fr);
+    gap:12px;
+    padding:10px 12px;
+  }
+  .add-reward-product-art{width:80px;height:50px}
+  .add-reward-product-art .mini-art{width:64px;height:40px}
+  .add-product-modal .add-reward-row{min-height:68px;padding:10px 12px}
+  .add-manual-panel{padding:16px 12px 18px 42px}
   .add-product-confirm-modal{
     width:100%;
     height:auto;
