@@ -46,6 +46,18 @@ for (const token of retiredAppShellPageTokens) {
   }
 }
 
+const retiredOfferCardStyleFiles = [
+  'offer-card-mock-ratio.css',
+  'offer-card-calibration-v2.css',
+  'offer-card-apple-refinement.css',
+  'offer-card-visual-cleanup.css'
+];
+const rootEntries = new Set(await readdir(ROOT));
+for (const fileName of retiredOfferCardStyleFiles) {
+  if (rootEntries.has(fileName)) failures.push(`${fileName} is retired; Offer Card visuals belong in offer-card.css.`);
+  if (index.includes(fileName)) failures.push(`index.html must not load retired Offer Card style: ${fileName}`);
+}
+
 const orderedScripts = [
   'ui/user-facing-copy.js',
   'ui/terminology.js',
