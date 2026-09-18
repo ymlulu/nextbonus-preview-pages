@@ -29,18 +29,22 @@
   }
 
   function build(ctx){
-    const product=ctx.currentProduct();
+    const sourceProduct=ctx.currentProduct();
+    const creditCard=window.NextBonusCreditCardProductDetailModel?.build?.(ctx,sourceProduct)||null;
+    const product=creditCard?.product||sourceProduct;
     const related=ctx.activeAttentionSorted(
-      ctx.currentActiveAttention().filter(item=>item.productId===product.id)
+      ctx.currentActiveAttention().filter(item=>item.productId===sourceProduct.id)
     );
     return Object.freeze({
       product,
+      sourceProduct,
+      creditCard,
       related,
       top:related.slice(0,3),
-      isPast:ctx.state.pastProducts.some(item=>item.id===product.id),
-      detailArt:ctx.productCardDisplay(product,true),
-      timeline:productTimelineItems(ctx,product),
-      benefits:benefitsFor(product)
+      isPast:ctx.state.pastProducts.some(item=>item.id===sourceProduct.id),
+      detailArt:ctx.productCardDisplay(sourceProduct,true),
+      timeline:productTimelineItems(ctx,sourceProduct),
+      benefits:creditCard?.benefits||benefitsFor(product)
     });
   }
 

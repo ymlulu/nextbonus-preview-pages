@@ -70,3 +70,13 @@
   .nb-card-single-task{align-items:flex-start;flex-direction:column;padding:12px}.nb-card-complete-btn{width:100%}
   .nb-card-benefit-columns .v4-benefit-row{grid-template-columns:30px minmax(0,1fr) auto 16px;row-gap:3px}.nb-card-benefit-columns .v4-benefit-row small{grid-column:2;text-align:left;max-width:none}.nb-card-benefit-due{grid-column:3;grid-row:1}.nb-benefit-cycle-quick{grid-column:3;grid-row:2;justify-self:end}
 }
+
+
+.nb-welcome-bonus-section{padding-top:12px;padding-bottom:12px}
+.nb-welcome-bonus-card{min-height:92px;border:1px solid #e6ebf3;border-radius:14px;background:#fff;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:1fr 1fr;column-gap:28px;align-items:center;padding:14px 18px}
+.nb-welcome-bonus-value{grid-column:1;grid-row:1;margin:0;align-self:end}
+.nb-welcome-bonus-requirement{grid-column:1;grid-row:2;margin:4px 0 0;align-self:start;min-height:0;white-space:normal;overflow:visible;text-overflow:clip}
+.nb-welcome-bonus-complete{grid-column:2;grid-row:1;justify-self:end;align-self:end}
+.nb-welcome-bonus-deadline{grid-column:2;grid-row:2;justify-self:end;align-self:start;display:inline-flex;align-items:center;gap:6px;padding:4px 0}
+.nb-welcome-bonus-focus{border-radius:12px;box-shadow:0 0 0 4px rgba(10,113,255,.08)}
+@media(max-width:600px){.nb-welcome-bonus-card{column-gap:14px;padding:12px 14px}}

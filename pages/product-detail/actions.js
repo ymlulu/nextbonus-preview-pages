@@ -82,6 +82,48 @@
     state.currentProductId=product.id;
   }
 
+  function creditCardBenefit(ctx,benefitId){
+    const product=ctx.currentProduct();
+    const card=window.NextBonusCreditCardProductDetailModel?.build?.(ctx,product);
+    return card?.benefits?.find(item=>item.id===benefitId)||null;
+  }
+
+  function toggleBenefitCycle(ctx,benefitId){
+    const benefit=creditCardBenefit(ctx,benefitId);
+    const info=benefit?.cycleInfo;
+    const store=window.NextBonusBenefitCycleState;
+    if(!benefit||!info||info.mode!=='cycle'||!store) return {handled:true};
+
+    const wasUsed=!!info.used;
+    const attentionId=benefit.attention?.id||info.record?.attentionId||null;
+    const previousAttentionId=info.record?.attentionId||null;
+    store.setUsed(info,!wasUsed,{attentionId});
+
+    if(!wasUsed&&benefit.attention?.id&&typeof ctx.completeAttention==='function'){
+      ctx.completeAttention(benefit.attention.id);
+      return {handled:true};
+    }
+
+    if(wasUsed&&previousAttentionId&&typeof ctx.historyCorrection==='function'){
+      const history=store.matchingHistory(ctx.state,info,previousAttentionId);
+      if(history?.id){
+        ctx.historyCorrection(history.id);
+        return {handled:true};
+      }
+    }
+
+    return {render:true};
+  }
+
+  function toggleBenefitManual(ctx,benefitId){
+    const benefit=creditCardBenefit(ctx,benefitId);
+    const info=benefit?.cycleInfo;
+    const store=window.NextBonusBenefitCycleState;
+    if(!benefit||!info||info.mode!=='manual'||!store) return {handled:true};
+    store.setUsed(info,!info.used);
+    return {render:true};
+  }
+
   events.register('product-detail',{
     click({event,ctx}){
       const el=event.target.closest?.('[data-action]');
@@ -89,10 +131,12 @@
       const action=el.dataset.action;
       const state=ctx.state;
 
-      if(action==='toggle-benefit'){
+      if(action==='toggle-benefit'||action==='toggle-card-benefit'){
         state.expandedBenefitId=state.expandedBenefitId===el.dataset.id?null:el.dataset.id;
         return {render:true};
       }
+      if(action==='benefit-cycle-toggle') return toggleBenefitCycle(ctx,el.dataset.id);
+      if(action==='benefit-manual-toggle') return toggleBenefitManual(ctx,el.dataset.id);
       if(action==='toggle-product-history'){
         state.productHistoryOpen=!state.productHistoryOpen;
         return {render:true};

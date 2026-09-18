@@ -89,13 +89,6 @@
     return true;
   }
 
-  function installPersistenceBridge() {
-    backfillPersistedState();
-    const schedule = () => queueMicrotask(backfillPersistedState);
-    document.addEventListener('click', schedule);
-    document.addEventListener('change', schedule);
-  }
-
   window.NextBonusBenefitAttention = Object.freeze({
     identity,
     isStructured,
@@ -104,9 +97,5 @@
     backfillPersistedState
   });
 
-  if (document.readyState === 'loading') {
-    window.addEventListener('DOMContentLoaded', installPersistenceBridge, { once: true });
-  } else {
-    installPersistenceBridge();
-  }
+  backfillPersistedState();
 })();

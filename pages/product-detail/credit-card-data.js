@@ -1,4 +1,6 @@
-{
+(() => {
+  'use strict';
+  window.NextBonusCreditCardProductFacts=Object.freeze({
   "version": "2026-09-15.3",
   "cards": {
     "amex-platinum": {"fee":"$895","earning":"机票和部分酒店消费 5x · 其他消费 1x","benefits":[["$600 FHR 酒店报销","每半年 $300","amex-platinum-fhr","half-year"],["$300 数字娱乐报销","每月最高 $25","amex-platinum-digital-entertainment","month"],["$300 Equinox 报销","每自然年最高 $300","amex-platinum-equinox","calendar-year"],["$219 CLEAR+ 报销","每自然年最高 $219","amex-platinum-clear","calendar-year"],["$200 Oura Ring Credit","每自然年最高 $200","amex-platinum-oura","calendar-year"],["$300 Lululemon 报销","每季度最高 $75","amex-platinum-lululemon","quarter"],["$400 Resy 报销","每季度最高 $100","amex-platinum-resy","quarter"],["Walmart+ 会员","按月会员费报销","amex-platinum-walmart-plus","month"],["$200 航空杂费报销","每自然年","amex-platinum-airline-fee","calendar-year"],["$200 Uber Cash","每月 $15，12 月 $35","amex-platinum-uber-cash","month"],["$120 Uber One 报销","每自然年最高 $120","amex-platinum-uber-one","calendar-year"],["Hilton Gold","持卡赠送"],["Marriott Gold","持卡赠送"],["Leaders Club Sterling","持卡赠送"],["Priority Pass / 高端休息室","包含 Centurion Lounge 等"],["Global Entry / TSA PreCheck","最高 $85 / $120"],["Avis / Hertz / National 租车会籍","持卡可登记对应高级会籍"]]},
@@ -15,3 +17,5 @@
     "citi-double-cash": {"fee":"$0","earning":"消费 1x TYP · 还款再 1x TYP · 合计最高 2x TYP","benefits":[]}
   }
 }
+);
+})();

@@ -124,7 +124,7 @@
   }
 
   function pageContext(){
-    const ctx={ state, categories, offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, productPageAttentionItem, productSection, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionItem, attentionExpanded, attentionIdentity, openLogin, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, renderApp:render, persist:()=>storageCore.save(state) };
+    const ctx={ state, categories, offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, productPageAttentionItem, productSection, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionItem, attentionExpanded, attentionIdentity, openLogin, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, completeAttention, historyCorrection, renderApp:render, persist:()=>storageCore.save(state) };
     ctx.renderRoute=route=>window.NextBonusPageRegistry.render(route,ctx);
     return ctx;
   }
@@ -438,7 +438,7 @@
     else if(a.completionKind==='viewed'){ result='已查看'; correction='撤销已查看'; }
     else if(a.completionKind==='confirmed'){ result='已了解'; correction='撤销确认'; }
     const identity=attentionIdentity(a);
-    const history=window.NextBonusAttentionHistory.stamp({id:`h-${a.id}-${Date.now()}`,productId:a.productId,product:identity.name,productInstance:identity.instance,action:a.action,time:a.time,dueDate:a.dueDate||null,result,statusClass,ended:historyDateLabel(),correction,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,source:{...a,product:identity.name,productInstance:identity.instance}},'user');
+    const history=window.NextBonusAttentionHistory.stamp({id:`h-${a.id}-${Date.now()}`,productId:a.productId,product:identity.name,productInstance:identity.instance,action:a.action,time:a.time,dueDate:a.dueDate||null,result,statusClass,ended:historyDateLabel(),correction,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,...(a.benefitId?{benefitId:a.benefitId,cycleType:a.cycleType||null,cycleId:a.cycleId||null}:{}),source:{...a,product:identity.name,productInstance:identity.instance}},'user');
     state.activeAttention.splice(idx,1); state.attentionHistory.unshift(history); state.expandedAttentionId=null;
     render(); toast(`${result} · `,()=>undoHistory(history.id,a));
   }
