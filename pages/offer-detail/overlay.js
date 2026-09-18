@@ -17,7 +17,6 @@
   let reconcileQueued = false;
   let reconciling = false;
   let closing = false;
-  let panelObserver = null;
   let panelScroll = null;
   let ctaSentinel = null;
   let ctaTarget = null;
@@ -79,8 +78,6 @@
   }
 
   function disconnectPanelRuntime(){
-    panelObserver?.disconnect();
-    panelObserver = null;
     panelScroll?.removeEventListener('scroll', updateCTAState);
     panelScroll = null;
     ctaSentinel = null;
@@ -125,12 +122,6 @@
     }
   }
 
-  function attachPanelObserver(panel){
-    panelObserver?.disconnect();
-    panelObserver = new MutationObserver(() => scheduleReconcile());
-    panelObserver.observe(panel,{childList:true,subtree:true});
-  }
-
   function mountDesktopCTA(){
     if(layoutMode !== 'desktop' || !detail) return;
     const panel = detail.querySelector('.v4-decision-panel');
@@ -154,7 +145,6 @@
     const target = panel.querySelector(CTA_SELECTOR);
     if(!target) return;
 
-    panelObserver?.disconnect();
     const scroll = document.createElement('div');
     scroll.className = 'nb-offer-panel-scroll';
     while(panel.firstChild) scroll.appendChild(panel.firstChild);
@@ -177,7 +167,6 @@
     ctaTarget = target;
     ctaDock = dock;
     panelScroll.addEventListener('scroll',updateCTAState,{passive:true});
-    attachPanelObserver(panel);
     updateCTAState();
   }
 
@@ -278,8 +267,6 @@
       promoteAppModal();
       restoreBaseVisual();
 
-      const panel = detail.querySelector('.v4-decision-panel');
-      if(panel) attachPanelObserver(panel);
       if(layoutMode === 'desktop') mountDesktopCTA();
       bridge?.endRestore?.();
     }finally{
@@ -408,8 +395,6 @@
     if(layoutMode === 'mobile'){
       unwrapDesktopPanel();
       disconnectPanelRuntime();
-      const panel = detail.querySelector('.v4-decision-panel');
-      if(panel) attachPanelObserver(panel);
     }else{
       mountDesktopCTA();
     }
@@ -423,7 +408,12 @@
   window.addEventListener('nb:offer-overlay-history',onOverlayHistory);
   window.addEventListener('resize',handleBreakpointChange,{passive:true});
 
-  new MutationObserver(scheduleReconcile).observe(app,{childList:true,subtree:true});
+  window.NextBonusOfferDetailOverlay = Object.freeze({
+    close:requestClose,
+    afterAppRender:scheduleReconcile,
+    isOpen(){ return !!overlay; },
+    offerId(){ return currentOfferId; }
+  });
 
   const initial = activeOverlayInfo();
   if(initial) openFromHistory(initial);

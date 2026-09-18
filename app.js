@@ -135,6 +135,7 @@
     const content=window.NextBonusPageRegistry.render(state.route,ctx);
     document.getElementById('app').innerHTML=renderShell(content)+renderModal(ctx);
     window.NextBonusProductDetailOverlay?.afterAppRender?.();
+    window.NextBonusOfferDetailOverlay?.afterAppRender?.();
     window.NextBonusUIFinalize?.schedule?.(document);
     storageCore.save(state);
     syncBrowserHistory();
