@@ -7,10 +7,11 @@
     if(!model) throw new Error('Offer Detail page model unavailable');
     const {offer:o,supportsAssessment,isEnded,result:r,isPlatinum:isPlat,posterSrc,hasAssessmentResult}=model.build(ctx);
     const backLabel=state.routeSource==='wishlist'?'返回关注':'返回发现';
+    const backNav=`<div class="detail-back-nav"><button class="detail-back-button" type="button" data-action="back-offer-list"><svg class="detail-back-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3.5 6 8l4.5 4.5"></path></svg><span>${backLabel}</span></button></div>`;
     const special=window.NextBonusOfferDetailSpecialized?.render?.(o,isSaved(o.id));
     if(special){
       return `<div class="content v4-offer-detail-page ${special.className||''}">
-        <div class="detail-back-nav"><button class="detail-back-button" type="button" data-action="back-offer-list"><span aria-hidden="true">←</span><span>${backLabel}</span></button></div>
+        ${backNav}
         <div class="v4-offer-detail-grid">
           <section class="v4-offer-poster-shell">${special.poster||genericPoster(o)}</section>
           <aside class="v4-decision-panel">${special.panel}</aside>
@@ -27,7 +28,7 @@
     if(!isEnded && supportsAssessment) actions.push(`<button class="btn primary" data-action="assessment-start">${hasAssessmentResult?'查看完整分析':'开始申请评估'} <span>→</span></button>`);
     if(!isEnded && o.applyUrl) actions.push(`<button class="btn secondary" data-action="direct-apply">直接申请</button>`);
 
-    return `<div class="content v4-offer-detail-page">\n      <div class="detail-back-nav"><button class="detail-back-button" type="button" data-action="back-offer-list"><span aria-hidden="true">←</span><span>${backLabel}</span></button></div>
+    return `<div class="content v4-offer-detail-page">\n      ${backNav}
       <div class="v4-offer-detail-grid">
         <section class="v4-offer-poster-shell">
           ${isPlat?`<div class="v4-reference-poster"><img src="${posterSrc}" alt="AMEX Platinum 海报" /><button class="poster-hotspot prev" data-action="poster-step" data-dir="-1" aria-label="上一张海报"></button><button class="poster-hotspot next" data-action="poster-step" data-dir="1" aria-label="下一张海报"></button></div>`:genericPoster(o)}
