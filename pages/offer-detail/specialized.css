@@ -1,0 +1,154 @@
+/* Shared layout contract for specialized Offer Detail variants.
+   Variant colors, artwork, rewards and component visuals remain in
+   usbank.css / moomoo.css / remaining.css / deals.css. */
+
+@media (min-width:1181px){
+  .nb-offer-cta-dock :where(.mm-cta,.nb-bank-cta,.remaining-cta,.deal-cta){
+    margin-top:0 !important;
+  }
+}
+
+.v4-offer-detail-page :where(
+  .mm-reward,
+  .mm-stack > div,
+  .mm-step-card,
+  .nb-bank-reward,
+  .nb-bank-step-card,
+  .remaining-reward,
+  .remaining-step-card,
+  .deal-value-card,
+  .deal-time-card,
+  .deal-step-copy
+){
+  height:auto !important;
+  max-height:none !important;
+}
+
+.v4-offer-detail-page :where(
+  .mm-reward-label,
+  .mm-reward-value,
+  .mm-tier-head,
+  .mm-tier,
+  .mm-stack b,
+  .mm-stack small,
+  .mm-step-title,
+  .mm-step-card li,
+  .mm-deadline,
+  .nb-bank-reward-label,
+  .nb-bank-reward-value,
+  .nb-bank-tier-head,
+  .nb-bank-tier,
+  .nb-bank-step-title,
+  .nb-bank-step-card li,
+  .nb-bank-deadline,
+  .remaining-reward-label,
+  .remaining-reward-value,
+  .remaining-reward-sub,
+  .remaining-tier-head,
+  .remaining-tier,
+  .remaining-step-title,
+  .remaining-step-card li,
+  .remaining-deadline,
+  .deal-value-label,
+  .deal-value,
+  .deal-value-sub,
+  .deal-step-copy b,
+  .deal-step-copy small,
+  .deal-terms-copy
+){
+  white-space:normal !important;
+  max-height:none !important;
+  text-overflow:clip !important;
+  -webkit-line-clamp:unset !important;
+  overflow-wrap:break-word;
+}
+
+.v4-offer-detail-page :where(.mm-head,.nb-bank-head,.remaining-head,.deal-head){
+  flex-wrap:wrap;
+  align-items:flex-start;
+}
+.v4-offer-detail-page :where(.mm-head-brand,.nb-bank-brand,.remaining-head-brand,.deal-brand){
+  flex:1 1 180px;
+  min-width:0;
+}
+.v4-offer-detail-page :where(.mm-save,.nb-bank-save,.remaining-save,.deal-save){
+  flex:0 0 auto !important;
+  white-space:nowrap !important;
+}
+.v4-offer-detail-page .nb-bank-reward-value{flex-wrap:wrap}
+
+.v4-offer-detail-page :where(
+  .mm-tier-head span,
+  .mm-tier span,
+  .nb-bank-tier-head span,
+  .nb-bank-tier span,
+  .remaining-tier-head span,
+  .remaining-tier span,
+  .mm-stack > div
+){
+  min-width:0;
+  overflow-wrap:break-word;
+}
+.v4-offer-detail-page .mm-tier > span:last-child,
+.v4-offer-detail-page .nb-bank-tier > span:last-child{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.v4-offer-detail-page :where(.mm-pill,.nb-best-pill){
+  float:none !important;
+  flex:0 0 auto !important;
+  white-space:nowrap !important;
+  margin-left:auto;
+}
+
+.v4-offer-detail-page :where(.mm-step-title,.nb-bank-step-title,.remaining-step-title){
+  flex-wrap:wrap;
+  align-items:flex-start;
+}
+.v4-offer-detail-page :where(
+  .mm-step-title > span:first-child,
+  .nb-bank-step-title > span:first-child,
+  .remaining-step-title > span:first-child
+){flex:1 1 160px}
+.v4-offer-detail-page :where(.mm-time,.nb-bank-step-time,.remaining-time,.deal-urgent){
+  flex:0 0 auto !important;
+  white-space:nowrap !important;
+}
+.v4-offer-detail-page .deal-time-card{flex-wrap:wrap;align-items:flex-start}
+
+.v4-offer-detail-page :where(
+  .mm-eligibility summary,
+  .nb-bank-eligibility summary,
+  .remaining-eligibility summary,
+  .deal-terms summary
+){gap:8px;align-items:flex-start}
+.v4-offer-detail-page :where(
+  .mm-eligibility summary::after,
+  .nb-bank-eligibility summary::after,
+  .remaining-eligibility summary::after,
+  .deal-terms summary::after
+){flex:0 0 auto}
+
+.v4-offer-detail-page :where(.mm-cta,.nb-bank-cta,.remaining-cta,.deal-cta){
+  height:auto !important;
+  white-space:normal !important;
+  text-align:center;
+}
+
+.nb-offer-detail-host :where(.mm-head,.nb-bank-head,.remaining-head,.deal-head){
+  padding-right:42px !important;
+}
+
+@media(max-width:420px){
+  .v4-offer-detail-page .mm-tier-head,
+  .v4-offer-detail-page .mm-tier{
+    grid-template-columns:minmax(0,1fr) minmax(92px,.72fr) !important;
+  }
+  .v4-offer-detail-page .remaining-tier-head,
+  .v4-offer-detail-page .remaining-tier{
+    grid-template-columns:minmax(0,1fr) minmax(88px,.72fr) !important;
+  }
+}

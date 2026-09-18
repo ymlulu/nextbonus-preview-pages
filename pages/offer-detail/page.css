@@ -70,9 +70,6 @@
     box-shadow:0 0 0 1px rgba(225,232,242,.9);
   }
   .nb-offer-cta-dock .v4-detail-actions.single{grid-template-columns:1fr}
-  .nb-offer-cta-dock :where(.mm-cta,.nb-bank-cta,.remaining-cta,.deal-cta){
-    margin-top:0 !important;
-  }
 }
 
 /* Grid/flex children are allowed to shrink to the rail width instead of widening it. */
@@ -91,17 +88,7 @@
    corners; only fixed/clamped content heights are neutralized here. */
 .v4-offer-detail-page :where(
   .v4-result-card,
-  .v4-metric,
-  .mm-reward,
-  .mm-stack > div,
-  .mm-step-card,
-  .nb-bank-reward,
-  .nb-bank-step-card,
-  .remaining-reward,
-  .remaining-step-card,
-  .deal-value-card,
-  .deal-time-card,
-  .deal-step-copy
+  .v4-metric
 ){
   height:auto !important;
   max-height:none !important;
@@ -115,37 +102,7 @@
   .v5-primary-alert,
   .v4-metric .metric-label,
   .v4-metric .metric-value,
-  .v4-metric .metric-sub,
-  .mm-reward-label,
-  .mm-reward-value,
-  .mm-tier-head,
-  .mm-tier,
-  .mm-stack b,
-  .mm-stack small,
-  .mm-step-title,
-  .mm-step-card li,
-  .mm-deadline,
-  .nb-bank-reward-label,
-  .nb-bank-reward-value,
-  .nb-bank-tier-head,
-  .nb-bank-tier,
-  .nb-bank-step-title,
-  .nb-bank-step-card li,
-  .nb-bank-deadline,
-  .remaining-reward-label,
-  .remaining-reward-value,
-  .remaining-reward-sub,
-  .remaining-tier-head,
-  .remaining-tier,
-  .remaining-step-title,
-  .remaining-step-card li,
-  .remaining-deadline,
-  .deal-value-label,
-  .deal-value,
-  .deal-value-sub,
-  .deal-step-copy b,
-  .deal-step-copy small,
-  .deal-terms-copy
+  .v4-metric .metric-sub
 ){
   white-space:normal !important;
   max-height:none !important;
@@ -154,90 +111,8 @@
   overflow-wrap:break-word;
 }
 
-/* Header rows: keep the save button intact, but let brand text wrap if space gets tight. */
-.v4-offer-detail-page :where(.mm-head,.nb-bank-head,.remaining-head,.deal-head){
-  flex-wrap:wrap;
-  align-items:flex-start;
-}
-.v4-offer-detail-page :where(.mm-head-brand,.nb-bank-brand,.remaining-head-brand,.deal-brand){
-  flex:1 1 180px;
-  min-width:0;
-}
-.v4-offer-detail-page :where(.mm-save,.nb-bank-save,.remaining-save,.deal-save){
-  flex:0 0 auto !important;
-  white-space:nowrap !important;
-}
-
-/* Long reward/value rows may wrap rather than overflow horizontally. */
-.v4-offer-detail-page .nb-bank-reward-value{flex-wrap:wrap}
-
-/* Tier table cells can wrap. Recommendation/status pills remain readable and move to the
-   next visual line inside their own cell when necessary instead of covering the amount. */
-.v4-offer-detail-page :where(
-  .mm-tier-head span,
-  .mm-tier span,
-  .nb-bank-tier-head span,
-  .nb-bank-tier span,
-  .remaining-tier-head span,
-  .remaining-tier span,
-  .mm-stack > div
-){
-  min-width:0;
-  overflow-wrap:break-word;
-}
-.v4-offer-detail-page .mm-tier > span:last-child,
-.v4-offer-detail-page .nb-bank-tier > span:last-child{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:6px;
-  flex-wrap:wrap;
-}
-.v4-offer-detail-page :where(.mm-pill,.nb-best-pill){
-  float:none !important;
-  flex:0 0 auto !important;
-  white-space:nowrap !important;
-  margin-left:auto;
-}
-
-/* Step headings can wrap independently while the time/status pill stays whole. */
-.v4-offer-detail-page :where(.mm-step-title,.nb-bank-step-title,.remaining-step-title){
-  flex-wrap:wrap;
-  align-items:flex-start;
-}
-.v4-offer-detail-page :where(
-  .mm-step-title > span:first-child,
-  .nb-bank-step-title > span:first-child,
-  .remaining-step-title > span:first-child
-){flex:1 1 160px}
-.v4-offer-detail-page :where(.mm-time,.nb-bank-step-time,.remaining-time,.deal-urgent){
-  flex:0 0 auto !important;
-  white-space:nowrap !important;
-}
-.v4-offer-detail-page .deal-time-card{flex-wrap:wrap;align-items:flex-start}
-
-/* Disclosure rows also need to survive narrow widths without hiding their chevron. */
-.v4-offer-detail-page :where(
-  .mm-eligibility summary,
-  .nb-bank-eligibility summary,
-  .remaining-eligibility summary,
-  .deal-terms summary
-){gap:8px;align-items:flex-start}
-.v4-offer-detail-page :where(
-  .mm-eligibility summary::after,
-  .nb-bank-eligibility summary::after,
-  .remaining-eligibility summary::after,
-  .deal-terms summary::after
-){flex:0 0 auto}
-
 /* CTAs may become two lines on a narrow viewport, but their text must remain visible. */
-.v4-offer-detail-page :where(
-  .mm-cta,
-  .nb-bank-cta,
-  .remaining-cta,
-  .deal-cta,
-  .v4-detail-actions .btn
-){
+.v4-offer-detail-page .v4-detail-actions .btn{
   height:auto !important;
   white-space:normal !important;
   text-align:center;
@@ -258,19 +133,6 @@
   }
   .nb-offer-cta-dock{display:none !important}
 }
-
-/* Very narrow phones: keep two-column tier tables useful without forcing horizontal scroll. */
-@media(max-width:420px){
-  .v4-offer-detail-page .mm-tier-head,
-  .v4-offer-detail-page .mm-tier{
-    grid-template-columns:minmax(0,1fr) minmax(92px,.72fr) !important;
-  }
-  .v4-offer-detail-page .remaining-tier-head,
-  .v4-offer-detail-page .remaining-tier{
-    grid-template-columns:minmax(0,1fr) minmax(88px,.72fr) !important;
-  }
-}
-
 
 /* Offer Detail presentation layer -------------------------------------------------
    Offer Detail is an overlay above its source page, not a standalone full-canvas page.
@@ -383,10 +245,6 @@ body.nb-offer-overlay-open{overflow:hidden}
   display:inline-grid;
   place-items:center;
   flex:0 0 auto;
-}
-
-.nb-offer-detail-host :where(.mm-head,.nb-bank-head,.remaining-head,.deal-head){
-  padding-right:42px !important;
 }
 
 .nb-offer-detail-close{
