@@ -9,6 +9,24 @@
     return `<div class="v4-pd-earning ${parts.length===1?'single':''}">${parts.map((item,index)=>`${index?'<i></i>':''}<div><span class="earn-icon ${index===0?'blue':index===1?'purple':'green'}">${index===0?'✦':index===1?'▥':'♧'}</span><span><b>${esc(item)}</b><small>消费回报</small></span></div>`).join('')}</div>`;
   }
 
+  function nonCreditRows(title,rows,esc){
+    if(!rows?.length) return '';
+    return `<section class="v4-pd-section nb-account-section"><div class="v4-section-head"><h2>${esc(title)}</h2></div><div class="nb-account-grid">${rows.map(row=>`<div class="nb-account-row"><strong>${esc(row[0])}</strong><span>${esc(row[1])}</span></div>`).join('')}</div></section>`;
+  }
+
+  function nonCreditSections(nonCredit,esc){
+    if(!nonCredit) return '';
+    const metrics=nonCreditRows(nonCredit.metricsTitle,nonCredit.metrics,esc);
+    const features=nonCreditRows(nonCredit.featuresTitle,nonCredit.features,esc);
+    const notice=nonCredit.notice
+      ? `<section class="v4-pd-section nb-account-notice ${nonCredit.resolved?'':'nb-no-verified-detail'}"><div class="v4-section-head"><h2>说明</h2></div><p>${esc(nonCredit.notice)}</p></section>`
+      : '';
+    const source=nonCredit.sourceUrl
+      ? `<div class="nb-account-source">资料：<a href="${esc(nonCredit.sourceUrl)}" target="_blank" rel="noopener noreferrer">美卡101</a>${nonCredit.sourceDate?` · ${esc(nonCredit.sourceDate)}`:''}</div>`
+      : '';
+    return `${metrics}${features}${notice}${source}`;
+  }
+
   function benefitCard(ctx,benefit){
     const {state,esc}=ctx;
     const expanded=state.expandedBenefitId===benefit.id;
@@ -39,6 +57,7 @@
   function editProductPage(ctx,product){
     const {state,esc,catalog,localDateISO}=ctx;
     const flow=state.editFlow;
+    const nonCredit=window.NextBonusNonCreditProductDetailModel?.build?.(product)||null;
     const offerChoice=window.NextBonusBonusOfferChoice;
     if(!offerChoice) throw new Error('Bonus offer choice feature unavailable');
 
@@ -66,7 +85,7 @@
 
     const tracked=state.activeAttention.some(item=>item.productId===product.id&&item.type==='bonus') ||
       state.attentionHistory.some(item=>item.productId===product.id&&/奖励/.test(item.action));
-    return `<div class="content narrow edit-product-page"><button class="detail-back" data-action="edit-exit">‹ 返回产品详情</button><div class="page-head"><div><h1 class="page-title">编辑产品</h1><p class="page-subtitle">${esc(product.name)}</p></div></div><div class="edit-panel"><div class="form-group"><label class="label">卡号后四位 / 账户识别</label><input class="input" id="edit-instance" value="${esc(flow.instance)}" /></div><div class="form-group"><label class="label">账户状态</label><select class="select" id="edit-status"><option ${flow.status==='正常'?'selected':''}>正常</option><option ${flow.status==='已关闭'?'selected':''}>已关闭</option><option ${flow.status==='不确定'?'selected':''}>不确定</option></select></div><div class="form-group"><label class="label">${product.type==='信用卡'?'开卡日期':'开户日期'}</label><input type="date" class="input" id="edit-opened" value="${esc(flow.opened)}" /></div>${product.type==='信用卡'?`<button class="option-row" data-action="edit-bonus-open"><span class="option-main"><span class="option-title">开卡奖励</span><span class="option-sub">${flow.pendingBonus?esc(flow.pendingBonus.reward):tracked?'正在追踪 / 已有记录':'未添加'}</span></span><span>›</span></button>`:''}<button class="option-row" style="margin-top:10px" data-action="edit-change-open"><span class="option-main"><span class="option-title">已变更为其他产品</span><span class="option-sub">只显示已确认可变更目标</span></span><span>›</span></button><div class="edit-footer split"><button class="btn danger" data-action="remove-product-request" data-id="${product.id}">从 NextBonus 中移除</button><button class="btn primary" data-action="save-edit-product" data-id="${product.id}">保存</button></div></div></div>`;
+    return `<div class="content narrow edit-product-page"><button class="detail-back" data-action="edit-exit">‹ 返回产品详情</button><div class="page-head"><div><h1 class="page-title">编辑产品</h1><p class="page-subtitle">${esc(product.name)}</p></div></div><div class="edit-panel"><div class="form-group"><label class="label">卡号后四位 / 账户识别</label><input class="input" id="edit-instance" value="${esc(flow.instance)}" /></div><div class="form-group"><label class="label">账户状态</label><select class="select" id="edit-status"><option ${flow.status==='正常'?'selected':''}>正常</option><option ${flow.status==='已关闭'?'selected':''}>已关闭</option><option ${flow.status==='不确定'?'selected':''}>不确定</option></select></div><div class="form-group"><label class="label">${product.type==='信用卡'?'开卡日期':nonCredit?.dateLabel||'开户日期'}</label><input type="date" class="input" id="edit-opened" value="${esc(nonCredit&&window.NextBonusNonCreditProductDetailModel?.isPrototypeDate?.({...product,opened:flow.opened})?'':flow.opened)}" /></div>${product.type==='信用卡'?`<button class="option-row" data-action="edit-bonus-open"><span class="option-main"><span class="option-title">开卡奖励</span><span class="option-sub">${flow.pendingBonus?esc(flow.pendingBonus.reward):tracked?'正在追踪 / 已有记录':'未添加'}</span></span><span>›</span></button>`:''}<button class="option-row" style="margin-top:10px" data-action="edit-change-open"><span class="option-main"><span class="option-title">已变更为其他产品</span><span class="option-sub">只显示已确认可变更目标</span></span><span>›</span></button><div class="edit-footer split"><button class="btn danger" data-action="remove-product-request" data-id="${product.id}">从 NextBonus 中移除</button><button class="btn primary" data-action="save-edit-product" data-id="${product.id}">保存</button></div></div></div>`;
   }
 
   window.NextBonusPageRegistry.register('product-detail',function(ctx){
@@ -79,7 +98,7 @@
 
     const model=window.NextBonusPageModels?.productDetail;
     if(!model) throw new Error('Product Detail page model unavailable');
-    const {product,related,top,isPast,detailArt,timeline,benefits,creditCard}=model.build(ctx);
+    const {product,related,top,isPast,detailArt,timeline,benefits,creditCard,nonCredit}=model.build(ctx);
     const creditCardView=window.NextBonusCreditCardProductDetailView;
 
     if(state.editFlow&&state.editFlow.productId===product.id) return editProductPage(ctx,product);
@@ -92,13 +111,15 @@
 
     const productSections=creditCard&&creditCardView
       ? `${creditCardView.bonusSection(ctx,creditCard)}${creditCardView.benefitsSection(ctx,creditCard)}`
-      : `${related.length?`<section class="v4-pd-section v4-pd-attention"><div class="v4-section-head"><h2>待处理 <span class="attention-count-dot">${related.length}</span></h2>${related.length>3?`<button class="mock-link" data-action="attention-for-product" data-id="${product.id}">查看全部 ${related.length}</button>`:''}</div><div class="v4-pd-attention-list">${top.map(item=>pdAttentionItem(ctx,item)).join('')}</div></section>`:''}<section class="v4-pd-section v4-pd-benefits"><div class="v4-section-head"><h2>福利</h2></div>${benefits.length?`<div class="benefit-grid pd-benefit-grid">${benefits.map(item=>benefitCard(ctx,item)).join('')}</div>`:'<div class="timeline-empty">暂时没有可展示的福利信息</div>'}</section>`;
-    return `<div class="content v4-product-detail-page ${creditCard?'nb-card-detail':''}">\n      <div class="detail-back-nav"><button class="detail-back-button" type="button" data-action="back-products"><span aria-hidden="true">←</span><span>返回钱包</span></button></div>
+      : nonCredit
+        ? `${related.length?`<section class="v4-pd-section v4-pd-attention"><div class="v4-section-head"><h2>待处理 <span class="attention-count-dot">${related.length}</span></h2>${related.length>3?`<button class="mock-link" data-action="attention-for-product" data-id="${product.id}">查看全部 ${related.length}</button>`:''}</div><div class="v4-pd-attention-list">${top.map(item=>pdAttentionItem(ctx,item)).join('')}</div></section>`:''}${nonCreditSections(nonCredit,esc)}`
+        : `${related.length?`<section class="v4-pd-section v4-pd-attention"><div class="v4-section-head"><h2>待处理 <span class="attention-count-dot">${related.length}</span></h2>${related.length>3?`<button class="mock-link" data-action="attention-for-product" data-id="${product.id}">查看全部 ${related.length}</button>`:''}</div><div class="v4-pd-attention-list">${top.map(item=>pdAttentionItem(ctx,item)).join('')}</div></section>`:''}<section class="v4-pd-section v4-pd-benefits"><div class="v4-section-head"><h2>福利</h2></div>${benefits.length?`<div class="benefit-grid pd-benefit-grid">${benefits.map(item=>benefitCard(ctx,item)).join('')}</div>`:'<div class="timeline-empty">暂时没有可展示的福利信息</div>'}</section>`;
+    return `<div class="content v4-product-detail-page ${creditCard?'nb-card-detail':nonCredit?'nb-account-detail':''}">\n      <div class="detail-back-nav"><button class="detail-back-button" type="button" data-action="back-products"><span aria-hidden="true">←</span><span>返回钱包</span></button></div>
       <section class="v4-pd-overview">
-        <div class="v4-pd-left"><div class="v4-pd-card ${product.type==='信用卡'?'credit-card-art':''}">${detailArt.primarySrc?`<img src="${detailArt.primarySrc}"${detailArt.fallbackAttr} alt="${esc(product.name)}" />`:`<span class="fallback-brand large">${esc(shortBrand(product.institution))}</span>`}</div>${contactActions}</div>
+        <div class="v4-pd-left"><div class="v4-pd-card ${product.type==='信用卡'?'credit-card-art':nonCredit?.logo?'nb-account-logo-card':''}">${nonCredit?.logo?`<img src="${esc(nonCredit.logo)}" alt="${esc(product.institution||product.name)}" />`:detailArt.primarySrc?`<img src="${detailArt.primarySrc}"${detailArt.fallbackAttr} alt="${esc(product.name)}" />`:`<span class="fallback-brand large">${esc(shortBrand(product.institution))}</span>`}</div>${contactActions}</div>
         <div class="v4-pd-right"><div class="v4-pd-title-row"><div><h1>${esc(product.name)}</h1><div class="v4-pd-status"><span>${esc(product.instance||'')}</span>${product.instance?'<i></i>':''}<b class="${isPast?'past':''}"></b><strong>${isPast?'历史产品':esc(product.status||'不确定')}</strong></div></div>${isPast?'':`<button class="v4-pd-edit" data-action="edit-product">✎　编辑</button>`}</div>
-          <div class="v4-pd-facts"><div><span class="fact-icon">▣</span><span><small>${product.type==='信用卡'?'开卡日期':'开户日期'}</small><strong>${product.opened?formatLongDate(product.opened):'未填写'}</strong></span></div>${product.type==='信用卡'?`<div><span class="fact-icon">♙</span><span><small>周年日</small><strong>${esc(product.anniversary||'—')}</strong></span></div><div><span class="fact-icon">$</span><span><small>年费</small><strong>${esc(product.annualFee||'—')}</strong></span></div>`:''}</div>
-          ${earningBlock(product,esc)}
+          <div class="v4-pd-facts"><div><span class="fact-icon">▣</span><span><small>${product.type==='信用卡'?'开卡日期':nonCredit?.dateLabel||'开户日期'}</small><strong>${nonCredit?(nonCredit.opened?formatLongDate(nonCredit.opened):'未填写'):(product.opened?formatLongDate(product.opened):'未填写')}</strong></span></div>${product.type==='信用卡'?`<div><span class="fact-icon">♙</span><span><small>周年日</small><strong>${esc(product.anniversary||'—')}</strong></span></div><div><span class="fact-icon">$</span><span><small>年费</small><strong>${esc(product.annualFee||'—')}</strong></span></div>`:''}</div>
+          ${nonCredit?'':earningBlock(product,esc)}
         </div>
       </section>
       ${productSections}

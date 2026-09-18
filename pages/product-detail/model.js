@@ -31,6 +31,7 @@
   function build(ctx){
     const sourceProduct=ctx.currentProduct();
     const creditCard=window.NextBonusCreditCardProductDetailModel?.build?.(ctx,sourceProduct)||null;
+    const nonCredit=creditCard?null:(window.NextBonusNonCreditProductDetailModel?.build?.(sourceProduct)||null);
     const product=creditCard?.product||sourceProduct;
     const related=ctx.activeAttentionSorted(
       ctx.currentActiveAttention().filter(item=>item.productId===sourceProduct.id)
@@ -39,6 +40,7 @@
       product,
       sourceProduct,
       creditCard,
+      nonCredit,
       related,
       top:related.slice(0,3),
       isPast:ctx.state.pastProducts.some(item=>item.id===sourceProduct.id),
