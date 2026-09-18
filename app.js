@@ -200,6 +200,7 @@
     }
     const finalRoute=state.route;
     render();
+    requestAnimationFrame(()=>window.NextBonusOnboarding?.open?.());
     if(intent?.type==='assessment'&&window.NextBonusAssessmentContract?.supported?.(intent.offerId)) requestAnimationFrame(()=>window.NextBonusAssessmentPage?.open?.(pageContext(),{restart:false}));
     if(['discover','wishlist','products','attention'].includes(finalRoute) && (intent?.type==='bookmark'||(!target&&source))) restoreScroll(finalRoute);
   }
