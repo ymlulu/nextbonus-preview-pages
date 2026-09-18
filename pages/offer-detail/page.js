@@ -6,6 +6,17 @@
     const model=window.NextBonusPageModels?.offerDetail;
     if(!model) throw new Error('Offer Detail page model unavailable');
     const {offer:o,supportsAssessment,isEnded,result:r,isPlatinum:isPlat,posterSrc,hasAssessmentResult}=model.build(ctx);
+    const backLabel=state.routeSource==='wishlist'?'返回关注':'返回发现';
+    const special=window.NextBonusOfferDetailSpecialized?.render?.(o,isSaved(o.id));
+    if(special){
+      return `<div class="content v4-offer-detail-page ${special.className||''}">
+        <div class="detail-back-nav"><button class="detail-back-button" type="button" data-action="back-offer-list"><span aria-hidden="true">←</span><span>${backLabel}</span></button></div>
+        <div class="v4-offer-detail-grid">
+          <section class="v4-offer-poster-shell">${special.poster||genericPoster(o)}</section>
+          <aside class="v4-decision-panel">${special.panel}</aside>
+        </div>
+      </div>`;
+    }
 
     const resultHtml=isEnded
       ? `<div class="v4-result-card is-ended"><div class="v4-result-meta">当前状态</div><div class="v4-recommendation ended">当前奖励已结束</div><div class="v4-result-note">这次关注的 Offer已经结束或当前不可用。旧信息只作为历史参考，不再作为当前申请建议。</div></div>`
@@ -16,7 +27,6 @@
     if(!isEnded && supportsAssessment) actions.push(`<button class="btn primary" data-action="assessment-start">${hasAssessmentResult?'查看完整分析':'开始申请评估'} <span>→</span></button>`);
     if(!isEnded && o.applyUrl) actions.push(`<button class="btn secondary" data-action="direct-apply">直接申请</button>`);
 
-    const backLabel=state.routeSource==='wishlist'?'返回关注':'返回发现';
     return `<div class="content v4-offer-detail-page">\n      <div class="detail-back-nav"><button class="detail-back-button" type="button" data-action="back-offer-list"><span aria-hidden="true">←</span><span>${backLabel}</span></button></div>
       <div class="v4-offer-detail-grid">
         <section class="v4-offer-poster-shell">
