@@ -1,7 +1,15 @@
 /* Discover page-owned presentation.
    Keeps content, typography, grid structure and behavior unchanged. */
 
-/* Search stays the one explicit field; make its chrome quieter. */
+/* Give Discover a calmer desktop canvas without changing other routes. */
+.main:has(> .discover-page){
+  background:#f7f8fa;
+}
+
+/* Search stays the one explicit field; make its chrome quieter and more focused. */
+.discover-page .discover-search-row{
+  max-width:880px;
+}
 .discover-page .search{
   border-color:rgba(60,60,67,.12);
   box-shadow:none;
@@ -32,23 +40,37 @@
   background:rgba(10,132,255,.09);
 }
 
+/* Unselected categories use one neutral language; selection carries the accent. */
+.discover-page .pill:not(.active) .pill-icon{
+  color:rgba(60,60,67,.68);
+}
+.discover-page .pill.active .pill-icon{
+  color:#0a84ff;
+}
+
+.discover-page .offer-grid{
+  column-gap:14px;
+  row-gap:18px;
+}
+
 /* Offer cards remain the primary containers; reduce elevation and hard outlines. */
 .discover-page .offer-card,
 .discover-page .nb-offer-card{
-  border-color:rgba(60,60,67,.10);
-  box-shadow:0 1px 2px rgba(0,0,0,.025);
+  border-color:rgba(60,60,67,.07);
+  border-radius:16px;
+  box-shadow:0 1px 2px rgba(0,0,0,.018);
 }
 .discover-page .offer-card:hover,
 .discover-page .nb-offer-card:hover{
   transform:translateY(-1px);
-  border-color:rgba(60,60,67,.15);
-  box-shadow:0 7px 20px rgba(0,0,0,.055);
+  border-color:rgba(60,60,67,.11);
+  box-shadow:0 8px 22px rgba(0,0,0,.045);
 }
 
 /* Visual panel should support product art rather than feel like another card. */
 .discover-page .nb-offer-card .nb-offer-visual,
 .discover-page .offer-card .offer-top{
-  background:rgba(246,247,249,.72);
+  background:rgba(244,245,247,.78);
 }
 
 /* Provider is context; remove extra badge chrome around plain-text fallback. */
@@ -81,13 +103,24 @@
   border:0;
 }
 
-/* Bookmark stays actionable, but its shell should not compete with the card. */
+/* Bookmark stays actionable without reading as another nested card. */
 .discover-page .nb-offer-card .bookmark,
 .discover-page .nb-offer-card .mock-bookmark,
 .discover-page .offer-card .bookmark{
-  border-color:rgba(60,60,67,.10);
+  border-color:transparent;
   box-shadow:none;
-  background:rgba(255,255,255,.88);
+  background:transparent;
+}
+.discover-page .nb-offer-card .bookmark:hover,
+.discover-page .nb-offer-card .mock-bookmark:hover,
+.discover-page .offer-card .bookmark:hover{
+  border-color:transparent;
+  background:rgba(120,120,128,.08);
+}
+.discover-page .nb-offer-card .bookmark.saved,
+.discover-page .nb-offer-card .mock-bookmark.saved{
+  border-color:transparent;
+  background:transparent;
 }
 
 @media(max-width:780px){
