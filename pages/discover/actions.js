@@ -16,10 +16,6 @@
         ctx.state.offerSearch='';
         return {render:true,focusId:'discover-search'};
       }
-      if(action==='open-offer'){
-        ctx.openOffer?.(el.dataset.id,'discover');
-        return {preventDefault:true};
-      }
       return false;
     },
     input({event,ctx}){

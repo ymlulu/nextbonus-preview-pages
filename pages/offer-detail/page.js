@@ -2,13 +2,15 @@
   'use strict';
   window.NextBonusPageRegistry.register('offer-detail',function(ctx){
     window.NextBonusEvents?.bind('offer-detail',ctx);
-    const { esc, metric, isSaved, genericPoster }=ctx;
+    const { state, esc, metric, isSaved, genericPoster }=ctx;
     const model=window.NextBonusPageModels?.offerDetail;
     if(!model) throw new Error('Offer Detail page model unavailable');
     const {offer:o,supportsAssessment,isEnded,result:r,isPlatinum:isPlat,posterSrc,hasAssessmentResult}=model.build(ctx);
+    const backLabel=state.routeSource==='wishlist'?'返回关注':'返回发现';
     const special=window.NextBonusOfferDetailSpecialized?.render?.(o,isSaved(o.id));
     if(special){
       return `<div class="content v4-offer-detail-page ${special.className||''}">
+        <div class="detail-back-nav"><button class="detail-back-button" type="button" data-action="back-offer-list"><span aria-hidden="true">←</span><span>${backLabel}</span></button></div>
         <div class="v4-offer-detail-grid">
           <section class="v4-offer-poster-shell">${special.poster||genericPoster(o)}</section>
           <aside class="v4-decision-panel">${special.panel}</aside>
@@ -25,12 +27,13 @@
     if(!isEnded && supportsAssessment) actions.push(`<button class="btn primary" data-action="assessment-start">${hasAssessmentResult?'查看完整分析':'开始申请评估'} <span>→</span></button>`);
     if(!isEnded && o.applyUrl) actions.push(`<button class="btn secondary" data-action="direct-apply">直接申请</button>`);
 
-    return `<div class="content v4-offer-detail-page">\n      <div class="v4-offer-detail-grid">
+    return `<div class="content v4-offer-detail-page">\n      <div class="detail-back-nav"><button class="detail-back-button" type="button" data-action="back-offer-list"><span aria-hidden="true">←</span><span>${backLabel}</span></button></div>
+      <div class="v4-offer-detail-grid">
         <section class="v4-offer-poster-shell">
           ${isPlat?`<div class="v4-reference-poster"><img src="${posterSrc}" alt="AMEX Platinum 海报" /><button class="poster-hotspot prev" data-action="poster-step" data-dir="-1" aria-label="上一张海报"></button><button class="poster-hotspot next" data-action="poster-step" data-dir="1" aria-label="下一张海报"></button></div>`:genericPoster(o)}
         </section>
         <aside class="v4-decision-panel">
-          <button class="v4-detail-save nb-follow-control ${isSaved(o.id)?'saved':''}" data-action="bookmark" data-id="${o.id}" aria-label="${isSaved(o.id)?'已关注，点击取消':'关注'}" title="${isSaved(o.id)?'已关注，点击取消':'关注'}"><span class="nb-follow-glyph" aria-hidden="true">${isSaved(o.id)?'✓':'＋'}</span><span>${isSaved(o.id)?'已关注':'关注'}</span></button>
+          <button class="v4-detail-save ${isSaved(o.id)?'saved':''}" data-action="bookmark" data-id="${o.id}">♡ <span>${isSaved(o.id)?'已关注':'关注'}</span></button>
           <div class="v4-nb-logo"><img src="assets/offer-detail/nb-logo-ref.png" alt="NextBonus" /></div>
           <h1>NextBonus 申请建议</h1>
           <p class="v4-decision-copy">${supportsAssessment&&!isEnded?'基于你已确认的信息与当前规则，判断这张卡现在是否适合申请。':isEnded?'这次机会已不再作为当前申请建议。':'只有存在已冻结评估规则时，才显示个性化申请结论。'}</p>

@@ -124,8 +124,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text"
 .discover-page .pill{height:42px;padding:0 14px;border-radius:999px;border:1px solid #e2e8f1;background:#fff;color:#1c2a50;font-weight:650;font-size:14px;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;box-shadow:0 2px 7px rgba(31,52,88,.025)}
 .discover-page .pill:hover{border-color:#cfd8e6;background:#fbfdff}
 .discover-page .pill.active{color:#0a71ff;border-color:#d8e7ff;background:#f6faff}
-.pill-icon{width:19px;height:19px;display:grid;place-items:center}
+.pill-icon{width:19px;height:19px;display:grid;place-items:center;color:#0a71ff}
 .pill-icon svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.cat-银行 .pill-icon{color:#15b95a}.cat-券商 .pill-icon{color:#8739ef}.cat-羊毛省钱 .pill-icon{color:#ff7a00}.cat-旅行 .pill-icon{color:#0b79ff}.cat-购物 .pill-icon{color:#ff2c79}.cat-生活 .pill-icon{color:#16b8d6}
 .offer-grid{grid-template-columns:repeat(5,minmax(0,202px));gap:14px 12px;justify-content:start;align-items:start}
 .mock-visual-card{width:202px;height:330px;border:0;border-radius:14px;box-shadow:none;overflow:hidden;background:#fff;position:relative;transition:transform .15s ease,filter .15s ease}
 .mock-visual-card:hover{transform:translateY(-2px);box-shadow:none;border:0;filter:drop-shadow(0 8px 14px rgba(30,51,89,.08))}

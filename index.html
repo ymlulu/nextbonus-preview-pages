@@ -6,26 +6,30 @@
   <meta name="description" content="NextBonus local interactive website" />
   <meta name="robots" content="noindex, nofollow" />
   <title>NextBonus</title>
-  <link rel="stylesheet" href="styles.css?v=20260918-2" />
+  <link rel="stylesheet" href="styles.css?v=20260914-2" />
   <link rel="stylesheet" href="pages/offer-detail/usbank.css?v=20260918-1" />
-  <link rel="stylesheet" href="offer-card.css?v=20260918-1" />
-  <link rel="stylesheet" href="pages/discover/page.css?v=20260918-1" />
-  <link rel="stylesheet" href="pages/product-detail/page.css?v=20260918-2" />
+  <link rel="stylesheet" href="offer-card.css" />
+  <link rel="stylesheet" href="offer-card-mock-ratio.css" />
+  <link rel="stylesheet" href="offer-card-calibration-v2.css" />
+  <link rel="stylesheet" href="offer-card-apple-refinement.css" />
+  <link rel="stylesheet" href="offer-card-visual-cleanup.css" />
+  <link rel="stylesheet" href="pages/discover/page.css?v=20260917-1" />
+  <link rel="stylesheet" href="pages/product-detail/page.css?v=20260918-1" />
   <link rel="stylesheet" href="pages/assessment/page.css?v=20260918-1" />
   <link rel="stylesheet" href="pages/application-result/page.css?v=20260918-1" />
   <link rel="stylesheet" href="pages/watchlist/page.css?v=20260917-1" />
-  <link rel="stylesheet" href="pages/add-product/page.css?v=20260918-6" />
+  <link rel="stylesheet" href="pages/add-product/page.css?v=20260918-1" />
   <link rel="stylesheet" href="mobile-v1-fixes.css?v=20260915-1" />
   <link rel="stylesheet" href="pages/attention/page.css?v=20260917-1" />
   <link rel="stylesheet" href="pages/wallet/page.css?v=20260917-1" />
   <link rel="stylesheet" href="mobile-discover-attention-polish.css?v=20260915-2" />
-  <link rel="stylesheet" href="ui/typography.css?v=20260918-3" />
-  <link rel="stylesheet" href="ui/typography-balance.css?v=20260918-2" />
+  <link rel="stylesheet" href="ui/typography.css?v=20260918-1" />
+  <link rel="stylesheet" href="ui/typography-balance.css?v=20260918-1" />
   <link rel="stylesheet" href="mobile-primary-page-focus.css?v=20260915-2" />
-  <link rel="stylesheet" href="pages/offer-detail/page.css?v=20260918-5" />
+  <link rel="stylesheet" href="pages/offer-detail/page.css?v=20260918-1" />
   <link rel="stylesheet" href="pages/offer-detail/remaining.css?v=20260918-1" />
   <link rel="stylesheet" href="pages/offer-detail/moomoo.css?v=20260918-1" />
-  <link rel="stylesheet" href="pages/product-detail/credit-card.css?v=20260918-1" />
+  <link rel="stylesheet" href="pages/product-detail/credit-card.css?v=20260918-2" />
   <link rel="stylesheet" href="ui/onboarding.css?v=20260918-1" />
 </head>
 <body>
@@ -61,8 +65,8 @@
   <script src="core/storage.js?v=20260917-1"></script>
   <script src="core/router.js?v=20260917-1"></script>
   <script src="core/page-registry.js?v=20260917-1"></script>
-  <script src="core/events.js?v=20260918-2"></script>
-  <script src="ui/offer-card.js?v=20260918-2"></script>
+  <script src="core/events.js?v=20260918-1"></script>
+  <script src="ui/offer-card.js?v=20260918-1"></script>
   <script src="pages/discover/model.js?v=20260917-1"></script>
   <script src="pages/watchlist/model.js?v=20260917-1"></script>
   <script src="pages/wallet/model.js?v=20260917-1"></script>
@@ -72,43 +76,42 @@
   <script src="pages/product-detail/credit-card-data.js?v=20260918-1"></script>
   <script src="pages/product-detail/non-credit-data.js?v=20260918-1"></script>
   <script src="pages/product-detail/non-credit-model.js?v=20260918-1"></script>
-  <script src="pages/product-detail/credit-card-model.js?v=20260918-1"></script>
-  <script src="pages/product-detail/credit-card-view.js?v=20260918-1"></script>
+  <script src="pages/product-detail/credit-card-model.js?v=20260918-2"></script>
+  <script src="pages/product-detail/credit-card-view.js?v=20260918-2"></script>
   <script src="pages/product-detail/model.js?v=20260918-1"></script>
-  <script src="pages/add-product/model.js?v=20260918-3"></script>
+  <script src="pages/add-product/model.js?v=20260918-1"></script>
   <script src="pages/assessment/offer-history-chart.js?v=20260918-1"></script>
   <script src="pages/assessment/page.js?v=20260918-1"></script>
   <script src="pages/application-result/page.js?v=20260918-1"></script>
-  <script src="pages/discover/page.js?v=20260918-2"></script>
-  <script src="pages/watchlist/page.js?v=20260918-2"></script>
+  <script src="pages/discover/page.js?v=20260918-1"></script>
+  <script src="pages/watchlist/page.js?v=20260918-1"></script>
   <script src="pages/wallet/page.js?v=20260918-1"></script>
   <script src="pages/attention/page.js?v=20260918-1"></script>
-  <script src="pages/discover/actions.js?v=20260918-2"></script>
-  <script src="pages/watchlist/actions.js?v=20260918-2"></script>
+  <script src="pages/discover/actions.js?v=20260918-1"></script>
+  <script src="pages/watchlist/actions.js?v=20260918-1"></script>
   <script src="pages/wallet/actions.js?v=20260918-1"></script>
   <script src="pages/attention/actions.js?v=20260918-1"></script>
   <script src="pages/login/page.js?v=20260917-1"></script>
-  <script src="pages/offer-detail/specialized.js?v=20260918-2"></script>
-  <script src="pages/offer-detail/page.js?v=20260918-4"></script>
+  <script src="pages/offer-detail/specialized.js?v=20260918-1"></script>
+  <script src="pages/offer-detail/page.js?v=20260918-1"></script>
   <script src="pages/offer-detail/actions.js?v=20260918-1"></script>
-  <script src="pages/product-detail/page.js?v=20260918-2"></script>
+  <script src="pages/product-detail/page.js?v=20260918-1"></script>
   <script src="pages/product-detail/actions.js?v=20260918-1"></script>
-  <script src="pages/add-product/page.js?v=20260918-5"></script>
-  <script src="pages/add-product/actions.js?v=20260918-4"></script>
+  <script src="pages/add-product/page.js?v=20260918-1"></script>
+  <script src="pages/add-product/actions.js?v=20260918-1"></script>
   <script src="ui/user-facing-copy.js?v=20260918-1"></script>
   <script src="ui/terminology.js?v=20260918-1"></script>
-  <script src="ui/typography.js?v=20260918-2"></script>
-  <script src="ui/semantic-typography.js?v=20260918-2"></script>
+  <script src="ui/typography.js?v=20260918-1"></script>
+  <script src="ui/semantic-typography.js?v=20260918-1"></script>
   <script src="ui/finalize.js?v=20260918-1"></script>
-  <script src="app.js?v=20260918-4"></script>
-  <script src="features/application/handoff.js?v=20260918-2"></script>
+  <script src="app.js?v=20260916-1"></script>
+  <script src="features/application/handoff.js?v=20260918-1"></script>
   <script src="features/application/watchlist-lifecycle.js?v=20260918-1"></script>
-  <script src="features/application/entry.js?v=20260918-2"></script>
+  <script src="features/application/entry.js?v=20260918-1"></script>
   <script src="features/application/review-flow.js?v=20260918-1"></script>
   <script src="features/bonus-tracking/runtime.js?v=20260918-1"></script>
   <script src="pages/product-detail/overlay.js?v=20260918-1"></script>
-  <script src="pages/offer-detail/overlay.js?v=20260918-3"></script>
-  <script src="features/onboarding/state.js?v=20260918-1"></script>
-  <script src="ui/onboarding.js?v=20260918-1"></script>
+  <script src="pages/offer-detail/overlay.js?v=20260918-1"></script>
+  <script src="features/onboarding/state.js?v=20260918-1"></script>\n  <script src="ui/onboarding.js?v=20260918-1"></script>
 </body>
 </html>

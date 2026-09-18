@@ -8,7 +8,6 @@
     const {items}=model.build(ctx);
 
     return `<div class="content discover-page">
-      <header class="nb-primary-page-head"><h1>发现</h1></header>
       <div class="discover-search-row">
         <div class="search-wrap"><span class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg></span><input id="discover-search" class="search" value="${esc(state.offerSearch)}" placeholder="搜索信用卡、银行、券商或优惠…" />${state.offerSearch?`<button class="search-clear" data-action="discover-clear-search" aria-label="清除搜索">×</button>`:''}</div>
       </div>

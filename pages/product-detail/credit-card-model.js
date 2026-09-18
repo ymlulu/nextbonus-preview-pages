@@ -131,10 +131,22 @@
   }
 
   function dueLabel(attention){
-    const due=dateOnly(attention?.dueDate);
-    if(due) return `Due ${due.getMonth()+1}月${due.getDate()}日`;
-    const raw=String(attention?.time||'').replace(/^本期截止\s*/u,'').replace(/^截止\s*/u,'').trim();
-    return raw?`Due ${raw}`:'Due';
+    const days=daysUntil(attention?.dueDate);
+    if(days===null||days>7) return '';
+    if(days<0) return `Overdue ${Math.abs(days)} days`;
+    if(days===0) return 'Due today';
+    if(days===1) return 'Due in 1 day';
+    return `Due in ${days} days`;
+  }
+
+  function sortBenefits(items){
+    return (Array.isArray(items)?items:[])
+      .map((item,index)=>({item,index}))
+      .sort((a,b)=>{
+        const cycleOrder=Number(!!b.item.cycleType)-Number(!!a.item.cycleType);
+        return cycleOrder||a.index-b.index;
+      })
+      .map(entry=>entry.item);
   }
 
   function benefitView(ctx,product,benefit){
@@ -158,7 +170,7 @@
   function build(ctx,product){
     if(product?.type!=='信用卡') return null;
     const viewProduct=enrich(product);
-    const benefitViews=(viewProduct.benefits||[]).map(item=>benefitView(ctx,viewProduct,item));
+    const benefitViews=sortBenefits((viewProduct.benefits||[]).map(item=>benefitView(ctx,viewProduct,item)));
     const bonusItems=bonuses(ctx.state,viewProduct.id);
     const contact=viewProduct.id==='p-amex-plat-1005'
       ? {
@@ -176,6 +188,7 @@
     legacyBenefitMatch,
     matchingAttention,
     benefitView,
+    sortBenefits,
     bonuses,
     build,
     daysUntil,

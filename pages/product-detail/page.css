@@ -62,7 +62,6 @@ body.nb-product-overlay-open{overflow:hidden}
 .v4-pd-status{display:flex;align-items:center;gap:10px;margin-top:12px;}
 .v4-pd-status>i{width:1px;height:20px;background:#dfe5ee}.v4-pd-status>b{width:9px;height:9px;border-radius:50%;background:#18c783}.v4-pd-status>b.past{background:#a9b0bd}
 .v4-pd-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:18px;border-top:1px solid transparent}
-@media(min-width:781px){.v4-pd-facts.credit-card-facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .v4-pd-facts>div{display:flex;align-items:center;gap:12px;padding:9px 16px;border-left:1px solid #e6ebf2}.v4-pd-facts>div:first-child{border-left:0;padding-left:0}
 .fact-icon{width:32px;height:32px;display:grid;place-items:center;border-radius:9px;background:#f6f8fb;}
 .v4-pd-facts small{display:block;margin-bottom:2px}.v4-pd-facts strong{display:block;}

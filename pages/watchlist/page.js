@@ -62,7 +62,7 @@
 
     return `<div class="content wishlist-page nb-watchlist-page">
       <div class="nb-watchlist-header"><div><h1>关注</h1><p>正在进行、以后想做，以及已经结束的 Offer。</p></div></div>
-      ${empty?`<div class="nb-watchlist-empty"><div class="nb-watchlist-empty-icon">＋</div><h2>还没有关注的内容</h2><p>看到感兴趣或准备以后做的 Offer，点一下关注。</p><button class="mock-add-btn" data-action="nav" data-route="discover">去发现</button></div>`:
+      ${empty?`<div class="nb-watchlist-empty"><div class="nb-watchlist-empty-icon">♡</div><h2>还没有关注的内容</h2><p>看到感兴趣或准备以后做的 Offer，点一下关注。</p><button class="mock-add-btn" data-action="nav" data-route="discover">去发现</button></div>`:
       `${section('进行中',inProgress,'in-progress','你已经开始处理的申请或活动，完成后会进入历史记录。',ctx.esc)}
        ${section('已关注',saved,'saved','感兴趣，准备以后再看或开始。',ctx.esc)}
        ${historySection(history,historyOpen,ctx.esc)}`}

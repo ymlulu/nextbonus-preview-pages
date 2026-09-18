@@ -261,6 +261,16 @@
     });
   }
 
+  function ensureDiscoverTitle() {
+    const page = document.querySelector('.discover-page');
+    if (!page) return;
+    if (page.querySelector(':scope > .nb-primary-page-head')) return;
+    const head = document.createElement('header');
+    head.className = 'nb-primary-page-head';
+    head.innerHTML = '<h1>发现</h1>';
+    page.insertBefore(head, page.firstElementChild || null);
+  }
+
   function applyRules(root = document) {
     RULES.forEach(([selector, type, legacyEmphasis = false, tone = null]) => {
       root.querySelectorAll?.(selector).forEach(node => mark(node, type, legacyEmphasis, tone));
@@ -276,6 +286,7 @@
   }
 
   function sync(root = document) {
+    ensureDiscoverTitle();
     markMarketingRoots(root);
     applyRules(root);
     applyFallbacks(root);

@@ -4,8 +4,6 @@ Last updated: 2026-09-18
 
 This document is the architecture contract for the NextBonus Preview repository.
 
-> Mandatory coding preflight: every GPT, coding agent, or human contributor must read the root `AGENTS.md` and this document before editing code. Pull requests must acknowledge that preflight and pass `NextBonus CI / quality-gate`.
-
 The goal is not to make the file tree look tidy. The goal is to make every page, business rule, state lifecycle, and infrastructure concern have one clear owner.
 
 Current architecture is frozen around:
@@ -281,29 +279,35 @@ Source-boundary tests are appropriate when they protect architecture.
 
 ## 14. Current CI architecture guards
 
-Every pull request to `main` now runs the repository-owned `NextBonus CI / quality-gate`.
+The repository now contains guards for:
 
-The baseline gate currently enforces:
-
-- JavaScript syntax across all runtime and CI scripts
-- local `index.html` script/style references resolve to real files
-- the explicit UI finalization pipeline remains wired through `app.js`
-- copy, terminology, typography, and semantic typography remain owned by `ui/finalize.js`
+- Core state/storage/router boundaries
+- page ownership
+- page-local models/actions/styles
+- feature ownership
+- `app.js` source boundaries
+- retired root runtime ownership
 - zero runtime `MutationObserver`
-- new typography declarations cannot be added outside the global typography owner
-- intentional poster/marketing typography requires an explicit `nb-typography-exempt: marketing` marker
-- diff whitespace errors fail CI
+- Product Detail ownership
+- Offer Detail ownership
+- Watchlist behavior/lifecycle
+- Application lifecycle/result ownership
+- Assessment deterministic integration
+- Product Lifecycle Core
+- Benefit cycle and structured Benefit/Attention identity
+- UI finalization pipeline
+- onboarding ownership
+- V1 acceptance
+- Add Product browser clickthrough
 
-These are repository-level safety rails, not a substitute for behavior tests. Owner migrations and business-lifecycle changes should add focused behavior/ownership tests as executable coverage is introduced.
-
-Do not weaken a guard just to make a patch merge.
+Do not weaken these tests just to make a patch merge.
 
 If a guard fails, first determine whether:
 
 1. the new implementation violates the architecture, or
 2. the guard still encodes a retired implementation detail.
 
-If the second case is true, update the guard to validate the current owner/behavior instead of bypassing it.
+If the second case is true, update the test to validate the new behavior/owner instead of bypassing it.
 
 ## 15. Retired patterns
 

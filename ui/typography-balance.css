@@ -135,6 +135,7 @@
 
 /* Tiny metadata can stay light, but not disappear. */
 .nb-offer-card .nb-provider-text[data-nb-type],
+.nb-offer-card .nb-tag[data-nb-type],
 .fallback-offer-card .provider[data-nb-type],
 .fallback-offer-card .soft-tag[data-nb-type],
 .nb-watchlist-provider[data-nb-type],

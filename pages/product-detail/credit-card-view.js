@@ -114,10 +114,11 @@
   function benefitRow(ctx,benefit){
     const {state,esc}=ctx;
     const expanded=state.expandedBenefitId===benefit.id;
-    const badge=benefit.attention&&!benefit.cycleInfo?.used&&benefit.cycleInfo?.mode!=='manual'
+    const badge=benefit.dueLabel&&!benefit.cycleInfo?.used&&benefit.cycleInfo?.mode!=='manual'
       ? `<span class="nb-card-benefit-due tone-${benefit.dueTone}">${esc(benefit.dueLabel)}</span>`
-      : '';
-    return `<div class="v4-benefit-item-wrap"><div class="v4-benefit-row nb-source-benefit-row" data-action="toggle-card-benefit" data-id="${esc(benefit.id)}" role="button" tabindex="0" aria-expanded="${expanded?'true':'false'}" ${benefit.benefitId?`data-benefit-id="${esc(benefit.benefitId)}"`:''} ${benefit.cycleType?`data-cycle-type="${esc(benefit.cycleType)}"`:''}><span class="v4-benefit-icon nb-card-benefit-icon">${iconSvg(benefitIconFor(benefit.title))}</span><strong>${esc(benefit.title)}</strong><small>${esc(benefit.short)}</small>${badge}${cycleStatusMarkup(ctx,benefit)}<b class="chev ${expanded?'up':''}" aria-hidden="true">›</b></div>${expanded?benefitDetail(ctx,benefit):''}</div>`;
+      : '<span class="nb-card-benefit-due-slot" aria-hidden="true"></span>';
+    const status=cycleStatusMarkup(ctx,benefit);
+    return `<div class="v4-benefit-item-wrap"><div class="v4-benefit-row nb-source-benefit-row" data-action="toggle-card-benefit" data-id="${esc(benefit.id)}" role="button" tabindex="0" aria-expanded="${expanded?'true':'false'}" ${benefit.benefitId?`data-benefit-id="${esc(benefit.benefitId)}"`:''} ${benefit.cycleType?`data-cycle-type="${esc(benefit.cycleType)}"`:''}><span class="nb-card-benefit-main"><span class="v4-benefit-icon nb-card-benefit-icon">${iconSvg(benefitIconFor(benefit.title))}</span><strong>${esc(benefit.title)}</strong></span><small>${esc(benefit.short)}</small>${badge}<span class="nb-card-benefit-status">${status}<b class="chev ${expanded?'up':''}" aria-hidden="true">›</b></span></div>${expanded?benefitDetail(ctx,benefit):''}</div>`;
   }
 
   function benefitsSection(ctx,card){
@@ -125,10 +126,7 @@
     if(!items.length){
       return '<section class="v4-pd-section nb-card-benefits-section"><div class="nb-card-section-title nb-card-benefits-title"><span class="nb-card-section-icon nb-card-crown">'+iconSvg('crown')+'</span><div><h2>卡片福利</h2><p>查看这张卡的长期福利与当前使用状态</p></div></div><div class="timeline-empty">美卡101当前文章没有列出需要单独追踪的长期福利</div></section>';
     }
-    const cut=Math.ceil(items.length/2);
-    const left=items.slice(0,cut).map(item=>benefitRow(ctx,item)).join('');
-    const right=items.slice(cut).map(item=>benefitRow(ctx,item)).join('');
-    return `<section class="v4-pd-section nb-card-benefits-section"><div class="nb-card-section-title nb-card-benefits-title"><span class="nb-card-section-icon nb-card-crown">${iconSvg('crown')}</span><div><h2>卡片福利</h2><p>查看这张卡的长期福利与当前使用状态</p></div></div><div class="v4-benefit-lists nb-card-benefit-columns"><div>${left}</div>${right?`<div>${right}</div>`:''}</div></section>`;
+    return `<section class="v4-pd-section nb-card-benefits-section"><div class="nb-card-section-title nb-card-benefits-title"><span class="nb-card-section-icon nb-card-crown">${iconSvg('crown')}</span><div><h2>卡片福利</h2><p>查看这张卡的长期福利与当前使用状态</p></div></div><div class="v4-benefit-lists nb-card-benefit-columns"><div>${items.map(item=>benefitRow(ctx,item)).join('')}</div></div></section>`;
   }
 
   function contactActions(card,esc){
