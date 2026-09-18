@@ -3,7 +3,7 @@
 
   const icons = {
     discover: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M15.7 8.3l-2.1 5.3-5.3 2.1 2.1-5.3 5.3-2.1z"></path></svg>',
-    saved: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17l-5.5-3.7-5.5 3.7v-17z"></path></svg>',
+    saved: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 12s3.5-5.4 9.2-5.4 9.2 5.4 9.2 5.4-3.5 5.4-9.2 5.4S2.8 12 2.8 12z"></path><circle cx="12" cy="12" r="2.6"></circle></svg>',
     products: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="6.5" width="17" height="12" rx="2.5"></rect><path d="M6 6.5V5.8A2.3 2.3 0 0 1 8.3 3.5h8.2"></path><path d="M15.5 11h5v3.5h-5a1.75 1.75 0 0 1 0-3.5z"></path></svg>',
     attention: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10a5 5 0 0 1 10 0v3.2l1.7 2.8H5.3L7 13.2V10z"></path><path d="M10 19h4"></path></svg>',
     login: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5.5A1.5 1.5 0 0 0 4 5.5v13A1.5 1.5 0 0 0 5.5 20H10"></path><path d="M13 8l4 4-4 4M17 12H8"></path></svg>',
