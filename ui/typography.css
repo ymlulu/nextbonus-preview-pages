@@ -149,13 +149,8 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 .btn:disabled{color:var(--nb-label-tertiary)!important}
 .search-icon,.search-clear,.close-btn{color:var(--nb-label-secondary)!important}
 .pill{color:var(--nb-label-primary)!important}
-.pill.active,.pill-icon,.mock-bookmark.saved{color:var(--nb-system-blue)!important}
-.cat-银行 .pill-icon{color:var(--nb-system-green)!important}
-.cat-券商 .pill-icon{color:var(--nb-system-purple)!important}
-.cat-羊毛省钱 .pill-icon{color:var(--nb-system-orange)!important}
-.cat-旅行 .pill-icon{color:var(--nb-system-blue)!important}
-.cat-购物 .pill-icon{color:var(--nb-system-pink)!important}
-.cat-生活 .pill-icon{color:var(--nb-system-cyan)!important}
+.pill-icon{color:rgba(60,60,67,.68)!important}
+.pill.active,.pill.active .pill-icon,.mock-bookmark.saved{color:var(--nb-system-blue)!important}
 .page-title,.section-title,.collapse-head,.confirm-copy,.product-name,.overview-name,.benefit-title,.timeline-copy,.label,.option-title,.category-title,.task-head,.success h2,.report h3{color:var(--nb-label-primary)!important}
 .eyebrow,.page-subtitle,.count-soft,.muted,.decision-note,.login-card p,.attention-compact-empty,.product-meta,.benefit-short,.benefit-detail,.hint,.option-sub,.category-sub,.success p,.report p{color:var(--nb-label-secondary)!important}
 .benefit-detail dt,.legal,.prototype-note{color:var(--nb-label-tertiary)!important}
