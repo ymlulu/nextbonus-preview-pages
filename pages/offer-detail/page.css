@@ -293,27 +293,86 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-offer-detail-frame{
   position:relative;
   width:min(1210px,calc(100vw - 48px));
-  height:min(760px,calc(100vh - 48px));
-  max-height:760px;
+  height:min(816px,calc(100vh - 48px));
+  max-height:816px;
+  border:1px solid rgba(221,228,238,.94);
   border-radius:16px;
-  background:#fff;
+  background:#f6f8fb;
   box-shadow:0 28px 90px rgba(18,28,45,.24);
-  overflow:visible;
+  overflow:hidden;
 }
 
-.nb-offer-detail-host,
-.nb-offer-detail-host > .v4-offer-detail-page,
-.nb-offer-detail-host .v4-offer-detail-grid{
+.nb-offer-detail-host{
+  width:100%;
+  height:100%;
+}
+
+.nb-offer-detail-host > .v4-offer-detail-page{
   width:100%;
   height:100%;
   max-width:none !important;
   margin:0 !important;
+  display:grid;
+  grid-template-rows:56px minmax(0,1fr);
+  overflow:hidden;
+  background:#f6f8fb;
+}
+
+.nb-offer-detail-host .detail-back-nav{
+  position:relative;
+  z-index:7;
+  min-height:56px;
+  margin:0 !important;
+  padding:0 58px 0 16px;
+  display:flex;
+  align-items:center;
+  border-bottom:1px solid #e7ebf1;
+  background:rgba(255,255,255,.98);
+}
+
+.nb-offer-detail-host .detail-back-button{
+  min-height:36px;
+  margin-left:-6px;
+  padding:0 10px;
+  gap:7px;
+  border-radius:10px;
+  color:#4f607a;
+  font-size:13px;
+  font-weight:680;
+  transition:background .14s ease,color .14s ease;
+}
+
+.nb-offer-detail-host .detail-back-button:hover{
+  background:#f0f4f9;
+  color:#0a6eff;
+}
+
+.nb-offer-detail-host .detail-back-button:focus-visible{
+  outline:2px solid rgba(10,110,255,.42);
+  outline-offset:2px;
+}
+
+.nb-offer-detail-host .detail-back-icon{
+  width:16px;
+  height:16px;
+  flex:0 0 auto;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
 }
 
 .nb-offer-detail-host .v4-offer-detail-grid{
+  box-sizing:border-box;
+  width:100%;
+  height:auto !important;
   min-height:0 !important;
   max-height:none !important;
+  margin:0 !important;
+  gap:12px !important;
   align-items:stretch !important;
+  background:#f6f8fb;
 }
 
 .nb-offer-detail-host .v4-offer-poster-shell,
@@ -325,18 +384,41 @@ body.nb-offer-overlay-open{overflow:hidden}
 
 .nb-offer-detail-close{
   position:absolute;
-  z-index:8;
-  top:-14px;
-  right:-14px;
-  width:34px;
-  height:34px;
-  border:1px solid rgba(224,229,237,.95);
-  border-radius:50%;
-  background:rgba(255,255,255,.98);
-  box-shadow:0 6px 20px rgba(20,30,45,.14);
+  z-index:9;
+  top:10px;
+  right:12px;
+  width:36px;
+  height:36px;
+  border:1px solid transparent;
+  border-radius:10px;
+  background:transparent;
+  color:#607089;
+  box-shadow:none;
   display:grid;
   place-items:center;
-  padding:0 0 2px;
+  padding:0;
+  cursor:pointer;
+  transition:background .14s ease,border-color .14s ease,color .14s ease;
+}
+
+.nb-offer-detail-close:hover{
+  background:#f0f4f9;
+  border-color:#e3e8ef;
+  color:#213552;
+}
+
+.nb-offer-detail-close:focus-visible{
+  outline:2px solid rgba(10,110,255,.42);
+  outline-offset:2px;
+}
+
+.nb-offer-detail-close svg{
+  width:16px;
+  height:16px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
 }
 
 .nb-offer-detail-host .v4-decision-panel{
@@ -423,23 +505,34 @@ body.nb-offer-overlay-open{overflow:hidden}
     width:100%;
     height:100%;
     max-height:none;
+    border:0;
     border-radius:0;
     box-shadow:none;
     overflow:auto;
   }
   .nb-offer-detail-close{
     position:fixed;
-    top:12px;
-    right:12px;
+    top:10px;
+    right:10px;
   }
-  .nb-offer-detail-host,
-  .nb-offer-detail-host > .v4-offer-detail-page,
-  .nb-offer-detail-host .v4-offer-detail-grid{
+  .nb-offer-detail-host{
     height:auto;
     min-height:100%;
   }
+  .nb-offer-detail-host > .v4-offer-detail-page{
+    height:auto;
+    min-height:100%;
+    grid-template-rows:56px auto;
+  }
+  .nb-offer-detail-host .detail-back-nav{
+    position:sticky;
+    top:0;
+  }
   .nb-offer-detail-host .v4-offer-detail-grid{
+    height:auto !important;
+    min-height:0 !important;
     grid-template-columns:1fr !important;
+    gap:12px !important;
   }
   .nb-offer-detail-host .v4-offer-poster-shell,
   .nb-offer-detail-host .v4-decision-panel{
