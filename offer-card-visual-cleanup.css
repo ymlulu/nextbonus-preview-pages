@@ -1,6 +1,6 @@
 /* Offer Card visual cleanup.
    Normalizes how Product Art and logos are framed without changing card layout.
-   Bookmark uses one visual system across legacy and composed cards. */
+   Follow uses a quiet + / check state instead of bookmark chrome. */
 
 .nb-offer-card .bookmark,
 .nb-offer-card .mock-bookmark{
@@ -11,31 +11,37 @@
   width:30px;
   height:32px;
   padding:0;
-  border:1px solid rgba(209,216,226,.92);
+  border:0;
   border-radius:9px;
-  background:rgba(255,255,255,.94);
-  color:#23324a;
+  background:transparent;
+  color:#667085;
   display:grid;
   place-items:center;
-  box-shadow:0 1px 4px rgba(22,38,61,.04);
-  transition:background .15s ease,border-color .15s ease,color .15s ease,transform .12s ease;
+  box-shadow:none;
+  transition:background .15s ease,color .15s ease,transform .12s ease;
 }
 .nb-offer-card .bookmark:hover,
-.nb-offer-card .mock-bookmark:hover{background:#fff;border-color:#c7d0dc}
+.nb-offer-card .mock-bookmark:hover{background:rgba(120,120,128,.09)}
 .nb-offer-card .bookmark:active,
 .nb-offer-card .mock-bookmark:active{transform:scale(.96)}
 .nb-offer-card .bookmark svg,
-.nb-offer-card .mock-bookmark svg{width:18px;height:22px;display:block;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-
-/* Followed state changes only the bookmark glyph. The outer button chrome stays identical. */
+.nb-offer-card .mock-bookmark svg{
+  width:18px;
+  height:18px;
+  display:block;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
 .nb-offer-card .bookmark.saved,
 .nb-offer-card .mock-bookmark.saved{
-  background:rgba(255,255,255,.94);
-  border-color:rgba(209,216,226,.92);
-  color:#23324a;
+  background:transparent;
+  color:#0a71ff;
 }
-.nb-offer-card .bookmark.saved svg path,
-.nb-offer-card .mock-bookmark.saved svg path{fill:currentColor}
+.nb-offer-card .bookmark.saved:hover,
+.nb-offer-card .mock-bookmark.saved:hover{background:rgba(10,113,255,.08)}
 
 /* Product art framing */
 .nb-offer-card .nb-main-art{overflow:hidden;border-radius:12px}
