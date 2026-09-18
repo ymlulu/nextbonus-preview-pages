@@ -8,6 +8,13 @@
       const el=event.target.closest?.('[data-action]');
       if(!el) return false;
       const action=el.dataset.action;
+      if(action==='open-add-product'){
+        const model=window.NextBonusPageModels?.addProduct;
+        if(!model) throw new Error('Add Product page model unavailable');
+        ctx.state.addFlow=model.createFlow();
+        ctx.renderApp?.();
+        return {handled:true};
+      }
       if(action==='wallet-clear-product-search'){
         ctx.state.productSearch='';
         return {render:true,focusId:'wallet-search'};

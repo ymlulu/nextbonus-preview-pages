@@ -1,0 +1,91 @@
+(() => {
+  'use strict';
+  const root=window.NextBonusPageModels=window.NextBonusPageModels||{};
+
+  const FILTERS=Object.freeze([
+    ['全部',null],
+    ['信用卡','信用卡'],
+    ['银行','银行账户'],
+    ['券商','券商账户'],
+    ['会籍','其他']
+  ]);
+
+  function createFlow(){
+    return {
+      step:'product',
+      category:null,
+      product:null,
+      search:'',
+      filter:'全部',
+      last4:'',
+      nickname:'',
+      opened:'',
+      track:null,
+      offer:null,
+      reward:'',
+      tasks:[{id:'t1',desc:'',due:''}],
+      savedProductId:null,
+      submitting:false,
+      committed:false,
+      offerLoading:false
+    };
+  }
+
+  function catalogEntries(catalog){
+    return Object.entries(catalog||{}).flatMap(([category,products])=>
+      (products||[]).map(product=>({category,product}))
+    );
+  }
+
+  function visibleEntries(catalog,flow){
+    const category=Object.fromEntries(FILTERS)[flow.filter]||null;
+    const query=String(flow.search||'').trim().toLowerCase();
+    return catalogEntries(catalog).filter(({category:itemCategory,product})=>{
+      if(category&&itemCategory!==category) return false;
+      if(!query) return true;
+      return `${product.name||''} ${product.institution||''} ${product.subtype||''}`.toLowerCase().includes(query);
+    });
+  }
+
+  function resetAfterCategory(flow){
+    flow.product=null;
+    resetAfterProduct(flow);
+  }
+
+  function resetAfterProduct(flow){
+    flow.last4='';
+    flow.nickname='';
+    flow.opened='';
+    flow.track=null;
+    flow.offer=null;
+    flow.reward='';
+    flow.tasks=[{id:'t1',desc:'',due:''}];
+    flow.savedProductId=null;
+    flow.submitting=false;
+    flow.committed=false;
+    flow.offerLoading=false;
+  }
+
+  function back(flow){
+    const map={info:'product',track:'info',offer:'track',manual:'offer','membership-confirm':'product'};
+    if(map[flow.step]){
+      flow.step=map[flow.step];
+      return true;
+    }
+    return false;
+  }
+
+  function progressed(flow){
+    return !!flow&&!['category','product','success'].includes(flow.step);
+  }
+
+  root.addProduct=Object.freeze({
+    FILTERS,
+    createFlow,
+    visibleEntries,
+    resetAfterCategory,
+    resetAfterProduct,
+    back,
+    progressed
+  });
+})();

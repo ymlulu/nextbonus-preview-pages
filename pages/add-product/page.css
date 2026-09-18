@@ -1,0 +1,27 @@
+/* Add Product modal-owned presentation. Typography remains centralized in ui-typography*.css. */
+.add-product-backdrop{background:rgba(28,39,58,.28);backdrop-filter:blur(2px)}
+.add-product-modal{width:min(720px,100%);border-radius:12px;box-shadow:0 26px 70px rgba(20,33,60,.2)}
+.add-product-modal .modal-head{padding:13px 17px;background:#fff}
+.add-progress-wrap{padding:11px 19px 3px;border-bottom:1px solid #f0f3f7}
+.add-progress{display:grid;grid-template-columns:24px 1fr 24px 1fr 24px 1fr 24px;align-items:center}
+.add-progress span{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#edf1f6}
+.add-progress span.done{background:#0877ff}
+.add-progress i{height:2px;background:#e6ebf2}
+.add-progress-labels{display:grid;grid-template-columns:repeat(4,1fr);margin-top:5px}
+.add-progress-labels b{text-align:center}
+.add-product-modal .modal-body{padding:15px 17px 17px}
+.add-product-modal .modal-foot{padding:10px 17px;background:#fff}
+.add-product-modal .category-grid{gap:9px}
+.add-product-modal .category-tile{border-radius:9px;padding:13px}
+.add-product-modal .category-icon{margin-bottom:8px}
+.add-product-modal .option-list{gap:7px}
+.add-product-modal .option-row{border-radius:8px;padding:9px 10px}
+.add-product-modal .input,.add-product-modal .textarea{border-radius:8px}
+.add-product-modal .btn{border-radius:8px}
+.add-product-modal .filters{margin:10px 0 12px}
+.add-product-modal .pill{padding:5px 9px}
+.add-product-modal .mini-art{width:50px;height:31px}
+.add-product-modal .option-main{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
+.add-product-modal .option-title,.add-product-modal .option-sub{display:block}
+.add-product-modal .add-card-art{width:72px;height:45px;flex:0 0 72px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:transparent;border-radius:7px}
+.add-product-modal .add-card-art img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}

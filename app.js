@@ -128,8 +128,9 @@
 
   function render(){
     if(!window.NextBonusPageRegistry) throw new Error('Page Registry unavailable');
-    const content=window.NextBonusPageRegistry.render(state.route,pageContext());
-    document.getElementById('app').innerHTML=renderShell(content)+renderModal();
+    const ctx=pageContext();
+    const content=window.NextBonusPageRegistry.render(state.route,ctx);
+    document.getElementById('app').innerHTML=renderShell(content)+renderModal(ctx);
     storageCore.save(state);
     syncBrowserHistory();
   }
@@ -439,27 +440,9 @@
   }
 
 
-  const bonusOfferChoice=window.NextBonusBonusOfferChoice;
-  if(!bonusOfferChoice) throw new Error('Bonus offer choice feature unavailable');
-  function offerChoicesFor(prod){ return bonusOfferChoice.offerChoicesFor(prod); }
-  function resolveOfferChoice(prod,choiceId){ return bonusOfferChoice.resolveOfferChoice(prod,choiceId); }
-  async function ensureReviewedOfferHistory(prod){ return bonusOfferChoice.ensureReviewedOfferHistory(prod); }
-
-  async function enterAddOfferStep(flow){
-    if(!flow||flow.offerLoading)return;
-    flow.offerLoading=true;render();
-    await ensureReviewedOfferHistory(flow.product);
-    if(state.addFlow!==flow)return;
-    flow.offerLoading=false;flow.step='offer';render();
-  }
-
-  function addProductContext(){
-    return {flow:state.addFlow,catalog,esc,localDateISO,offerChoicesFor};
-  }
-
-  function renderModal(){
+  function renderModal(ctx){
     if(!state.modal && !state.addFlow) return '';
-    if(state.addFlow) return window.NextBonusAddProductPage.render(addProductContext());
+    if(state.addFlow) return window.NextBonusAddProductPage.render(ctx);
     const m=state.modal;
     if(m.type==='apply-risk') return `<div class="modal-backdrop"><div class="modal"><div class="modal-head"><div class="modal-title">确认继续申请</div><button class="close-btn" data-action="modal-close">×</button></div><div class="modal-body"><p class="confirm-copy">${esc(m.copy||'你可能无法获得当前开卡奖励。仍要继续申请吗？')}</p><p class="muted">这只是风险确认，不替你强制拦截申请。</p></div><div class="modal-foot"><button class="btn secondary" data-action="modal-close">返回</button><button class="btn primary" data-action="apply-confirm">继续申请</button></div></div></div>`;
     if(m.type==='simple') return `<div class="modal-backdrop"><div class="modal"><div class="modal-head"><div class="modal-title">${esc(m.title)}</div><button class="close-btn" data-action="modal-close">×</button></div><div class="modal-body"><p class="confirm-copy">${esc(m.copy)}</p>${m.detail?`<p class="muted">${esc(m.detail)}</p>`:''}</div><div class="modal-foot"><span></span><button class="btn primary" data-action="modal-close">知道了</button></div></div></div>`;
@@ -468,74 +451,8 @@
     return '';
   }
 
-  function openAddProduct(){
-    state.addFlow={step:'product',category:null,product:null,search:'',filter:'全部',last4:'',nickname:'',opened:'',track:null,offer:null,reward:'',tasks:[{id:'t1',desc:'',due:''}],savedProductId:null,submitting:false,committed:false,offerLoading:false};
-    render();
-  }
-  function resetAddAfterCategory(f){
-    f.product=null; f.last4=''; f.nickname=''; f.opened=''; f.track=null; f.offer=null; f.reward='';
-    f.tasks=[{id:'t1',desc:'',due:''}]; f.savedProductId=null; f.submitting=false; f.committed=false;
-  }
-  function resetAddAfterProduct(f){
-    f.last4=''; f.nickname=''; f.opened=''; f.track=null; f.offer=null; f.reward='';
-    f.tasks=[{id:'t1',desc:'',due:''}]; f.savedProductId=null; f.submitting=false; f.committed=false;
-  }
-
-
-
-
-
-  function submitAddedProduct(){
-    const f=state.addFlow; if(!f||f.submitting||f.committed) return;
-    const lifecycle=window.NextBonusProductLifecycleCore;
-    if(!lifecycle) throw new Error('Product Lifecycle Core unavailable');
-    f.submitting=true;
-    const type=f.category==='信用卡'?'信用卡':f.category==='其他'?'会籍':'银行和券商账户';
-    const p=lifecycle.createUserProduct(state,{
-      idPrefix:'p-local',offerId:f.product.offerId||null,type,name:f.product.name,institution:f.product.institution,
-      instance:f.category==='信用卡'?(f.last4?`•••• ${f.last4}`:'账户 1'):(f.nickname||f.product.subtype||'主账户'),
-      art:f.product.art||'bank',cardImageLocal:f.product.cardImageLocal||null,opened:f.opened||'',
-      annualFee:f.category==='信用卡'?(f.product.annualFee||'以产品规则为准'):'—',earning:f.product.earning||'—'
-    });
-    f.savedProductId=p.id;
-    state.productSearch='';
-    state.productSectionExpanded=state.productSectionExpanded||{};
-    if(state.products.filter(x=>x.type===type).length>=8) state.productSectionExpanded[type]=true;
-    if(f.track){
-      const chosen=f.offer==='manual'?null:resolveOfferChoice(f.product,f.offer);
-      const manualEntries=f.offer==='manual'?(f.tasks||[]).filter(t=>String(t.desc||'').trim()||t.due):[];
-      const reward=f.offer==='manual'?String(f.reward||'').trim():(chosen?.value||'开户 / 开卡奖励');
-      const tasks=f.offer==='manual'?manualEntries.filter(t=>String(t.desc||'').trim()).map(t=>({id:t.id,label:String(t.desc||'').trim(),dueDate:t.due||null})):null;
-      const manualDue=f.offer==='manual'?(manualEntries.find(t=>t.due)?.due||null):null;
-      lifecycle.createBonusTracking(state,{
-        identity:p.id,productId:p.id,productName:p.name,productLabel:p.name,offerId:chosen?.sourceOfferId||f.product.offerId||null,
-        reward,requirement:chosen?.req||'完成对应奖励条件',tasks,anchorDate:f.opened||null,anchorKind:'user_product_opened_date',category:f.category,
-        dueDate:f.offer==='manual'?manualDue:null,preserveEmptyReward:f.offer==='manual',
-        action:f.category==='信用卡'?'完成开卡奖励':'完成开户奖励条件',
-        summary:'这是你在添加产品时建立的奖励追踪。逐项完成条件即可。'
-      });
-      lifecycle.removeSavedOffer(state,chosen?.sourceOfferId||null);
-    }
-    f.committed=true; f.submitting=false; f.step='success';
-  }
-
   function formatAnniversary(date){ try{ const d=new Date(date+'T00:00:00'); return `${d.getMonth()+1} 月 ${d.getDate()} 日`; }catch(e){return '—';} }
   function shortDate(date){ try{ const d=new Date(date+'T00:00:00'); return `${d.getMonth()+1}/${d.getDate()}`;}catch(e){return date;} }
-
-  function goAddBack(){
-    const f=state.addFlow;if(!f)return;
-    const map={info:'product',track:'info',offer:'track',manual:'offer','membership-confirm':'product'};
-    if(map[f.step])f.step=map[f.step];else if(f.step==='product'||f.step==='category')state.addFlow=null;
-    render();
-  }
-  function closeAdd(){
-    const f=state.addFlow;
-    const progressed=!!f && !['category','product','success'].includes(f.step);
-    if(progressed){
-      f._confirmClose=true; render(); return;
-    }
-    state.addFlow=null; state.modal=null; render();
-  }
 
   function completeAttention(id, mode='complete'){
     const idx=state.activeAttention.findIndex(a=>a.id===id); if(idx<0) return;
@@ -620,7 +537,6 @@
     if(action==='login-cancel'){ const source=state.returnSource||'discover'; state.route=source; state.returnTarget=null;state.pendingIntent=null;state.returnSource=null;render(); if(['discover','wishlist','products','attention'].includes(source)) restoreScroll(source); return; }
     if(action==='toggle-account'){ state.accountMenu=!state.accountMenu; render(); return; }
     if(action==='logout'){ logout(); return; }
-    if(action==='open-add-product'){ openAddProduct(); return; }
     if(action==='clear-product-search'){ state.productSearch='';render();return; }
     if(action==='open-all-attention'){ navigate('attention',{tab:'active'}); return; }
     if(action==='toggle-past'){ state.pastOpen=!state.pastOpen;render();return; }
@@ -640,41 +556,11 @@
     if(action==='history-deeplink'){ state.attentionProductFilter=el.dataset.product;state.attentionTab='history';state.historyStatusFilter='all';state.historyVisibleCount=20;state.route='attention'; const candidate=state.attentionHistory.find(h=>h.id===el.dataset.historyId);state.expandedAttentionId=candidate?.id||null;render();window.scrollTo(0,0);return; }
 
 
-    // Add Product actions
-    if(action==='add-close'){ closeAdd();return; }
-    if(action==='add-continue-editing'){ state.addFlow._confirmClose=false;render();return; }
-    if(action==='add-discard'){ state.addFlow=null;state.modal=null;render();return; }
-    if(action==='add-back'){ goAddBack();return; }
-    if(action==='add-category'){ const f=state.addFlow; const next=el.dataset.category; if(f.category!==next) resetAddAfterCategory(f); f.category=next; f.step='product';f.search='';f.filter='全部';render();return; }
-    if(action==='add-filter'){ state.addFlow.filter=el.dataset.value;render();return; }
-    if(action==='add-clear-search'){ state.addFlow.search='';state.addFlow.reportStatus=null;render();return; }
-    if(action==='add-report-missing'){ state.addFlow.reportStatus='loading';render();setTimeout(()=>{if(state.addFlow){state.addFlow.reportStatus='submitted';render();}},150);return; }
-    if(action==='add-product-select'){ const f=state.addFlow; const category=el.dataset.category||f.category; const next=(catalog[category]||[]).find(x=>x.id===el.dataset.id); if(!next)return; if(f.product?.id!==next.id) resetAddAfterProduct(f); f.category=category;f.product=next;void ensureReviewedOfferHistory(next);if(category==='其他')f.step='membership-confirm';else f.step='info';render();return; }
-    if(action==='add-clear-opened'){ state.addFlow.opened='';render();return; }
-    if(action==='add-to-track'){ state.addFlow.step='track';render();return; }
-    if(action==='add-track-choice'){ state.addFlow.track=el.dataset.value==='yes';render();return; }
-    if(action==='add-track-next'){ const f=state.addFlow;if(f.track===true){enterAddOfferStep(f);return;}f.track=false;submitAddedProduct();render();return; }
-    if(action==='add-offer-choice'){ state.addFlow.offer=el.dataset.id;render();return; }
-    if(action==='add-offer-next'){ const f=state.addFlow;if(f.offer==='manual'){f.step='manual';render();return;}if(!f.offer){f.track=false;}else{f.track=true;}submitAddedProduct();render();return; }
-    if(action==='add-task'){ state.addFlow.tasks.push({id:`t${Date.now()}`,desc:'',due:''});render();return; }
-    if(action==='clear-task-due'){ const t=state.addFlow.tasks.find(x=>x.id===el.dataset.id);if(t)t.due='';render();return; }
-    if(action==='delete-task'){ state.addFlow.tasks=state.addFlow.tasks.filter(t=>t.id!==el.dataset.id);render();return; }
-    if(action==='add-manual-submit'){ const f=state.addFlow,has=!!String(f.reward||'').trim()||(f.tasks||[]).some(t=>String(t.desc||'').trim()||t.due);if(!has){f.track=false;f.offer=null;}else{f.track=true;f.offer='manual';}submitAddedProduct();render();return; }
-    if(action==='add-membership-submit'){ submitAddedProduct();render();return; }
-    if(action==='add-view-product'){ state.currentProductId=state.addFlow.savedProductId;state.addFlow=null;state.route='product-detail';render();return; }
-    if(action==='add-another'){ openAddProduct();return; }
   });
 
   document.addEventListener('input', e => {
     if(e.target.id==='offer-search'){ state.offerSearch=e.target.value; render(); focusEnd('offer-search'); }
     if(e.target.id==='product-search'){ state.productSearch=e.target.value; render(); focusEnd('product-search'); }
-    if(e.target.id==='nb-add-search' && state.addFlow){ state.addFlow.search=e.target.value; render(); focusEnd('nb-add-search'); }
-    if(e.target.id==='add-last4' && state.addFlow){ state.addFlow.last4=e.target.value.replace(/\D/g,'').slice(0,4); }
-    if(e.target.id==='add-nickname' && state.addFlow){ state.addFlow.nickname=e.target.value; }
-    if(e.target.id==='add-opened' && state.addFlow){ state.addFlow.opened=e.target.value; const clear=e.target.closest('.date-field-row')?.querySelector('[data-action="add-clear-opened"]'); if(clear) clear.disabled=!e.target.value; }
-    if(e.target.id==='add-reward' && state.addFlow){ state.addFlow.reward=e.target.value; updateManualSubmit(); }
-    if(e.target.classList.contains('task-desc') && state.addFlow){ const t=state.addFlow.tasks.find(t=>t.id===e.target.dataset.id); if(t)t.desc=e.target.value; updateManualSubmit(); }
-    if(e.target.classList.contains('task-due') && state.addFlow){ const t=state.addFlow.tasks.find(t=>t.id===e.target.dataset.id); if(t)t.due=e.target.value; updateManualSubmit(); }
   });
 
   document.addEventListener('change', e => {
@@ -684,13 +570,6 @@
       const a=state.activeAttention.find(x=>x.id===e.target.dataset.attention); const c=a?.checklist.find(x=>x.id===e.target.dataset.check); if(c)c.done=e.target.checked; render();
     }
   });
-
-  function updateManualSubmit(){
-    if(!state.addFlow) return;
-    const valid=state.addFlow.reward.trim() && state.addFlow.tasks.length && state.addFlow.tasks.every(t=>t.desc.trim()&&t.due);
-    const btn=document.querySelector('[data-action="add-manual-submit"]');
-    if(btn) btn.disabled=!valid;
-  }
 
   window.addEventListener?.('popstate', e=>{
     const snap=e.state; if(!snap?.nb) return;

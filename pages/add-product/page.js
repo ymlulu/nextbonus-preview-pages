@@ -1,30 +1,6 @@
 (() => {
   'use strict';
 
-  const FILTERS = Object.freeze([
-    ['全部', null],
-    ['信用卡', '信用卡'],
-    ['银行', '银行账户'],
-    ['券商', '券商账户'],
-    ['会籍', '其他']
-  ]);
-
-  function catalogEntries(catalog){
-    return Object.entries(catalog || {}).flatMap(([category, products]) =>
-      (products || []).map(product => ({category, product}))
-    );
-  }
-
-  function visibleEntries(catalog, flow){
-    const category = Object.fromEntries(FILTERS)[flow.filter] || null;
-    const query = String(flow.search || '').trim().toLowerCase();
-    return catalogEntries(catalog).filter(({category:itemCategory, product}) => {
-      if(category && itemCategory !== category) return false;
-      if(!query) return true;
-      return `${product.name || ''} ${product.institution || ''} ${product.subtype || ''}`.toLowerCase().includes(query);
-    });
-  }
-
   function progress(step){
     const stage = step === 'product' ? 1 : step === 'info' ? 2 : ['track','offer','manual'].includes(step) ? 3 : 4;
     return `<div class="add-progress"><span class="${stage>=1?'done':''}">1</span><i></i><span class="${stage>=2?'done':''}">2</span><i></i><span class="${stage>=3?'done':''}">3</span><i></i><span class="${stage>=4?'done':''}">4</span></div><div class="add-progress-labels"><b>选择产品</b><b>基本信息</b><b>奖励</b><b>完成</b></div>`;
@@ -34,19 +10,25 @@
   const next = (action, label, disabled=false) => `<button class="btn primary" data-action="${action}" ${disabled?'disabled':''}>${label}</button>`;
   const footer = (left, right='') => `<div class="modal-foot">${left}${right || '<span></span>'}</div>`;
 
-  function selector(flow, catalog, esc){
-    const items = visibleEntries(catalog, flow);
+  function selector(flow, catalog, esc, model){
+    const items = model.visibleEntries(catalog, flow);
     const rows = items.map(({category, product}) => `<button class="option-row" type="button" data-action="add-product-select" data-id="${esc(product.id)}" data-category="${esc(category)}" data-nb-add-product-id="${esc(product.id)}" data-nb-add-category="${esc(category)}">${product.cardImageLocal?`<span class="add-card-art"><img src="${esc(product.cardImageLocal)}" alt="${esc(product.name)}" /></span>`:`<div class="mini-art ${esc(product.art||'bank')}"></div>`}<span class="option-main"><span class="option-title">${esc(product.name)}</span><span class="option-sub">${esc(product.institution)}${product.subtype?` · ${esc(product.subtype)}`:''}</span></span><span>›</span></button>`).join('');
     return {
       title: '添加产品',
-      body: `<div class="search-wrap"><span class="search-icon">⌕</span><input id="nb-add-search" class="search" value="${esc(flow.search||'')}" placeholder="搜索信用卡、银行账户、券商或会籍" />${flow.search?'<button class="search-clear" type="button" data-action="add-clear-search" data-nb-clear-search>×</button>':''}</div><div class="filters nb-add-filter-row">${FILTERS.map(([label])=>`<button class="pill ${flow.filter===label?'active':''}" type="button" data-action="add-filter" data-value="${esc(label)}" data-nb-add-filter="${esc(label)}">${esc(label)}</button>`).join('')}</div>${rows?`<div class="option-list">${rows}</div>`:'<div class="empty"><h3>没有找到这个产品</h3><p>换个关键词试试。</p></div>'}`,
+      body: `<div class="search-wrap"><span class="search-icon">⌕</span><input id="nb-add-search" class="search" value="${esc(flow.search||'')}" placeholder="搜索信用卡、银行账户、券商或会籍" />${flow.search?'<button class="search-clear" type="button" data-action="add-clear-search" data-nb-clear-search>×</button>':''}</div><div class="filters nb-add-filter-row">${model.FILTERS.map(([label])=>`<button class="pill ${flow.filter===label?'active':''}" type="button" data-action="add-filter" data-value="${esc(label)}" data-nb-add-filter="${esc(label)}">${esc(label)}</button>`).join('')}</div>${rows?`<div class="option-list">${rows}</div>`:'<div class="empty"><h3>没有找到这个产品</h3><p>换个关键词试试。</p></div>'}`,
       foot: footer(back())
     };
   }
 
   function render(ctx){
-    const {flow:f, catalog, esc, localDateISO, offerChoicesFor} = ctx;
+    const {state, catalog, esc, localDateISO} = ctx;
+    const f=state.addFlow;
     if(!f) return '';
+    window.NextBonusEvents?.bind('add-product',ctx);
+    const model=window.NextBonusPageModels?.addProduct;
+    const offerChoice=window.NextBonusBonusOfferChoice;
+    if(!model) throw new Error('Add Product page model unavailable');
+    if(!offerChoice) throw new Error('Bonus offer choice feature unavailable');
 
     if(f._confirmClose){
       return '<div class="modal-backdrop add-product-backdrop"><div class="modal add-product-modal"><div class="modal-head"><div class="modal-title">退出添加？</div></div><div class="modal-body"><p class="confirm-copy">已填写的内容不会保存。</p></div><div class="modal-foot"><button class="btn secondary" data-action="add-continue-editing" data-nb-exit-continue>继续添加</button><button class="btn danger" data-action="add-discard" data-nb-exit-confirm>退出</button></div></div></div>';
@@ -54,7 +36,7 @@
 
     let view;
     if(f.step === 'category' || f.step === 'product'){
-      view = selector(f, catalog, esc);
+      view = selector(f, catalog, esc, model);
     }else if(f.step === 'info'){
       const isCard = f.category === '信用卡';
       view = {
@@ -72,7 +54,7 @@
       };
     }else if(f.step === 'offer'){
       const isCard = f.category === '信用卡';
-      const result = offerChoicesFor(f.product);
+      const result = offerChoice.offerChoicesFor(f.product);
       const rows = result.choices.map(choice => `<button class="option-row ${f.offer===choice.id?'selected':''}" data-action="add-offer-choice" data-id="${esc(choice.id)}"><span class="radio-dot"></span><span class="option-main"><span class="option-title">${esc(choice.value)}</span><span class="option-sub">${esc(choice.kind==='current'?`当前公开 · ${choice.req}`:`${choice.dateLabel||'历史奖励'} · ${choice.req}`)}</span></span></button>`).join('');
       const status = result.status === 'error'
         ? '<div class="muted" data-nb-reviewed-message="error">历史奖励暂时无法加载；当前公开奖励仍可选择，也可以按实际奖励手动填写。</div>'
@@ -105,7 +87,7 @@
         foot: ''
       };
     }else{
-      view = selector(f, catalog, esc);
+      view = selector(f, catalog, esc, model);
     }
 
     return `<div class="modal-backdrop add-product-backdrop"><div class="modal large add-product-modal" data-nb-stage="${esc(f.step)}"><div class="modal-head"><div><div class="modal-kicker">添加产品</div><div class="modal-title">${view.title}</div></div><button class="close-btn" data-action="add-close">×</button></div><div class="add-progress-wrap">${progress(f.step)}</div><div class="modal-body">${view.body}</div>${view.foot||''}</div></div>`;
