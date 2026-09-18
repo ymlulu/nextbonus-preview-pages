@@ -3,20 +3,32 @@
 
   function progress(step){
     const stage = step === 'product' ? 1 : step === 'info' ? 2 : ['track','offer','manual'].includes(step) ? 3 : 4;
-    return `<div class="add-progress"><span class="${stage>=1?'done':''}">1</span><i></i><span class="${stage>=2?'done':''}">2</span><i></i><span class="${stage>=3?'done':''}">3</span><i></i><span class="${stage>=4?'done':''}">4</span></div><div class="add-progress-labels"><b>选择产品</b><b>基本信息</b><b>奖励</b><b>完成</b></div>`;
+    const labels=['选择产品','基本信息','奖励','完成'];
+    return `<div class="add-progress">${labels.map((label,index)=>{
+      const number=index+1;
+      const done=stage>=number;
+      const complete=stage>number;
+      const current=stage===number;
+      return `<div class="add-step ${done?'done':''} ${complete?'complete':''} ${current?'current':''}"${current?' aria-current="step"':''}><span class="add-step-number ${done?'done':''}">${number}</span><span class="add-step-label">${label}</span></div>`;
+    }).join('')}</div>`;
   }
 
-  const back = () => '<button class="btn secondary" data-action="add-back">返回</button>';
+  const back = () => '<button class="btn secondary" data-action="add-back">上一步</button>';
   const next = (action, label, disabled=false) => `<button class="btn primary" data-action="${action}" ${disabled?'disabled':''}>${label}</button>`;
-  const footer = (left, right='') => `<div class="modal-foot">${left}${right || '<span></span>'}</div>`;
+  const footer = (left, right='') => `<div class="modal-foot"><div class="add-product-foot-inner">${left}${right || '<span></span>'}</div></div>`;
 
   function selector(flow, catalog, esc, model){
     const items = model.visibleEntries(catalog, flow);
-    const rows = items.map(({category, product}) => `<button class="option-row" type="button" data-action="add-product-select" data-id="${esc(product.id)}" data-category="${esc(category)}" data-nb-add-product-id="${esc(product.id)}" data-nb-add-category="${esc(category)}">${product.cardImageLocal?`<span class="add-card-art"><img src="${esc(product.cardImageLocal)}" alt="${esc(product.name)}" /></span>`:`<div class="mini-art ${esc(product.art||'bank')}"></div>`}<span class="option-main"><span class="option-title">${esc(product.name)}</span><span class="option-sub">${esc(product.institution)}${product.subtype?` · ${esc(product.subtype)}`:''}</span></span><span>›</span></button>`).join('');
+    const rows = items.map(({category, product}) => {
+      const art=product.cardImageLocal
+        ? `<div class="add-product-art"><img src="${esc(product.cardImageLocal)}" alt="${esc(product.name)}" /></div>`
+        : `<div class="add-product-art"><div class="mini-art ${esc(product.art||'bank')}"></div></div>`;
+      return `<button class="option-row add-product-selector-row" type="button" data-action="add-product-select" data-id="${esc(product.id)}" data-category="${esc(category)}" data-nb-add-product-id="${esc(product.id)}" data-nb-add-category="${esc(category)}">${art}<span class="option-main"><span class="option-title">${esc(product.name)}</span><span class="option-sub">${esc(product.institution)}${product.subtype?` · ${esc(product.subtype)}`:''}</span></span><span class="add-product-row-chevron" aria-hidden="true">›</span></button>`;
+    }).join('');
     return {
       title: '添加产品',
-      body: `<div class="search-wrap"><span class="search-icon">⌕</span><input id="nb-add-search" class="search" value="${esc(flow.search||'')}" placeholder="搜索信用卡、银行账户、券商或会籍" />${flow.search?'<button class="search-clear" type="button" data-action="add-clear-search" data-nb-clear-search>×</button>':''}</div><div class="filters nb-add-filter-row">${model.FILTERS.map(([label])=>`<button class="pill ${flow.filter===label?'active':''}" type="button" data-action="add-filter" data-value="${esc(label)}" data-nb-add-filter="${esc(label)}">${esc(label)}</button>`).join('')}</div>${rows?`<div class="option-list">${rows}</div>`:'<div class="empty"><h3>没有找到这个产品</h3><p>换个关键词试试。</p></div>'}`,
-      foot: footer(back())
+      body: `<div class="search-wrap nb-add-search-wrap"><span class="search-icon">⌕</span><input id="nb-add-search" class="search" value="${esc(flow.search||'')}" placeholder="搜索信用卡、银行账户、券商或会籍" />${flow.search?'<button class="search-clear" type="button" data-action="add-clear-search" data-nb-clear-search>×</button>':''}</div><div class="filters nb-add-filter-row">${model.FILTERS.map(([label])=>`<button class="pill ${flow.filter===label?'active':''}" type="button" data-action="add-filter" data-value="${esc(label)}" data-nb-add-filter="${esc(label)}">${esc(label)}</button>`).join('')}</div>${rows?`<div class="option-list add-product-selector-list">${rows}</div>`:'<div class="empty"><h3>没有找到这个产品</h3><p>换个关键词试试。</p></div>'}`,
+      foot: ''
     };
   }
 
@@ -31,7 +43,7 @@
     if(!offerChoice) throw new Error('Bonus offer choice feature unavailable');
 
     if(f._confirmClose){
-      return '<div class="modal-backdrop add-product-backdrop"><div class="modal add-product-modal"><div class="modal-head"><div class="modal-title">退出添加？</div></div><div class="modal-body"><p class="confirm-copy">已填写的内容不会保存。</p></div><div class="modal-foot"><button class="btn secondary" data-action="add-continue-editing" data-nb-exit-continue>继续添加</button><button class="btn danger" data-action="add-discard" data-nb-exit-confirm>退出</button></div></div></div>';
+      return '<div class="modal-backdrop add-product-backdrop"><div class="modal add-product-modal add-product-confirm-modal"><div class="modal-head"><div class="modal-title">退出添加？</div></div><div class="modal-body"><p class="confirm-copy">已填写的内容不会保存。</p></div><div class="modal-foot"><button class="btn secondary" data-action="add-continue-editing" data-nb-exit-continue>继续添加</button><button class="btn danger" data-action="add-discard" data-nb-exit-confirm>退出</button></div></div></div>';
     }
 
     let view;
@@ -90,7 +102,7 @@
       view = selector(f, catalog, esc, model);
     }
 
-    return `<div class="modal-backdrop add-product-backdrop"><div class="modal large add-product-modal" data-nb-stage="${esc(f.step)}"><div class="modal-head"><div><div class="modal-kicker">添加产品</div><div class="modal-title">${view.title}</div></div><button class="close-btn" data-action="add-close">×</button></div><div class="add-progress-wrap">${progress(f.step)}</div><div class="modal-body">${view.body}</div>${view.foot||''}</div></div>`;
+    return `<div class="modal-backdrop add-product-backdrop"><div class="modal large add-product-modal" data-nb-stage="${esc(f.step)}"><div class="modal-head"><div class="add-product-head-inner"><div class="modal-title">${view.title}</div><button class="close-btn" type="button" data-action="add-close" aria-label="关闭添加产品">×</button></div></div><div class="add-progress-wrap"><div class="add-progress-inner">${progress(f.step)}</div></div><div class="modal-body"><div class="add-product-body-inner">${view.body}</div></div>${view.foot||''}</div></div>`;
   }
 
   window.NextBonusAddProductPage = Object.freeze({render});
