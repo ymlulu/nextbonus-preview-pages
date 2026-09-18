@@ -5,7 +5,11 @@
   function build({state,currentOffer,offerResult}){
     const offer=currentOffer();
     const supportsAssessment=!!window.NextBonusAssessmentContract?.supported?.(offer.id);
-    const isEnded=state.unavailableSavedIds.includes(offer.id);
+    const history=window.NextBonusWatchlistState?.list?.('history')||[];
+    const isEnded=history.some(item=>
+      item.offerId===offer.id &&
+      ['expired','ended','unavailable'].includes(String(item.status||'').toLowerCase())
+    );
     const result=supportsAssessment?offerResult(offer):null;
     const isPlatinum=offer.id==='amex-platinum';
     const posterIndex=((state.posterIndex||0)%2+2)%2;
@@ -21,7 +25,7 @@
       isPlatinum,
       posterIndex,
       posterSrc,
-      hasAssessmentResult:!!state.assessmentResults[offer.id]
+      hasAssessmentResult:!!state.assessmentResults?.[offer.id]
     });
   }
 
