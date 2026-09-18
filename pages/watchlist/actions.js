@@ -20,6 +20,10 @@
         }
         return {preventDefault:true};
       }
+      if(action==='open-offer'){
+        ctx.openOffer?.(el.dataset.id,'wishlist');
+        return {preventDefault:true};
+      }
       return false;
     }
   });
