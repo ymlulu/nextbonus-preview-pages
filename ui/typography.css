@@ -160,6 +160,19 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 .toast{color:var(--nb-label-on-accent)!important}.toast button{color:var(--nb-system-blue)!important}
 
 /* Discover / Offer cards */
+/* Offer Card component typography.
+   Layout/visual framing is owned by offer-card.css. */
+.nb-offer-card .nb-provider-text{font-size:12px;font-weight:600;letter-spacing:.04em}
+.nb-offer-card .nb-brand-art{font-size:17px;font-weight:850;letter-spacing:-.4px}
+.nb-offer-card .nb-status-tag{font-size:9.5px;font-weight:750}
+.nb-offer-card .nb-offer-name{font-size:14px;font-weight:600;line-height:1.18}
+.nb-offer-card .nb-primary-value{font-size:26px;font-weight:700;letter-spacing:-.45px;line-height:1.03}
+.nb-offer-card .nb-primary-value.is-short{font-size:24px}
+.nb-offer-card .nb-primary-value.is-medium{font-size:22px}
+.nb-offer-card .nb-primary-value.is-long{font-size:20px;line-height:1.05}
+.nb-offer-card .nb-requirement{font-size:12px;line-height:1.25}
+.nb-offer-card .nb-tag{font-size:10.25px;font-weight:600}
+
 .nb-offer-card .nb-provider-text,.fallback-offer-card .provider{color:var(--nb-label-secondary)!important}
 .nb-offer-card .nb-offer-name,.fallback-offer-card .offer-name,.nb-offer-card .nb-primary-value,.fallback-offer-card .primary-value{color:var(--nb-label-primary)!important}
 .nb-offer-card .nb-requirement,.fallback-offer-card .requirement,.nb-offer-card .nb-tag,.fallback-offer-card .soft-tag{color:var(--nb-label-secondary)!important}
