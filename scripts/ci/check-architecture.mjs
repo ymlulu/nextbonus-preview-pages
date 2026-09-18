@@ -24,6 +24,28 @@ requireText(finalize, 'NextBonusTerminologyUI?.polish?.(root)', 'ui/finalize.js 
 requireText(finalize, 'NextBonusTypography?.sync?.(root)', 'ui/finalize.js must call the typography owner.');
 requireText(finalize, 'NextBonusSemanticTypography?.sync?.(root)', 'ui/finalize.js must call the semantic typography owner.');
 
+const retiredAppShellPageTokens = [
+  "action==='offer-category'",
+  "action==='clear-offer-search'",
+  "action==='clear-product-search'",
+  "action==='toggle-past'",
+  "action==='toggle-product-section'",
+  "action==='toggle-product-sort'",
+  "action==='product-sort'",
+  "action==='attention-tab'",
+  "action==='history-load-more'",
+  "action==='clear-attention-filter'",
+  "e.target.id==='offer-search'",
+  "e.target.id==='product-search'",
+  "e.target.id==='attention-product-filter'",
+  "e.target.id==='history-status-filter'"
+];
+for (const token of retiredAppShellPageTokens) {
+  if (app.includes(token)) {
+    failures.push(`app.js must not re-own page-local interaction: ${token}`);
+  }
+}
+
 const orderedScripts = [
   'ui/user-facing-copy.js',
   'ui/terminology.js',
