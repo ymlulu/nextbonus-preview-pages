@@ -4,6 +4,8 @@ Last updated: 2026-09-18
 
 This document is the architecture contract for the NextBonus Preview repository.
 
+> Mandatory coding preflight: every GPT, coding agent, or human contributor must read the root `AGENTS.md` and this document before editing code. Pull requests must acknowledge that preflight and pass `NextBonus CI / quality-gate`.
+
 The goal is not to make the file tree look tidy. The goal is to make every page, business rule, state lifecycle, and infrastructure concern have one clear owner.
 
 Current architecture is frozen around:
