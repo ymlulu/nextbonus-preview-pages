@@ -13,6 +13,8 @@
       pendingIntent:null,
       currentOfferId:null,
       currentProductId:null,
+      offerOverlay:null,
+      productOverlay:null,
       offerSearch:'',
       offerCategory:'全部',
       watchlistHistoryOpen:false,

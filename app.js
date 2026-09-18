@@ -134,8 +134,8 @@
     const ctx=pageContext();
     const content=window.NextBonusPageRegistry.render(state.route,ctx);
     document.getElementById('app').innerHTML=renderShell(content)+renderModal(ctx);
-    window.NextBonusProductDetailOverlay?.afterAppRender?.();
-    window.NextBonusOfferDetailOverlay?.afterAppRender?.();
+    window.NextBonusProductDetailOverlay?.afterAppRender?.(ctx);
+    window.NextBonusOfferDetailOverlay?.afterAppRender?.(ctx);
     window.NextBonusUIFinalize?.schedule?.(document);
     storageCore.save(state);
     syncBrowserHistory();
@@ -401,13 +401,15 @@
     const action=el.dataset.action;
     if(action==='bookmark'){ e.stopPropagation(); toggleSaved(el.dataset.id); return; }
     if(action==='nav'){
+      state.offerOverlay=null;
+      state.productOverlay=null;
       const r=el.dataset.route;
       if(r==='login'){ openLogin(null,null,state.route); }
       else navigate(r,{source:r});
       return;
     }
-    if(action==='open-offer'){ captureScroll(); state.currentOfferId=el.dataset.id; state.routeSource=state.route==='wishlist'?'wishlist':'discover'; state.posterIndex=0; state.route='offer-detail'; render(); window.scrollTo(0,0); return; }
-    if(action==='back-offer-list'){ const target=state.routeSource==='wishlist'?'wishlist':'discover'; state.route=target; render(); restoreScroll(target); return; }
+    if(action==='open-offer'){ captureScroll(); state.currentOfferId=el.dataset.id; state.routeSource=state.route==='wishlist'?'wishlist':'discover'; state.posterIndex=0; state.productOverlay=null; state.route='offer-detail'; render(); window.scrollTo(0,0); return; }
+    if(action==='back-offer-list'){ const target=state.routeSource==='wishlist'?'wishlist':'discover'; state.offerOverlay=null; state.route=target; render(); restoreScroll(target); return; }
     if(action==='direct-apply'){ const o=currentOffer(), r=state.assessmentResults[o.id]; if(!o.applyUrl)return; const appRestriction=!!(r&&['BLOCK','WAIT'].includes(r.internal?.appHard)); const bonusRestriction=!!(r&&(r.eligible==='不可以'||['BLOCK','WAIT'].includes(r.internal?.bonusHard))); const risky=appRestriction||bonusRestriction||!!(r&&r.recommendation==='暂不建议申请'); if(risky){state.modal={type:'apply-risk',copy:appRestriction?'按当前已知规则，你现在申请可能不符合申请限制。仍要继续申请吗？':'你可能无法获得当前开卡奖励。仍要继续申请吗？'};render();}else{window.open(o.applyUrl,'_blank','noopener,noreferrer');} return; }
     if(action==='apply-confirm'){ const o=currentOffer(); state.modal=null; render(); if(o.applyUrl) window.open(o.applyUrl,'_blank','noopener,noreferrer'); return; }
     if(action==='modal-close'){ state.modal=null; render(); return; }
@@ -416,8 +418,8 @@
     if(action==='toggle-account'){ state.accountMenu=!state.accountMenu; render(); return; }
     if(action==='logout'){ logout(); return; }
     if(action==='open-all-attention'){ navigate('attention',{tab:'active'}); return; }
-    if(action==='open-product'){ captureScroll(); state.currentProductId=el.dataset.id; state.editFlow=null; state.route='product-detail'; state.productHistoryOpen=false;render();window.scrollTo(0,0);return; }
-    if(action==='back-products'){ state.route='products';render();restoreScroll('products');return; }
+    if(action==='open-product'){ captureScroll(); state.currentProductId=el.dataset.id; state.editFlow=null; state.offerOverlay=null; state.route='product-detail'; state.productHistoryOpen=false;render();window.scrollTo(0,0);return; }
+    if(action==='back-products'){ state.productOverlay=null; state.route='products';render();restoreScroll('products');return; }
     if(action==='toggle-attention'){ state.expandedAttentionId=state.expandedAttentionId===el.dataset.id?null:el.dataset.id;render();return; }
     if(action==='complete-attention'){ completeAttention(el.dataset.id,'complete');return; }
     if(action==='skip-attention'){ completeAttention(el.dataset.id,'skip');return; }
@@ -435,16 +437,9 @@
   });
 
   window.addEventListener?.('popstate', e=>{
-    const snap=e.state; if(!snap?.nb) return;
+    const snap=e.state;
+    if(!routerCore.applyHistorySnapshot(state,snap)) return;
     suppressBrowserHistory=true;
-    state.route=snap.route||'discover';
-    state.routeSource=snap.routeSource||'discover';
-    state.currentOfferId=snap.currentOfferId||state.currentOfferId;
-    state.currentProductId=snap.currentProductId||state.currentProductId;
-    state.attentionTab=snap.attentionTab||'active';
-    state.attentionProductFilter=snap.attentionProductFilter||'all';
-    state.historyStatusFilter=snap.historyStatusFilter||'all';
-    state.posterIndex=Number(snap.posterIndex||0);
     state.modal=null; state.addFlow=null; state.editFlow=null; state.accountMenu=false;
     render();
     suppressBrowserHistory=false;
