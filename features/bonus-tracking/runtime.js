@@ -334,14 +334,6 @@
     writeJson(APP_STATE_KEY,state);window.location.reload();return true;
   }
 
-  function hideMultiTaskPrimaryActions(){
-    document.querySelectorAll('.attention-expanded').forEach(expanded=>{
-      const checks=expanded.querySelectorAll('[data-action="checklist"]');
-      if(checks.length<=1)return;
-      expanded.querySelector('[data-action="complete-attention"]')?.remove();
-    });
-  }
-
   document.addEventListener('input',event=>{
     if(event.target.id==='add-opened')memory.opened=event.target.value||'';
   },true);
@@ -414,7 +406,4 @@
     },0);
   });
 
-  const observer=new MutationObserver(()=>hideMultiTaskPrimaryActions());
-  const root=document.getElementById('app');if(root)observer.observe(root,{childList:true,subtree:true});
-  hideMultiTaskPrimaryActions();
 })();
