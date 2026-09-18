@@ -51,22 +51,26 @@
     panda:['panda mobile','新用户首月低至 $10','全美覆盖 · 高性价比 · 中文支持','◉','全美覆盖','⌕','灵活套餐','♧','中文客服']
   };
 
-  function dealPoster(type){
+  function dealPoster(type,offer){
     const x=dealPosterMap[type];
-    return `<div class="deal-poster deal-${type}"><div class="deal-poster-brand">${x[0]}</div><div class="deal-poster-kicker">CURRENT OFFER</div><div class="deal-poster-title">${x[1]}</div><div class="deal-poster-copy">${x[2]}</div><div class="deal-poster-features"><div class="deal-poster-feature"><i>${x[3]}</i><b>${x[4]}</b></div><div class="deal-poster-feature"><i>${x[5]}</i><b>${x[6]}</b></div><div class="deal-poster-feature"><i>${x[7]}</i><b>${x[8]}</b></div></div></div>`;
+    const value=offer?.primaryValue||x[1];
+    return `<div class="deal-poster deal-${type}"><div class="deal-poster-brand">${x[0]}</div><div class="deal-poster-kicker">CURRENT OFFER</div><div class="deal-poster-title">${value}</div><div class="deal-poster-copy">${x[2]}</div><div class="deal-poster-features"><div class="deal-poster-feature"><i>${x[3]}</i><b>${x[4]}</b></div><div class="deal-poster-feature"><i>${x[5]}</i><b>${x[6]}</b></div><div class="deal-poster-feature"><i>${x[7]}</i><b>${x[8]}</b></div></div></div>`;
   }
 
-  function dealPanel(id,d,saved){
-    return `<div class="deal-head"><div class="deal-brand"><div class="deal-logo ${d.tone}">${d.logo}</div><div><strong>${d.brand}</strong><small>${d.sub}</small></div></div><button class="deal-save ${saved?'saved':''}" data-action="bookmark" data-id="${id}">♡ ${saved?'已关注':'关注'}</button></div><section class="deal-value-card ${d.tone}"><div class="deal-value-label">当前优惠</div><div class="deal-value">${d.value}</div></section><div class="deal-section-title">${d.title}</div><div class="deal-steps">${d.steps.map((step,i)=>`<div class="deal-step"><div class="deal-step-num ${d.tone}">${i+1}</div><div class="deal-step-copy"><b>${step}</b></div></div>`).join('')}</div><button class="deal-cta ${d.tone}" type="button">${d.cta}</button><details class="deal-terms"><summary>重要信息</summary><div class="deal-terms-copy">${d.terms.map(x=>`<div>• ${x}</div>`).join('')}</div></details>`;
+  function dealPanel(id,d,saved,offer){
+    const value=offer?.primaryValue||d.value;
+    const requirement=offer?.primaryRequirement||'';
+    const terms=requirement&&!d.terms.includes(requirement)?[requirement,...d.terms]:d.terms;
+    return `<div class="deal-head"><div class="deal-brand"><div class="deal-logo ${d.tone}">${d.logo}</div><div><strong>${d.brand}</strong><small>${d.sub}</small></div></div><button class="deal-save ${saved?'saved':''}" data-action="bookmark" data-id="${id}">♡ ${saved?'已关注':'关注'}</button></div><section class="deal-value-card ${d.tone}"><div class="deal-value-label">当前优惠</div><div class="deal-value">${value}</div></section><div class="deal-section-title">${d.title}</div><div class="deal-steps">${d.steps.map((step,i)=>`<div class="deal-step"><div class="deal-step-num ${d.tone}">${i+1}</div><div class="deal-step-copy"><b>${step}</b></div></div>`).join('')}</div><button class="deal-cta ${d.tone}" type="button">${d.cta}</button><details class="deal-terms"><summary>重要信息</summary><div class="deal-terms-copy">${terms.map(x=>`<div>• ${x}</div>`).join('')}</div></details>`;
   }
 
-  function remainingPoster(d){
-    return `<div class="remaining-poster poster-${d.poster}"><div class="remaining-brand">${d.brand.toUpperCase()}</div><div class="remaining-title">${d.title}</div><div class="remaining-kicker">CURRENT OFFER</div><div class="remaining-value">${d.posterValue}</div><div class="remaining-copy">${d.copy}</div><div class="remaining-features">${d.features.map(x=>`<div class="remaining-feature"><b>${x[0]}</b><small>${x[1]}</small></div>`).join('')}</div></div>`;
+  function remainingPoster(d,offer){
+    return `<div class="remaining-poster poster-${d.poster}"><div class="remaining-brand">${d.brand.toUpperCase()}</div><div class="remaining-title">${d.title}</div><div class="remaining-kicker">CURRENT OFFER</div><div class="remaining-value">${offer?.primaryValue||d.posterValue}</div><div class="remaining-copy">${d.copy}</div><div class="remaining-features">${d.features.map(x=>`<div class="remaining-feature"><b>${x[0]}</b><small>${x[1]}</small></div>`).join('')}</div></div>`;
   }
 
-  function remainingPanel(id,d,saved){
+  function remainingPanel(id,d,saved,offer){
     const tiers=d.tiers?`<div class="remaining-tier-head"><span>任务金额</span><span>奖励金额</span></div>${d.tiers.map((x,i)=>`<div class="remaining-tier ${i===0?'best':''}"><span>${x[0]}</span><span><strong>${x[1]}</strong></span></div>`).join('')}`:'';
-    return `<div class="remaining-head"><div class="remaining-head-brand"><div class="remaining-mark ${d.markClass}">${d.mark}</div><div><strong>${d.brand}</strong><small>${d.sub}</small></div></div><button class="remaining-save ${saved?'saved':''}" data-action="bookmark" data-id="${id}">♡ ${saved?'已关注':'关注'}</button></div><section class="remaining-reward"><div class="remaining-reward-top ${d.green?'green':''}"><div class="remaining-reward-label">当前核心奖励</div><div class="remaining-reward-value">${d.reward}</div><div class="remaining-reward-sub">${d.rewardSub}</div></div>${tiers}</section><div class="remaining-section-title">如何完成</div><div class="remaining-timeline">${d.steps.map((step,i)=>`<div class="remaining-step"><div class="remaining-num ${d.green?'green':''}">${i+1}</div><div class="remaining-step-card"><div class="remaining-step-title"><span>${step[0]}</span><span class="remaining-time">${step[2]}</span></div><ul><li>${step[1]}</li></ul></div></div>`).join('')}</div><a class="remaining-cta ${d.green?'green':''}" href="${d.source}" target="_blank" rel="noopener noreferrer">${d.cta} <span>↗</span></a><div class="remaining-deadline">${d.deadline}</div><details class="remaining-eligibility"><summary>申请前请确认资格要求</summary><div class="remaining-eligibility-copy">${d.eligibility.map(x=>`<div>• ${x}</div>`).join('')}</div></details>`;
+    return `<div class="remaining-head"><div class="remaining-head-brand"><div class="remaining-mark ${d.markClass}">${d.mark}</div><div><strong>${d.brand}</strong><small>${d.sub}</small></div></div><button class="remaining-save ${saved?'saved':''}" data-action="bookmark" data-id="${id}">♡ ${saved?'已关注':'关注'}</button></div><section class="remaining-reward"><div class="remaining-reward-top ${d.green?'green':''}"><div class="remaining-reward-label">当前核心奖励</div><div class="remaining-reward-value">${offer?.primaryValue||d.reward}</div><div class="remaining-reward-sub">${d.rewardSub}</div></div>${tiers}</section><div class="remaining-section-title">如何完成</div><div class="remaining-timeline">${d.steps.map((step,i)=>`<div class="remaining-step"><div class="remaining-num ${d.green?'green':''}">${i+1}</div><div class="remaining-step-card"><div class="remaining-step-title"><span>${step[0]}</span><span class="remaining-time">${step[2]}</span></div><ul><li>${step[1]}</li></ul></div></div>`).join('')}</div><a class="remaining-cta ${d.green?'green':''}" href="${d.source}" target="_blank" rel="noopener noreferrer">${d.cta} <span>↗</span></a><div class="remaining-deadline">${d.deadline}</div><details class="remaining-eligibility"><summary>申请前请确认资格要求</summary><div class="remaining-eligibility-copy">${d.eligibility.map(x=>`<div>• ${x}</div>`).join('')}</div></details>`;
   }
 
   function usbankPanel(saved){
@@ -99,8 +103,8 @@
     if(!offer?.id) return null;
     if(offer.id==='usbank-checking') return Object.freeze({className:'bank-bonus-usbank',poster:null,panel:usbankPanel(saved)});
     if(offer.id==='moomoo') return Object.freeze({className:'bank-bonus-moomoo',poster:moomooPoster(),panel:moomooPanel(saved)});
-    if(DEALS[offer.id]) return Object.freeze({className:'deal-detail',poster:dealPoster(DEALS[offer.id].poster),panel:dealPanel(offer.id,DEALS[offer.id],saved)});
-    if(REMAINING[offer.id]) return Object.freeze({className:'remaining-offer',poster:remainingPoster(REMAINING[offer.id]),panel:remainingPanel(offer.id,REMAINING[offer.id],saved)});
+    if(DEALS[offer.id]) return Object.freeze({className:'deal-detail',poster:dealPoster(DEALS[offer.id].poster,offer),panel:dealPanel(offer.id,DEALS[offer.id],saved,offer)});
+    if(REMAINING[offer.id]) return Object.freeze({className:'remaining-offer',poster:remainingPoster(REMAINING[offer.id],offer),panel:remainingPanel(offer.id,REMAINING[offer.id],saved,offer)});
     return null;
   }
 
