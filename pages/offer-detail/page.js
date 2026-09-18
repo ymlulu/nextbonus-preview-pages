@@ -30,7 +30,7 @@
           ${isPlat?`<div class="v4-reference-poster"><img src="${posterSrc}" alt="AMEX Platinum 海报" /><button class="poster-hotspot prev" data-action="poster-step" data-dir="-1" aria-label="上一张海报"></button><button class="poster-hotspot next" data-action="poster-step" data-dir="1" aria-label="下一张海报"></button></div>`:genericPoster(o)}
         </section>
         <aside class="v4-decision-panel">
-          <button class="v4-detail-save ${isSaved(o.id)?'saved':''}" data-action="bookmark" data-id="${o.id}">♡ <span>${isSaved(o.id)?'已关注':'关注'}</span></button>
+          <button class="v4-detail-save nb-follow-control ${isSaved(o.id)?'saved':''}" data-action="bookmark" data-id="${o.id}" aria-label="${isSaved(o.id)?'已关注，点击取消':'关注'}" title="${isSaved(o.id)?'已关注，点击取消':'关注'}"><span class="nb-follow-glyph" aria-hidden="true">${isSaved(o.id)?'✓':'＋'}</span><span>${isSaved(o.id)?'已关注':'关注'}</span></button>
           <div class="v4-nb-logo"><img src="assets/offer-detail/nb-logo-ref.png" alt="NextBonus" /></div>
           <h1>NextBonus 申请建议</h1>
           <p class="v4-decision-copy">${supportsAssessment&&!isEnded?'基于你已确认的信息与当前规则，判断这张卡现在是否适合申请。':isEnded?'这次机会已不再作为当前申请建议。':'只有存在已冻结评估规则时，才显示个性化申请结论。'}</p>
