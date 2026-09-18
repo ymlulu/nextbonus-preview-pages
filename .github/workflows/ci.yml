@@ -32,6 +32,9 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Agent preflight acknowledgement
+        run: node scripts/ci/check-pr-preflight.mjs
+
       - name: JavaScript syntax
         run: node scripts/ci/check-js-syntax.mjs
 
