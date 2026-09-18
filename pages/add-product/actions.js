@@ -211,13 +211,15 @@
         return {handled:true};
       }
       if(action==='add-offer-choice'){
-        flow.offer=el.dataset.id;
+        const nextOffer=el.dataset.id;
+        flow.offer=flow.offer===nextOffer?null:nextOffer;
         rerender(ctx);
         return {handled:true};
       }
       if(action==='add-offer-next'){
         if(!model.rewardChoiceReady(flow)) return {handled:true};
-        flow.track=flow.offer!=='skip';
+        if(flow.offer==='skip') flow.offer=null;
+        flow.track=!!flow.offer;
         submit(ctx);
         rerender(ctx);
         return {handled:true};
