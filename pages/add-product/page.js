@@ -51,9 +51,12 @@
       view = selector(f, catalog, esc, model);
     }else if(f.step === 'info'){
       const isCard = f.category === '信用卡';
+      const selectedArt = f.product?.cardImageLocal
+        ? `<div class="add-info-product-art"><img src="${esc(f.product.cardImageLocal)}" alt="${esc(f.product?.name||'')}" /></div>`
+        : `<div class="add-info-product-art"><div class="mini-art ${esc(f.product?.art||'bank')}"></div></div>`;
       view = {
         title: '补充信息',
-        body: `<div class="report nb-selected-product"><h3>${esc(f.product?.name||'')}</h3><p>${esc(f.product?.institution||'')}</p></div>${isCard?`<div class="form-group"><label class="label">卡号后四位（可选）</label><input id="add-last4" class="input" maxlength="4" inputmode="numeric" value="${esc(f.last4)}" placeholder="例如 1005" /></div>`:`<div class="form-group"><label class="label">账户昵称（可选）</label><input id="add-nickname" class="input" value="${esc(f.nickname)}" placeholder="例如 主账户" /></div>`}<div class="form-group"><label class="label">${isCard?'开卡日期':'开户日期'}（可选）</label><div class="date-field-row"><input id="add-opened" type="date" max="${localDateISO()}" class="input" value="${esc(f.opened)}" /><button class="btn secondary small" data-action="add-clear-opened" ${f.opened?'':'disabled'}>清除日期</button></div></div><p class="hint">这些信息都可以稍后修改。</p>`,
+        body: `<div class="add-info-flow"><div class="add-info-product">${selectedArt}<div class="add-info-product-copy"><span class="option-title">${esc(f.product?.name||'')}</span><span class="option-sub">${esc(f.product?.institution||'')}${f.product?.subtype?` · ${esc(f.product.subtype)}`:''}</span></div></div><div class="add-info-section"><div class="add-info-section-head"><span class="option-title">账户信息</span><span class="option-sub">以下信息都可以稍后修改。</span></div><div class="add-info-fields">${isCard?`<div class="form-group"><label class="label">卡号后四位（可选）</label><input id="add-last4" class="input" maxlength="4" inputmode="numeric" value="${esc(f.last4)}" placeholder="例如 1005" /></div>`:`<div class="form-group"><label class="label">账户昵称（可选）</label><input id="add-nickname" class="input" value="${esc(f.nickname)}" placeholder="例如 主账户" /></div>`}<div class="form-group"><label class="label">${isCard?'开卡日期':'开户日期'}（可选）</label><div class="date-field-row add-info-date-row"><input id="add-opened" type="date" max="${localDateISO()}" class="input" value="${esc(f.opened)}" /><button class="btn ghost small add-info-clear-date" type="button" data-action="add-clear-opened" ${f.opened?'':'hidden'}>清除</button></div></div></div></div></div>`,
         foot: footer(back(), next('add-to-track','继续'))
       };
     }else if(f.step === 'track'){
