@@ -124,7 +124,7 @@
   }
 
   function pageContext(){
-    const ctx={ state, categories, offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, productPageAttentionItem, productSection, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionItem, attentionExpanded, attentionIdentity, openLogin, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, completeAttention, historyCorrection, renderApp:render, persist:()=>storageCore.save(state) };
+    const ctx={ state, categories, offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, productPageAttentionItem, productSection, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionItem, attentionExpanded, attentionIdentity, openOffer, openLogin, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, completeAttention, historyCorrection, renderApp:render, persist:()=>storageCore.save(state) };
     ctx.renderRoute=route=>window.NextBonusPageRegistry.render(route,ctx);
     return ctx;
   }
@@ -172,6 +172,17 @@
     if(opts.source) state.routeSource=opts.source;
     render();
     if(opts.restore) restoreScroll(route); else window.scrollTo({top:0,behavior:'instant'});
+  }
+
+  function openOffer(offerId,source=state.route){
+    if(!offerId) return;
+    captureScroll();
+    state.currentOfferId=offerId;
+    state.routeSource=source==='wishlist'?'wishlist':'discover';
+    state.posterIndex=0;
+    state.route='offer-detail';
+    render();
+    window.scrollTo(0,0);
   }
 
   function openLogin(target, intent=null, source=null){
@@ -496,7 +507,6 @@
     }
     if(action==='offer-category'){ state.offerCategory=el.dataset.category; render(); return; }
     if(action==='clear-offer-search'){ state.offerSearch=''; render(); return; }
-    if(action==='open-offer'){ captureScroll(); state.currentOfferId=el.dataset.id; state.routeSource=state.route==='wishlist'?'wishlist':'discover'; state.posterIndex=0; state.route='offer-detail'; render(); window.scrollTo(0,0); return; }
     if(action==='back-offer-list'){ const target=state.routeSource==='wishlist'?'wishlist':'discover'; state.route=target; render(); restoreScroll(target); return; }
     if(action==='direct-apply'){ const o=currentOffer(), r=state.assessmentResults[o.id]; if(!o.applyUrl)return; const appRestriction=!!(r&&['BLOCK','WAIT'].includes(r.internal?.appHard)); const bonusRestriction=!!(r&&(r.eligible==='不可以'||['BLOCK','WAIT'].includes(r.internal?.bonusHard))); const risky=appRestriction||bonusRestriction||!!(r&&r.recommendation==='暂不建议申请'); if(risky){state.modal={type:'apply-risk',copy:appRestriction?'按当前已知规则，你现在申请可能不符合申请限制。仍要继续申请吗？':'你可能无法获得当前开卡奖励。仍要继续申请吗？'};render();}else{window.open(o.applyUrl,'_blank','noopener,noreferrer');} return; }
     if(action==='apply-confirm'){ const o=currentOffer(); state.modal=null; render(); if(o.applyUrl) window.open(o.applyUrl,'_blank','noopener,noreferrer'); return; }
