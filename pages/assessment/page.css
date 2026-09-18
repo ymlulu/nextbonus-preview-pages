@@ -1,0 +1,48 @@
+/* Assessment modal/page-owned layout. Text metrics and colors stay centralized. */
+.assessment-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.assessment-choice{min-height:52px;border:1px solid #dfe5ee;background:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:11px;text-align:left;cursor:pointer;transition:border .14s ease,background .14s ease,box-shadow .14s ease}
+.assessment-choice:hover{border-color:#aacbfb;background:#fbfdff}
+.assessment-choice.selected{border-color:#0a76ff;background:#f3f8ff;box-shadow:0 0 0 1px rgba(10,118,255,.08)}
+.assessment-compound{display:grid;gap:22px}
+.canonical-assessment-modal{width:min(680px,calc(100vw - 32px));max-height:88vh;padding:0;border:1px solid #e2e8f0;border-radius:20px;background:white;box-shadow:0 24px 90px #101b3940}
+.canonical-assessment-modal::backdrop{background:#13213d88}
+.canonical-modal-body{padding:30px}
+.canonical-modal-body h2{padding-right:24px}
+.canonical-modal-body h3{margin:20px 0 12px}
+.canonical-modal-body p{white-space:pre-wrap}
+.canonical-modal-body progress{width:100%;height:7px;accent-color:#0877ff}
+.canonical-close{position:absolute;right:14px;top:12px;border:0;background:transparent;cursor:pointer}
+.canonical-modal-body footer{display:flex;justify-content:space-between;gap:12px;margin-top:24px}
+.canonical-dimensions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.canonical-dimensions div{padding:14px;background:#f4f7fb;border-radius:12px}
+.canonical-dimensions dd{margin:6px 0 0}
+
+/* Assessment Offer History chart. */
+.canonical-assessment-modal .nb-offer-history{margin:18px 0 4px;padding:16px 0 0;border-top:1px solid #e8edf3}
+.nb-oh-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 18px}
+.nb-oh-stat{padding:12px 13px;border:1px solid #e7ebf0;border-radius:12px;background:#fafbfd;min-width:0}
+.nb-oh-stat-name{margin-bottom:4px}
+.nb-oh-stat-value{overflow-wrap:anywhere}
+.nb-oh-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 8px}
+.nb-oh-ranges{display:inline-flex;padding:3px;border:1px solid #e1e6ed;border-radius:999px;background:#f8fafc}
+.nb-oh-ranges button{border:0;background:transparent;border-radius:999px;padding:6px 10px;cursor:pointer}
+.nb-oh-ranges button.active{background:#edf3ff}
+.nb-oh-stage{min-width:0;width:100%;overflow:hidden}
+.nb-oh-stage svg{display:block;overflow:visible}
+.nb-oh-line{fill:none;stroke:#2f8b5d;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.nb-oh-grid{stroke:#e4e9ee;stroke-width:1;stroke-dasharray:4 5}
+.nb-oh-node{cursor:pointer;outline:none}
+.nb-oh-dot{fill:#fff;stroke:#63a17f;stroke-width:2}
+.nb-oh-node.current .nb-oh-dot{fill:#0a7c49;stroke:#fff;stroke-width:3}
+.nb-oh-node:focus .nb-oh-dot,.nb-oh-node:hover .nb-oh-dot{stroke:#075f38;stroke-width:3}
+.nb-oh-details{margin-top:6px;padding:9px 11px;border:1px solid #e5eaf0;border-radius:10px;background:#fafbfd}
+.nb-oh-note,.nb-oh-empty{margin-top:7px}
+
+@media(max-width:700px){
+  .canonical-modal-body{padding:24px 18px}
+  .canonical-assessment-modal .assessment-choices{grid-template-columns:1fr}
+  .nb-oh-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .nb-oh-toolbar{align-items:flex-start;flex-direction:column}
+  .nb-oh-ranges{width:100%;display:grid;grid-template-columns:1fr 1fr}
+  .nb-oh-ranges button{width:100%}
+}

@@ -4,7 +4,7 @@
 
   function build({state,currentOffer,offerResult}){
     const offer=currentOffer();
-    const supportsAssessment=!!window.NBStaticAssessmentIntegration?.productMap?.[offer.id];
+    const supportsAssessment=!!window.NextBonusAssessmentContract?.supported?.(offer.id);
     const isEnded=state.unavailableSavedIds.includes(offer.id);
     const result=supportsAssessment?offerResult(offer):null;
     const isPlatinum=offer.id==='amex-platinum';

@@ -462,33 +462,6 @@ body .content > .offer-grid{justify-content:start}
   filter:drop-shadow(0 7px 11px rgba(20,36,62,.16));
 }
 
-/* V5 Assessment — deterministic questionnaire pulled from the production Assessment contracts. */
-.v5-assessment-page{max-width:930px;margin:0 auto;padding-top:24px}
-.assessment-shell{max-width:760px;margin:18px auto 0}
-.assessment-progress-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}
-.assessment-progress-head h1{margin:5px 0 0;color:#0b1332;font-size:30px;line-height:1.22;letter-spacing:-.7px}
-.assessment-progress-head>strong{color:#62708f;font-size:13px;font-weight:750;margin-top:12px;white-space:nowrap}
-.assessment-progress{height:5px;background:#e9edf4;border-radius:999px;overflow:hidden;margin:18px 0 22px}
-.assessment-progress i{display:block;height:100%;background:#0877ff;border-radius:inherit;transition:width .18s ease}
-.assessment-card{background:#fff;border:1px solid #e4e9f1;border-radius:18px;box-shadow:0 8px 26px rgba(29,50,85,.045);padding:22px}
-.assessment-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.assessment-choices.compact{margin-top:12px}
-.assessment-choices.multi{grid-template-columns:1fr 1fr}
-.assessment-choice{min-height:52px;border:1px solid #dfe5ee;background:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:11px;color:#152241;text-align:left;font:inherit;font-size:13px;font-weight:650;cursor:pointer;transition:border .14s ease,background .14s ease,box-shadow .14s ease}
-.assessment-choice:hover{border-color:#aacbfb;background:#fbfdff}
-.assessment-choice.selected{border-color:#0a76ff;background:#f3f8ff;box-shadow:0 0 0 1px rgba(10,118,255,.08)}
-.assessment-mark{flex:0 0 20px;width:20px;height:20px;border:1.5px solid #c8d1df;border-radius:50%;display:grid;place-items:center;color:white;font-size:12px;font-weight:900;background:#fff}
-.assessment-choice.selected .assessment-mark{border-color:#0a76ff;background:#0a76ff}
-.assessment-compound{display:grid;gap:22px}
-.assessment-subq{padding-bottom:20px;border-bottom:1px solid #edf1f6}
-.assessment-subq:last-child{padding-bottom:0;border-bottom:0}
-.assessment-subq-title{display:flex;align-items:flex-start;gap:9px;color:#17223f;font-size:14px;font-weight:760;line-height:1.45}
-.assessment-subq-title>span{width:23px;height:23px;border-radius:999px;background:#eef5ff;color:#0877ff;display:grid;place-items:center;font-size:11px;flex:0 0 23px}
-.assessment-help{margin:16px 2px 0;color:#7b8498;font-size:11px;line-height:1.55}
-.assessment-nav{display:flex;justify-content:space-between;gap:12px;margin-top:18px}
-.assessment-nav .btn{min-width:120px}
-.assessment-nav .btn[disabled]{opacity:.38;cursor:default;pointer-events:none}
-.assessment-footnote{text-align:center;color:#9299a8;font-size:10px;margin:14px 0 0}
 .v5-short-summary{font-size:12px;color:#53627f;text-align:center;margin:-2px 0 10px;font-weight:650}
 .v5-primary-alert{border:1px solid #ffd7d2;background:#fff6f5;color:#c73a32;border-radius:10px;padding:9px 11px;font-size:11px;line-height:1.45;margin:10px 0 12px;font-weight:650}
 .v5-reassess{display:block;margin:8px auto 0;border:0;background:transparent;color:#6d7b96;font-size:11px;font-weight:700;cursor:pointer;padding:6px 10px}
@@ -501,14 +474,7 @@ body .content > .offer-grid{justify-content:start}
 
 @media(max-width:780px){
   .credit-products .v4-owned-product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .assessment-progress-head h1{font-size:25px}
-  .assessment-choices,.assessment-choices.multi{grid-template-columns:1fr}
-  .assessment-card{padding:16px;border-radius:15px}
 }
-
-.assessment-inline-number{margin-top:10px;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:#f8fafc;border:1px solid #e7ebf0}
-.assessment-inline-number label{font-size:12px;font-weight:700;color:#455066;white-space:nowrap}
-.assessment-inline-number .input{max-width:150px;margin-left:auto}
 
 /* V8 interaction closeout */
 .v4-generic-poster-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
@@ -531,10 +497,6 @@ body .content > .offer-grid{justify-content:start}
 .product-sort-menu{position:absolute;right:0;top:26px;z-index:20;width:150px;padding:6px;background:#fff;border:1px solid #e3e9f1;border-radius:11px;box-shadow:0 12px 28px rgba(25,45,78,.12)}
 .product-sort-menu button{display:block;width:100%;border:0;background:transparent;text-align:left;padding:8px 9px;border-radius:7px;color:#2c3958;font-size:10px;cursor:pointer}
 .product-sort-menu button:hover{background:#f3f7fc}
-
-.assessment-result-reasons{margin:18px 0;padding:16px 18px;border:1px solid #e5ebf3;border-radius:14px;background:#fff}
-.assessment-result-reasons h3{margin:0 0 8px;font-size:15px;color:#14203c}
-.assessment-result-reasons p{margin:6px 0;color:#5f6c84;font-size:12px;line-height:1.55}
 
 .v4-benefit-item-wrap,.v4-feature-benefit-wrap{display:block}
 .v4-benefit-expanded{padding:12px 14px;border:1px solid #e6ebf2;border-top:0;background:#fbfcfe;color:#52617d;font-size:10.5px;line-height:1.55}
@@ -780,9 +742,3 @@ body .content > .offer-grid{justify-content:start}
   .other-products .v10-info-tile{grid-template-columns:44px minmax(0,1fr) 12px;min-height:70px;padding:8px 9px;gap:9px}
   .v10-info-logo{width:44px;height:44px;border-radius:9px}
 }
-
-/* Canonical Assessment modal; all questionnaire/report content comes from AssessmentClient. */
-.canonical-assessment-modal{width:min(680px,calc(100vw - 32px));max-height:88vh;padding:0;border:1px solid #e2e8f0;border-radius:20px;color:#18243a;background:white;box-shadow:0 24px 90px #101b3940}
-.canonical-assessment-modal::backdrop{background:#13213d88}
-.canonical-modal-body{padding:30px}.canonical-modal-body h2{padding-right:24px;font-size:23px}.canonical-modal-body h3{font-size:16px;margin:20px 0 12px}.canonical-modal-body p{white-space:pre-wrap;line-height:1.7}.canonical-modal-body progress{width:100%;height:7px;accent-color:#0877ff}.canonical-close{position:absolute;right:14px;top:12px;border:0;background:transparent;font-size:26px;cursor:pointer;color:#536179}.canonical-modal-body footer{display:flex;justify-content:space-between;gap:12px;margin-top:24px}.canonical-dimensions{display:grid;grid-template-columns:1fr 1fr;gap:12px}.canonical-dimensions div{padding:14px;background:#f4f7fb;border-radius:12px}.canonical-dimensions dt{font-size:12px;color:#637087}.canonical-dimensions dd{margin:6px 0 0;font-weight:700}.canonical-error{color:#b42318}
-@media(max-width:520px){.canonical-modal-body{padding:24px 18px}.canonical-assessment-modal .assessment-choices{grid-template-columns:1fr}}

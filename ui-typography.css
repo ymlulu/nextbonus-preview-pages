@@ -435,3 +435,7 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 .v4-feature-benefit>b{font-size:22px!important}
 .v4-benefit-row>b{font-size:20px!important}
 .v4-benefit-icon{font-size:14px!important;color:var(--nb-label-primary)!important}
+
+/* Assessment modal control typography. */
+.canonical-close{font-size:26px!important;line-height:1!important;color:var(--nb-label-secondary)!important}
+.canonical-error{color:var(--nb-system-red)!important}

@@ -121,7 +121,7 @@
   }
 
   function pageContext(){
-    const ctx={ state, categories, offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, productPageAttentionItem, productSection, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionItem, attentionExpanded, attentionIdentity, openLogin, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, renderApp:render };
+    const ctx={ state, categories, offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, productPageAttentionItem, productSection, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionItem, attentionExpanded, attentionIdentity, openLogin, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, renderApp:render, persist:()=>storageCore.save(state) };
     ctx.renderRoute=route=>window.NextBonusPageRegistry.render(route,ctx);
     return ctx;
   }
@@ -197,7 +197,7 @@
     }
     const finalRoute=state.route;
     render();
-    if(intent?.type==='assessment'&&window.NBStaticAssessmentIntegration?.productMap?.[intent.offerId]) requestAnimationFrame(()=>window.NBStaticAssessmentIntegration.open(false));
+    if(intent?.type==='assessment'&&window.NextBonusAssessmentContract?.supported?.(intent.offerId)) requestAnimationFrame(()=>window.NextBonusAssessmentPage?.open?.(pageContext(),{restart:false}));
     if(['discover','wishlist','products','attention'].includes(finalRoute) && (intent?.type==='bookmark'||(!target&&source))) restoreScroll(finalRoute);
   }
 
@@ -519,17 +519,6 @@
     if(action==='open-offer'){ captureScroll(); state.currentOfferId=el.dataset.id; state.routeSource=state.route==='wishlist'?'wishlist':'discover'; state.posterIndex=0; state.route='offer-detail'; render(); window.scrollTo(0,0); return; }
     if(action==='toggle-unavailable'){ state.wishlistUnavailableOpen=!state.wishlistUnavailableOpen; render(); return; }
     if(action==='back-offer-list'){ const target=state.routeSource==='wishlist'?'wishlist':'discover'; state.route=target; render(); restoreScroll(target); return; }
-    if(action==='assessment-start'){
-      const supported=!!window.NBStaticAssessmentIntegration?.productMap?.[state.currentOfferId];
-      if(!supported) return;
-      if(!state.loggedIn) openLogin('offer-detail',{type:'assessment',offerId:state.currentOfferId},'offer-detail');
-      else window.NBStaticAssessmentIntegration.open(false);
-      return;
-    }
-    if(action==='assessment-restart'){
-      if(window.NBStaticAssessmentIntegration?.productMap?.[state.currentOfferId]) window.NBStaticAssessmentIntegration.open(true);
-      return;
-    }
     if(action==='direct-apply'){ const o=currentOffer(), r=state.assessmentResults[o.id]; if(!o.applyUrl)return; const appRestriction=!!(r&&['BLOCK','WAIT'].includes(r.internal?.appHard)); const bonusRestriction=!!(r&&(r.eligible==='不可以'||['BLOCK','WAIT'].includes(r.internal?.bonusHard))); const risky=appRestriction||bonusRestriction||!!(r&&r.recommendation==='暂不建议申请'); if(risky){state.modal={type:'apply-risk',copy:appRestriction?'按当前已知规则，你现在申请可能不符合申请限制。仍要继续申请吗？':'你可能无法获得当前开卡奖励。仍要继续申请吗？'};render();}else{window.open(o.applyUrl,'_blank','noopener,noreferrer');} return; }
     if(action==='apply-confirm'){ const o=currentOffer(); state.modal=null; render(); if(o.applyUrl) window.open(o.applyUrl,'_blank','noopener,noreferrer'); return; }
     if(action==='modal-close'){ state.modal=null; render(); return; }
@@ -591,15 +580,5 @@
 
   function focusEnd(id){ requestAnimationFrame(()=>{const el=document.getElementById(id);if(el){el.focus();const n=el.value.length;try{el.setSelectionRange(n,n);}catch(e){}}}); }
 
-  // Presentation boundary into the existing persisted Assessment state.
-  window.NBAssessmentUI=Object.freeze({
-    context(){ return {offerId:state.currentOfferId,route:state.route,result:state.assessmentResults[state.currentOfferId],draft:state.assessmentDraft}; },
-    saveDraft(draft){ state.assessmentDraft=draft; persist(); },
-    saveResult(offerId,result){
-      state.assessmentResults[offerId]=result;
-      state.assessmentDraft=null;
-      render();
-    }
-  });
   render();
 })();
