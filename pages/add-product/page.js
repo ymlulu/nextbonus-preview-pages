@@ -2,7 +2,7 @@
   'use strict';
 
   function progress(step){
-    const stage = step === 'product' ? 1 : step === 'info' ? 2 : ['track','offer','manual'].includes(step) ? 3 : 4;
+    const stage = step === 'product' ? 1 : step === 'info' ? 2 : step === 'offer' ? 3 : 4;
     const labels=['选择产品','基本信息','奖励','完成'];
     return `<div class="add-progress">${labels.map((label,index)=>{
       const number=index+1;
@@ -16,6 +16,32 @@
   const back = () => '<button class="btn secondary" data-action="add-back">上一步</button>';
   const next = (action, label, disabled=false) => `<button class="btn primary" data-action="${action}" ${disabled?'disabled':''}>${label}</button>`;
   const footer = (left, right='') => `<div class="modal-foot"><div class="add-product-foot-inner">${left}${right || '<span></span>'}</div></div>`;
+
+  function displayRewardValue(value){
+    const raw=String(value||'').trim();
+    const withoutHighest=raw.replace(/^最高\s*/,'').trim();
+    const match=withoutHighest.match(/^AS\s+HIGH\s+AS\s+([\d,.]+(?:\.\d+)?)\s*([Kk])?\s*(MR|UR|TYP|MILES?|POINTS?)$/i);
+    if(!match) return withoutHighest||raw;
+    const numeric=Number(match[1].replace(/,/g,''));
+    if(!Number.isFinite(numeric)) return withoutHighest||raw;
+    const amount=match[2] ? numeric*1000 : numeric;
+    return `${Math.round(amount).toLocaleString('en-US')} ${match[3].toUpperCase()}`;
+  }
+
+  function displayRewardRequirement(requirement){
+    const raw=String(requirement||'').trim();
+    let match=raw.match(/^\$([\d,.]+)\s*\/\s*(\d+)\s*months?$/i);
+    if(match) return `${match[2]} 个月内消费 ${match[1]}`;
+    match=raw.match(/^spend\s+\$([\d,.]+)\s+(?:in|within)\s+(\d+)\s*months?$/i);
+    if(match) return `${match[2]} 个月内消费 ${match[1]}`;
+    return raw;
+  }
+
+  function selectedProductArt(product, esc, className){
+    return product?.cardImageLocal
+      ? `<div class="${className}"><img src="${esc(product.cardImageLocal)}" alt="${esc(product?.name||'')}" /></div>`
+      : `<div class="${className}"><div class="mini-art ${esc(product?.art||'bank')}"></div></div>`;
+  }
 
   function selector(flow, catalog, esc, model){
     const items = model.visibleEntries(catalog, flow);
@@ -51,43 +77,38 @@
       view = selector(f, catalog, esc, model);
     }else if(f.step === 'info'){
       const isCard = f.category === '信用卡';
-      const selectedArt = f.product?.cardImageLocal
-        ? `<div class="add-info-product-art"><img src="${esc(f.product.cardImageLocal)}" alt="${esc(f.product?.name||'')}" /></div>`
-        : `<div class="add-info-product-art"><div class="mini-art ${esc(f.product?.art||'bank')}"></div></div>`;
+      const selectedArt = selectedProductArt(f.product,esc,'add-info-product-art');
       view = {
         title: '补充信息',
         body: `<div class="add-info-flow"><div class="add-info-product">${selectedArt}<div class="add-info-product-copy"><span class="option-title">${esc(f.product?.name||'')}</span><span class="option-sub">${esc(f.product?.institution||'')}${f.product?.subtype?` · ${esc(f.product.subtype)}`:''}</span></div></div><div class="add-info-section"><div class="add-info-section-head"><span class="option-title">账户信息</span><span class="option-sub">以下信息都可以稍后修改。</span></div><div class="add-info-fields">${isCard?`<div class="form-group"><label class="label">卡号后四位（可选）</label><input id="add-last4" class="input" maxlength="4" inputmode="numeric" value="${esc(f.last4)}" placeholder="例如 1005" /></div>`:`<div class="form-group"><label class="label">账户昵称（可选）</label><input id="add-nickname" class="input" value="${esc(f.nickname)}" placeholder="例如 主账户" /></div>`}<div class="form-group"><label class="label">${isCard?'开卡日期':'开户日期'}（可选）</label><div class="date-field-row add-info-date-row"><input id="add-opened" type="date" max="${localDateISO()}" class="input" value="${esc(f.opened)}" /><button class="btn ghost small add-info-clear-date" type="button" data-action="add-clear-opened" ${f.opened?'':'hidden'}>清除</button></div></div></div></div></div>`,
         foot: footer(back(), next('add-to-track','继续'))
       };
-    }else if(f.step === 'track'){
-      const isCard = f.category === '信用卡';
-      const loading = !!f.offerLoading;
-      view = {
-        title: isCard ? '要一起追踪开卡奖励吗？' : '要一起追踪开户奖励吗？',
-        body: `<div class="option-list"><button class="option-row ${f.track===true?'selected':''}" data-action="add-track-choice" data-value="yes"><span class="radio-dot"></span><span class="option-main"><span class="option-title">${isCard?'追踪这次开卡奖励':'追踪这次开户奖励'}</span><span class="option-sub">${isCard?'选择你申请时看到的奖励，之后可以记录进度和截止日期。':'选择你开户时看到的奖励，之后可以记录进度和截止日期。'}</span></span></button><button class="option-row ${f.track===false?'selected':''}" data-action="add-track-choice" data-value="no"><span class="radio-dot"></span><span class="option-main"><span class="option-title">暂时不追踪</span><span class="option-sub">以后也可以从产品详情里添加。</span></span></button></div>`,
-        foot: footer(back(), next('add-track-next', loading?'加载奖励…':f.track===true?'继续':'添加到钱包', loading))
-      };
     }else if(f.step === 'offer'){
       const isCard = f.category === '信用卡';
       const result = offerChoice.offerChoicesFor(f.product);
-      const rows = result.choices.map(choice => `<button class="option-row ${f.offer===choice.id?'selected':''}" data-action="add-offer-choice" data-id="${esc(choice.id)}"><span class="radio-dot"></span><span class="option-main"><span class="option-title">${esc(choice.value)}</span><span class="option-sub">${esc(choice.kind==='current'?`当前公开 · ${choice.req}`:`${choice.dateLabel||'历史奖励'} · ${choice.req}`)}</span></span></button>`).join('');
-      const status = result.status === 'error'
-        ? '<div class="muted" data-nb-reviewed-message="error">历史奖励暂时无法加载；当前公开奖励仍可选择，也可以按实际奖励手动填写。</div>'
-        : result.status === 'ready' && result.choices.length <= 1
-          ? '<div class="muted" data-nb-reviewed-message="empty">暂无其他可直接选择的已审核历史奖励。</div>'
-          : '';
-      const label = !f.offer ? '跳过并添加到钱包' : f.offer === 'manual' ? '继续' : '添加到钱包';
+      const rewardArt = selectedProductArt(f.product,esc,'add-reward-product-art');
+      const offerRows = result.choices.map(choice => {
+        const value=displayRewardValue(choice.value);
+        const requirement=displayRewardRequirement(choice.req);
+        const meta=choice.kind==='current'?'当前公开':(choice.dateLabel||'历史奖励');
+        return `<button class="option-row add-reward-row ${f.offer===choice.id?'selected':''}" type="button" data-action="add-offer-choice" data-id="${esc(choice.id)}"><span class="radio-dot"></span><span class="option-main"><span class="option-title">${esc(value)}</span><span class="option-sub">${esc(requirement)}</span></span><span class="option-tag add-reward-meta">${esc(meta)}</span></button>`;
+      }).join('');
+      const status = f.offerLoading || result.status === 'loading'
+        ? '<div class="muted add-reward-status" data-nb-reviewed-message="loading">正在加载已审核的历史奖励…</div>'
+        : result.status === 'error'
+          ? '<div class="muted add-reward-status" data-nb-reviewed-message="error">历史奖励暂时无法加载；当前公开奖励仍可选择，也可以按实际奖励手动填写。</div>'
+          : result.status === 'ready' && result.choices.length <= 1
+            ? '<div class="muted add-reward-status" data-nb-reviewed-message="empty">暂无其他可直接选择的已审核历史奖励。</div>'
+            : '';
+      const manualCards = (f.tasks||[]).map((t,i)=>`<div class="task-card"><div class="task-head"><span>完成条件 ${i+1}</span><button class="icon-btn" type="button" data-action="delete-task" data-id="${esc(t.id)}" aria-label="删除条件">×</button></div><input class="input task-desc" data-id="${esc(t.id)}" value="${esc(t.desc)}" placeholder="例如 消费 $12,000" /><label class="label nb-due-label">截止日期</label><div class="date-field-row"><input type="date" class="input task-due" data-id="${esc(t.id)}" value="${esc(t.due)}" />${t.due?`<button class="btn ghost small" type="button" data-action="clear-task-due" data-id="${esc(t.id)}">清除</button>`:''}</div></div>`).join('');
+      const manualPanel = f.offer==='manual'
+        ? `<div class="add-manual-panel"><div class="form-group"><label class="label">奖励内容</label><input id="add-reward" class="input" value="${esc(f.reward)}" placeholder="例如 175,000 MR" /></div><div><label class="label">完成条件</label>${manualCards}<button class="btn secondary small" type="button" data-action="add-task">＋ 添加条件</button></div></div>`
+        : '';
+      const canSubmit=model.rewardChoiceReady(f);
       view = {
-        title: isCard ? '你申请时看到的是哪个奖励？' : '你开户时看到的是哪个奖励？',
-        body: `${status}<div class="option-list">${rows}<button class="option-row ${f.offer==='manual'?'selected':''}" data-action="add-offer-choice" data-id="manual"><span class="radio-dot"></span><span class="option-main"><span class="option-title">都不是，手动填写</span><span class="option-sub">按你实际申请或开户时看到的奖励填写。</span></span></button></div>`,
-        foot: footer(back(), next('add-offer-next', label))
-      };
-    }else if(f.step === 'manual'){
-      const cards = (f.tasks||[]).map((t,i)=>`<div class="task-card"><div class="task-head"><span>完成条件 ${i+1}</span><button class="icon-btn" data-action="delete-task" data-id="${esc(t.id)}" aria-label="删除条件">×</button></div><input class="input task-desc" data-id="${esc(t.id)}" value="${esc(t.desc)}" placeholder="例如 消费 $12,000" /><label class="label nb-due-label">截止日期</label><div class="date-field-row"><input type="date" class="input task-due" data-id="${esc(t.id)}" value="${esc(t.due)}" />${t.due?`<button class="btn secondary small" data-action="clear-task-due" data-id="${esc(t.id)}">清除日期</button>`:''}</div></div>`).join('');
-      view = {
-        title: '填写你的奖励',
-        body: `<div class="form-group"><label class="label">奖励内容</label><textarea id="add-reward" class="textarea" placeholder="例如 175,000 MR">${esc(f.reward)}</textarea></div><div><label class="label">完成条件</label>${cards}<button class="btn secondary small" data-action="add-task">＋ 添加条件</button></div>`,
-        foot: footer(back(), next('add-manual-submit','保存'))
+        title: isCard ? '选择这次开卡奖励' : '选择这次开户奖励',
+        body: `<div class="add-reward-flow"><div class="add-reward-product">${rewardArt}<div class="add-reward-product-copy"><span class="option-title">${esc(f.product?.name||'')}</span><span class="option-sub">${esc(f.product?.institution||'')}${f.product?.subtype?` · ${esc(f.product.subtype)}`:''}</span></div></div><div class="add-reward-intro"><span class="option-sub">${isCard?'选择你申请时看到的 Offer，之后可以追踪完成进度；也可以暂时不追踪。':'选择你开户时看到的 Offer，之后可以追踪完成进度；也可以暂时不追踪。'}</span></div>${status}<div class="option-list add-reward-list">${offerRows}<button class="option-row add-reward-row ${f.offer==='manual'?'selected':''}" type="button" data-action="add-offer-choice" data-id="manual"><span class="radio-dot"></span><span class="option-main"><span class="option-title">都不是，手动填写</span><span class="option-sub">按你实际申请或开户时看到的奖励填写。</span></span></button>${manualPanel}<button class="option-row add-reward-row add-reward-skip ${f.offer==='skip'?'selected':''}" type="button" data-action="add-offer-choice" data-id="skip"><span class="radio-dot"></span><span class="option-main"><span class="option-title">暂时不追踪</span><span class="option-sub">以后也可以从产品详情里添加奖励追踪。</span></span></button></div></div>`,
+        foot: footer(back(), next('add-offer-next','添加到钱包',!canSubmit))
       };
     }else if(f.step === 'membership-confirm'){
       view = {
