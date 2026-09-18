@@ -66,8 +66,22 @@
     flow.offerLoading=false;
   }
 
+  function manualTrackingValid(flow){
+    return !!flow &&
+      String(flow.reward||'').trim() &&
+      Array.isArray(flow.tasks) &&
+      flow.tasks.length>0 &&
+      flow.tasks.every(task=>String(task.desc||'').trim()&&task.due);
+  }
+
+  function rewardChoiceReady(flow){
+    if(!flow?.offer) return false;
+    if(flow.offer==='manual') return !!manualTrackingValid(flow);
+    return true;
+  }
+
   function back(flow){
-    const map={info:'product',track:'info',offer:'track',manual:'offer','membership-confirm':'product'};
+    const map={info:'product',offer:'info','membership-confirm':'product'};
     if(map[flow.step]){
       flow.step=map[flow.step];
       return true;
@@ -85,6 +99,8 @@
     visibleEntries,
     resetAfterCategory,
     resetAfterProduct,
+    manualTrackingValid,
+    rewardChoiceReady,
     back,
     progressed
   });
