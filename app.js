@@ -98,7 +98,7 @@
   }
 
   // Shared shell only. Route markup lives in pages/*/page.js.
-  function renderShell(content){
+  function renderShell(content,route){
     const activeCount=currentActiveAttention().length;
     const badge = activeCount ? String(activeCount) : '';
     const watchlistProgress=window.NextBonusWatchlistState?.list?.('in_progress')?.length||0;
@@ -106,7 +106,7 @@
     const authItem = state.loggedIn
       ? `<div class="account-menu"><button class="nav-item" data-action="toggle-account"><span class="nav-icon">${icons.account}</span><span class="nav-label">账户</span></button>${state.accountMenu?`<div class="account-pop"><button data-action="logout">退出登录</button></div>`:''}</div>`
       : `<button class="nav-item login-item" data-action="nav" data-route="login"><span class="nav-icon">${icons.login}</span><span class="nav-label">登录</span></button>`;
-    return `<div class="shell">
+    return `<div class="shell" data-base-route="${esc(route||'')}">
       <aside class="sidebar">
         <button class="brand" type="button" data-action="nav" data-route="discover" aria-label="返回发现"><span class="brand-mark"><span class="nb-n">N</span><span class="nb-b">B</span></span><span class="brand-word">Next<span>Bonus</span></span></button>
         <nav class="nav">
@@ -123,17 +123,65 @@
     </div>`;
   }
 
+  function closeOfferDetail(){
+    const target=state.routeSource==='wishlist'?'wishlist':'discover';
+    state.offerOverlay=null;
+    state.route=target;
+    render();
+    restoreScroll(target);
+  }
+
+  function closeProductDetail(){
+    state.productOverlay=null;
+    state.route='products';
+    render();
+    restoreScroll('products');
+  }
+
+  function baseRouteForRender(){
+    if(state.route==='offer-detail') return state.routeSource==='wishlist'?'wishlist':'discover';
+    if(state.route==='product-detail') return 'products';
+    return state.route;
+  }
+
   function pageContext(){
-    const ctx={ state, categories, offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionIdentity, openLogin, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, completeAttention, historyCorrection, renderApp:render, persist:()=>storageCore.save(state) };
+    const ctx={ state, categories, offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionIdentity, openLogin, closeOfferDetail, closeProductDetail, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, completeAttention, historyCorrection, renderApp:render, persist:()=>storageCore.save(state) };
     ctx.renderRoute=route=>window.NextBonusPageRegistry.render(route,ctx);
     return ctx;
+  }
+
+  function hasDetailLayer(){
+    return !!(
+      state.route==='offer-detail' ||
+      state.route==='product-detail' ||
+      state.offerOverlay?.offerId ||
+      state.productOverlay?.productId
+    );
+  }
+
+  function syncModalSurface(ctx){
+    const app=document.getElementById('app');
+    let root=app.querySelector(':scope > #app-modal-root');
+    if(!root){
+      root=document.createElement('div');
+      root.id='app-modal-root';
+      app.appendChild(root);
+    }
+    root.innerHTML=renderModal(ctx);
   }
 
   function render(){
     if(!window.NextBonusPageRegistry) throw new Error('Page Registry unavailable');
     const ctx=pageContext();
-    const content=window.NextBonusPageRegistry.render(state.route,ctx);
-    document.getElementById('app').innerHTML=renderShell(content)+renderModal(ctx);
+    const baseRoute=baseRouteForRender();
+    const app=document.getElementById('app');
+    const shell=app.querySelector(':scope > .shell');
+    const preserveBase=hasDetailLayer()&&shell?.dataset?.baseRoute===baseRoute;
+    if(!preserveBase){
+      const content=window.NextBonusPageRegistry.render(baseRoute,ctx);
+      app.innerHTML=renderShell(content,baseRoute)+'<div id="app-modal-root"></div>';
+    }
+    syncModalSurface(ctx);
     window.NextBonusProductDetailOverlay?.afterAppRender?.(ctx);
     window.NextBonusOfferDetailOverlay?.afterAppRender?.(ctx);
     window.NextBonusUIFinalize?.schedule?.(document);
@@ -415,7 +463,7 @@
       return;
     }
     if(action==='open-offer'){ captureScroll(); state.currentOfferId=el.dataset.id; state.routeSource=state.route==='wishlist'?'wishlist':'discover'; state.posterIndex=0; state.productOverlay=null; state.route='offer-detail'; render(); window.scrollTo(0,0); return; }
-    if(action==='back-offer-list'){ const target=state.routeSource==='wishlist'?'wishlist':'discover'; state.offerOverlay=null; state.route=target; render(); restoreScroll(target); return; }
+    if(action==='back-offer-list'){ closeOfferDetail(); return; }
     if(action==='direct-apply'){ const o=currentOffer(), r=state.assessmentResults[o.id]; if(!o.applyUrl)return; const appRestriction=!!(r&&['BLOCK','WAIT'].includes(r.internal?.appHard)); const bonusRestriction=!!(r&&(r.eligible==='不可以'||['BLOCK','WAIT'].includes(r.internal?.bonusHard))); const risky=appRestriction||bonusRestriction||!!(r&&r.recommendation==='暂不建议申请'); if(risky){state.modal={type:'apply-risk',copy:appRestriction?'按当前已知规则，你现在申请可能不符合申请限制。仍要继续申请吗？':'你可能无法获得当前开卡奖励。仍要继续申请吗？'};render();}else{window.open(o.applyUrl,'_blank','noopener,noreferrer');} return; }
     if(action==='apply-confirm'){ const o=currentOffer(); state.modal=null; render(); if(o.applyUrl) window.open(o.applyUrl,'_blank','noopener,noreferrer'); return; }
     if(action==='modal-close'){ state.modal=null; render(); return; }
@@ -425,7 +473,7 @@
     if(action==='logout'){ logout(); return; }
     if(action==='open-all-attention'){ navigate('attention',{tab:'active'}); return; }
     if(action==='open-product'){ captureScroll(); state.currentProductId=el.dataset.id; state.editFlow=null; state.offerOverlay=null; state.route='product-detail'; state.productHistoryOpen=false;render();window.scrollTo(0,0);return; }
-    if(action==='back-products'){ state.productOverlay=null; state.route='products';render();restoreScroll('products');return; }
+    if(action==='back-products'){ closeProductDetail(); return; }
     if(action==='toggle-attention'){ state.expandedAttentionId=state.expandedAttentionId===el.dataset.id?null:el.dataset.id;render();return; }
     if(action==='complete-attention'){ completeAttention(el.dataset.id,'complete');return; }
     if(action==='skip-attention'){ completeAttention(el.dataset.id,'skip');return; }

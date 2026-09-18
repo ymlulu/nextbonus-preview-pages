@@ -8,14 +8,10 @@
 
   let overlay = null;
   let detail = null;
-  let baseHtml = null;
   let baseScrollY = 0;
   let baseSource = 'discover';
   let currentOfferId = null;
-  let reconcileQueued = false;
-  let reconciling = false;
-  let closing = false;
-  let openingFromHistory = false;
+  let openedFromHistory = false;
   let lastContext = null;
   let panelScroll = null;
   let ctaSentinel = null;
@@ -42,15 +38,6 @@
     const id=lastContext?.state?.currentOfferId;
     if(id) return id;
     return node?.querySelector?.('[data-action="bookmark"][data-id]')?.dataset?.id || null;
-  }
-
-  function captureBaseBeforeOpen(event){
-    const trigger=event.target.closest?.('[data-action="open-offer"][data-id]');
-    if(!trigger||overlay) return;
-    baseHtml=app.innerHTML;
-    baseScrollY=window.scrollY||0;
-    baseSource=sourceFromContext();
-    currentOfferId=trigger.dataset.id;
   }
 
   function ensureOverlay(){
@@ -174,86 +161,6 @@
     });
   }
 
-  function restoreBaseVisual(){
-    if(baseHtml==null) return;
-    app.innerHTML=baseHtml;
-    requestAnimationFrame(()=>window.scrollTo({top:baseScrollY,behavior:'instant'}));
-  }
-
-  function prepareBaseBeforeReveal(){
-    if(baseSource!=='wishlist') return;
-    window.scrollTo({top:baseScrollY,behavior:'instant'});
-  }
-
-  function revealBaseAfterSettle(){
-    if(!overlay){ closing=false; return; }
-    queueMicrotask(()=>{
-      if(!overlay){ closing=false; return; }
-      prepareBaseBeforeReveal();
-      const y=baseScrollY;
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        if(!overlay){ closing=false; return; }
-        teardownOverlay();
-        window.scrollTo({top:y,behavior:'instant'});
-      }));
-    });
-  }
-
-  function promoteAppModal(){
-    const modal=app.querySelector(':scope > .modal-backdrop, .shell + .modal-backdrop');
-    if(!modal) return;
-    modal.classList.add('nb-promoted-app-modal');
-    document.body.appendChild(modal);
-  }
-
-  function removePromotedModals(){
-    document.querySelectorAll('.nb-promoted-app-modal').forEach(node=>node.remove());
-  }
-
-  function mountIncomingDetail(node){
-    if(reconciling||!node) return;
-    reconciling=true;
-    try{
-      ensureOverlay();
-      disconnectPanelRuntime();
-      currentOfferId=offerIdFrom(node)||currentOfferId;
-      const info=overlayInfoFromContext();
-      if(info){
-        baseSource=info.source==='wishlist'?'wishlist':'discover';
-        if(baseHtml==null) baseScrollY=Number(info.scrollY||0);
-      }
-      if(detail&&detail!==node) detail.remove();
-      detail=node;
-      detail.classList.add('nb-overlay-detail');
-      overlay.querySelector('.nb-offer-detail-host').replaceChildren(detail);
-      promoteAppModal();
-      restoreBaseVisual();
-      openingFromHistory=false;
-      if(layoutMode==='desktop') mountDesktopCTA();
-    }finally{
-      reconciling=false;
-    }
-  }
-
-  function reconcile(){
-    reconcileQueued=false;
-    if(reconciling) return;
-    const incoming=app.querySelector('.v4-offer-detail-page');
-    if(incoming){
-      mountIncomingDetail(incoming);
-      return;
-    }
-    if(!detail) return;
-    if(layoutMode==='desktop') mountDesktopCTA();
-    syncFollowState();
-  }
-
-  function scheduleReconcile(){
-    if(reconcileQueued) return;
-    reconcileQueued=true;
-    requestAnimationFrame(reconcile);
-  }
-
   function teardownOverlay(){
     if(!overlay) return;
     disconnectPanelRuntime();
@@ -261,83 +168,37 @@
     overlay=null;
     detail=null;
     document.body.classList.remove('nb-offer-overlay-open');
-    removePromotedModals();
-    baseHtml=null;
     currentOfferId=null;
-    openingFromHistory=false;
-    closing=false;
+    openedFromHistory=false;
   }
 
-  function fireBackFallback(){
-    const button=document.createElement('button');
-    button.type='button';
-    button.hidden=true;
-    button.dataset.action='back-offer-list';
-    document.body.appendChild(button);
-    button.click();
-    button.remove();
+  function renderCurrent(ctx){
+    lastContext=ctx||lastContext;
+    const info=overlayInfoFromContext();
+    if(!info?.offerId){
+      teardownOverlay();
+      return null;
+    }
+    currentOfferId=String(info.offerId);
+    baseSource=info.source==='wishlist'?'wishlist':'discover';
+    baseScrollY=Number(info.scrollY||0);
+    if(lastContext?.state){
+      lastContext.state.currentOfferId=currentOfferId;
+      lastContext.state.posterIndex=Number(info.posterIndex??lastContext.state.posterIndex??0);
+    }
+    const registry=window.NextBonusPageRegistry;
+    if(!registry) return null;
+    return renderSurface(registry.render('offer-detail',lastContext),lastContext);
   }
 
   function requestClose(){
-    if(closing) return;
-    closing=true;
-    if(history.state?.nbOfferOverlay&&history.length>1){
+    if(!overlay) return;
+    const state=lastContext?.state;
+    if((state?.route==='offer-detail'||openedFromHistory)&&history.state?.nbOfferOverlay&&history.length>1){
       history.back();
       return;
     }
-    fireBackFallback();
-    revealBaseAfterSettle();
-  }
-
-  function suspendForLogin(){
-    if(!overlay) return;
-    disconnectPanelRuntime();
-    overlay.remove();
-    overlay=null;
-    detail=null;
-    document.body.classList.remove('nb-offer-overlay-open');
-    removePromotedModals();
-    closing=false;
-  }
-
-  function maybeSuspendForAssessment(event){
-    if(!overlay) return;
-    const action=event.target.closest?.('[data-action="assessment-start"]');
-    if(!action||lastContext?.state?.loggedIn) return;
-    requestAnimationFrame(suspendForLogin);
-  }
-
-  function openFromHistory(info){
-    if(!info?.offerId) return;
-    closing=false;
-    if(currentOfferId===info.offerId&&(overlay||openingFromHistory)) return;
-    if(overlay) teardownOverlay();
-    openingFromHistory=true;
-    currentOfferId=info.offerId;
-    baseSource=info.source==='wishlist'?'wishlist':'discover';
-    baseScrollY=Number(info.scrollY||0);
-    baseHtml=app.innerHTML;
-    requestAnimationFrame(()=>{
-      const trigger=document.createElement('button');
-      trigger.type='button';
-      trigger.hidden=true;
-      trigger.dataset.action='open-offer';
-      trigger.dataset.id=info.offerId;
-      app.appendChild(trigger);
-      trigger.click();
-      trigger.remove();
-    });
-  }
-
-  function onHistory(event){
-    const info=event.state?.nbOfferOverlay||null;
-    if(!info){
-      openingFromHistory=false;
-      if(overlay) revealBaseAfterSettle();
-      else closing=false;
-      return;
-    }
-    requestAnimationFrame(()=>openFromHistory(info));
+    lastContext?.closeOfferDetail?.();
   }
 
   function handleBreakpointChange(){
@@ -353,10 +214,10 @@
     }
   }
 
-  document.addEventListener('click',captureBaseBeforeOpen,true);
-  document.addEventListener('click',maybeSuspendForAssessment,true);
   document.addEventListener('keydown',event=>{ if(event.key==='Escape'&&overlay) requestClose(); });
-  window.addEventListener('popstate',onHistory);
+  window.addEventListener('popstate',event=>{
+    openedFromHistory=!!event.state?.nbOfferOverlay;
+  });
   window.addEventListener('resize',handleBreakpointChange,{passive:true});
 
   function renderSurface(markup,ctx){
@@ -370,7 +231,6 @@
     if(detail){
       currentOfferId=offerIdFrom(detail)||currentOfferId;
       detail.classList.add('nb-overlay-detail');
-      openingFromHistory=false;
       if(layoutMode==='desktop') mountDesktopCTA();
       syncFollowState();
     }
@@ -383,13 +243,10 @@
     close:requestClose,
     afterAppRender(ctx){
       lastContext=ctx||lastContext;
-      scheduleReconcile();
-      const info=lastContext?.state?.offerOverlay||history.state?.nbOfferOverlay||null;
-      if(info&&lastContext?.state?.route!=='offer-detail') requestAnimationFrame(()=>openFromHistory(info));
+      renderCurrent(lastContext);
     },
     isOpen(){return !!overlay;},
     offerId(){return currentOfferId;}
   });
 
-  scheduleReconcile();
 })();
