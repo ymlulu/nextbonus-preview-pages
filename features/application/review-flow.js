@@ -62,22 +62,6 @@
     },0);
   }
 
-  function verifiedRecon(attempt){
-    const entry = window.NextBonusApplicationFollowupRegistry?.find?.({productId:attempt?.productId,issuer:attempt?.issuer}) || null;
-    return entry?.verificationStatus==='verified' ? entry : null;
-  }
-
-  function deniedNotice(attempt){
-    const entry = verifiedRecon(attempt);
-    const recon = entry?.reconsiderationPhone
-      ? `<a class="nb-ah-btn secondary" href="tel:${entry.reconsiderationPhone}">拨打 Recon 电话</a>`
-      : '';
-    const note = entry
-      ? '这次申请已记录为未通过。你可以选择尝试 Reconsideration；这里只显示已经核验的后续信息。'
-      : '这次申请已记录为未通过。部分银行的拒绝结果可能可以尝试 Reconsideration；目前没有已核验的具体入口。';
-    return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">这次申请没有通过</div><div class="nb-ah-sub">${attempt?.productName||''}</div></div><button class="nb-ah-close" data-denied-action="dismiss" aria-label="关闭">×</button></div><div class="nb-ah-body"><div class="nb-ah-note">${note}</div></div><div class="nb-ah-foot"><span></span><div class="nb-ah-row">${recon}<button class="nb-ah-btn primary" data-denied-action="dismiss">知道了</button></div></div></div></div>`;
-  }
-
   function finishDeniedSelection(){
     const store = readStore();
     if(!store || !Array.isArray(store.attempts) || !store.activeId) return false;
@@ -91,7 +75,7 @@
     window.NextBonusApplicationWatchlistLifecycle?.sync?.();
     window.NextBonusWatchlistUI?.refresh?.();
     const root = document.getElementById(ROOT_ID);
-    if(root) root.innerHTML = deniedNotice(attempt);
+    if(root) root.innerHTML = window.NextBonusApplicationResultPage?.denied?.(attempt) || '';
     openedFromWatchlistAttemptId = null;
     return true;
   }

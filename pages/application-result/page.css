@@ -1,0 +1,33 @@
+#nb-application-handoff-root .nb-ah-banner,
+#nb-application-handoff-root .nb-ah-success{position:fixed;right:24px;bottom:24px;z-index:2200;width:min(380px,calc(100vw - 32px));background:rgba(255,255,255,.97);border:1px solid rgba(0,0,0,.08);box-shadow:0 18px 50px rgba(0,0,0,.15);border-radius:18px;padding:16px;backdrop-filter:blur(18px)}
+#nb-application-handoff-root .nb-ah-banner strong,
+#nb-application-handoff-root .nb-ah-success strong{display:block;margin-bottom:5px}
+#nb-application-handoff-root .nb-ah-banner p,
+#nb-application-handoff-root .nb-ah-success p{margin:0 0 12px}
+#nb-application-handoff-root .nb-ah-success p{margin-bottom:0}
+#nb-application-handoff-root .nb-ah-row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+#nb-application-handoff-root .nb-ah-row-start{justify-content:flex-start;margin-top:14px}
+#nb-application-handoff-root .nb-ah-btn{appearance:none;border:0;border-radius:11px;padding:10px 14px;cursor:pointer;text-decoration:none}
+#nb-application-handoff-root .nb-ah-btn.primary{background:#111827}
+#nb-application-handoff-root .nb-ah-btn.secondary{background:#f2f4f7}
+#nb-application-handoff-root .nb-ah-btn.ghost{background:transparent}
+#nb-application-handoff-root .nb-ah-btn:disabled{opacity:.45;cursor:not-allowed}
+#nb-application-handoff-root .nb-ah-backdrop{position:fixed;inset:0;z-index:2300;background:rgba(17,24,39,.28);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
+#nb-application-handoff-root .nb-ah-modal{width:min(520px,100%);background:#fff;border-radius:24px;box-shadow:0 28px 80px rgba(0,0,0,.22);overflow:hidden}
+#nb-application-handoff-root .nb-ah-head{padding:24px 26px 8px;display:flex;gap:16px;align-items:flex-start;justify-content:space-between}
+#nb-application-handoff-root .nb-ah-sub{margin-top:6px}
+#nb-application-handoff-root .nb-ah-close{border:0;background:#f2f4f7;width:32px;height:32px;border-radius:50%;cursor:pointer}
+#nb-application-handoff-root .nb-ah-body{padding:16px 26px 24px}
+#nb-application-handoff-root .nb-ah-foot{padding:0 26px 24px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+#nb-application-handoff-root .nb-ah-result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+#nb-application-handoff-root .nb-ah-result{border:1px solid #e5e7eb;background:#fff;border-radius:16px;padding:18px 10px;cursor:pointer}
+#nb-application-handoff-root .nb-ah-result:hover{border-color:#98a2b3;background:#fafafa}
+#nb-application-handoff-root .nb-ah-note{background:#f8fafc;border-radius:14px;padding:13px 14px;margin-top:14px}
+#nb-application-handoff-root .nb-ah-field label{display:block;margin-bottom:7px}
+#nb-application-handoff-root .nb-ah-field input{width:100%;box-sizing:border-box;border:1px solid #d0d5dd;border-radius:12px;padding:12px}
+@media(max-width:640px){
+  #nb-application-handoff-root .nb-ah-banner,#nb-application-handoff-root .nb-ah-success{right:16px;bottom:16px}
+  #nb-application-handoff-root .nb-ah-result-grid{grid-template-columns:1fr}
+  #nb-application-handoff-root .nb-ah-modal{border-radius:20px}
+  #nb-application-handoff-root .nb-ah-head,#nb-application-handoff-root .nb-ah-body,#nb-application-handoff-root .nb-ah-foot{padding-left:20px;padding-right:20px}
+}
