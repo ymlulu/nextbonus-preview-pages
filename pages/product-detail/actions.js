@@ -206,7 +206,9 @@
             kind:'public',
             reward:choice.value,
             req:choice.req,
-            sourceOfferId:choice.sourceOfferId||null
+            sourceOfferId:choice.sourceOfferId||null,
+            offerVersionId:choice.offerVersionId||null,
+            sourceOfferChoiceId:choice.sourceOfferChoiceId||choice.id||null
           };
           flow.step='main';
         }
@@ -274,9 +276,10 @@
         const product=state.products.find(item=>item.id===el.dataset.id);
         if(!flow||!product) return {handled:true};
 
-        const instance=document.getElementById('edit-instance')?.value??flow.instance;
-        const status=document.getElementById('edit-status')?.value??flow.status;
-        const opened=document.getElementById('edit-opened')?.value??flow.opened;
+        const instance=flow.instance;
+        const status=flow.status;
+        const opened=flow.opened;
+        const oldOpened=product.opened||'';
         product.instance=product.type==='信用卡'
           ? (instance?`•••• ${instance}`:product.instance)
           : (instance||product.instance);
@@ -284,32 +287,59 @@
         product.opened=opened;
         product.anniversary=opened?ctx.formatAnniversary(opened):'—';
 
-        if(flow.pendingBonus&&!state.activeAttention.some(item=>item.productId===product.id&&item.type==='bonus')){
-          const now=Date.now();
-          const due=flow.pendingBonus.kind==='manual'?flow.pendingBonus.tasks[0]?.due:null;
-          state.activeAttention.push({
-            id:`a-edit-${now}`,
-            productId:product.id,
-            product:product.name,
-            action:'完成开卡奖励',
-            secondary:flow.pendingBonus.reward,
-            time:due?`截止 ${ctx.shortDate(due)}`:'截止日期以所选奖励规则为准',
-            dueDate:due,
-            type:'bonus',
-            summary:'这是你在编辑产品时补充建立的开卡奖励追踪。',
-            key:flow.pendingBonus.reward,
-            keySub:due?`最晚 ${ctx.shortDate(due)} 完成`:'按所选奖励规则',
-            instruction:'完成以下条件',
-            checklist:flow.pendingBonus.kind==='manual'
-              ? flow.pendingBonus.tasks.map(task=>({id:task.id,label:task.desc,done:false,dueDate:task.due}))
-              : [{id:'req1',label:flow.pendingBonus.req||'完成对应奖励条件',done:false}],
-            primary:'我已完成',
-            secondaryAction:null,
-            completionKind:'completed'
-          });
-          if(flow.pendingBonus.sourceOfferId&&ctx.isSaved(flow.pendingBonus.sourceOfferId)){
-            ctx.removeSaved(flow.pendingBonus.sourceOfferId);
+        const bonusRuntime=window.NextBonusBonusTrackingRuntime;
+        const cycleState=window.NextBonusBenefitCycleState;
+        const existingBonus=state.activeAttention.find(item=>item.productId===product.id&&item.type==='bonus')||null;
+        const preferred=flow.pendingBonus?.kind==='public'
+          ? {
+              offerId:flow.pendingBonus.sourceOfferId||product.offerId||null,
+              offerVersionId:flow.pendingBonus.offerVersionId||null,
+              sourceOfferChoiceId:flow.pendingBonus.sourceOfferChoiceId||null,
+              reward:flow.pendingBonus.reward,
+              requirement:flow.pendingBonus.req||'完成对应奖励条件',
+              source:'product-edit'
+            }
+          : null;
+
+        if(opened&&oldOpened!==opened){
+          bonusRuntime?.reanchorProduct?.(state,product,oldOpened,opened,preferred);
+          cycleState?.reanchorCardmemberYear?.(product.id,oldOpened,opened,state);
+        }
+
+        if(flow.pendingBonus&&!existingBonus){
+          if(flow.pendingBonus.kind==='public'){
+            product.offerVersionId=flow.pendingBonus.offerVersionId||product.offerVersionId||null;
+            product.sourceOfferChoiceId=flow.pendingBonus.sourceOfferChoiceId||product.sourceOfferChoiceId||null;
           }
+          const lifecycle=window.NextBonusProductLifecycleCore;
+          if(!lifecycle) throw new Error('Product Lifecycle Core unavailable');
+          const manual=flow.pendingBonus.kind==='manual';
+          const manualTasks=manual
+            ? flow.pendingBonus.tasks.map(task=>({id:task.id,label:task.desc,dueDate:task.due||null}))
+            : null;
+          const requirement=manual
+            ? flow.pendingBonus.tasks.map(task=>task.desc).filter(Boolean).join('；')
+            : (flow.pendingBonus.req||'完成对应奖励条件');
+          lifecycle.createBonusTracking(state,{
+            identity:`edit-${product.id}-${Date.now()}`,
+            productId:product.id,
+            productName:product.name,
+            productLabel:product.name,
+            offerId:flow.pendingBonus.sourceOfferId||product.offerId||null,
+            offerVersionId:flow.pendingBonus.offerVersionId||null,
+            sourceOfferChoiceId:flow.pendingBonus.sourceOfferChoiceId||null,
+            reward:flow.pendingBonus.reward,
+            requirement,
+            tasks:manual?manualTasks:null,
+            anchorDate:opened||null,
+            anchorKind:'user_product_opened_date',
+            category:product.type,
+            dueDate:manual?(manualTasks.find(task=>task.dueDate)?.dueDate||null):null,
+            preserveEmptyReward:manual,
+            action:'完成开卡奖励',
+            summary:'这是你后来补充的开卡奖励。'
+          });
+          lifecycle.removeSavedOffer(state,flow.pendingBonus.sourceOfferId||null);
         }
 
         closeProduct(ctx,product,status);

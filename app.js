@@ -369,6 +369,12 @@
   }
 
   function historyCorrection(id){
+    if(window.NextBonusBonusTrackingRuntime?.restoreHistoryDirect?.(state,id)){
+      state.expandedAttentionId=null;
+      render();
+      toast('已重新进入待处理');
+      return;
+    }
     const idx=state.attentionHistory.findIndex(h=>h.id===id); if(idx<0) return;
     const h=state.attentionHistory[idx];
     if(['expired','stopped'].includes(h.statusClass)) return;
@@ -432,7 +438,21 @@
 
   document.addEventListener('change', e => {
     if(e.target.matches('[data-action="checklist"]')){
-      const a=state.activeAttention.find(x=>x.id===e.target.dataset.attention); const c=a?.checklist.find(x=>x.id===e.target.dataset.check); if(c)c.done=e.target.checked; render();
+      const result=window.NextBonusBonusTrackingRuntime?.setChecklistItem?.(
+        state,
+        e.target.dataset.attention,
+        e.target.dataset.check,
+        e.target.checked
+      );
+      if(result?.handled){
+        render();
+        if(result.completed) toast('已完成');
+        return;
+      }
+      const a=state.activeAttention.find(x=>x.id===e.target.dataset.attention);
+      const c=a?.checklist.find(x=>x.id===e.target.dataset.check);
+      if(c)c.done=e.target.checked;
+      render();
     }
   });
 

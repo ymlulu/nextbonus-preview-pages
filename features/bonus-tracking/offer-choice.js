@@ -10,6 +10,8 @@
       id:`current-${source}`,
       kind:'current',
       sourceOfferId:source,
+      sourceOfferChoiceId:`current-${source}`,
+      offerVersionId:offer.offerVersionId||`preview-current:${source}`,
       value:String(offer.primaryValue||''),
       req:String(offer.primaryRequirement||''),
       dateLabel:'当前公开'
@@ -26,6 +28,8 @@
         id:choice.id,
         kind:'reviewed',
         sourceOfferId:source,
+        sourceOfferChoiceId:choice.id,
+        offerVersionId:`reviewed:${choice.id}`,
         value:choice.value,
         req:choice.requirement,
         dateLabel:choice.dateLabel

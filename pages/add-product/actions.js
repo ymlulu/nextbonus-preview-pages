@@ -89,12 +89,18 @@
         ? (manualEntries.find(task=>task.due)?.due||null)
         : null;
 
+      if(chosen){
+        product.offerVersionId=chosen.offerVersionId||product.offerVersionId||null;
+        product.sourceOfferChoiceId=chosen.sourceOfferChoiceId||chosen.id||null;
+      }
       lifecycle.createBonusTracking(state,{
         identity:product.id,
         productId:product.id,
         productName:product.name,
         productLabel:product.name,
         offerId:chosen?.sourceOfferId||flow.product.offerId||null,
+        offerVersionId:chosen?.offerVersionId||null,
+        sourceOfferChoiceId:chosen?.sourceOfferChoiceId||chosen?.id||null,
         reward,
         requirement:chosen?.req||'完成对应奖励条件',
         tasks,

@@ -103,5 +103,38 @@
     )||null;
   }
 
-  window.NextBonusBenefitCycleState=Object.freeze({read,current,setUsed,currentRecord,matchingHistory});
+  function reanchorCardmemberYear(productId,oldOpened,newOpened,state){
+    if(!productId||!oldOpened||!newOpened||oldOpened===newOpened||!window.NextBonusBenefitCycle?.current) return false;
+    const store=read();
+    if(!store?.records) return false;
+    let changed=false;
+    for(const [key,record] of Object.entries({...store.records})){
+      const parts=key.split('|');
+      if(parts.length<3||parts[0]!==productId||!String(parts[2]).includes('__')||record?.status!=='used'||!record?.usedAt) continue;
+      const date=String(record.usedAt).slice(0,10);
+      const period=window.NextBonusBenefitCycle.current('cardmember-year',date,newOpened);
+      if(!period) continue;
+      const nextKey=`${productId}|${parts[1]}|${period.id}`;
+      if(nextKey===key) continue;
+      const existing=store.records[nextKey];
+      if(!existing||String(existing.usedAt||'')<String(record.usedAt||'')) store.records[nextKey]=record;
+      delete store.records[key];
+      changed=true;
+    }
+    for(const attention of state?.activeAttention||[]){
+      if(attention.productId!==productId||attention.type!=='benefit'||attention.cycleType!=='cardmember-year') continue;
+      const today=new Date().toISOString().slice(0,10);
+      const period=window.NextBonusBenefitCycle.current('cardmember-year',today,newOpened);
+      if(!period) continue;
+      const pad=value=>String(value).padStart(2,'0');
+      const due=`${period.end.getFullYear()}-${pad(period.end.getMonth()+1)}-${pad(period.end.getDate())}`;
+      attention.cycleId=period.id;
+      attention.dueDate=due;
+      attention.time=`本期截止 ${period.end.getMonth()+1}月${period.end.getDate()}日`;
+    }
+    if(changed) write(store);
+    return changed;
+  }
+
+  window.NextBonusBenefitCycleState=Object.freeze({read,current,setUsed,currentRecord,matchingHistory,reanchorCardmemberYear});
 })();

@@ -5,24 +5,8 @@
   const history=window.NextBonusReviewedOfferHistory;
   if(!rules)return;
 
-  const APP_STATE_KEY='nextbonus-local-v8-state';
-  const BENEFIT_CYCLE_KEY='nextbonus-benefit-cycle-v1';
-  const memory={opened:'',pendingAdd:null,pendingEdit:null,pendingEditOffer:null,pendingChecklist:null};
-
-  function readJson(key,fallback=null){
-    try{const raw=localStorage.getItem(key);return raw?JSON.parse(raw):fallback;}catch(_){return fallback;}
-  }
-  function writeJson(key,value){localStorage.setItem(key,JSON.stringify(value));}
-  function reset(){memory.opened='';memory.pendingAdd=null;}
   function clone(value){return value==null?value:JSON.parse(JSON.stringify(value));}
   function nowIso(){return new Date().toISOString();}
-
-  function trigger(action,dataset={}){
-    const button=document.createElement('button');
-    button.type='button';button.hidden=true;button.dataset.action=action;
-    Object.entries(dataset).forEach(([key,value])=>button.dataset[key]=String(value));
-    document.body.appendChild(button);button.click();button.remove();
-  }
 
   function rewardKey(value){
     return String(value||'')
@@ -51,67 +35,6 @@
 
   function currentOfferVersion(offerId){return offerId?`preview-current:${offerId}`:null;}
   function reviewedOfferVersion(choice){return choice?.id?`reviewed:${choice.id}`:null;}
-
-  function selectedAddOffer(modal){
-    const reviewedOfferId=modal?.dataset?.nbReviewedOfferId||null;
-    const reviewed=reviewedOfferId&&history?.current?history.current(reviewedOfferId):null;
-    if(reviewed)return {
-      offerId:reviewedOfferId,
-      offerVersionId:reviewedOfferVersion(reviewed),
-      sourceOfferChoiceId:reviewed.id,
-      reward:reviewed.value||'',requirement:reviewed.requirement||'',source:'reviewed-offer-history'
-    };
-    const selected=modal?.querySelector('[data-action="add-offer-choice"].selected');
-    const id=selected?.dataset.id||'';
-    if(!id||id==='manual')return null;
-    const offerId=id.startsWith('current-')?id.slice('current-'.length):null;
-    const offer=offerId?window.NextBonusOfferData?.[offerId]:null;
-    if(!offer)return null;
-    return {offerId,offerVersionId:offer.offerVersionId||currentOfferVersion(offerId),sourceOfferChoiceId:id,reward:offer.primaryValue||'',requirement:offer.primaryRequirement||'',source:'current-offer'};
-  }
-
-  function selectedEditOffer(action){
-    const state=readJson(APP_STATE_KEY,null);
-    const productId=state?.currentProductId||'';
-    const product=(state?.products||[]).find(item=>item.id===productId)||null;
-    const offerId=product?.offerId||'';
-    if(!product||!offerId)return null;
-    const reviewed=history?.current?.(offerId)||null;
-    if(reviewed)return {
-      productId,offerId,offerVersionId:reviewedOfferVersion(reviewed),sourceOfferChoiceId:reviewed.id,
-      reward:reviewed.value||'',requirement:reviewed.requirement||'',source:'reviewed-offer-history'
-    };
-    const page=action?.closest?.('.edit-product-page')||document.querySelector('.edit-product-page');
-    const selected=page?.querySelector('[data-action="edit-bonus-choice"].selected');
-    const id=selected?.dataset.id||'';
-    if(!id||id==='manual')return null;
-    const fact=window.NextBonusOfferData?.[offerId]||null;
-    if(!fact)return null;
-    return {productId,offerId,offerVersionId:fact.offerVersionId||currentOfferVersion(offerId),sourceOfferChoiceId:id,reward:fact.primaryValue||'',requirement:fact.primaryRequirement||'',source:'current-offer'};
-  }
-
-  function categoryFromModal(modal){
-    const title=(modal?.querySelector('.modal-title')?.textContent||'').trim();
-    return title.includes('开户时')?'银行和券商账户':'信用卡';
-  }
-
-  function anchorValue(kind){
-    if(kind==='edit')return document.getElementById('edit-opened')?.value||'';
-    return document.getElementById('add-opened')?.value||memory.opened||'';
-  }
-
-  function ensureAnchorPrompt(container,kind){
-    if(!container||container.querySelector(`[data-nb-anchor-prompt="${kind}"]`))return;
-    const isEdit=kind==='edit';
-    const block=document.createElement('div');
-    block.dataset.nbAnchorPrompt=kind;
-    block.className='report';
-    block.style.marginTop='14px';
-    block.innerHTML=`<h3>${isEdit?'补充开卡日期':'补充开卡 / 开户日期'}</h3><p>这个奖励的截止日期需要从${isEdit?'开卡':'开卡 / 开户'}日期计算。填写后才能继续。</p><div class="form-group" style="margin-top:10px"><label class="label">${isEdit?'开卡日期':'开卡 / 开户日期'}</label><input id="${isEdit?'edit-opened':'add-opened'}" class="input" type="date" max="${new Date().toISOString().slice(0,10)}" value="${anchorValue(kind)}"></div>`;
-    const footer=container.querySelector('.edit-footer,.modal-foot');
-    if(footer)footer.parentElement.insertBefore(block,footer);else container.appendChild(block);
-    block.querySelector('input')?.focus();
-  }
 
   function planFor(offer,opened,category){
     if(!offer?.requirement)return null;
@@ -174,37 +97,6 @@
   }
 
 
-  function addSnapshot(action){
-    if(action?.dataset?.action!=='add-offer-next')return null;
-    const modal=action.closest('.add-product-modal');if(!modal)return null;
-    const offer=selectedAddOffer(modal);if(!offer||!offer.requirement)return null;
-    const opened=anchorValue('add'),category=categoryFromModal(modal),plan=planFor(offer,opened,category);
-    if(plan?.needsAnchorDate||(!opened&&plan?.hasRelativeDeadline)){
-      ensureAnchorPrompt(modal,'add');return {blocked:true};
-    }
-    if(!plan?.tasks?.length||plan.tasks.some(task=>!task.dueDate))return null;
-    const state=readJson(APP_STATE_KEY,{products:[]});
-    return {blocked:false,existingProductIds:(state.products||[]).map(item=>item.id),opened,category,offer,plan};
-  }
-
-  function patchAddedProduct(snapshot){
-    const state=readJson(APP_STATE_KEY,null);if(!state)return false;
-    const oldIds=new Set(snapshot.existingProductIds||[]);
-    const product=[...(state.products||[])].reverse().find(item=>!oldIds.has(item.id)&&item.offerId===snapshot.offer.offerId)||null;
-    if(!product)return false;
-    const attention=(state.activeAttention||[]).find(item=>item.productId===product.id&&item.type==='bonus');
-    if(!attention)return false;
-    product.offerVersionId=snapshot.offer.offerVersionId||product.offerVersionId||null;
-    product.sourceOfferChoiceId=snapshot.offer.sourceOfferChoiceId||null;
-    if(!patchAttention(state,product,attention,snapshot.offer,snapshot.plan,snapshot.opened))return false;
-    state.savedOfferIds=(state.savedOfferIds||[]).filter(id=>id!==snapshot.offer.offerId);
-    state.unavailableSavedIds=(state.unavailableSavedIds||[]).filter(id=>id!==snapshot.offer.offerId);
-    writeJson(APP_STATE_KEY,state);
-    window.NextBonusWatchlistState?.unfollow?.(snapshot.offer.offerId);
-    window.location.reload();
-    return true;
-  }
-
   function checklistRequirement(attention){
     const labels=(Array.isArray(attention?.checklist)?attention.checklist:[]).map(item=>String(item?.label||'').trim()).filter(Boolean);
     if(labels.length!==1)return '';
@@ -212,7 +104,7 @@
     return rules.extractOffset(label)?label:'';
   }
 
-  async function sourceForAttention(state,product,attention,preferred=null){
+  function sourceForAttention(state,product,attention,preferred=null){
     if(preferred&&rewardKey(preferred.reward)===rewardKey(attention?.key||attention?.secondary||''))return preferred;
     const tracking=(state.offerTrackings||[]).find(item=>item.id===attention?.trackingId)||((attention?.applicationHandoffId&&(state.offerTrackings||[]).find(item=>item.applicationHandoffId===attention.applicationHandoffId))||null);
     if(tracking?.requirement)return {offerId:tracking.offerId||product.offerId||null,offerVersionId:tracking.offerVersionId||attention.offerVersionId||null,sourceOfferChoiceId:tracking.sourceOfferChoiceId||attention.sourceOfferChoiceId||null,reward:tracking.reward||attention.key||'',requirement:tracking.requirement,source:'tracking'};
@@ -225,74 +117,12 @@
     const current=window.NextBonusOfferData?.[offerId]||null;
     if(current?.primaryRequirement&&rewardKey(current.primaryValue)===rewardKey(reward))return {offerId,offerVersionId:current.offerVersionId||currentOfferVersion(offerId),sourceOfferChoiceId:`current-${offerId}`,reward,requirement:current.primaryRequirement,source:'current-offer'};
     if(!history?.isSupported?.(offerId))return null;
-    const result=history.cached?.(offerId)||await history.load(offerId);
+    const result=history.cached?.(offerId)||null;
     const matches=(result?.choices||[]).filter(choice=>rewardKey(choice.value)===rewardKey(reward));
     const unique=[...new Map(matches.map(choice=>[String(choice.requirement||'').trim(),choice])).entries()].filter(([requirement])=>requirement);
     if(unique.length!==1)return null;
     const choice=unique[0][1];
     return {offerId,offerVersionId:reviewedOfferVersion(choice),sourceOfferChoiceId:choice.id,reward,requirement:unique[0][0],source:'reviewed-offer-history'};
-  }
-
-  function migrateCardmemberRecords(productId,oldOpened,newOpened,state){
-    if(!productId||!oldOpened||!newOpened||oldOpened===newOpened||!window.NextBonusBenefitCycle?.current)return false;
-    const store=readJson(BENEFIT_CYCLE_KEY,null);if(!store?.records)return false;
-    let changed=false;
-    for(const [key,record] of Object.entries({...store.records})){
-      const parts=key.split('|');
-      if(parts.length<3||parts[0]!==productId||!String(parts[2]).includes('__')||record?.status!=='used'||!record?.usedAt)continue;
-      const date=String(record.usedAt).slice(0,10);
-      const period=window.NextBonusBenefitCycle.current('cardmember-year',date,newOpened);if(!period)continue;
-      const nextKey=`${productId}|${parts[1]}|${period.id}`;
-      if(nextKey===key)continue;
-      const existing=store.records[nextKey];
-      if(!existing||String(existing.usedAt||'')<String(record.usedAt||''))store.records[nextKey]=record;
-      delete store.records[key];changed=true;
-    }
-    for(const attention of state.activeAttention||[]){
-      if(attention.productId!==productId||attention.type!=='benefit'||attention.cycleType!=='cardmember-year')continue;
-      const today=new Date().toISOString().slice(0,10),period=window.NextBonusBenefitCycle.current('cardmember-year',today,newOpened);if(!period)continue;
-      const pad=value=>String(value).padStart(2,'0');
-      const due=`${period.end.getFullYear()}-${pad(period.end.getMonth()+1)}-${pad(period.end.getDate())}`;
-      attention.cycleId=period.id;attention.dueDate=due;attention.time=`本期截止 ${shortDate(due)}`;
-    }
-    if(changed)writeJson(BENEFIT_CYCLE_KEY,store);
-    return changed;
-  }
-
-  function editSnapshot(action){
-    if(action?.dataset?.action!=='save-edit-product')return null;
-    const productId=action.dataset.id||'',opened=document.getElementById('edit-opened')?.value||'',status=document.getElementById('edit-status')?.value||'';
-    if(!productId||!opened||status==='已关闭')return null;
-    const state=readJson(APP_STATE_KEY,null),product=(state?.products||[]).find(item=>item.id===productId);
-    if(!product||!['信用卡','银行和券商账户'].includes(product.type))return null;
-    const bonuses=(state.activeAttention||[]).filter(item=>item.productId===productId&&item.type==='bonus');
-    const preferred=memory.pendingEditOffer?.productId===productId?clone(memory.pendingEditOffer):null;
-    if(opened===product.opened&&bonuses.every(item=>!!item.dueDate)&&!preferred)return null;
-    return {productId,opened,oldOpened:product.opened||'',bonusIds:bonuses.map(item=>item.id),preferred};
-  }
-
-  async function patchEditedProduct(snapshot){
-    const state=readJson(APP_STATE_KEY,null);if(!state)return false;
-    const product=(state.products||[]).find(item=>item.id===snapshot.productId);
-    if(!product||!['信用卡','银行和券商账户'].includes(product.type)||product.opened!==snapshot.opened)return false;
-    migrateCardmemberRecords(product.id,snapshot.oldOpened,snapshot.opened,state);
-    let changed=false;
-    const bonuses=(state.activeAttention||[]).filter(item=>item.productId===product.id&&item.type==='bonus');
-    for(const attention of bonuses){
-      const source=await sourceForAttention(state,product,attention,snapshot.preferred);
-      if(!source?.requirement)continue;
-      const plan=planFor(source,snapshot.opened,product.type);
-      if(!plan?.tasks?.length||plan.tasks.some(task=>!task.dueDate))continue;
-      if(snapshot.preferred&&rewardKey(snapshot.preferred.reward)===rewardKey(attention.key||attention.secondary||'')){
-        product.offerVersionId=snapshot.preferred.offerVersionId||product.offerVersionId||null;
-        product.sourceOfferChoiceId=snapshot.preferred.sourceOfferChoiceId||product.sourceOfferChoiceId||null;
-      }
-      if(patchAttention(state,product,attention,source,plan,snapshot.opened))changed=true;
-    }
-    if(!changed&&snapshot.oldOpened===snapshot.opened)return false;
-    writeJson(APP_STATE_KEY,state);
-    if(snapshot.preferred?.offerId)window.NextBonusWatchlistState?.unfollow?.(snapshot.preferred.offerId);
-    window.location.reload();return true;
   }
 
   function syncChecklistTaskState(state,attention){
@@ -311,11 +141,11 @@
     const tracking=(state.offerTrackings||[]).find(item=>item.id===attention.trackingId);if(tracking)tracking.status='completed';
     const historyItem=window.NextBonusAttentionHistory.stamp({id:`h-${attention.id}-${Date.now()}`,productId:attention.productId,product:attention.product,productInstance:attention.productInstance||'',action:attention.action,time:attention.time,dueDate:attention.dueDate||null,result:'已完成',statusClass:'used',ended:historyDateLabel(),correction:'撤销完成',summary:attention.summary,key:attention.key,keySub:attention.keySub,instruction:attention.instruction,source:clone(attention)},'user');
     state.activeAttention.splice(index,1);state.attentionHistory=[historyItem,...(state.attentionHistory||[])];
-    writeJson(APP_STATE_KEY,state);window.location.reload();return true;
+    return true;
   }
 
-  function restoreHistoryDirect(historyId){
-    const state=readJson(APP_STATE_KEY,null);if(!state)return false;
+  function restoreHistoryDirect(state,historyId){
+    if(!state)return false;
     const index=(state.attentionHistory||[]).findIndex(item=>item.id===historyId);if(index<0)return false;
     const item=state.attentionHistory[index],source=clone(item.source||null);if(!source)return false;
     const triggerId=source.completionTriggerCheckId||null;
@@ -331,79 +161,48 @@
     window.NextBonusAttentionHistory.addReopenEvent(state,item);
     syncChecklistTaskState(state,source);
     const tracking=(state.offerTrackings||[]).find(track=>track.id===source.trackingId);if(tracking)tracking.status='in_progress';
-    writeJson(APP_STATE_KEY,state);window.location.reload();return true;
+    return true;
   }
 
-  document.addEventListener('input',event=>{
-    if(event.target.id==='add-opened')memory.opened=event.target.value||'';
-  },true);
-
-  document.addEventListener('click',event=>{
-    const action=event.target.closest?.('[data-action]');if(!action)return;
-    if(action.dataset.action==='open-add-product'||action.dataset.action==='add-another')reset();
-    if(['add-close','add-discard'].includes(action.dataset.action)){reset();return;}
-
-    if(action.dataset.action==='add-offer-next'){
-      const snapshot=addSnapshot(action);
-      if(snapshot?.blocked){event.preventDefault();event.stopImmediatePropagation();return;}
-      if(snapshot)memory.pendingAdd=snapshot;
-      return;
+  function setChecklistItem(state,attentionId,checkId,checked){
+    const attention=(state?.activeAttention||[]).find(item=>item.id===attentionId);
+    const check=attention?.checklist?.find(item=>item.id===checkId);
+    if(!attention||!check)return {handled:false,completed:false};
+    check.done=!!checked;
+    syncChecklistTaskState(state,attention);
+    if(checked&&attention.type==='bonus'&&attention.checklist.length>1&&attention.checklist.every(item=>item.done)){
+      return {handled:true,completed:completeChecklistAttention(state,attention,check.id)};
     }
+    return {handled:true,completed:false};
+  }
 
-    if(action.dataset.action==='edit-bonus-use'){
-      const offer=selectedEditOffer(action);if(!offer)return;
-      const opened=anchorValue('edit'),state=readJson(APP_STATE_KEY,null),product=(state?.products||[]).find(item=>item.id===offer.productId);
-      const plan=planFor(offer,opened,product?.type||'信用卡');
-      if(plan?.needsAnchorDate||(!opened&&plan?.hasRelativeDeadline)){
-        ensureAnchorPrompt(action.closest('.edit-product-page'),'edit');event.preventDefault();event.stopImmediatePropagation();return;
+  function reanchorProduct(state,product,oldOpened,newOpened,preferred=null){
+    if(!state||!product||!newOpened||oldOpened===newOpened||!['信用卡','银行和券商账户'].includes(product.type))return false;
+    let changed=false;
+    const bonuses=(state.activeAttention||[]).filter(item=>item.productId===product.id&&item.type==='bonus');
+    for(const attention of bonuses){
+      const source=sourceForAttention(state,product,attention,preferred);
+      if(!source?.requirement)continue;
+      const plan=planFor(source,newOpened,product.type);
+      if(!plan?.tasks?.length||plan.tasks.some(task=>!task.dueDate))continue;
+      if(preferred&&rewardKey(preferred.reward)===rewardKey(attention.key||attention.secondary||'')){
+        product.offerVersionId=preferred.offerVersionId||product.offerVersionId||null;
+        product.sourceOfferChoiceId=preferred.sourceOfferChoiceId||product.sourceOfferChoiceId||null;
       }
-      if(plan?.tasks?.length&&!plan.tasks.some(task=>!task.dueDate))memory.pendingEditOffer={...offer,opened};
-      return;
+      if(patchAttention(state,product,attention,source,plan,newOpened))changed=true;
     }
+    return changed;
+  }
 
-    if(action.dataset.action==='save-edit-product'){
-      const snapshot=editSnapshot(action);if(snapshot)memory.pendingEdit=snapshot;
-      return;
-    }
-
-    if(action.dataset.action==='history-correction'){
-      const state=readJson(APP_STATE_KEY,null),item=(state?.attentionHistory||[]).find(historyItem=>historyItem.id===action.dataset.id);
-      if(item?.source&&(item.source.completionTriggerCheckId||['bonus','annual','change'].includes(item.source.type))){
-        event.preventDefault();event.stopImmediatePropagation();restoreHistoryDirect(action.dataset.id);return;
-      }
-    }
-  },true);
-
-  document.addEventListener('change',event=>{
-    const checkbox=event.target.closest?.('[data-action="checklist"]');if(!checkbox)return;
-    const state=readJson(APP_STATE_KEY,null),attention=(state?.activeAttention||[]).find(item=>item.id===checkbox.dataset.attention);
-    const check=attention?.checklist?.find(item=>item.id===checkbox.dataset.check);if(!attention||!check)return;
-    if(checkbox.checked&&attention.type==='bonus'&&attention.checklist.length>1){
-      check.done=true;
-      if(attention.checklist.every(item=>item.done)){
-        event.preventDefault();event.stopImmediatePropagation();completeChecklistAttention(state,attention,check.id);return;
-      }
-    }
-    memory.pendingChecklist={attentionId:attention.id,checkId:check.id,checked:checkbox.checked};
-  },true);
-
-  document.addEventListener('click',event=>{
-    const action=event.target.closest?.('[data-action]');if(!action)return;
-    if(action.dataset.action==='add-offer-next'&&memory.pendingAdd){
-      const snapshot=memory.pendingAdd;memory.pendingAdd=null;window.setTimeout(()=>patchAddedProduct(snapshot),0);
-    }
-    if(action.dataset.action==='save-edit-product'&&memory.pendingEdit){
-      const snapshot=memory.pendingEdit;memory.pendingEdit=null;memory.pendingEditOffer=null;window.setTimeout(()=>{patchEditedProduct(snapshot).catch(()=>{});},0);
-    }
-  });
-
-  document.addEventListener('change',()=>{
-    if(!memory.pendingChecklist)return;
-    const pending=memory.pendingChecklist;memory.pendingChecklist=null;
-    window.setTimeout(()=>{
-      const state=readJson(APP_STATE_KEY,null),attention=(state?.activeAttention||[]).find(item=>item.id===pending.attentionId);if(!attention)return;
-      syncChecklistTaskState(state,attention);writeJson(APP_STATE_KEY,state);
-    },0);
+  window.NextBonusBonusTrackingRuntime=Object.freeze({
+    rewardKey,
+    planFor,
+    patchAttention,
+    sourceForAttention,
+    reanchorProduct,
+    syncChecklistTaskState,
+    setChecklistItem,
+    restoreHistoryDirect
   });
 
 })();

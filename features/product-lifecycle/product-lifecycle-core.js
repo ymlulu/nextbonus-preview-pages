@@ -97,14 +97,15 @@
         userProductId: spec.productId,
         offerId: spec.offerId || null,
         ...(spec.offerVersionId ? {offerVersionId: spec.offerVersionId} : {}),
+        ...(spec.sourceOfferChoiceId ? {sourceOfferChoiceId: spec.sourceOfferChoiceId} : {}),
         status: 'in_progress',
         anchorDate: spec.anchorDate || null,
         anchorKind: spec.anchorKind || null,
         reward,
+        requirement: spec.requirement || '',
         createdAt: spec.createdAt || nowIso()
       };
       if(derivedPlan?.unresolvedAnchorDate){
-        tracking.requirement=spec.requirement;
         tracking.deadlineStatus='needs_anchor_date';
       }
       state.offerTrackings.push(tracking);
@@ -118,6 +119,10 @@
       ...(spec.applicationHandoffId ? {applicationHandoffId: spec.applicationHandoffId} : {}),
       productId: spec.productId,
       product: spec.productLabel || spec.productName || '',
+      ...(spec.offerId ? {sourceOfferId:spec.offerId} : {}),
+      ...(spec.offerVersionId ? {offerVersionId:spec.offerVersionId} : {}),
+      ...(spec.sourceOfferChoiceId ? {sourceOfferChoiceId:spec.sourceOfferChoiceId} : {}),
+      ...(spec.requirement ? {requirement:spec.requirement} : {}),
       action: spec.action || '完成开卡奖励',
       secondary: reward,
       time: missingAnchor ? '截止日期暂时无法计算' : dueDate ? `截止 ${shortDate(dueDate)}` : '截止日期以所选奖励规则为准',
