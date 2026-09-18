@@ -6,6 +6,10 @@
   background:#f7f8fa;
 }
 
+.shell:has(.discover-page) .sidebar .nav-item.active{
+  background:rgba(10,132,255,.075);
+}
+
 /* Search stays the one explicit field; make its chrome quieter and more focused. */
 .discover-page .discover-search-row{
   max-width:880px;
