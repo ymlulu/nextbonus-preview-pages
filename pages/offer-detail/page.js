@@ -1,20 +1,38 @@
 (() => {
   'use strict';
 
-  function rewardValueHtml(esc,offer){
-    const value=String(offer.value||'');
-    const pointsLike=/\b(MR|UR|TYP|miles?|points?)\b/i.test(value);
-    if(!pointsLike){
-      return `<section class="nb-offer-value-section">
-        <div class="nb-offer-section-label">奖励价值</div>
-        <div class="nb-offer-value-copy">这部分先看当前奖励本身，再结合你实际会不会用到产品长期权益判断价值。</div>
-      </section>`;
-    }
+  function money(value){
+    return Number.isFinite(Number(value))
+      ? '$'+Math.round(Number(value)).toLocaleString('en-US')
+      : null;
+  }
+
+  function rewardValueHtml(esc,timingCurrent){
+    const estimated=timingCurrent?.comparisonUnit==='USD_NORM'
+      ? money(timingCurrent.comparableValue)
+      : null;
+    const valuationCopy=estimated
+      ? `按 Timing 当前估值约 <strong>${esc(estimated)}</strong>`
+      : '正在读取 Timing 估值…';
+
     return `<section class="nb-offer-value-section">
       <div class="nb-offer-section-label">奖励价值</div>
       <div class="nb-offer-value-grid">
-        <div><b>旅行兑换</b><span>可以结合航空、酒店等实际兑换方式理解这笔积分的用途。</span></div>
-        <div><b>实际价值</b><span>积分价值会随兑换方式变化，这里不把单一估值当成固定现金价值。</span></div>
+        <div class="nb-offer-value-primary">
+          <span>估值</span>
+          <b>${valuationCopy}</b>
+          <small>使用 Offer Timing 的正式 Comparable Value</small>
+        </div>
+        <div>
+          <span>航空</span>
+          <b>航空伙伴</b>
+          <small>可用于航空伙伴转点；具体兑换示例后续由 Timing 数据补充。</small>
+        </div>
+        <div>
+          <span>酒店</span>
+          <b>酒店伙伴</b>
+          <small>可用于酒店伙伴转点；具体兑换示例后续由 Timing 数据补充。</small>
+        </div>
       </div>
     </section>`;
   }
@@ -79,6 +97,7 @@
       supportsAssessment,
       isEnded,
       result:r,
+      timingCurrent,
       isPlatinum:isPlat,
       posterSrc,
       hasAssessmentResult
@@ -146,7 +165,7 @@
           </header>
 
           ${offerSummary}
-          ${!isEnded?rewardValueHtml(esc,o):''}
+          ${!isEnded?rewardValueHtml(esc,timingCurrent):''}
           ${applyHtml}
           ${assessment}
           ${!isEnded&&!applyHtml&&!assessment?`<div class="v4-no-action-note">当前暂未提供可执行的申请入口。</div>`:''}
