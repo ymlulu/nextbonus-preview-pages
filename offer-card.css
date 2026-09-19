@@ -3,9 +3,12 @@
    Typography lives in ui/typography.css; Discover-only overrides stay page-owned. */
 
 .offer-card.nb-offer-card{
+  --nb-offer-card-aspect:202 / 315;
+  --nb-offer-visual-share:46%;
   width:202px;
-  height:333px;
+  height:auto;
   max-width:100%;
+  aspect-ratio:var(--nb-offer-card-aspect);
   display:flex;
   flex-direction:column;
   overflow:hidden;
@@ -17,16 +20,18 @@
   display:flex;
   align-items:center;
   justify-content:center;
-  height:165px;
-  flex:0 0 165px;
+  height:auto;
+  flex:0 0 var(--nb-offer-visual-share);
   padding:17px 14px 10px;
+  box-sizing:border-box;
   background:linear-gradient(145deg,#f7f9fc,#eef2f7);
   overflow:hidden;
 }
 
 .nb-offer-card .nb-main-art{
-  width:168px;
-  height:106px;
+  width:min(168px,100%);
+  height:auto;
+  aspect-ratio:168 / 106;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -44,24 +49,27 @@
 
 
 .nb-offer-card .nb-main-art.is-brand-logo{
-  width:120px;
-  height:86px;
+  width:min(120px,72%);
+  height:auto;
+  aspect-ratio:120 / 86;
   border-radius:0;
 }
 .nb-offer-card .nb-main-art.is-brand-logo img{
-  max-width:112px;
-  max-height:72px;
+  max-width:100%;
+  max-height:100%;
   filter:none;
   transform:none;
 }
 
 .nb-offer-card .nb-brand-art{
-  width:168px;
-  height:101px;
+  width:min(168px,100%);
+  height:auto;
+  aspect-ratio:168 / 101;
   border-radius:13px;
   display:grid;
   place-items:center;
   padding:18px;
+  box-sizing:border-box;
   text-align:center;
   color:#183252;
   background:linear-gradient(145deg,#fff,#e8edf5);
@@ -73,11 +81,11 @@
 .nb-offer-card .nb-brand-art.bank{background:linear-gradient(145deg,#fff,#e4e9f1);color:#253955}
 
 .nb-offer-card .nb-card-body{
-  height:168px;
+  height:auto;
   min-height:0;
-  padding:12px 14px 12px;
+  padding:10px 12px 9px;
   display:flex;
-  flex:1;
+  flex:1 1 auto;
   flex-direction:column;
 }
 
@@ -146,7 +154,7 @@
 .nb-offer-card .mock-bookmark.saved:hover{background:rgba(10,113,255,.08)}
 
 .nb-offer-card .nb-primary-value{
-  margin-top:8px;
+  margin-top:4px;
   color:#142745;
   flex:0 0 auto;
   display:-webkit-box;
@@ -158,19 +166,19 @@
 .nb-offer-card .nb-card-footer{
   flex:0 0 auto;
   margin-top:auto;
-  padding-top:9px;
+  padding-top:6px;
   display:flex;
   align-items:flex-end;
   justify-content:space-between;
-  gap:8px;
-  min-height:31px;
+  gap:5px;
+  min-height:26px;
 }
 
 .nb-offer-card .nb-card-meta{
   min-width:0;
   display:flex;
   align-items:center;
-  gap:5px;
+  gap:4px;
   white-space:nowrap;
   overflow:hidden;
 }
@@ -178,7 +186,7 @@
 .nb-offer-card .nb-status-tag{
   flex:0 0 auto;
   border-radius:999px;
-  padding:3px 7px;
+  padding:3px 6px;
   background:#fff3e5;
   color:#a65c13;
   box-shadow:none;
@@ -250,19 +258,7 @@
 }
 
 @media(max-width:780px){
-  .offer-card.nb-offer-card{
-    width:100%;
-    height:auto;
-    aspect-ratio:202/333;
-  }
-  .nb-offer-card .nb-offer-visual{
-    height:auto;
-    flex-basis:52%;
-  }
-  .nb-offer-card .nb-card-body{
-    height:auto;
-    flex:1;
-  }
+  .offer-card.nb-offer-card{width:100%}
 }
 @media(max-width:520px){
   .offer-card.nb-offer-card{max-width:202px}

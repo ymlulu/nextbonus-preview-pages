@@ -37,7 +37,19 @@ requireText(files.card,'class="nb-card-footer"','Canonical Offer Card must keep 
 requireText(files.card,'providerFooterHtml','Canonical Offer Card must keep provider branding in the footer owner.');
 requireText(files.cardCss,'position:static','Offer Card Follow must neutralize the retired absolute-positioned bookmark style.');
 requireText(files.cardCss,'.nb-offer-card .nb-card-footer','Offer Card footer layout owner is missing.');
-requireText(files.mobileCardGeometry,'.discover-page .nb-offer-card .nb-offer-visual','Mobile Offer Card geometry must stay in mobile-primary-page-focus.css.');
+requireText(files.cardCss,'--nb-offer-card-aspect:202 / 315','Canonical Offer Card aspect ratio must stay owned by offer-card.css.');
+const mobileGeometrySelectors=[
+  '.discover-page .offer-card.nb-offer-card',
+  '.discover-page .nb-offer-card .nb-offer-visual',
+  '.discover-page .nb-offer-card .nb-main-art',
+  '.discover-page .nb-offer-card .nb-card-body'
+];
+for(const selector of mobileGeometrySelectors){
+  if(files.mobileCardGeometry?.includes(selector)){
+    failures.push('mobile-primary-page-focus.css must not re-own canonical Offer Card geometry.');
+    break;
+  }
+}
 if(files.mobileDiscoverPolish?.includes('.discover-page .nb-offer-card .nb-offer-visual')||
    files.mobileDiscoverPolish?.includes('.discover-page .nb-offer-card .nb-card-body')){
   failures.push('mobile-discover-attention-polish.css must not re-own Offer Card internal geometry.');

@@ -2,67 +2,11 @@
    This file changes layout/visibility only; business data and state remain untouched. */
 
 @media(max-width:780px){
-  /* Discover: preserve two-column browsing with the canonical Offer Card structure.
-     Mobile scan order is artwork -> product name / Follow -> reward -> metadata / brand. */
-  .discover-page .offer-card.nb-offer-card{
-    height:266px;
-    aspect-ratio:auto;
-  }
-
-  .discover-page .nb-offer-card .nb-offer-visual{
-    height:126px;
-    flex:0 0 126px;
-    padding:12px 9px 7px;
-  }
-
-  .discover-page .nb-offer-card .nb-main-art{
-    max-width:136px;
-    height:84px;
-    margin-top:0;
-  }
-
-
-  .discover-page .nb-offer-card .nb-main-art.is-brand-logo{
-    max-width:104px;
-    height:76px;
-  }
-
-  .discover-page .nb-offer-card .nb-main-art.is-brand-logo img{
-    max-width:96px;
-    max-height:64px;
-  }
-
-  .discover-page .nb-offer-card .nb-brand-art{
-    max-width:136px;
-    height:82px;
-  }
-
-  .discover-page .nb-offer-card .nb-card-body{
-    height:140px;
-    flex:0 0 140px;
-    padding:10px 10px 9px;
-  }
-
-  .discover-page .nb-offer-card .nb-primary-value{
-    margin-top:4px;
-  }
+  /* Discover Offer Card geometry is canonical in offer-card.css.
+     Mobile owns only the surrounding two-column page layout. */
 
   .discover-page .fallback-offer-card .requirement{
     display:none;
-  }
-
-  .discover-page .nb-offer-card .nb-card-footer{
-    padding-top:6px;
-    gap:5px;
-    min-height:26px;
-  }
-
-  .discover-page .nb-offer-card .nb-card-meta{
-    gap:4px;
-  }
-
-  .discover-page .nb-offer-card .nb-status-tag{
-    padding:3px 6px;
   }
 
   /* Watchlist / 已关注: this page answers "what did I save and how valuable is it?"
@@ -146,11 +90,5 @@
   .v4-products-page .v4-needs-attention .v4-pp-chevron{
     grid-area:chev;
     align-self:center;
-  }
-}
-
-@media(max-width:340px){
-  .discover-page .offer-card.nb-offer-card{
-    height:auto;
   }
 }
