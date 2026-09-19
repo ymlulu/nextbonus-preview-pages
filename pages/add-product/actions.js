@@ -23,6 +23,7 @@
 
   async function enterOfferStep(ctx,flow){
     if(!flow||flow.offerLoading) return;
+    flow.step='offer';
     flow.offerLoading=true;
     rerender(ctx);
     try{
@@ -30,7 +31,6 @@
     }finally{
       if(ctx.state.addFlow!==flow) return;
       flow.offerLoading=false;
-      flow.step='offer';
       rerender(ctx);
     }
   }
@@ -121,12 +121,11 @@
     return product;
   }
 
-  function updateManualSubmit(state){
+  function updateRewardSubmit(state){
     const flow=state.addFlow;
     if(!flow) return;
-    const valid=flow.reward.trim()&&flow.tasks.length&&flow.tasks.every(task=>task.desc.trim()&&task.due);
-    const button=document.querySelector('[data-action="add-manual-submit"]');
-    if(button) button.disabled=!valid;
+    const button=document.querySelector('[data-action="add-offer-next"]');
+    if(button) button.disabled=!model.rewardChoiceReady(flow);
   }
 
   events.register('add-product',{
@@ -139,9 +138,8 @@
       if(!flow) return false;
 
       if(action==='add-close'){
-        if(model.progressed(flow)){
-          flow._confirmClose=true;
-        }else{
+        if(model.progressed(flow)) flow._confirmClose=true;
+        else{
           state.addFlow=null;
           state.modal=null;
         }
@@ -164,16 +162,6 @@
         rerender(ctx);
         return {handled:true};
       }
-      if(action==='add-category'){
-        const next=el.dataset.category;
-        if(flow.category!==next) model.resetAfterCategory(flow);
-        flow.category=next;
-        flow.step='product';
-        flow.search='';
-        flow.filter='全部';
-        rerender(ctx);
-        return {handled:true};
-      }
       if(action==='add-filter'){
         flow.filter=el.dataset.value;
         rerender(ctx);
@@ -183,17 +171,6 @@
         flow.search='';
         flow.reportStatus=null;
         rerender(ctx,'nb-add-search');
-        return {handled:true};
-      }
-      if(action==='add-report-missing'){
-        flow.reportStatus='loading';
-        rerender(ctx);
-        setTimeout(()=>{
-          if(ctx.state.addFlow===flow){
-            flow.reportStatus='submitted';
-            rerender(ctx);
-          }
-        },150);
         return {handled:true};
       }
       if(action==='add-product-select'){
@@ -214,36 +191,17 @@
         return {handled:true};
       }
       if(action==='add-to-track'){
-        flow.step='track';
-        rerender(ctx);
-        return {handled:true};
-      }
-      if(action==='add-track-choice'){
-        flow.track=el.dataset.value==='yes';
-        rerender(ctx);
-        return {handled:true};
-      }
-      if(action==='add-track-next'){
-        if(flow.track===true){
-          void enterOfferStep(ctx,flow);
-          return {handled:true};
-        }
-        flow.track=false;
-        submit(ctx);
-        rerender(ctx);
+        void enterOfferStep(ctx,flow);
         return {handled:true};
       }
       if(action==='add-offer-choice'){
-        flow.offer=el.dataset.id;
+        const nextOffer=el.dataset.id;
+        flow.offer=flow.offer===nextOffer?null:nextOffer;
         rerender(ctx);
         return {handled:true};
       }
       if(action==='add-offer-next'){
-        if(flow.offer==='manual'){
-          flow.step='manual';
-          rerender(ctx);
-          return {handled:true};
-        }
+        if(!model.rewardChoiceReady(flow)) return {handled:true};
         flow.track=!!flow.offer;
         submit(ctx);
         rerender(ctx);
@@ -262,20 +220,6 @@
       }
       if(action==='delete-task'){
         flow.tasks=flow.tasks.filter(task=>task.id!==el.dataset.id);
-        rerender(ctx);
-        return {handled:true};
-      }
-      if(action==='add-manual-submit'){
-        const has=!!String(flow.reward||'').trim()||
-          (flow.tasks||[]).some(task=>String(task.desc||'').trim()||task.due);
-        if(!has){
-          flow.track=false;
-          flow.offer=null;
-        }else{
-          flow.track=true;
-          flow.offer='manual';
-        }
-        submit(ctx);
         rerender(ctx);
         return {handled:true};
       }
@@ -319,24 +263,24 @@
       if(target.id==='add-opened'){
         flow.opened=target.value;
         const clear=target.closest('.date-field-row')?.querySelector('[data-action="add-clear-opened"]');
-        if(clear) clear.disabled=!target.value;
+        if(clear) clear.hidden=!target.value;
         return {handled:true};
       }
       if(target.id==='add-reward'){
         flow.reward=target.value;
-        updateManualSubmit(ctx.state);
+        updateRewardSubmit(ctx.state);
         return {handled:true};
       }
       if(target.classList?.contains('task-desc')){
         const task=flow.tasks.find(item=>item.id===target.dataset.id);
         if(task) task.desc=target.value;
-        updateManualSubmit(ctx.state);
+        updateRewardSubmit(ctx.state);
         return {handled:true};
       }
       if(target.classList?.contains('task-due')){
         const task=flow.tasks.find(item=>item.id===target.dataset.id);
         if(task) task.due=target.value;
-        updateManualSubmit(ctx.state);
+        updateRewardSubmit(ctx.state);
         return {handled:true};
       }
       return false;

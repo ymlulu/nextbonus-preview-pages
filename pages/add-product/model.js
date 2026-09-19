@@ -9,6 +9,7 @@
     ['券商','券商账户'],
     ['会籍','其他']
   ]);
+  const RECENT_REWARD_MONTHS=6;
 
   function createFlow(){
     return {
@@ -66,8 +67,40 @@
     flow.offerLoading=false;
   }
 
+  function manualTrackingValid(flow){
+    return !!flow &&
+      String(flow.reward||'').trim() &&
+      Array.isArray(flow.tasks) &&
+      flow.tasks.length>0 &&
+      flow.tasks.every(task=>String(task.desc||'').trim()&&task.due);
+  }
+
+  function rewardChoiceReady(flow){
+    if(!flow) return false;
+    if(flow.offer==='manual') return !!manualTrackingValid(flow);
+    return true;
+  }
+
+  function monthIndex(value){
+    const match=String(value||'').match(/^(\d{4})-(\d{2})/);
+    if(!match) return null;
+    const month=Number(match[2]);
+    if(month<1||month>12) return null;
+    return Number(match[1])*12+(month-1);
+  }
+
+  function recentRewardChoices(choices,now=new Date()){
+    const currentMonth=now.getFullYear()*12+now.getMonth();
+    const firstMonth=currentMonth-(RECENT_REWARD_MONTHS-1);
+    return (choices||[]).filter(choice=>{
+      if(choice?.kind==='current') return true;
+      const month=monthIndex(choice?.dateLabel);
+      return month!==null&&month>=firstMonth&&month<=currentMonth;
+    });
+  }
+
   function back(flow){
-    const map={info:'product',track:'info',offer:'track',manual:'offer','membership-confirm':'product'};
+    const map={info:'product',offer:'info','membership-confirm':'product'};
     if(map[flow.step]){
       flow.step=map[flow.step];
       return true;
@@ -81,10 +114,14 @@
 
   root.addProduct=Object.freeze({
     FILTERS,
+    RECENT_REWARD_MONTHS,
     createFlow,
     visibleEntries,
     resetAfterCategory,
     resetAfterProduct,
+    manualTrackingValid,
+    rewardChoiceReady,
+    recentRewardChoices,
     back,
     progressed
   });
