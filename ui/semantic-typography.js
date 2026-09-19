@@ -11,7 +11,7 @@
   // weight, line-height or tracking; those stay owned by the fixed text styles.
   const RULES = [
     /* Discover: provider is context; status/tag is metadata. */
-    ['.nb-offer-card .nb-provider-text,.fallback-offer-card .provider', 'caption1', 'secondary'],
+    ['.nb-offer-card .nb-provider-text,.fallback-offer-card .provider', 'caption2', 'secondary'],
     ['.nb-offer-card .nb-status-tag,.nb-offer-card .nb-tag,.fallback-offer-card .status-tag,.fallback-offer-card .soft-tag', 'caption2', 'secondary'],
 
     /* Watchlist: product + reward are scan targets; requirement is supporting copy. */
@@ -58,9 +58,9 @@
   }
 
   function desktopDiscoverValueType(node) {
-    if (node.matches('.fallback-offer-card .primary-value')) return 'display-value-compact';
-    if (node.classList.contains('is-short')) return 'display-value';
-    return 'display-value-compact';
+    if (node.matches('.fallback-offer-card .primary-value')) return 'title3';
+    if (node.classList.contains('is-short')) return 'display-value-compact';
+    return 'title3';
   }
 
   function syncDiscoverValueHierarchy(root = document) {
@@ -68,7 +68,7 @@
     const nodes = [];
     root.querySelectorAll?.(selector).forEach(node => nodes.push(node));
     if (root.matches?.(selector)) nodes.push(root);
-    nodes.forEach(node => mark(node, mobileQuery.matches ? 'title3' : desktopDiscoverValueType(node), null));
+    nodes.forEach(node => mark(node, mobileQuery.matches ? 'headline' : desktopDiscoverValueType(node), null));
   }
 
   function syncMobileProductDetailHierarchy(root = document) {
