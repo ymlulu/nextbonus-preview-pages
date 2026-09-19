@@ -451,9 +451,11 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 .nb-current-offer-value{font-size:32px;font-weight:820;line-height:1.08;letter-spacing:-.7px}
 .nb-current-offer.is-ended .nb-current-offer-value{font-size:25px}
 .nb-current-offer-requirement{font-size:13px;line-height:1.55}
-.nb-offer-value-grid span{font-size:10px;font-weight:700}
-.nb-offer-value-grid b{font-size:13px;line-height:1.4}
-.nb-offer-value-grid small{font-size:9.5px;line-height:1.45}
+.nb-offer-value-head h2{font-size:17px;line-height:1.25;font-weight:760;letter-spacing:-.2px}
+.nb-offer-value-head small{font-size:8px;line-height:1.2;font-weight:650;letter-spacing:.28em}
+.nb-offer-value-grid span{font-size:10px;font-weight:650}
+.nb-offer-value-grid b{font-size:23px;line-height:1.15;font-weight:720;letter-spacing:-.25px}
+.nb-offer-value-grid small{font-size:10px;line-height:1.45}
 .nb-offer-apply-primary .btn{font-size:14px;font-weight:760}
 .nb-assessment-kicker{font-size:10px;font-weight:760;letter-spacing:.03em}
 .nb-assessment-entry h2{font-size:18px;line-height:1.25;letter-spacing:-.25px}

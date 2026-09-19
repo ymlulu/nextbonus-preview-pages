@@ -7,32 +7,51 @@
       : null;
   }
 
-  function rewardValueHtml(esc,timingCurrent){
+  function rewardValueHtml(esc,timingCurrent,isPlatinum){
     const estimated=timingCurrent?.comparisonUnit==='USD_NORM'
       ? money(timingCurrent.comparableValue)
       : null;
-    const valuationCopy=estimated
-      ? `按 Timing 当前估值约 <strong>${esc(estimated)}</strong>`
-      : '正在读取 Timing 估值…';
+    const valuationValue=estimated
+      ? `约 ${esc(estimated)}`
+      : '正在读取估值…';
 
-    return `<section class="nb-offer-value-section">
-      <div class="nb-offer-section-label">奖励价值</div>
-      <div class="nb-offer-value-grid">
-        <div class="nb-offer-value-primary">
-          <span>估值</span>
-          <b>${valuationCopy}</b>
-          <small>使用 Offer Timing 的正式 Comparable Value</small>
+    const exchangeExamples=isPlatinum
+      ? `
+        <div class="nb-offer-value-card">
+          <span>洲际商务舱 / 头等舱</span>
+          <b>约 1–2 次</b>
+          <small>长途高端舱位体验</small>
         </div>
-        <div>
+        <div class="nb-offer-value-card">
+          <span>奢华酒店住宿</span>
+          <b>约 1–3 晚</b>
+          <small>高端酒店兑换参考</small>
+        </div>`
+      : `
+        <div class="nb-offer-value-card">
           <span>航空</span>
           <b>航空伙伴</b>
           <small>可用于航空伙伴转点；具体兑换示例后续由 Timing 数据补充。</small>
         </div>
-        <div>
+        <div class="nb-offer-value-card">
           <span>酒店</span>
           <b>酒店伙伴</b>
           <small>可用于酒店伙伴转点；具体兑换示例后续由 Timing 数据补充。</small>
+        </div>`;
+
+    return `<section class="nb-offer-value-section">
+      <div class="nb-offer-value-head">
+        <h2>奖励能换什么</h2>
+        <span class="nb-offer-value-rule" aria-hidden="true"></span>
+        <small>MORE TRAVEL, A BRIGHTER YOU</small>
+      </div>
+      <div class="nb-offer-value-grid">
+        <div class="nb-offer-value-card nb-offer-value-primary">
+          <span>大概价值</span>
+          <b>${valuationValue}</b>
+          <small>按当前 Timing 估值</small>
         </div>
+        ${exchangeExamples}
       </div>
     </section>`;
   }
@@ -54,11 +73,10 @@
       return `<section class="nb-assessment-section">
         <div class="nb-assessment-entry">
           <div class="nb-assessment-copy">
-            <span class="nb-assessment-kicker">申请评估</span>
-            <h2>不确定现在适不适合申请？</h2>
+            <h2>评估一下，让你的申请更有把握</h2>
             <p>回答几个与你申请情况有关的问题，看看申请限制、奖励资格、当前 Offer 水平和长期价值。</p>
           </div>
-          <button class="btn primary nb-assessment-start" data-action="assessment-start">开始申请评估 <span>→</span></button>
+          <button class="btn secondary nb-assessment-start" data-action="assessment-start">开始申请评估 <span>→</span></button>
           <button class="nb-assessment-preview-link" data-action="assessment-preview">了解会看到什么结果</button>
         </div>
       </section>`;
@@ -165,7 +183,7 @@
           </header>
 
           ${offerSummary}
-          ${!isEnded?rewardValueHtml(esc,timingCurrent):''}
+          ${!isEnded?rewardValueHtml(esc,timingCurrent,isPlat):''}
           ${applyHtml}
           ${assessment}
           ${!isEnded&&!applyHtml&&!assessment?`<div class="v4-no-action-note">当前暂未提供可执行的申请入口。</div>`:''}

@@ -450,7 +450,10 @@ body.nb-offer-overlay-open{overflow:hidden}
   padding:18px 18px 17px;
   border:1px solid #dce9fb;
   border-radius:16px;
-  background:linear-gradient(145deg,#f5f9ff,#fbfdff);
+  background:
+    radial-gradient(120% 95% at 100% 100%,rgba(111,173,255,.10),transparent 58%),
+    repeating-radial-gradient(ellipse at 112% 112%,rgba(128,181,247,.08) 0 1px,transparent 1px 7px),
+    linear-gradient(145deg,#f5f9ff,#fbfdff);
 }
 
 .nb-current-offer.is-ended{
@@ -491,46 +494,58 @@ body.nb-offer-overlay-open{overflow:hidden}
   margin-top:20px;
 }
 
+.nb-offer-value-head{
+  display:grid;
+  grid-template-columns:auto minmax(28px,1fr) auto;
+  align-items:center;
+  gap:12px;
+}
+
+.nb-offer-value-head h2{
+  margin:0;
+  color:#172033;
+}
+
+.nb-offer-value-rule{
+  height:1px;
+  background:#d9e1ea;
+}
+
+.nb-offer-value-head small{
+  color:#9aa5b5;
+  white-space:nowrap;
+}
+
 .nb-offer-value-grid{
   display:grid;
-  grid-template-columns:1.15fr 1fr 1fr;
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:9px;
-  margin-top:9px;
+  margin-top:11px;
 }
 
 .nb-offer-value-grid>div{
   min-height:104px;
   padding:13px 12px;
-  border:1px solid #e7ebf0;
+  border:1px solid #eadfc9;
   border-radius:13px;
-  background:#fff;
+  background:linear-gradient(155deg,#fffdf9,#fbf7ef);
 }
 
 .nb-offer-value-grid span{
   display:block;
-  color:#8a95a6;
-
-
+  color:#75839a;
 }
 
 .nb-offer-value-grid b{
   display:block;
   margin-top:6px;
-  color:#1e293b;
-
-
-}
-
-.nb-offer-value-grid .nb-offer-value-primary b{
-  color:#0d6fe8;
+  color:#7b5416;
 }
 
 .nb-offer-value-grid small{
   display:block;
   margin-top:5px;
   color:#7c8798;
-
-
 }
 
 .nb-offer-apply-primary{
@@ -553,9 +568,9 @@ body.nb-offer-overlay-open{overflow:hidden}
 
 .nb-assessment-entry{
   padding:17px;
-  border:1px solid #e4e8ee;
+  border:1px solid #dfe7f1;
   border-radius:16px;
-  background:#f8f9fb;
+  background:#f8fbff;
 }
 
 .nb-assessment-kicker{
@@ -586,6 +601,13 @@ body.nb-offer-overlay-open{overflow:hidden}
   margin-top:14px;
   min-height:44px;
   border-radius:12px;
+  border-color:#69a7ff;
+  background:#f7fbff;
+  color:#0a71ff;
+}
+.nb-assessment-start:hover{
+  border-color:#3f8cff;
+  background:#f0f7ff;
 }
 
 .nb-assessment-preview-link{
