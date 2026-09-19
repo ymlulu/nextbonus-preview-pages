@@ -22,7 +22,14 @@
       : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>';
   }
 
-  function providerFooterHtml(product,esc){
+  function shouldShowProviderFooter(product,visual){
+    if(product.type==='credit-card') return true;
+    if(product.type==='bank-account') return visual?.kind!=='logo';
+    return false;
+  }
+
+  function providerFooterHtml(product,visual,esc){
+    if(!shouldShowProviderFooter(product,visual)) return '';
     const logo=providerLogoFor(product);
     if(logo)return `<span class="nb-provider"><img src="${esc(logo)}" alt="${esc(product.provider)}" /></span>`;
     return `<span class="nb-provider"><span class="nb-provider-text">${esc(product.provider)}</span></span>`;
@@ -30,7 +37,10 @@
 
   function visualHtml(visual,product,esc){
     if(!visual)return `<div class="nb-brand-art">${esc(product.provider)}</div>`;
-    if(visual.kind==='image'||visual.kind==='logo')return `<div class="nb-main-art"><img src="${esc(visual.src)}" alt="${esc(visual.alt||product.name)}" /></div>`;
+    if(visual.kind==='image'||visual.kind==='logo'){
+      const kindClass=visual.kind==='logo'?' is-brand-logo':'';
+      return `<div class="nb-main-art${kindClass}"><img src="${esc(visual.src)}" alt="${esc(visual.alt||product.name)}" /></div>`;
+    }
     return `<div class="nb-brand-art ${esc(visual.tone||'')}">${esc(visual.label||product.provider)}</div>`;
   }
 
@@ -45,10 +55,8 @@
     if(!id||!fact||!product)return '';
     const visual=visualFor(product);
     const status=tag(fact.statusTag);
-    const valueTag=tag(fact.valueTag);
     const attributeTag=tag(fact.attributeTag);
     const statusLabel=unavailable?'已结束或不可用':status?.label||'';
-    const hasBothTags=!!(valueTag&&attributeTag);
 
     return `<article class="offer-card nb-offer-card${unavailable?' is-unavailable':''}" data-action="open-offer" data-id="${esc(id)}" tabindex="0" role="button" aria-label="${esc(product.name)}">
       <div class="nb-offer-visual">
@@ -63,11 +71,9 @@
         <div class="nb-card-footer">
           <div class="nb-card-meta">
             ${statusLabel?`<span class="nb-status-tag${unavailable?' is-unavailable':''}">${esc(statusLabel)}</span>`:''}
-            ${valueTag?`<span class="nb-tag value">${esc(valueTag.label)}</span>`:''}
-            ${hasBothTags?'<span class="nb-meta-separator" aria-hidden="true">·</span>':''}
             ${attributeTag?`<span class="nb-tag attribute">${esc(attributeTag.label)}</span>`:''}
           </div>
-          ${providerFooterHtml(product,esc)}
+          ${providerFooterHtml(product,visual,esc)}
         </div>
       </div>
     </article>`;
