@@ -3,7 +3,7 @@
    Typography lives in ui/typography.css; Discover-only overrides stay page-owned. */
 
 .offer-card.nb-offer-card{
-  --nb-offer-card-aspect:202 / 315;
+  --nb-offer-card-aspect:202 / 305;
   --nb-offer-visual-share:46%;
   width:202px;
   height:auto;
