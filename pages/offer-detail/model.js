@@ -11,6 +11,7 @@
       ['expired','ended','unavailable'].includes(String(item.status||'').toLowerCase())
     );
     const result=supportsAssessment?offerResult(offer):null;
+    const timingCurrent=window.NextBonusOfferDetailTiming?.cached?.(offer.id)?.current||null;
     const isPlatinum=offer.id==='amex-platinum';
     const posterIndex=((state.posterIndex||0)%2+2)%2;
     const posterSrc=posterIndex===0
@@ -22,6 +23,7 @@
       supportsAssessment,
       isEnded,
       result,
+      timingCurrent,
       isPlatinum,
       posterIndex,
       posterSrc,
