@@ -43,10 +43,6 @@
     padding:10px 10px 9px;
   }
 
-  .discover-page .nb-offer-card .nb-offer-name{
-    min-height:32px;
-  }
-
   .discover-page .nb-offer-card .nb-primary-value{
     margin-top:4px;
   }
@@ -67,16 +63,6 @@
 
   .discover-page .nb-offer-card .nb-status-tag{
     padding:3px 6px;
-  }
-
-  .discover-page .nb-offer-card .nb-provider{
-    min-width:20px;
-    min-height:20px;
-  }
-
-  .discover-page .nb-offer-card .nb-provider img{
-    max-width:28px;
-    max-height:20px;
   }
 
   /* Watchlist / 已关注: this page answers "what did I save and how valuable is it?"
