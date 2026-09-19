@@ -67,6 +67,9 @@ body.nb-product-overlay-open{overflow:hidden}
 .fact-icon{width:32px;height:32px;display:grid;place-items:center;border-radius:9px;background:#f6f8fb;}
 .v4-pd-facts small{display:block;margin-bottom:2px}.v4-pd-facts strong{display:block;}
 .v4-pd-earning{margin-top:15px;border-radius:10px;background:#f7f9fc;display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;align-items:center;padding:8px 12px}
+.v4-pd-earning.cols-1{grid-template-columns:minmax(0,1fr)}
+.v4-pd-earning.cols-2{grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr)}
+.v4-pd-earning.cols-3{grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr) 1px minmax(0,1fr)}
 .v4-pd-earning>div{display:flex;align-items:center;justify-content:center;gap:11px}.v4-pd-earning>i{width:1px;height:40px;background:#dde4ee}
 .v4-pd-earning b{display:block;}.v4-pd-earning small{display:block;margin-top:1px}
 .v4-pd-section{margin-top:14px;border:1px solid #e4ebf4;border-radius:15px;background:#fff;box-shadow:0 5px 18px rgba(28,51,89,.025);padding:13px 18px}

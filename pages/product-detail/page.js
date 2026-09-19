@@ -6,7 +6,7 @@
     if(!parts.length||parts[0]==='—'){
       return '<div class="v4-pd-earning single"><div><span class="earn-icon blue">•</span><span><b>—</b><small>消费回报</small></span></div></div>';
     }
-    return `<div class="v4-pd-earning ${parts.length===1?'single':''}">${parts.map((item,index)=>`${index?'<i></i>':''}<div><span class="earn-icon ${index===0?'blue':index===1?'purple':'green'}">${index===0?'✦':index===1?'▥':'♧'}</span><span><b>${esc(item)}</b><small>消费回报</small></span></div>`).join('')}</div>`;
+    return `<div class="v4-pd-earning cols-${parts.length} ${parts.length===1?'single':''}">${parts.map((item,index)=>`${index?'<i></i>':''}<div><span class="earn-icon ${index===0?'blue':index===1?'purple':'green'}">${index===0?'✦':index===1?'▥':'♧'}</span><span><b>${esc(item)}</b><small>消费回报</small></span></div>`).join('')}</div>`;
   }
 
   function nonCreditRows(title,rows,esc){
