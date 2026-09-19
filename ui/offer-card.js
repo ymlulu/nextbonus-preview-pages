@@ -44,11 +44,6 @@
     return `<div class="nb-brand-art ${esc(visual.tone||'')}">${esc(visual.label||product.provider)}</div>`;
   }
 
-  function valueLengthClass(value){
-    const n=String(value||'').trim().length;
-    return n>=24?'is-long':n>=15?'is-medium':'is-short';
-  }
-
   function render(offer,{saved=false,unavailable=false,esc=escapeHtml}={}){
     const id=offer?.id;
     const {fact,product}=productFor(id);
@@ -67,7 +62,7 @@
           <div class="nb-offer-name">${esc(product.name)}</div>
           <button class="bookmark nb-follow-toggle ${saved?'saved':''}" data-action="bookmark" data-id="${esc(id)}" aria-label="${saved?'已关注，点击取消':'关注'}" title="${saved?'已关注，点击取消':'关注'}">${followIcon(saved)}</button>
         </div>
-        <div class="nb-primary-value ${valueLengthClass(fact.primaryValue)}">${esc(fact.primaryValue)}</div>
+        <div class="nb-primary-value">${esc(fact.primaryValue)}</div>
         <div class="nb-card-footer">
           <div class="nb-card-meta">
             ${statusLabel?`<span class="nb-status-tag${unavailable?' is-unavailable':''}">${esc(statusLabel)}</span>`:''}
@@ -79,5 +74,5 @@
     </article>`;
   }
 
-  window.NextBonusOfferCard=Object.freeze({render,valueLengthClass});
+  window.NextBonusOfferCard=Object.freeze({render});
 })();

@@ -30,10 +30,7 @@
     ['.discover-page .search', 'callout'],
     ['.discover-page .pill', 'callout', false],
     ['.nb-offer-card .nb-offer-name,.fallback-offer-card .offer-name', 'callout', false],
-    ['.nb-offer-card .nb-primary-value.is-short', 'display-value-compact', false],
-    ['.nb-offer-card .nb-primary-value.is-medium', 'title3', false],
-    ['.nb-offer-card .nb-primary-value.is-long', 'title3', false],
-    ['.fallback-offer-card .primary-value', 'title3', false],
+    ['.nb-offer-card .nb-primary-value,.fallback-offer-card .primary-value', 'display-value-compact', false],
     ['.nb-offer-card .nb-requirement,.fallback-offer-card .requirement', 'subheadline', false, 'secondary'],
     ['.nb-offer-card .nb-provider-text,.nb-offer-card .nb-status-tag,.nb-offer-card .nb-tag,.fallback-offer-card .provider,.fallback-offer-card .status-tag,.fallback-offer-card .soft-tag', 'caption2', false],
 

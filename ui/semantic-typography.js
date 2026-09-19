@@ -57,18 +57,12 @@
     else node.removeAttribute(TONE_ATTR);
   }
 
-  function desktopDiscoverValueType(node) {
-    if (node.matches('.fallback-offer-card .primary-value')) return 'title3';
-    if (node.classList.contains('is-short')) return 'display-value-compact';
-    return 'title3';
-  }
-
   function syncDiscoverValueHierarchy(root = document) {
     const selector = '.discover-page .nb-offer-card .nb-primary-value,.discover-page .fallback-offer-card .primary-value';
     const nodes = [];
     root.querySelectorAll?.(selector).forEach(node => nodes.push(node));
     if (root.matches?.(selector)) nodes.push(root);
-    nodes.forEach(node => mark(node, mobileQuery.matches ? 'headline' : desktopDiscoverValueType(node), null));
+    nodes.forEach(node => mark(node, mobileQuery.matches ? 'headline' : 'display-value-compact', null));
   }
 
   function syncMobileProductDetailHierarchy(root = document) {
