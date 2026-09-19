@@ -425,23 +425,23 @@ body.nb-offer-overlay-open{overflow:hidden}
   align-items:center;
   gap:7px;
   color:#6f7b8e;
-  font-size:12px;
-  line-height:1.4;
+
+
 }
 
 .nb-credit-offer-name{
   color:#172033;
-  font-size:17px;
-  font-weight:760;
-  letter-spacing:-.2px;
+
+
+
 }
 
 .nb-credit-offer-provider{
   margin-top:5px;
   color:#8b95a5;
-  font-size:11px;
-  font-weight:650;
-  letter-spacing:.05em;
+
+
+
   text-transform:uppercase;
 }
 
@@ -461,30 +461,30 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-current-offer-label,
 .nb-offer-section-label{
   color:#7a8799;
-  font-size:11px;
-  font-weight:720;
-  letter-spacing:.02em;
+
+
+
 }
 
 .nb-current-offer-value{
   margin-top:7px;
   color:#0d6fe8;
-  font-size:32px;
-  font-weight:820;
-  line-height:1.08;
-  letter-spacing:-.7px;
+
+
+
+
 }
 
 .nb-current-offer.is-ended .nb-current-offer-value{
   color:#596477;
-  font-size:25px;
+
 }
 
 .nb-current-offer-requirement{
   margin-top:8px;
   color:#536174;
-  font-size:13px;
-  line-height:1.55;
+
+
 }
 
 .nb-offer-value-section{
@@ -509,16 +509,16 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-offer-value-grid span{
   display:block;
   color:#8a95a6;
-  font-size:10px;
-  font-weight:700;
+
+
 }
 
 .nb-offer-value-grid b{
   display:block;
   margin-top:6px;
   color:#1e293b;
-  font-size:13px;
-  line-height:1.4;
+
+
 }
 
 .nb-offer-value-grid .nb-offer-value-primary b{
@@ -529,8 +529,8 @@ body.nb-offer-overlay-open{overflow:hidden}
   display:block;
   margin-top:5px;
   color:#7c8798;
-  font-size:9.5px;
-  line-height:1.45;
+
+
 }
 
 .nb-offer-apply-primary{
@@ -541,8 +541,8 @@ body.nb-offer-overlay-open{overflow:hidden}
   width:100%;
   min-height:48px;
   border-radius:13px;
-  font-size:14px;
-  font-weight:760;
+
+
 }
 
 .nb-assessment-section{
@@ -561,24 +561,24 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-assessment-kicker{
   display:block;
   color:#778395;
-  font-size:10px;
-  font-weight:760;
-  letter-spacing:.03em;
+
+
+
 }
 
 .nb-assessment-entry h2{
   margin:5px 0 0;
   color:#192235;
-  font-size:18px;
-  line-height:1.25;
-  letter-spacing:-.25px;
+
+
+
 }
 
 .nb-assessment-entry p{
   margin:7px 0 0;
   color:#687487;
-  font-size:12px;
-  line-height:1.6;
+
+
 }
 
 .nb-assessment-start{
@@ -595,8 +595,8 @@ body.nb-offer-overlay-open{overflow:hidden}
   border:0;
   background:transparent;
   color:#66758c;
-  font-size:11px;
-  font-weight:680;
+
+
   cursor:pointer;
 }
 
@@ -616,7 +616,7 @@ body.nb-offer-overlay-open{overflow:hidden}
 
 .nb-assessment-result-card .v4-recommendation{
   margin:10px 0 12px;
-  font-size:28px;
+
 }
 
 .nb-assessment-result-actions{
@@ -629,7 +629,7 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-assessment-result-actions .btn{
   min-height:42px;
   border-radius:11px;
-  font-size:12px;
+
 }
 
 /* The desktop dock follows only the main Direct Apply action for credit-card details. */
@@ -671,8 +671,8 @@ body.nb-offer-overlay-open{overflow:hidden}
   border-radius:9px;
   background:#f2f4f7;
   color:#677386;
-  font-size:20px;
-  line-height:1;
+
+
   cursor:pointer;
 }
 
@@ -682,21 +682,21 @@ body.nb-offer-overlay-open{overflow:hidden}
 
 .nb-assessment-preview-kicker{
   color:#0d6fe8;
-  font-size:11px;
-  font-weight:760;
+
+
 }
 
 .nb-assessment-preview-body h2{
   margin:6px 44px 0 0;
-  font-size:22px;
-  letter-spacing:-.35px;
+
+
 }
 
 .nb-assessment-preview-intro{
   margin:8px 0 17px;
   color:#6f7b8d;
-  font-size:12px;
-  line-height:1.55;
+
+
 }
 
 .nb-assessment-preview-result{
@@ -708,21 +708,21 @@ body.nb-offer-overlay-open{overflow:hidden}
 
 .nb-assessment-preview-meta{
   color:#7d8999;
-  font-size:10px;
-  font-weight:680;
+
+
 }
 
 .nb-assessment-preview-result>strong{
   display:block;
   margin-top:8px;
-  font-size:27px;
+
 }
 
 .nb-assessment-preview-result>p{
   margin:5px 0 14px;
   color:#657185;
-  font-size:12px;
-  line-height:1.5;
+
+
 }
 
 .nb-assessment-preview-grid{
@@ -741,21 +741,21 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-assessment-preview-grid span{
   display:block;
   color:#8792a3;
-  font-size:9px;
+
 }
 
 .nb-assessment-preview-grid b{
   display:block;
   margin-top:4px;
   color:#213047;
-  font-size:14px;
+
 }
 
 .nb-assessment-preview-foot{
   margin-top:14px;
   color:#697588;
-  font-size:11px;
-  line-height:1.55;
+
+
 }
 
 @media(max-width:780px){
@@ -766,7 +766,7 @@ body.nb-offer-overlay-open{overflow:hidden}
     padding-right:110px;
   }
   .nb-current-offer-value{
-    font-size:28px;
+
   }
   .nb-offer-value-grid{
     grid-template-columns:1fr;
