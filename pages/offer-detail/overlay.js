@@ -2,7 +2,7 @@
   'use strict';
 
   const DESKTOP_MIN = 1181;
-  const CTA_SELECTOR = '.v4-detail-actions,.nb-bank-cta,.mm-cta,.remaining-cta,.deal-cta';
+  const CTA_SELECTOR = '.nb-offer-apply-primary,.nb-bank-cta,.mm-cta,.remaining-cta,.deal-cta';
   const app = document.getElementById('app');
   if(!app) return;
 
@@ -220,6 +220,15 @@
   });
   window.addEventListener('resize',handleBreakpointChange,{passive:true});
 
+  function hydrateTiming(){
+    const offerId=currentOfferId;
+    if(!offerId||window.NextBonusOfferDetailTiming?.cached?.(offerId)) return;
+    void window.NextBonusOfferDetailTiming?.load?.(offerId).then(()=>{
+      if(!overlay||currentOfferId!==offerId) return;
+      renderCurrent(lastContext);
+    });
+  }
+
   function renderSurface(markup,ctx){
     lastContext=ctx||lastContext;
     ensureOverlay();
@@ -233,6 +242,7 @@
       detail.classList.add('nb-overlay-detail');
       if(layoutMode==='desktop') mountDesktopCTA();
       syncFollowState();
+      hydrateTiming();
     }
     return host;
   }
