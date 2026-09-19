@@ -62,13 +62,13 @@
   function bonusDeadlineMarkup(ctx,card,bonus){
     const {esc}=ctx;
     const dueDate=bonus?.dueDate||'';
-    const copy=dueDate
-      ? `截止日期 ${displayDeadline(dueDate)}`
-      : !card.product.opened
-        ? '未填写开卡时间，无法计算截止日期'
-        : '截止日期暂无法确定';
-    const actionCopy=dueDate?'修改 →':'去编辑 →';
-    return `<button class="nb-welcome-bonus-deadline" type="button" data-action="edit-product" data-focus-opened="1" aria-label="${esc(`${copy}，${actionCopy.replace(' →','')}`)}"><span class="nb-bonus-deadline-copy">${esc(copy)}</span><span class="nb-bonus-edit-link">${esc(actionCopy)}</span></button>`;
+    if(dueDate){
+      return `<div class="nb-welcome-bonus-deadline is-set"><span class="nb-bonus-deadline-label">截止日期</span><strong class="nb-bonus-deadline-value">${esc(displayDeadline(dueDate))}</strong></div>`;
+    }
+    if(!card.product.opened){
+      return `<button class="nb-welcome-bonus-deadline is-missing" type="button" data-action="edit-product" data-focus-opened="1" aria-label="未填写开卡时间，补充开卡时间"><span class="nb-bonus-deadline-label">截止日期</span><strong class="nb-bonus-deadline-value">未计算</strong><span class="nb-bonus-edit-link">补充开卡时间 →</span></button>`;
+    }
+    return '<div class="nb-welcome-bonus-deadline is-unresolved"><span class="nb-bonus-deadline-label">截止日期</span><strong class="nb-bonus-deadline-value">暂无法确定</strong></div>';
   }
 
   function bonusTaskMarkup(ctx,bonus,compact=false){

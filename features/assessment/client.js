@@ -64,9 +64,6 @@
     getOfferHistory(productId,evaluationDate){
       return call('getOfferHistory',{product_id:productId,evaluation_date:evaluationDate});
     },
-    getOfferTiming(productId){
-      return call('getOfferTiming',{product_id:productId});
-    },
     evaluate({productId,evaluationDate,answers,locale='zh-CN'}){
       return call('evaluate',{request:{product_id:productId,evaluation_date:evaluationDate,answers,locale}});
     }
