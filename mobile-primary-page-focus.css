@@ -2,8 +2,8 @@
    This file changes layout/visibility only; business data and state remain untouched. */
 
 @media(max-width:780px){
-  /* Discover: preserve two-column browsing, but keep each Offer Card compact.
-     Mobile scan order is artwork -> product name -> reward -> tags. */
+  /* Discover: preserve two-column browsing with the canonical Offer Card structure.
+     Mobile scan order is artwork -> product name / Follow -> reward -> metadata / brand. */
   .discover-page .offer-card.nb-offer-card{
     height:266px;
     aspect-ratio:auto;
@@ -12,13 +12,13 @@
   .discover-page .nb-offer-card .nb-offer-visual{
     height:138px;
     flex:0 0 138px;
-    padding:26px 9px 7px;
+    padding:14px 9px 8px;
   }
 
   .discover-page .nb-offer-card .nb-main-art{
     max-width:142px;
     height:90px;
-    margin-top:5px;
+    margin-top:0;
   }
 
   .discover-page .nb-offer-card .nb-brand-art{
@@ -40,15 +40,32 @@
     margin-top:4px;
   }
 
-  .discover-page .nb-offer-card .nb-requirement,
   .discover-page .fallback-offer-card .requirement{
     display:none;
   }
 
-  .discover-page .nb-offer-card .nb-tag-row{
-    margin-top:6px;
-    padding-top:0;
-    min-height:22px;
+  .discover-page .nb-offer-card .nb-card-footer{
+    padding-top:6px;
+    gap:5px;
+    min-height:26px;
+  }
+
+  .discover-page .nb-offer-card .nb-card-meta{
+    gap:4px;
+  }
+
+  .discover-page .nb-offer-card .nb-status-tag{
+    padding:3px 6px;
+  }
+
+  .discover-page .nb-offer-card .nb-provider{
+    min-width:20px;
+    min-height:20px;
+  }
+
+  .discover-page .nb-offer-card .nb-provider img{
+    max-width:28px;
+    max-height:20px;
   }
 
   /* Watchlist / 已关注: this page answers "what did I save and how valuable is it?"

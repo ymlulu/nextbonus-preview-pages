@@ -404,3 +404,381 @@ body.nb-offer-overlay-open{overflow:hidden}
   }
 }
 
+
+
+/* Credit-card Offer Detail decision hierarchy -------------------------------------
+   The page owns presentation only. Offer facts come from NextBonusOfferData,
+   valuation comes from Offer Timing, and Assessment output comes from its formal owner. */
+
+.nb-credit-decision-panel{
+  padding:26px 24px 22px;
+  color:#182236;
+}
+
+.nb-credit-offer-head{
+  padding:2px 126px 18px 0;
+  border-bottom:1px solid #edf1f5;
+}
+
+.nb-credit-offer-meta{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:#6f7b8e;
+
+
+}
+
+.nb-credit-offer-name{
+  color:#172033;
+
+
+
+}
+
+.nb-credit-offer-provider{
+  margin-top:5px;
+  color:#8b95a5;
+
+
+
+  text-transform:uppercase;
+}
+
+.nb-current-offer{
+  margin-top:20px;
+  padding:18px 18px 17px;
+  border:1px solid #dce9fb;
+  border-radius:16px;
+  background:linear-gradient(145deg,#f5f9ff,#fbfdff);
+}
+
+.nb-current-offer.is-ended{
+  border-color:#e5e7eb;
+  background:#f7f7f8;
+}
+
+.nb-current-offer-label,
+.nb-offer-section-label{
+  color:#7a8799;
+
+
+
+}
+
+.nb-current-offer-value{
+  margin-top:7px;
+  color:#0d6fe8;
+
+
+
+
+}
+
+.nb-current-offer.is-ended .nb-current-offer-value{
+  color:#596477;
+
+}
+
+.nb-current-offer-requirement{
+  margin-top:8px;
+  color:#536174;
+
+
+}
+
+.nb-offer-value-section{
+  margin-top:20px;
+}
+
+.nb-offer-value-grid{
+  display:grid;
+  grid-template-columns:1.15fr 1fr 1fr;
+  gap:9px;
+  margin-top:9px;
+}
+
+.nb-offer-value-grid>div{
+  min-height:104px;
+  padding:13px 12px;
+  border:1px solid #e7ebf0;
+  border-radius:13px;
+  background:#fff;
+}
+
+.nb-offer-value-grid span{
+  display:block;
+  color:#8a95a6;
+
+
+}
+
+.nb-offer-value-grid b{
+  display:block;
+  margin-top:6px;
+  color:#1e293b;
+
+
+}
+
+.nb-offer-value-grid .nb-offer-value-primary b{
+  color:#0d6fe8;
+}
+
+.nb-offer-value-grid small{
+  display:block;
+  margin-top:5px;
+  color:#7c8798;
+
+
+}
+
+.nb-offer-apply-primary{
+  margin-top:18px;
+}
+
+.nb-offer-apply-primary .btn{
+  width:100%;
+  min-height:48px;
+  border-radius:13px;
+
+
+}
+
+.nb-assessment-section{
+  margin-top:22px;
+  padding-top:20px;
+  border-top:1px solid #edf1f5;
+}
+
+.nb-assessment-entry{
+  padding:17px;
+  border:1px solid #e4e8ee;
+  border-radius:16px;
+  background:#f8f9fb;
+}
+
+.nb-assessment-kicker{
+  display:block;
+  color:#778395;
+
+
+
+}
+
+.nb-assessment-entry h2{
+  margin:5px 0 0;
+  color:#192235;
+
+
+
+}
+
+.nb-assessment-entry p{
+  margin:7px 0 0;
+  color:#687487;
+
+
+}
+
+.nb-assessment-start{
+  width:100%;
+  margin-top:14px;
+  min-height:44px;
+  border-radius:12px;
+}
+
+.nb-assessment-preview-link{
+  display:block;
+  margin:7px auto 0;
+  padding:5px 8px;
+  border:0;
+  background:transparent;
+  color:#66758c;
+
+
+  cursor:pointer;
+}
+
+.nb-assessment-preview-link:hover{
+  color:#0d6fe8;
+}
+
+.nb-assessment-section.is-unavailable .nb-assessment-entry{
+  background:#fafafa;
+}
+
+.nb-assessment-result-card{
+  margin-top:9px;
+  border-color:#dce7f5;
+  background:#f7fbff;
+}
+
+.nb-assessment-result-card .v4-recommendation{
+  margin:10px 0 12px;
+
+}
+
+.nb-assessment-result-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:12px;
+}
+
+.nb-assessment-result-actions .btn{
+  min-height:42px;
+  border-radius:11px;
+
+}
+
+/* The desktop dock follows only the main Direct Apply action for credit-card details. */
+.nb-offer-panel-dock .nb-offer-apply-primary{
+  width:100%;
+}
+
+.nb-offer-panel-dock .nb-offer-apply-primary .btn{
+  width:100%;
+  min-height:46px;
+  border-radius:12px;
+  box-shadow:0 8px 24px rgba(14,111,232,.18);
+}
+
+/* Assessment result preview is page-owned explanatory UI, never business state. */
+.nb-assessment-preview-modal{
+  width:min(520px,calc(100vw - 36px));
+  max-height:min(720px,calc(100vh - 48px));
+  padding:0;
+  border:0;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 24px 80px rgba(20,30,48,.24);
+  color:#172033;
+}
+
+.nb-assessment-preview-modal::backdrop{
+  background:rgba(18,24,34,.38);
+  backdrop-filter:blur(5px);
+}
+
+.nb-assessment-preview-close{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:32px;
+  height:32px;
+  border:0;
+  border-radius:9px;
+  background:#f2f4f7;
+  color:#677386;
+
+
+  cursor:pointer;
+}
+
+.nb-assessment-preview-body{
+  padding:28px 26px 25px;
+}
+
+.nb-assessment-preview-kicker{
+  color:#0d6fe8;
+
+
+}
+
+.nb-assessment-preview-body h2{
+  margin:6px 44px 0 0;
+
+
+}
+
+.nb-assessment-preview-intro{
+  margin:8px 0 17px;
+  color:#6f7b8d;
+
+
+}
+
+.nb-assessment-preview-result{
+  padding:17px;
+  border:1px solid #dce8f7;
+  border-radius:16px;
+  background:#f7fbff;
+}
+
+.nb-assessment-preview-meta{
+  color:#7d8999;
+
+
+}
+
+.nb-assessment-preview-result>strong{
+  display:block;
+  margin-top:8px;
+
+}
+
+.nb-assessment-preview-result>p{
+  margin:5px 0 14px;
+  color:#657185;
+
+
+}
+
+.nb-assessment-preview-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.nb-assessment-preview-grid>div{
+  padding:11px;
+  border:1px solid #e6edf6;
+  border-radius:11px;
+  background:#fff;
+}
+
+.nb-assessment-preview-grid span{
+  display:block;
+  color:#8792a3;
+
+}
+
+.nb-assessment-preview-grid b{
+  display:block;
+  margin-top:4px;
+  color:#213047;
+
+}
+
+.nb-assessment-preview-foot{
+  margin-top:14px;
+  color:#697588;
+
+
+}
+
+@media(max-width:780px){
+  .nb-credit-decision-panel{
+    padding:22px 16px 28px;
+  }
+  .nb-credit-offer-head{
+    padding-right:110px;
+  }
+  .nb-current-offer-value{
+
+  }
+  .nb-offer-value-grid{
+    grid-template-columns:1fr;
+  }
+  .nb-offer-value-grid>div{
+    min-height:0;
+  }
+}
+
+@media(max-width:520px){
+  .nb-assessment-result-actions,
+  .nb-assessment-preview-grid{
+    grid-template-columns:1fr;
+  }
+}

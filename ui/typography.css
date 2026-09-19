@@ -177,8 +177,7 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 .nb-offer-card .nb-offer-name,.fallback-offer-card .offer-name,.nb-offer-card .nb-primary-value,.fallback-offer-card .primary-value{color:var(--nb-label-primary)!important}
 .nb-offer-card .nb-requirement,.fallback-offer-card .requirement,.nb-offer-card .nb-tag,.fallback-offer-card .soft-tag{color:var(--nb-label-secondary)!important}
 .nb-offer-card .nb-status-tag,.fallback-offer-card .status-tag{color:var(--nb-system-orange)!important}
-.nb-offer-card .nb-tag.value{color:var(--nb-system-blue)!important}
-.nb-offer-card .nb-tag.attribute{color:var(--nb-system-purple)!important}
+.nb-offer-card .nb-tag.value,.nb-offer-card .nb-tag.attribute{color:var(--nb-label-secondary)!important}
 
 /* Primary pages / Wallet / Attention */
 .mock-page-title,.mock-section-title,.owned-product-copy strong,.v4-pp-product,.att-product-copy strong,.att-action-cell strong{color:var(--nb-label-primary)!important}
@@ -450,3 +449,38 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 
 /* Detail navigation semantic text style. */
 .detail-back-button{color:#3f6fd8;font-size:14px;font-weight:600}
+
+
+/* Offer Detail decision-first surface typography.
+   Layout remains page-owned; text metrics stay centralized here. */
+.nb-credit-offer-meta{font-size:12px;line-height:1.4}
+.nb-credit-offer-name{font-size:17px;font-weight:760;letter-spacing:-.2px}
+.nb-credit-offer-provider{font-size:11px;font-weight:650;letter-spacing:.05em}
+.nb-current-offer-label,.nb-offer-section-label{font-size:11px;font-weight:720;letter-spacing:.02em}
+.nb-current-offer-value{font-size:32px;font-weight:820;line-height:1.08;letter-spacing:-.7px}
+.nb-current-offer.is-ended .nb-current-offer-value{font-size:25px}
+.nb-current-offer-requirement{font-size:13px;line-height:1.55}
+.nb-offer-value-grid span{font-size:10px;font-weight:700}
+.nb-offer-value-grid b{font-size:13px;line-height:1.4}
+.nb-offer-value-grid small{font-size:9.5px;line-height:1.45}
+.nb-offer-apply-primary .btn{font-size:14px;font-weight:760}
+.nb-assessment-kicker{font-size:10px;font-weight:760;letter-spacing:.03em}
+.nb-assessment-entry h2{font-size:18px;line-height:1.25;letter-spacing:-.25px}
+.nb-assessment-entry p{font-size:12px;line-height:1.6}
+.nb-assessment-preview-link{font-size:11px;font-weight:680}
+.nb-assessment-result-card .v4-recommendation{font-size:28px}
+.nb-assessment-result-actions .btn{font-size:12px}
+.nb-assessment-preview-close{font-size:20px;line-height:1}
+.nb-assessment-preview-kicker{font-size:11px;font-weight:760}
+.nb-assessment-preview-body h2{font-size:22px;letter-spacing:-.35px}
+.nb-assessment-preview-intro{font-size:12px;line-height:1.55}
+.nb-assessment-preview-meta{font-size:10px;font-weight:680}
+.nb-assessment-preview-result>strong{font-size:27px}
+.nb-assessment-preview-result>p{font-size:12px;line-height:1.5}
+.nb-assessment-preview-grid span{font-size:9px}
+.nb-assessment-preview-grid b{font-size:14px}
+.nb-assessment-preview-foot{font-size:11px;line-height:1.55}
+
+@media(max-width:780px){
+  .nb-current-offer-value{font-size:28px}
+}
