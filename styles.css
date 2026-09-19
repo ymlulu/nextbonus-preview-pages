@@ -769,7 +769,6 @@ body .content > .offer-grid{justify-content:start}
   }
   .nav-item.active{
     background:transparent;
-    color:#0a84ff;
   }
   .main{
     padding-bottom:calc(118px + env(safe-area-inset-bottom));
