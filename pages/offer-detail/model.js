@@ -16,12 +16,16 @@
     const posterSrc=posterIndex===0
       ? 'assets/offer-detail/amex-platinum-poster.png'
       : 'assets/offer-detail/amex-platinum-poster-2.png';
+    const valuationSpec=window.NextBonusOfferData?.[offer.id]?.valuation||null;
+    const valuation=window.NextBonusOfferValuation?.build?.(valuationSpec)||
+      Object.freeze({supported:false,estimatedValueUsd:null,displayValue:null,assumptions:[],examples:[]});
 
     return Object.freeze({
       offer,
       supportsAssessment,
       isEnded,
       result,
+      valuation,
       isPlatinum,
       posterIndex,
       posterSrc,
