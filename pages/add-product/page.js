@@ -117,8 +117,8 @@
       const canSubmit=model.rewardChoiceReady(f);
       const actionLabel=f.offer?'添加并追踪奖励':'添加到钱包';
       view = {
-        title: isCard ? '开卡奖励（可选）' : '开户奖励（可选）',
-        body: `<div class="add-reward-flow">${selectedProductHeader(f.product,esc)}<div class="add-reward-skip-note"><span class="option-title">只想添加产品？</span><span class="option-sub">无需选择奖励，直接点击下方“添加到钱包”。</span></div><div class="add-reward-intro"><span class="option-sub">${isCard?'如果还在完成开卡奖励，选择你申请时拿到的 Offer，我们会帮你追踪进度和截止日期。':'如果还在完成开户奖励，选择你开户时拿到的 Offer，我们会帮你追踪进度和截止日期。'}</span></div><div class="add-reward-window-note option-sub">仅显示最近 6 个月已审核奖励。</div>${status}<div class="option-list add-reward-list">${offerRows}<button class="option-row add-reward-row ${f.offer==='manual'?'selected':''}" type="button" data-action="add-offer-choice" data-id="manual"><span class="radio-dot"></span><span class="option-main"><span class="option-title">都不是，手动填写</span></span></button>${manualPanel}</div></div>`,
+        title: isCard ? '添加你的开卡奖励（可选）' : '添加你的开户奖励（可选）',
+        body: `<div class="add-reward-flow">${selectedProductHeader(f.product,esc)}${status}<div class="option-list add-reward-list">${offerRows}<button class="option-row add-reward-row ${f.offer==='manual'?'selected':''}" type="button" data-action="add-offer-choice" data-id="manual"><span class="radio-dot"></span><span class="option-main"><span class="option-title">都不是，手动填写</span></span></button>${manualPanel}</div></div>`,
         foot: footer(back(), next('add-offer-next',actionLabel,!canSubmit))
       };
     }else if(f.step === 'membership-confirm'){

@@ -240,18 +240,6 @@
   gap:14px;
   padding-top:6px;
 }
-.add-reward-skip-note{
-  display:flex;
-  align-items:baseline;
-  justify-content:space-between;
-  gap:16px;
-  padding:12px 14px;
-  border:1px solid #e4e9f0;
-  border-radius:11px;
-  background:#fbfcfe;
-}
-.add-reward-intro{padding:0 2px}
-.add-reward-window-note{padding:0 2px}
 .add-reward-status{padding:0 2px}
 .add-reward-list{
   display:block!important;
@@ -356,11 +344,6 @@
   .add-selected-product-art .mini-art{width:72px;height:45px}
   .add-info-fields{grid-template-columns:1fr;gap:16px}
   .add-reward-flow{gap:12px;padding-top:2px}
-  .add-reward-skip-note{
-    display:grid;
-    gap:4px;
-    padding:10px 12px;
-  }
   .add-product-modal .add-reward-row{min-height:54px;padding:9px 12px}
   .add-manual-panel{padding:16px 12px 18px 42px}
   .add-success-flow{gap:22px;padding-top:2px}
