@@ -3,13 +3,113 @@
 
   // Canonical current Offer facts for the Preview runtime.
   // This is the only Preview layer that owns changing value / requirement / status / tag selections.
+  // Valuation inputs live with the Offer facts; calculation/display behavior belongs to features/offer-valuation/.
   const OFFERS = Object.freeze({
-    'chase-sapphire': {productId:'chase-sapphire', primaryValue:'75,000 UR', primaryRequirement:'3 个月内消费 $5,000', statusTag:null, valueTag:'high_bonus', attributeTag:'travel_card', applyUrl:'https://creditcards.chase.com/rewards-credit-cards/sapphire/preferred'},
-    'amex-gold': {productId:'amex-gold', primaryValue:'最高 100,000 MR', primaryRequirement:'6 个月内消费 $4,000', statusTag:'new_offer', valueTag:'high_bonus', attributeTag:'dining_card', applyUrl:'https://www.americanexpress.com/us/credit-cards/card/gold-card/'},
-    'amex-platinum': {productId:'amex-platinum', primaryValue:'最高 175,000 MR', primaryRequirement:'6 个月内消费 $12,000', statusTag:'new_offer', valueTag:'high_bonus', attributeTag:'travel_card', applyUrl:'https://www.americanexpress.com/us/credit-cards/card/platinum/'},
-    'bilt-palladium': {productId:'bilt-palladium', primaryValue:'50,000 points + $300 Bilt Cash', primaryRequirement:'3 个月内消费 $4,000', statusTag:null, valueTag:'high_bonus', attributeTag:'everyday', applyUrl:'https://www.bilt.com/card/palladium'},
-    'capitalone-venturex': {productId:'capitalone-venturex', primaryValue:'75,000 miles', primaryRequirement:'6 个月内消费 $4,000', statusTag:null, valueTag:'high_bonus', attributeTag:'travel_card', applyUrl:'https://www.capitalone.com/credit-cards/venture-x/'},
-    'citi-strata': {productId:'citi-strata', primaryValue:'75,000 TYP', primaryRequirement:'3 个月内消费 $6,000', statusTag:null, valueTag:'high_bonus', attributeTag:'travel_card', applyUrl:'https://www.citi.com/credit-cards/citi-strata-elite-credit-card/apply'},
+    'chase-sapphire': {
+      productId:'chase-sapphire',
+      primaryValue:'75,000 UR',
+      primaryRequirement:'3 个月内消费 $5,000',
+      statusTag:null,
+      valueTag:'high_bonus',
+      attributeTag:'travel_card',
+      applyUrl:'https://creditcards.chase.com/rewards-credit-cards/sapphire/preferred',
+      valuation:{
+        schemaVersion:1,
+        components:[{kind:'points',program:'UR',amount:75000,centsPerPoint:1.6}],
+        redemptionExamples:[
+          {kind:'airline',label:'航空',copy:'可用于航空伙伴转点'},
+          {kind:'hotel',label:'酒店',copy:'可用于酒店伙伴转点'}
+        ]
+      }
+    },
+    'amex-gold': {
+      productId:'amex-gold',
+      primaryValue:'最高 100,000 MR',
+      primaryRequirement:'6 个月内消费 $4,000',
+      statusTag:'new_offer',
+      valueTag:'high_bonus',
+      attributeTag:'dining_card',
+      applyUrl:'https://www.americanexpress.com/us/credit-cards/card/gold-card/',
+      valuation:{
+        schemaVersion:1,
+        components:[{kind:'points',program:'MR',amount:100000,centsPerPoint:1.5}],
+        redemptionExamples:[
+          {kind:'airline',label:'航空',copy:'可用于航空伙伴转点'},
+          {kind:'hotel',label:'酒店',copy:'可用于酒店伙伴转点'}
+        ]
+      }
+    },
+    'amex-platinum': {
+      productId:'amex-platinum',
+      primaryValue:'最高 175,000 MR',
+      primaryRequirement:'6 个月内消费 $12,000',
+      statusTag:'new_offer',
+      valueTag:'high_bonus',
+      attributeTag:'travel_card',
+      applyUrl:'https://www.americanexpress.com/us/credit-cards/card/platinum/',
+      valuation:{
+        schemaVersion:1,
+        components:[{kind:'points',program:'MR',amount:175000,centsPerPoint:1.5}],
+        redemptionExamples:[
+          {kind:'airline',label:'航空',copy:'可用于航空伙伴转点'},
+          {kind:'hotel',label:'酒店',copy:'可用于酒店伙伴转点'}
+        ]
+      }
+    },
+    'bilt-palladium': {
+      productId:'bilt-palladium',
+      primaryValue:'50,000 points + $300 Bilt Cash',
+      primaryRequirement:'3 个月内消费 $4,000',
+      statusTag:null,
+      valueTag:'high_bonus',
+      attributeTag:'everyday',
+      applyUrl:'https://www.bilt.com/card/palladium',
+      valuation:{
+        schemaVersion:1,
+        components:[
+          {kind:'points',program:'Bilt',amount:50000,centsPerPoint:1.6},
+          {kind:'cash',label:'Bilt Cash',amountUsd:300}
+        ],
+        redemptionExamples:[
+          {kind:'airline',label:'航空',copy:'Bilt Points 可用于航空伙伴转点'},
+          {kind:'hotel',label:'酒店',copy:'Bilt Points 可用于酒店伙伴转点'}
+        ]
+      }
+    },
+    'capitalone-venturex': {
+      productId:'capitalone-venturex',
+      primaryValue:'75,000 miles',
+      primaryRequirement:'6 个月内消费 $4,000',
+      statusTag:null,
+      valueTag:'high_bonus',
+      attributeTag:'travel_card',
+      applyUrl:'https://www.capitalone.com/credit-cards/venture-x/',
+      valuation:{
+        schemaVersion:1,
+        components:[{kind:'points',program:'C1 Miles',amount:75000,centsPerPoint:1.3}],
+        redemptionExamples:[
+          {kind:'airline',label:'航空',copy:'可用于航空伙伴转点'},
+          {kind:'hotel',label:'酒店',copy:'可用于酒店伙伴转点'}
+        ]
+      }
+    },
+    'citi-strata': {
+      productId:'citi-strata',
+      primaryValue:'75,000 TYP',
+      primaryRequirement:'3 个月内消费 $6,000',
+      statusTag:null,
+      valueTag:'high_bonus',
+      attributeTag:'travel_card',
+      applyUrl:'https://www.citi.com/credit-cards/citi-strata-elite-credit-card/apply',
+      valuation:{
+        schemaVersion:1,
+        components:[{kind:'points',program:'TYP',amount:75000,centsPerPoint:1.5}],
+        redemptionExamples:[
+          {kind:'airline',label:'航空',copy:'可用于航空伙伴转点'},
+          {kind:'hotel',label:'酒店',copy:'可用于酒店伙伴转点'}
+        ]
+      }
+    },
 
     'hsbc-checking': {productId:'hsbc-checking', primaryValue:'最高 $3,000', primaryRequirement:'$50,000+ 新资金 / 合格资产 · 保持 3 个完整自然月', statusTag:null, valueTag:'high_bonus', attributeTag:'bank_account'},
     'chase-checking': {productId:'chase-checking', primaryValue:'$400', primaryRequirement:'90 天内 Direct Deposit $1,000', statusTag:null, valueTag:'high_bonus', attributeTag:'bank_account'},
