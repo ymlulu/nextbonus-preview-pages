@@ -33,6 +33,16 @@ Global typography and terminology are formal owners.
 - Intentional poster/marketing artwork is the only typography exemption and must be explicitly marked with `nb-typography-exempt: marketing`.
 - Keep user-facing terminology aligned with `ui/user-facing-copy.js` and `ui/terminology.js`.
 
+## Preview publishing is read-only
+
+GitHub `main` is the only formal source for the Preview.
+
+- Never publish the Preview by committing a local snapshot, generated bundle, copied directory, or stale checkout back to `main`.
+- Never use a commit such as `Publish NextBonus preview` to synchronize source files.
+- Preview deployment must read the already-merged `main` commit and deploy it without modifying repository source.
+- If local files differ from `main`, stop and reconcile through a normal branch + PR. Do not overwrite `main`.
+- Product/UI changes and deployment are separate operations: deployment must not alter owners, data, CI files, or cache-busting references.
+
 ## CI is mandatory
 
 Every pull request to `main` must run **NextBonus CI / quality-gate**.
