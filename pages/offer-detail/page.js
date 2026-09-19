@@ -97,7 +97,6 @@
         </div>
         <div class="nb-assessment-result-actions">
           <button class="btn secondary" data-action="assessment-start">查看完整分析</button>
-          <button class="btn primary" data-action="direct-apply">直接申请</button>
         </div>
         <button class="v5-reassess" data-action="assessment-restart">重新评估</button>
       </div>

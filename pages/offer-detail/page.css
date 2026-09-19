@@ -643,8 +643,7 @@ body.nb-offer-overlay-open{overflow:hidden}
 
 .nb-assessment-result-actions{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
+  grid-template-columns:1fr;
   margin-top:12px;
 }
 
