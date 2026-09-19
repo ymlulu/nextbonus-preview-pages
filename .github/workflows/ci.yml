@@ -44,6 +44,9 @@ jobs:
       - name: Architecture ownership
         run: node scripts/ci/check-architecture.mjs
 
+      - name: Source owner integrity
+        run: node scripts/ci/check-source-integrity.mjs
+
       - name: Typography ownership
         run: node scripts/ci/check-typography-drift.mjs
 
