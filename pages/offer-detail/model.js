@@ -11,21 +11,19 @@
       ['expired','ended','unavailable'].includes(String(item.status||'').toLowerCase())
     );
     const result=supportsAssessment?offerResult(offer):null;
+    const timingCurrent=window.NextBonusOfferDetailTiming?.cached?.(offer.id)?.current||null;
     const isPlatinum=offer.id==='amex-platinum';
     const posterIndex=((state.posterIndex||0)%2+2)%2;
     const posterSrc=posterIndex===0
       ? 'assets/offer-detail/amex-platinum-poster.png'
       : 'assets/offer-detail/amex-platinum-poster-2.png';
-    const valuationSpec=window.NextBonusOfferData?.[offer.id]?.valuation||null;
-    const valuation=window.NextBonusOfferValuation?.build?.(valuationSpec)||
-      Object.freeze({supported:false,estimatedValueUsd:null,displayValue:null,assumptions:[],examples:[]});
 
     return Object.freeze({
       offer,
       supportsAssessment,
       isEnded,
       result,
-      valuation,
+      timingCurrent,
       isPlatinum,
       posterIndex,
       posterSrc,
