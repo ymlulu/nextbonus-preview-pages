@@ -177,8 +177,7 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 .nb-offer-card .nb-offer-name,.fallback-offer-card .offer-name,.nb-offer-card .nb-primary-value,.fallback-offer-card .primary-value{color:var(--nb-label-primary)!important}
 .nb-offer-card .nb-requirement,.fallback-offer-card .requirement,.nb-offer-card .nb-tag,.fallback-offer-card .soft-tag{color:var(--nb-label-secondary)!important}
 .nb-offer-card .nb-status-tag,.fallback-offer-card .status-tag{color:var(--nb-system-orange)!important}
-.nb-offer-card .nb-tag.value{color:var(--nb-system-blue)!important}
-.nb-offer-card .nb-tag.attribute{color:var(--nb-system-purple)!important}
+.nb-offer-card .nb-tag.value,.nb-offer-card .nb-tag.attribute{color:var(--nb-label-secondary)!important}
 
 /* Primary pages / Wallet / Attention */
 .mock-page-title,.mock-section-title,.owned-product-copy strong,.v4-pp-product,.att-product-copy strong,.att-action-cell strong{color:var(--nb-label-primary)!important}
