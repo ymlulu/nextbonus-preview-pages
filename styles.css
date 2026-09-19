@@ -753,3 +753,29 @@ body .content > .offer-grid{justify-content:start}
 .nb-account-divider{display:none}
 @media(min-width:781px){.sidebar .nav{flex:1;min-height:0}.sidebar .nav>.nb-account-divider{display:block;flex:0 0 auto;height:1px;background:rgba(214,220,230,.82);margin:0 10px 10px;margin-top:auto}}
 @media(max-width:720px){.detail-back-nav{margin-bottom:14px}.detail-back-button{padding:8px 4px}}
+
+
+/* Mobile App Shell: iOS-style tab bar and scroll safe area.
+   Presentation only; navigation behavior remains App Shell-owned. */
+@media(max-width:780px){
+  .sidebar{
+    height:calc(72px + env(safe-area-inset-bottom));
+    padding-bottom:calc(7px + env(safe-area-inset-bottom));
+    box-sizing:border-box;
+    background:rgba(249,249,249,.86);
+    border-top-color:rgba(60,60,67,.16);
+    -webkit-backdrop-filter:blur(24px) saturate(180%);
+    backdrop-filter:blur(24px) saturate(180%);
+  }
+  .nav-item.active{
+    background:transparent;
+    color:#0a84ff;
+  }
+  .main{
+    padding-bottom:calc(118px + env(safe-area-inset-bottom));
+  }
+  .nav-badge{
+    transform:scale(.9);
+    transform-origin:center;
+  }
+}
