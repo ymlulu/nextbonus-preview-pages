@@ -22,7 +22,7 @@
       : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>';
   }
 
-  function providerHtml(product,esc){
+  function providerFooterHtml(product,esc){
     const logo=providerLogoFor(product);
     if(logo)return `<span class="nb-provider"><img src="${esc(logo)}" alt="${esc(product.provider)}" /></span>`;
     return `<span class="nb-provider"><span class="nb-provider-text">${esc(product.provider)}</span></span>`;
@@ -48,21 +48,26 @@
     const valueTag=tag(fact.valueTag);
     const attributeTag=tag(fact.attributeTag);
     const statusLabel=unavailable?'已结束或不可用':status?.label||'';
+    const hasBothTags=!!(valueTag&&attributeTag);
 
     return `<article class="offer-card nb-offer-card${unavailable?' is-unavailable':''}" data-action="open-offer" data-id="${esc(id)}" tabindex="0" role="button" aria-label="${esc(product.name)}">
       <div class="nb-offer-visual">
-        ${providerHtml(product,esc)}
-        <button class="bookmark nb-follow-toggle ${saved?'saved':''}" data-action="bookmark" data-id="${esc(id)}" aria-label="${saved?'已关注，点击取消':'关注'}" title="${saved?'已关注，点击取消':'关注'}">${followIcon(saved)}</button>
         ${visualHtml(visual,product,esc)}
-        ${statusLabel?`<span class="nb-status-tag">${esc(statusLabel)}</span>`:''}
       </div>
       <div class="nb-card-body">
-        <div class="nb-offer-name">${esc(product.name)}</div>
+        <div class="nb-title-row">
+          <div class="nb-offer-name">${esc(product.name)}</div>
+          <button class="bookmark nb-follow-toggle ${saved?'saved':''}" data-action="bookmark" data-id="${esc(id)}" aria-label="${saved?'已关注，点击取消':'关注'}" title="${saved?'已关注，点击取消':'关注'}">${followIcon(saved)}</button>
+        </div>
         <div class="nb-primary-value ${valueLengthClass(fact.primaryValue)}">${esc(fact.primaryValue)}</div>
-        <div class="nb-requirement">${esc(fact.primaryRequirement||'')}</div>
-        <div class="nb-tag-row">
-          ${valueTag?`<span class="nb-tag value">${esc(valueTag.label)}</span>`:''}
-          ${attributeTag?`<span class="nb-tag attribute">${esc(attributeTag.label)}</span>`:''}
+        <div class="nb-card-footer">
+          <div class="nb-card-meta">
+            ${statusLabel?`<span class="nb-status-tag${unavailable?' is-unavailable':''}">${esc(statusLabel)}</span>`:''}
+            ${valueTag?`<span class="nb-tag value">${esc(valueTag.label)}</span>`:''}
+            ${hasBothTags?'<span class="nb-meta-separator" aria-hidden="true">·</span>':''}
+            ${attributeTag?`<span class="nb-tag attribute">${esc(attributeTag.label)}</span>`:''}
+          </div>
+          ${providerFooterHtml(product,esc)}
         </div>
       </div>
     </article>`;
