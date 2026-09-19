@@ -89,6 +89,10 @@
 
 .nb-offer-card .bookmark,
 .nb-offer-card .mock-bookmark{
+  position:static;
+  right:auto;
+  top:auto;
+  z-index:auto;
   flex:0 0 auto;
   width:30px;
   height:30px;
