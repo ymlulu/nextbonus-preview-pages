@@ -41,20 +41,38 @@
     return date instanceof Date&&!Number.isNaN(date.getTime())?`${date.getMonth()+1}月${date.getDate()}日`:'';
   }
 
-  function remainingLabel(model,attention){
-    const days=model.daysUntil(attention?.dueDate);
-    if(days===null) return attention?.time||'';
-    if(days<0) return `已逾期 ${Math.abs(days)} 天`;
-    if(days===0) return '今天截止';
-    return `剩余 ${days} 天`;
+  function displayDeadline(value){
+    const match=String(value||'').slice(0,10).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    return match?`${match[1]}/${match[2]}/${match[3]}`:String(value||'');
   }
 
-  function bonusTaskMarkup(ctx,bonus){
+  function rewardLabel(value){
+    return String(value||'开卡奖励').replace(/^AS HIGH AS\s+/i,'最高 ');
+  }
+
+  function requirementLabel(value){
+    const current=String(value||'').trim();
+    const english=current.match(/^(?:消费\s*)?(\$[\d,.]+)\s*\/\s*(\d+)\s*months?$/i);
+    return english?`消费 ${english[1]} / ${english[2]} 个月`:current;
+  }
+
+  function bonusDeadlineMarkup(ctx,card,bonus){
+    const {esc}=ctx;
+    const dueDate=bonus?.dueDate||'';
+    const copy=dueDate
+      ? `截止日期 ${displayDeadline(dueDate)}`
+      : !card.product.opened
+        ? '未填写开卡时间，无法计算截止日期'
+        : '截止日期暂无法确定';
+    const actionCopy=dueDate?'修改 →':'去编辑 →';
+    return `<button class="nb-welcome-bonus-deadline" type="button" data-action="edit-product" data-focus-opened="1" aria-label="${esc(`${copy}，${actionCopy.replace(' →','')}`)}"><span class="nb-bonus-deadline-copy">${esc(copy)}</span><span class="nb-bonus-edit-link">${esc(actionCopy)}</span></button>`;
+  }
+
+  function bonusTaskMarkup(ctx,bonus,compact=false){
     const {esc}=ctx;
     const tasks=Array.isArray(bonus.checklist)?bonus.checklist:[];
     if(tasks.length<=1){
-      const task=tasks[0];
-      return `<div class="nb-card-single-task"><span>${esc(task?.label||'完成符合条件的消费要求')}</span><button class="nb-card-complete-btn" data-action="complete-attention" data-id="${esc(bonus.id)}" type="button">标记完成</button></div>`;
+      return `<button class="nb-card-complete-btn ${compact?'nb-welcome-bonus-complete':''}" data-action="complete-attention" data-id="${esc(bonus.id)}" type="button">标记完成</button>`;
     }
     return `<div class="nb-card-multi-task">${tasks.map(task=>`<label class="nb-card-bonus-check"><input type="checkbox" data-action="checklist" data-attention="${esc(bonus.id)}" data-check="${esc(task.id)}" ${task.done?'checked':''}/><span>${esc(task.label)}</span></label>`).join('')}<button class="nb-card-complete-btn" data-action="complete-attention" data-id="${esc(bonus.id)}" type="button">我已全部完成</button></div>`;
   }
@@ -62,13 +80,19 @@
   function bonusSection(ctx,card){
     if(!card.bonuses.length) return '';
     const {esc}=ctx;
-    const model=window.NextBonusCreditCardProductDetailModel;
-    return `<section class="v4-pd-section nb-card-bonus-section"><div class="nb-card-section-title"><span class="nb-card-section-icon">${iconSvg('gift')}</span><h2>开卡奖励</h2></div><div class="nb-card-bonus-stack">${card.bonuses.map(bonus=>{
+    return `<section class="v4-pd-section nb-card-bonus-section nb-welcome-bonus-section"><div class="nb-card-section-title"><span class="nb-card-section-icon">${iconSvg('gift')}</span><h2>开卡奖励</h2></div><div class="nb-card-bonus-stack">${card.bonuses.map(bonus=>{
       const secondary=String(bonus.secondary||'');
       const first=(bonus.checklist||[])[0];
-      const spend=/消费/.test(secondary)?secondary.replace(/，?获得.*$/u,'').replace(/个月/u,' 个月'):(first?.label||secondary||'完成对应奖励条件');
-      const tone=model.urgency(model.daysUntil(bonus.dueDate));
-      return `<div class="nb-card-bonus-card"><div class="nb-card-bonus-main"><strong>${esc(bonus.key||bonus.secondary||'开卡奖励')}</strong><span>${esc(spend)}</span><i aria-hidden="true">${iconSvg('plane')}</i></div><div class="nb-card-bonus-actions"><button class="nb-card-bonus-due tone-${tone}" data-action="attention-for-product" data-id="${esc(card.product.id)}" type="button"><span class="nb-card-clock">${iconSvg('clock')}</span><strong>${esc(remainingLabel(model,bonus))}</strong><span class="nb-card-chevron">›</span></button>${bonusTaskMarkup(ctx,bonus)}</div></div>`;
+      const rawRequirement=/消费/.test(secondary)
+        ? secondary.replace(/，?获得.*$/u,'').replace(/个月/u,' 个月')
+        : (first?.label||secondary||'完成对应奖励条件');
+      const requirement=requirementLabel(rawRequirement);
+      const reward=rewardLabel(bonus.key||bonus.secondary||'开卡奖励');
+      const compact=(bonus.checklist||[]).length<=1;
+      if(!compact){
+        return `<div class="nb-card-bonus-card"><div class="nb-card-bonus-main"><strong>${esc(reward)}</strong><span>${esc(requirement)}</span></div><div class="nb-card-bonus-actions">${bonusTaskMarkup(ctx,bonus)}${bonusDeadlineMarkup(ctx,card,bonus)}</div></div>`;
+      }
+      return `<div class="nb-card-bonus-card nb-welcome-bonus-card"><strong class="nb-welcome-bonus-value">${esc(reward)}</strong><span class="nb-welcome-bonus-requirement">${esc(requirement)}</span>${bonusTaskMarkup(ctx,bonus,true)}${bonusDeadlineMarkup(ctx,card,bonus)}</div>`;
     }).join('')}</div></section>`;
   }
 

@@ -149,6 +149,7 @@
           instance:(product.instance||'').replace('•••• ',''),
           status:product.status||'不确定',
           opened:product.opened||'',
+          focusOpened:el.dataset.focusOpened==='1',
           pendingBonus:null,
           bonusChoice:null,
           bonusReward:'',
