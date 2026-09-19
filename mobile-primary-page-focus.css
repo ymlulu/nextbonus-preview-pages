@@ -93,8 +93,3 @@
   }
 }
 
-@media(max-width:340px){
-  .discover-page .offer-card.nb-offer-card{
-    height:auto;
-  }
-}
