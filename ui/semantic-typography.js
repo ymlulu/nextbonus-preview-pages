@@ -59,8 +59,8 @@
 
   function desktopDiscoverValueType(node) {
     if (node.matches('.fallback-offer-card .primary-value')) return 'title3';
-    if (node.classList.contains('is-short')) return 'title3';
-    return 'display-value-compact';
+    if (node.classList.contains('is-short')) return 'display-value-compact';
+    return 'title3';
   }
 
   function syncDiscoverValueHierarchy(root = document) {
