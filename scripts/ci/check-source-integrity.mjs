@@ -19,6 +19,8 @@ const files={
   agents:await text('AGENTS.md'),
   card:await text('ui/offer-card.js'),
   cardCss:await text('offer-card.css'),
+  mobileCardGeometry:await text('mobile-primary-page-focus.css'),
+  mobileDiscoverPolish:await text('mobile-discover-attention-polish.css'),
   assessmentClient:await text('features/assessment/client.js'),
   offerDetailTiming:await text('pages/offer-detail/timing.js'),
   offerDetailPage:await text('pages/offer-detail/page.js'),
@@ -35,6 +37,11 @@ requireText(files.card,'class="nb-card-footer"','Canonical Offer Card must keep 
 requireText(files.card,'providerFooterHtml','Canonical Offer Card must keep provider branding in the footer owner.');
 requireText(files.cardCss,'position:static','Offer Card Follow must neutralize the retired absolute-positioned bookmark style.');
 requireText(files.cardCss,'.nb-offer-card .nb-card-footer','Offer Card footer layout owner is missing.');
+requireText(files.mobileCardGeometry,'.discover-page .nb-offer-card .nb-offer-visual','Mobile Offer Card geometry must stay in mobile-primary-page-focus.css.');
+if(files.mobileDiscoverPolish?.includes('.discover-page .nb-offer-card .nb-offer-visual')||
+   files.mobileDiscoverPolish?.includes('.discover-page .nb-offer-card .nb-card-body')){
+  failures.push('mobile-discover-attention-polish.css must not re-own Offer Card internal geometry.');
+}
 requireText(files.assessmentClient,'getOfferTiming(productId)','Assessment client must expose the formal Offer Timing bridge method.');
 requireText(files.offerDetailPage,'data-action="assessment-preview"','Offer Detail must retain the Assessment result-preview action.');
 requireText(files.offerDetailOverlay,".nb-offer-apply-primary",'Offer Detail sticky CTA must stay owned by Direct Apply.');

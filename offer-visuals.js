@@ -11,8 +11,8 @@
     'capitalone-venturex': {kind:'image', src:'assets/product-art/capitalone-venturex.png', alt:'Capital One Venture X'},
     'citi-strata': {kind:'image', src:'assets/product-art/citi-strata.png', alt:'Citi Strata Elite'},
 
-    // Bank offer visuals belong in the large center artwork slot. Provider logos are rendered
-    // separately in the top-left, so this registry should point at the main product artwork.
+    // Bank offer visuals belong in the large center artwork slot. Provider branding, when shown,
+    // is rendered separately by the canonical Offer Card footer.
     'hsbc-checking': {kind:'logo', src:'assets/product-logo-marks/hsbc.svg', alt:'HSBC Premier Checking'},
     'chase-checking': {kind:'logo', src:'assets/product-logo-marks/chase.svg', alt:'Chase Total Checking'},
     'usbank-checking': {kind:'image', src:'assets/product-page/bank-usbank.png', alt:'U.S. Bank Smartly Checking'},

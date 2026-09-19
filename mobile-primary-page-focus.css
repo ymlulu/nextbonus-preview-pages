@@ -10,25 +10,36 @@
   }
 
   .discover-page .nb-offer-card .nb-offer-visual{
-    height:138px;
-    flex:0 0 138px;
-    padding:14px 9px 8px;
+    height:126px;
+    flex:0 0 126px;
+    padding:12px 9px 7px;
   }
 
   .discover-page .nb-offer-card .nb-main-art{
-    max-width:142px;
-    height:90px;
+    max-width:136px;
+    height:84px;
     margin-top:0;
   }
 
+
+  .discover-page .nb-offer-card .nb-main-art.is-brand-logo{
+    max-width:104px;
+    height:76px;
+  }
+
+  .discover-page .nb-offer-card .nb-main-art.is-brand-logo img{
+    max-width:96px;
+    max-height:64px;
+  }
+
   .discover-page .nb-offer-card .nb-brand-art{
-    max-width:142px;
-    height:88px;
+    max-width:136px;
+    height:82px;
   }
 
   .discover-page .nb-offer-card .nb-card-body{
-    height:128px;
-    flex:0 0 128px;
+    height:140px;
+    flex:0 0 140px;
     padding:10px 10px 9px;
   }
 
