@@ -1374,3 +1374,29 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-credit-v1-actions .nb-assessment-inline-result{
   margin:0;
 }
+
+
+/* Gold completed-state copy: keep the two result lines lightweight and inline. */
+.nb-gold-assessment-line{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  margin:0 2px;
+  color:#7b879d;
+  font-size:10.5px;
+  line-height:1.5;
+  white-space:nowrap;
+}
+.nb-gold-assessment-check{
+  color:#0d9b73;
+  font-weight:700;
+}
+.nb-gold-assessment-line button{
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#0d6fe8;
+  font:inherit;
+  font-weight:700;
+  cursor:pointer;
+}

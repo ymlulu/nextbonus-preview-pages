@@ -85,7 +85,16 @@
           </section>`;
     }
 
-    const summary=`<section class="nb-assessment-inline-result ${compact?'is-compact':''}">
+    const compactRecommendation=result.recommendation==='现在申请'?'建议现在申请':result.recommendation;
+    if(compact){
+      return `<div class="nb-gold-assessment-line">
+        <span class="nb-gold-assessment-check" aria-hidden="true">✓</span>
+        <span>${esc(compactRecommendation)}。</span>
+        <button type="button" data-action="assessment-report">查看完整报告 <span>›</span></button>
+      </div>`;
+    }
+
+    const summary=`<section class="nb-assessment-inline-result">
       <div>
         <span>申请评估</span>
         <strong>${esc(result.recommendation)}</strong>
@@ -94,13 +103,11 @@
       <button type="button" data-action="assessment-report">查看完整报告 <span>›</span></button>
     </section>`;
 
-    return compact
-      ? summary
-      : `<section class="nb-assessment-section is-complete">
-          <div class="nb-offer-section-label">申请评估</div>
-          ${summary}
-          <button class="v5-reassess" data-action="assessment-restart">重新评估</button>
-        </section>`;
+    return `<section class="nb-assessment-section is-complete">
+      <div class="nb-offer-section-label">申请评估</div>
+      ${summary}
+      <button class="v5-reassess" data-action="assessment-restart">重新评估</button>
+    </section>`;
   }
 
   function productFactFor(offerId){
@@ -150,16 +157,18 @@
           <span>每年收益</span>
           <strong>${resultLabel} / 年</strong>
         </div>
-        ${customized?`<div class="nb-annual-value-personalized"><span aria-hidden="true">✓</span> 已按你的情况计算</div>`:''}
-        <p>按常见消费和福利使用情况估算，实际价值因人而异。 <button type="button" data-action="annual-value-toggle">收起明细 <span>›</span></button></p>
+        ${customized
+          ?`<p>已按照你的情况计算。 <button type="button" data-action="annual-value-toggle">收起明细 <span>›</span></button></p>`
+          :`<p>按常见消费和福利使用情况估算，实际价值因人而异。 <button type="button" data-action="annual-value-toggle">收起明细 <span>›</span></button></p>`}
         <button class="nb-annual-value-customize" type="button" data-action="annual-value-customize">${customized?'调整我的计算':'计算我的每年收益'} <span>›</span></button>
       `:`
         <div class="nb-annual-value-total">
           <span>每年收益</span>
           <strong>${resultLabel} / 年</strong>
         </div>
-        ${customized?`<div class="nb-annual-value-personalized"><span aria-hidden="true">✓</span> 已按你的情况计算</div>`:''}
-        <p>按常见消费和福利使用情况估算，实际价值因人而异。 <button type="button" data-action="annual-value-toggle">查看明细 <span>›</span></button></p>
+        ${customized
+          ?`<p>已按照你的情况计算。 <button type="button" data-action="annual-value-toggle">查看明细 <span>›</span></button></p>`
+          :`<p>按常见消费和福利使用情况估算，实际价值因人而异。 <button type="button" data-action="annual-value-toggle">查看明细 <span>›</span></button></p>`}
       `}
     </section>`;
   }
