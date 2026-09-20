@@ -24,21 +24,6 @@
     return {id,provider:product.provider,name:product.name,category:product.category,value:fact.primaryValue,requirement:fact.primaryRequirement,status:offerTagLabel(fact.statusTag),valueTag:fact.valueTag||null,attributeTag:fact.attributeTag||null,tags:[offerTagLabel(fact.valueTag),offerTagLabel(fact.attributeTag)].filter(Boolean),art:OFFER_TONES[id]||'bank',applyUrl:fact.applyUrl||null,risk:false};
   }).filter(Boolean);
 
-  const posterSets = {
-    'amex-gold':[
-      {tab:'开卡奖励', kicker:'LIMITED OFFER'},
-      {tab:'餐饮回报', kicker:'DAILY VALUE', title:'餐饮与超市高回报', copy:'长期价值主要来自自然消费场景与可用报销。'},
-      {tab:'长期持有', kicker:'KEEP OR CANCEL', title:'看你是否真的用得上福利', copy:'长期判断不只看年费，还要看你真实能使用的 Credits 与消费回报。'}
-    ],
-    'chase-sapphire':[
-      {tab:'开卡奖励', kicker:'WELCOME BONUS'},
-      {tab:'旅行转点', kicker:'TRANSFER', title:'灵活的旅行伙伴', copy:'UR 可在多个航空与酒店伙伴之间灵活转点。'},
-      {tab:'日常使用', kicker:'EVERYDAY', title:'年费压力较低', copy:'适合作为长期保留的中端旅行卡。'}
-    ]
-  };
-
-
-
   const catalog = window.NextBonusProductCatalog || {};
 
   const stateCore=window.NextBonusState,storageCore=window.NextBonusStorage,routerCore=window.NextBonusRouter;
@@ -299,8 +284,6 @@
   }
 
   function posterData(offer){
-    const custom=posterSets[offer.id];
-    if(custom) return custom.map((item,index)=>index===0?{...item,title:offer.value,copy:offer.requirement}:item);
     return [
       {tab:'核心奖励',kicker:'CURRENT OFFER',title:offer.value,copy:offer.requirement},
       {tab:'为什么值得看',kicker:'VALUE',title:offer.tags[0]||'当前机会',copy:'这里集中展示最影响决策的产品卖点，不在列表页重复完整规则。'},

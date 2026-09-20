@@ -71,10 +71,6 @@
         ctx.state.posterIndex=Number(el.dataset.index);
         return {render:true};
       }
-      if(action==='poster-step'){
-        ctx.state.posterIndex=((ctx.state.posterIndex||0)+Number(el.dataset.dir)+2)%2;
-        return {render:true};
-      }
       return false;
     },
     input({event,ctx}){

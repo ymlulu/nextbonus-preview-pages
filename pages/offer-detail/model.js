@@ -13,15 +13,7 @@
     const result=supportsAssessment?offerResult(offer):null;
     const timingCurrent=window.NextBonusOfferDetailTiming?.cached?.(offer.id)?.current||null;
     const isPlatinum=offer.id==='amex-platinum';
-    const isGold=offer.id==='amex-gold';
     const usesCreditCardPanel=offer.category==='信用卡'&&supportsAssessment;
-    const posterIndex=((state.posterIndex||0)%2+2)%2;
-    const posterSrc=posterIndex===0
-      ? 'assets/offer-detail/amex-platinum-poster.png'
-      : 'assets/offer-detail/amex-platinum-poster-2.png';
-    const staticPosterSrc=isGold
-      ? 'assets/offer-detail/amex-gold-poster.webp'
-      : null;
 
     return Object.freeze({
       offer,
@@ -30,11 +22,7 @@
       result,
       timingCurrent,
       isPlatinum,
-      isGold,
       usesCreditCardPanel,
-      posterIndex,
-      posterSrc,
-      staticPosterSrc,
       hasAssessmentResult:!!state.assessmentResults?.[offer.id]
     });
   }
