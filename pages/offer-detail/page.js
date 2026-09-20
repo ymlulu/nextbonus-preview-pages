@@ -56,30 +56,38 @@
     </section>`;
   }
 
-  function assessmentHtml({esc,metric,supportsAssessment,isEnded,hasAssessmentResult,result}){
+  function assessmentHtml({esc,metric,supportsAssessment,isEnded,hasAssessmentResult,result,compact=false}){
     if(isEnded) return '';
 
     if(!supportsAssessment){
-      return `<section class="nb-assessment-section is-unavailable">
-        <div class="nb-offer-section-label">申请评估</div>
-        <div class="nb-assessment-entry">
-          <h2>暂未提供申请评估</h2>
-          <p>当前没有已冻结的个性化评估流程，因此不显示推测性的评分或结论。</p>
-        </div>
-      </section>`;
+      return compact
+        ? ''
+        : `<section class="nb-assessment-section is-unavailable">
+            <div class="nb-offer-section-label">申请评估</div>
+            <div class="nb-assessment-entry">
+              <h2>暂未提供申请评估</h2>
+              <p>当前没有已冻结的个性化评估流程，因此不显示推测性的评分或结论。</p>
+            </div>
+          </section>`;
     }
 
     if(!hasAssessmentResult){
-      return `<section class="nb-assessment-section">
-        <div class="nb-assessment-entry">
-          <div class="nb-assessment-copy">
-            <h2>评估一下，让你的申请更有把握</h2>
-            <p>回答几个与你申请情况有关的问题，看看申请限制、奖励资格、当前 Offer 水平和长期价值。</p>
-          </div>
-          <button class="btn secondary nb-assessment-start" data-action="assessment-start">开始申请评估 <span>→</span></button>
-          <button class="nb-assessment-preview-link" data-action="assessment-preview">了解会看到什么结果</button>
-        </div>
-      </section>`;
+      return compact
+        ? `<button class="btn secondary nb-assessment-compact" data-action="assessment-start">评估一下，让你的申请更有把握</button>`
+        : `<section class="nb-assessment-section">
+            <div class="nb-assessment-entry">
+              <div class="nb-assessment-copy">
+                <h2>评估一下，让你的申请更有把握</h2>
+                <p>回答几个与你申请情况有关的问题，看看申请限制、奖励资格、当前 Offer 水平和长期价值。</p>
+              </div>
+              <button class="btn secondary nb-assessment-start" data-action="assessment-start">开始申请评估 <span>→</span></button>
+              <button class="nb-assessment-preview-link" data-action="assessment-preview">了解会看到什么结果</button>
+            </div>
+          </section>`;
+    }
+
+    if(compact){
+      return `<button class="btn secondary nb-assessment-compact" data-action="assessment-start">查看完整分析</button>`;
     }
 
     return `<section class="nb-assessment-section is-complete">
@@ -101,6 +109,101 @@
         <button class="v5-reassess" data-action="assessment-restart">重新评估</button>
       </div>
     </section>`;
+  }
+
+  function productFactFor(offerId){
+    const map={
+      'chase-sapphire':'chase-sapphire-preferred',
+      'amex-gold':'amex-gold',
+      'amex-platinum':'amex-platinum',
+      'bilt-palladium':'bilt-palladium',
+      'capitalone-venturex':'capitalone-venturex',
+      'citi-strata':'citi-strata-elite'
+    };
+    return window.NextBonusCreditCardProductFacts?.cards?.[map[offerId]||offerId]||null;
+  }
+
+  function goldAnnualValueHtml(expanded){
+    return `<section class="nb-annual-value-card ${expanded?'is-expanded':''}">
+      <div class="nb-annual-value-head">
+        <h2>每年福利 vs 年费</h2>
+        <button class="nb-annual-value-chevron" type="button" data-action="annual-value-toggle" aria-expanded="${expanded?'true':'false'}" aria-label="${expanded?'收起每年收益明细':'展开每年收益明细'}">${expanded?'⌃':'⌄'}</button>
+      </div>
+      ${expanded?`
+        <div class="nb-annual-value-breakdown">
+          <div><span>固定福利</span><b>$424</b></div>
+          <div><span>刷卡额外回报</span><b>+$180</b></div>
+          <div><span>年费</span><b>-$325</b></div>
+        </div>
+        <div class="nb-annual-value-total">
+          <span>每年收益</span>
+          <strong>+$279 / 年</strong>
+        </div>
+        <p>按常见消费和福利使用情况估算，实际价值因人而异。</p>
+        <button class="nb-annual-value-customize" type="button" data-action="annual-value-customize">计算我的每年收益 <span>›</span></button>
+      `:`
+        <div class="nb-annual-value-total">
+          <span>每年收益</span>
+          <strong>+$279 / 年</strong>
+        </div>
+        <p>按常见消费和福利使用情况估算，实际价值因人而异。 <button type="button" data-action="annual-value-toggle">查看明细 <span>›</span></button></p>
+      `}
+    </section>`;
+  }
+
+  function goldOfferPanel({esc,o,timingCurrent,saved,supportsAssessment,isEnded,hasAssessmentResult,result,state,metric}){
+    const estimated=timingCurrent?.comparisonUnit==='USD_NORM'
+      ? money(timingCurrent.comparableValue)
+      : null;
+    const productFact=productFactFor(o.id);
+    const fee=productFact?.fee||'—';
+    const rewardLevel=o.valueTag==='high_bonus'?'较高':'常见水平';
+    const expanded=!!state.offerAnnualValueExpanded;
+
+    const applyHtml=!isEnded&&o.applyUrl
+      ? `<button class="btn primary nb-gold-direct-apply" data-action="direct-apply">直接申请 <span>→</span></button>`
+      : '';
+    const assessment=assessmentHtml({
+      esc,metric,supportsAssessment,isEnded,hasAssessmentResult,result,compact:true
+    });
+
+    return `
+      <aside class="v4-decision-panel nb-credit-decision-panel nb-credit-v1-final">
+        <header class="nb-credit-v1-head">
+          <div class="nb-credit-offer-name">${esc(o.name)}</div>
+          <button class="v4-detail-save nb-follow-control ${saved?'saved':''}" data-action="bookmark" data-id="${o.id}" aria-label="${saved?'已关注，点击取消':'关注'}" title="${saved?'已关注，点击取消':'关注'}">
+            <span class="nb-follow-glyph" aria-hidden="true">${saved?'✓':'＋'}</span>
+            <span>${saved?'已关注':'关注'}</span>
+          </button>
+        </header>
+
+        <section class="nb-current-offer nb-current-offer-v1">
+          <div class="nb-current-offer-label">当前奖励</div>
+          <div class="nb-current-offer-value">${esc(o.value)}</div>
+          <div class="nb-current-offer-requirement">${esc(o.requirement)}</div>
+          <div class="nb-current-offer-metrics">
+            <div>
+              <span>奖励价值</span>
+              <b>${estimated?`约 ${esc(estimated)}`:'正在读取…'}</b>
+            </div>
+            <div>
+              <span>首年年费</span>
+              <b>${esc(fee)}</b>
+            </div>
+            <div>
+              <span>当前奖励水平</span>
+              <b>${esc(rewardLevel)}</b>
+            </div>
+          </div>
+        </section>
+
+        ${goldAnnualValueHtml(expanded)}
+
+        <div class="nb-credit-v1-actions">
+          ${applyHtml}
+          ${assessment}
+        </div>
+      </aside>`;
   }
 
   window.NextBonusPageRegistry.register('offer-detail',function(ctx){
@@ -133,6 +236,23 @@
     }
 
     const saved=isSaved(o.id);
+
+    if(isGold){
+      return `<div class="content v4-offer-detail-page nb-credit-v1-page">
+        <div class="v4-offer-detail-grid">
+          <section class="v4-offer-poster-shell">
+            ${staticPosterSrc
+              ?`<div class="v4-reference-poster"><img src="${staticPosterSrc}" alt="AMEX Gold 海报" /></div>`
+              :genericPoster(o)}
+          </section>
+          ${goldOfferPanel({
+            esc,o,timingCurrent,saved,supportsAssessment,isEnded,
+            hasAssessmentResult,result:r,state:ctx.state,metric
+          })}
+        </div>
+      </div>`;
+    }
+
     const offerSummary=isEnded
       ? `<section class="nb-current-offer is-ended">
           <div class="nb-current-offer-label">当前状态</div>
@@ -165,9 +285,7 @@
         <section class="v4-offer-poster-shell">
           ${isPlat
             ?`<div class="v4-reference-poster"><img src="${posterSrc}" alt="AMEX Platinum 海报" /><button class="poster-hotspot prev" data-action="poster-step" data-dir="-1" aria-label="上一张海报"></button><button class="poster-hotspot next" data-action="poster-step" data-dir="1" aria-label="下一张海报"></button></div>`
-            :isGold&&staticPosterSrc
-              ?`<div class="v4-reference-poster"><img src="${staticPosterSrc}" alt="AMEX Gold 海报" /></div>`
-              :genericPoster(o)}
+            :genericPoster(o)}
         </section>
 
         <aside class="v4-decision-panel nb-credit-decision-panel">

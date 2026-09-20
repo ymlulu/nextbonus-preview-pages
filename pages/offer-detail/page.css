@@ -803,3 +803,257 @@ body.nb-offer-overlay-open{overflow:hidden}
     grid-template-columns:1fr;
   }
 }
+
+
+/* AMEX Gold V1 final decision panel ------------------------------------------------
+   Scoped to the approved Gold layout. Other Offer Detail variants remain unchanged. */
+.nb-credit-v1-page .nb-credit-v1-final{
+  display:flex;
+  flex-direction:column;
+  padding:24px 24px 22px;
+  background:#fff;
+  overflow:hidden !important;
+}
+
+.nb-credit-v1-head{
+  min-height:48px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  padding:0 72px 15px 0;
+  border-bottom:1px solid #edf1f5;
+}
+
+.nb-credit-v1-head .nb-credit-offer-name{
+  color:#15213a;
+  font-size:19px;
+  line-height:1.25;
+  font-weight:760;
+  letter-spacing:-.02em;
+}
+
+.nb-credit-v1-final .v4-detail-save{
+  top:16px;
+  right:58px;
+  height:31px;
+  padding:0;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  color:#263657;
+  font-size:12px;
+  font-weight:650;
+}
+.nb-credit-v1-final .v4-detail-save:hover{background:transparent;color:#0d6fe8}
+.nb-credit-v1-final .nb-follow-glyph{font-size:15px;font-weight:500}
+
+.nb-current-offer-v1{
+  margin-top:16px;
+  padding:17px 18px 0;
+  border-color:#dce9fb;
+  border-radius:15px;
+  background:linear-gradient(145deg,#f7fbff,#fbfdff);
+  overflow:hidden;
+}
+.nb-current-offer-v1 .nb-current-offer-label{
+  color:#16213b;
+  font-size:13px;
+  line-height:1.2;
+  font-weight:760;
+}
+.nb-current-offer-v1 .nb-current-offer-value{
+  margin-top:7px;
+  color:#0d6fe8;
+  font-size:36px;
+  line-height:1.02;
+  font-weight:820;
+  letter-spacing:-.035em;
+}
+.nb-current-offer-v1 .nb-current-offer-requirement{
+  margin-top:8px;
+  padding-bottom:16px;
+  color:#56647e;
+  font-size:14px;
+  line-height:1.35;
+  border-bottom:1px solid #e5edf7;
+}
+.nb-current-offer-metrics{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  margin:0 -18px;
+}
+.nb-current-offer-metrics>div{
+  position:relative;
+  padding:13px 14px 15px;
+  text-align:center;
+}
+.nb-current-offer-metrics>div+div:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:13px;
+  bottom:15px;
+  width:1px;
+  background:#e2e8f2;
+}
+.nb-current-offer-metrics span{
+  display:block;
+  color:#68758f;
+  font-size:11px;
+  line-height:1.2;
+  font-weight:650;
+}
+.nb-current-offer-metrics b{
+  display:block;
+  margin-top:5px;
+  color:#895711;
+  font-size:18px;
+  line-height:1.15;
+  font-weight:780;
+}
+
+.nb-annual-value-card{
+  margin-top:16px;
+  padding:16px 16px 15px;
+  border:1px solid #dce9fb;
+  border-radius:15px;
+  background:linear-gradient(145deg,#f9fcff,#fbfdff);
+}
+.nb-annual-value-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.nb-annual-value-head h2{
+  margin:0;
+  color:#17213a;
+  font-size:15px;
+  line-height:1.25;
+  font-weight:760;
+}
+.nb-annual-value-chevron{
+  width:26px;
+  height:26px;
+  display:grid;
+  place-items:center;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#0d6fe8;
+  font-size:16px;
+}
+.nb-annual-value-total{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-top:13px;
+  padding:12px 12px;
+  border-radius:10px;
+  background:#eef6ff;
+}
+.nb-annual-value-total span{
+  color:#17213a;
+  font-size:14px;
+  line-height:1.2;
+  font-weight:740;
+}
+.nb-annual-value-total strong{
+  color:#08966f;
+  font-size:22px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:-.025em;
+  white-space:nowrap;
+}
+.nb-annual-value-card p{
+  margin:10px 2px 0;
+  color:#7b879d;
+  font-size:10.5px;
+  line-height:1.5;
+}
+.nb-annual-value-card p button{
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#0d6fe8;
+  font:inherit;
+  font-weight:700;
+}
+.nb-annual-value-breakdown{
+  margin-top:10px;
+}
+.nb-annual-value-breakdown>div{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  min-height:33px;
+  border-bottom:1px solid #e8eef6;
+  color:#5f6d87;
+  font-size:12px;
+}
+.nb-annual-value-breakdown b{
+  color:#24314d;
+  font-size:13px;
+  font-weight:730;
+}
+.nb-annual-value-breakdown>div:nth-child(2) b{color:#0d8f69}
+.nb-annual-value-breakdown>div:nth-child(3) b{color:#c94444}
+.nb-annual-value-card.is-expanded .nb-annual-value-total{margin-top:9px}
+.nb-annual-value-customize{
+  margin:9px 0 0;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#0d6fe8;
+  font-size:11px;
+  font-weight:700;
+}
+
+.nb-credit-v1-actions{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin-top:auto;
+  padding-top:18px;
+}
+.nb-credit-v1-actions .btn{
+  width:100%;
+  min-height:48px;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:720;
+}
+.nb-credit-v1-actions .nb-gold-direct-apply{
+  background:#1177f5;
+  color:#fff;
+  border-color:#1177f5;
+}
+.nb-credit-v1-actions .nb-gold-direct-apply:hover{background:#0f6fe5}
+.nb-credit-v1-actions .nb-assessment-compact{
+  min-height:44px;
+  background:#fff;
+  border-color:#dce4ef;
+  color:#17213a;
+  font-weight:670;
+}
+.nb-credit-v1-actions .nb-assessment-compact:hover{
+  background:#f8fafc;
+  border-color:#cfd9e7;
+}
+
+@media(max-width:1180px){
+  .nb-credit-v1-page .nb-credit-v1-final{
+    overflow:visible !important;
+    padding:22px 18px 28px;
+  }
+  .nb-credit-v1-actions{margin-top:18px}
+}
+@media(max-width:560px){
+  .nb-current-offer-v1 .nb-current-offer-value{font-size:31px}
+  .nb-current-offer-metrics b{font-size:15px}
+  .nb-annual-value-total strong{font-size:20px}
+}

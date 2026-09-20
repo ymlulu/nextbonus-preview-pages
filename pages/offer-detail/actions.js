@@ -59,6 +59,14 @@
         openPreview();
         return {handled:true};
       }
+      if(action==='annual-value-toggle'){
+        ctx.state.offerAnnualValueExpanded=!ctx.state.offerAnnualValueExpanded;
+        return {render:true};
+      }
+      if(action==='annual-value-customize'){
+        ctx.state.offerAnnualValueExpanded=true;
+        return {handled:true};
+      }
       if(action==='assessment-start'){
         const supported=!!window.NextBonusAssessmentContract?.supported?.(ctx.state.currentOfferId);
         if(!supported) return {handled:true};

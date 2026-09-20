@@ -119,6 +119,7 @@
       updateCTAState();
       return;
     }
+    if(panel.classList.contains('nb-credit-v1-final')) return;
     const target=panel.querySelector(CTA_SELECTOR);
     if(!target) return;
     const scroll=document.createElement('div');
