@@ -213,6 +213,7 @@
     }else{
       mountDesktopCTA();
     }
+    syncMobileTaskState();
   }
 
   document.addEventListener('keydown',event=>{ if(event.key==='Escape'&&overlay) requestClose(); });
@@ -230,6 +231,13 @@
     });
   }
 
+  function syncMobileTaskState(){
+    const frame=overlay?.querySelector?.('.nb-offer-detail-frame');
+    if(!frame) return;
+    const task=lastContext?.state?.offerDetailTask;
+    frame.classList.toggle('nb-mobile-task-open',layoutMode==='mobile'&&(task==='assessment'||task==='annual-value'));
+  }
+
   function renderSurface(markup,ctx){
     lastContext=ctx||lastContext;
     ensureOverlay();
@@ -242,6 +250,7 @@
     if(detail){
       currentOfferId=offerIdFrom(detail)||currentOfferId;
       detail.classList.add('nb-overlay-detail');
+      syncMobileTaskState();
       if(layoutMode==='desktop') mountDesktopCTA();
       syncFollowState();
       window.NextBonusCreditCardStory?.afterRender?.(host);
