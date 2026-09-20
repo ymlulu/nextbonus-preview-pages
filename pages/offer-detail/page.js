@@ -145,7 +145,7 @@
 
     return `<section class="nb-annual-value-card ${expanded?'is-expanded':''} ${customized?'is-customized':''}">
       <div class="nb-annual-value-head">
-        <h2>每年福利 vs 年费</h2>
+        <h2>每年持有价值</h2>
       </div>
       ${expanded?`
         <div class="nb-annual-value-breakdown">
@@ -154,21 +154,21 @@
           <div><span>年费</span><b>-${annualMoney(result.fee)}</b></div>
         </div>
         <div class="nb-annual-value-total">
-          <span>每年收益</span>
+          <span>每年净收益</span>
           <strong>${resultLabel} / 年</strong>
         </div>
         ${customized
           ?`<p>已按照你的情况计算。 <button type="button" data-action="annual-value-toggle">收起明细 <span>›</span></button></p>`
-          :`<p>按常见消费和福利使用情况估算，实际价值因人而异。 <button type="button" data-action="annual-value-toggle">收起明细 <span>›</span></button></p>`}
+          :`<p>已扣除 ${annualMoney(result.fee)} 年费，按常见消费和福利使用情况估算。 <button type="button" data-action="annual-value-toggle">收起明细 <span>›</span></button></p>`}
         <button class="nb-annual-value-customize" type="button" data-action="annual-value-customize">${customized?'调整我的计算':'计算我的每年收益'} <span>›</span></button>
       `:`
         <div class="nb-annual-value-total">
-          <span>每年收益</span>
+          <span>每年净收益</span>
           <strong>${resultLabel} / 年</strong>
         </div>
         ${customized
           ?`<p>已按照你的情况计算。 <button type="button" data-action="annual-value-toggle">查看明细 <span>›</span></button></p>`
-          :`<p>按常见消费和福利使用情况估算，实际价值因人而异。 <button type="button" data-action="annual-value-toggle">查看明细 <span>›</span></button></p>`}
+          :`<p>已扣除 ${annualMoney(result.fee)} 年费，按常见消费和福利使用情况估算。 <button type="button" data-action="annual-value-toggle">查看明细 <span>›</span></button></p>`}
       `}
     </section>`;
   }
