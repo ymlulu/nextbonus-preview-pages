@@ -1021,12 +1021,12 @@ body.nb-offer-overlay-open{overflow:hidden}
   font-size:14px;
   font-weight:720;
 }
-.nb-credit-v1-actions .nb-gold-direct-apply{
+.nb-credit-v1-actions .nb-credit-direct-apply{
   background:#1177f5;
   color:#fff;
   border-color:#1177f5;
 }
-.nb-credit-v1-actions .nb-gold-direct-apply:hover{background:#0f6fe5}
+.nb-credit-v1-actions .nb-credit-direct-apply:hover{background:#0f6fe5}
 .nb-credit-v1-actions .nb-assessment-compact{
   min-height:44px;
   background:#fff;
@@ -1376,8 +1376,8 @@ body.nb-offer-overlay-open{overflow:hidden}
 }
 
 
-/* Gold completed-state copy: keep the two result lines lightweight and inline. */
-.nb-gold-assessment-line{
+/* Shared credit-card completed-state copy: keep the two result lines lightweight and inline. */
+.nb-credit-assessment-line{
   display:flex;
   align-items:center;
   gap:4px;
@@ -1387,11 +1387,11 @@ body.nb-offer-overlay-open{overflow:hidden}
   line-height:1.5;
   white-space:nowrap;
 }
-.nb-gold-assessment-check{
+.nb-credit-assessment-check{
   color:#0d9b73;
   font-weight:700;
 }
-.nb-gold-assessment-line button{
+.nb-credit-assessment-line button{
   padding:0;
   border:0;
   background:transparent;

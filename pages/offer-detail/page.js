@@ -87,8 +87,8 @@
 
     const compactRecommendation=result.recommendation==='现在申请'?'建议现在申请':result.recommendation;
     if(compact){
-      return `<div class="nb-gold-assessment-line">
-        <span class="nb-gold-assessment-check" aria-hidden="true">✓</span>
+      return `<div class="nb-credit-assessment-line">
+        <span class="nb-credit-assessment-check" aria-hidden="true">✓</span>
         <span>${esc(compactRecommendation)}。</span>
         <button type="button" data-action="assessment-report">查看完整报告 <span>›</span></button>
       </div>`;

@@ -148,7 +148,7 @@
     const rewardLevel=timingCurrent ? (timingCurrent.rating||'暂无评级') : '正在读取…';
 
     const applyHtml=!isEnded&&o.applyUrl
-      ? `<button class="btn primary nb-gold-direct-apply" data-action="direct-apply">直接申请 <span>→</span></button>`
+      ? `<button class="btn primary nb-credit-direct-apply" data-action="direct-apply">直接申请 <span>→</span></button>`
       : '';
     const assessment=assessmentHtml({
       esc,supportsAssessment,isEnded,hasAssessmentResult,result,compact:true
