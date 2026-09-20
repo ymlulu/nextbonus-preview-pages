@@ -39,20 +39,24 @@
     });
   }
 
-  function makeSlide(section,zh={}){
+  function makeSlide(section,zh={},background=null){
     return Object.freeze({
       id:section.id,
-      background:emptyBackground(),
+      background:background||emptyBackground(),
       layout:DEFAULT_LAYOUT,
       copy:localizedCopy(section.label,zh)
     });
   }
 
-  function makeStory(offerId,copyBySection={}){
+  function makeStory(offerId,copyBySection={},backgroundBySection={}){
     return Object.freeze({
       offerId,
-      version:'2026-09-20.3',
-      slides:Object.freeze(SECTION_DEFS.map(section=>makeSlide(section,copyBySection[section.id])))
+      version:'2026-09-20.4',
+      slides:Object.freeze(SECTION_DEFS.map(section=>makeSlide(
+        section,
+        copyBySection[section.id],
+        backgroundBySection[section.id]
+      )))
     });
   }
 
@@ -79,6 +83,13 @@
     })
   });
 
+  const AMEX_GOLD_ART=Object.freeze({
+    intro:Object.freeze({src:'assets/offer-detail/amex-gold-intro.webp',alt:'',position:'center'}),
+    highlights:Object.freeze({src:'assets/offer-detail/amex-gold-benefits.webp',alt:'',position:'center'}),
+    points:Object.freeze({src:'assets/offer-detail/amex-gold-points.webp',alt:'',position:'center'}),
+    fit:Object.freeze({src:'assets/offer-detail/amex-gold-fit.webp',alt:'',position:'center'})
+  });
+
   const SUPPORTED=Object.freeze([
     'chase-sapphire',
     'amex-gold',
@@ -91,7 +102,11 @@
   const STORIES=Object.freeze(Object.fromEntries(
     SUPPORTED.map(offerId=>[
       offerId,
-      makeStory(offerId,offerId==='amex-gold'?AMEX_GOLD_COPY:{})
+      makeStory(
+        offerId,
+        offerId==='amex-gold'?AMEX_GOLD_COPY:{},
+        offerId==='amex-gold'?AMEX_GOLD_ART:{}
+      )
     ])
   ));
 

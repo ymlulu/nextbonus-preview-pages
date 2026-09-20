@@ -25,11 +25,15 @@
       `<span class="${i===index?'active':''}" aria-hidden="true"></span>`
     ).join('');
 
-    const carousel=story.slides.map((item,i)=>
-      `<button type="button" class="nb-credit-story-nav-item ${i===index?'active':''}" data-action="poster" data-index="${i}" aria-pressed="${i===index?'true':'false'}">
-        <span>${esc(item.navLabel)}</span>
-      </button>`
-    ).join('');
+    const carousel=story.slides.map((item,i)=>{
+      const thumb=item.background?.src
+        ? `<span class="nb-credit-story-nav-thumb" aria-hidden="true"><img src="${esc(item.background.src)}" alt="" /></span>`
+        : '';
+      return `<button type="button" class="nb-credit-story-nav-item ${i===index?'active':''}" data-action="poster" data-index="${i}" aria-pressed="${i===index?'true':'false'}">
+        ${thumb}
+        <span class="nb-credit-story-nav-label">${esc(item.navLabel)}</span>
+      </button>`;
+    }).join('');
 
     return `<div class="nb-credit-story" data-offer-id="${esc(offer.id)}" data-story-version="${esc(story.version)}">
       <div class="nb-credit-story-stage">
