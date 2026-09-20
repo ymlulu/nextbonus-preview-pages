@@ -237,6 +237,7 @@
     if(!host) return null;
     disconnectPanelRuntime();
     host.innerHTML=markup;
+    window.NextBonusUIFinalize?.run?.(host);
     detail=host.querySelector('.v4-offer-detail-page');
     if(detail){
       currentOfferId=offerIdFrom(detail)||currentOfferId;
