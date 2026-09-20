@@ -1326,3 +1326,51 @@ body.nb-offer-overlay-open{overflow:hidden}
     overflow:visible !important;
   }
 }
+
+
+/* Assessment summary after a completed evaluation. */
+.nb-assessment-inline-result{
+  margin-top:10px;
+  padding:14px 15px;
+  border:1px solid #dfe8f4;
+  border-radius:13px;
+  background:#f8fbff;
+}
+.nb-assessment-inline-result>div>span{
+  display:block;
+  color:#7f8ba0;
+  font-size:9.5px;
+  font-weight:650;
+}
+.nb-assessment-inline-result>div>strong{
+  display:block;
+  margin-top:4px;
+  color:#1d2a43;
+  font-size:16px;
+  line-height:1.15;
+  font-weight:790;
+}
+.nb-assessment-inline-result>div>small{
+  display:block;
+  margin-top:5px;
+  color:#68768b;
+  font-size:9.5px;
+  line-height:1.45;
+}
+.nb-assessment-inline-result>button{
+  margin-top:10px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#0d6fe8;
+  font-size:9.5px;
+  font-weight:700;
+  cursor:pointer;
+}
+.nb-assessment-inline-result.is-compact{
+  margin-top:0;
+  padding:13px 14px;
+}
+.nb-credit-v1-actions .nb-assessment-inline-result{
+  margin:0;
+}

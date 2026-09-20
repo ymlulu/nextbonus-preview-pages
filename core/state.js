@@ -39,7 +39,7 @@
       assessmentResults:{},
       annualValueProfiles:{},
       annualValueDraft:null,
-      offerAnnualValueMode:'default',
+      offerDetailTask:null,
       offerAnnualValueExpanded:false,
       posterIndex:0,
       modal:null,

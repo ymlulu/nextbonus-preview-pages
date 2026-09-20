@@ -243,6 +243,7 @@
       detail.classList.add('nb-overlay-detail');
       if(layoutMode==='desktop') mountDesktopCTA();
       syncFollowState();
+      window.NextBonusAssessmentPage?.afterRender?.(host,lastContext);
       hydrateTiming();
     }
     return host;

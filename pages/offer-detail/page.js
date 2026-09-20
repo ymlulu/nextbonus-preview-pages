@@ -56,7 +56,7 @@
     </section>`;
   }
 
-  function assessmentHtml({esc,metric,supportsAssessment,isEnded,hasAssessmentResult,result,compact=false}){
+  function assessmentHtml({esc,supportsAssessment,isEnded,hasAssessmentResult,result,compact=false}){
     if(isEnded) return '';
 
     if(!supportsAssessment){
@@ -66,7 +66,7 @@
             <div class="nb-offer-section-label">申请评估</div>
             <div class="nb-assessment-entry">
               <h2>暂未提供申请评估</h2>
-              <p>当前没有已冻结的个性化评估流程，因此不显示推测性的评分或结论。</p>
+              <p>当前没有已冻结的个性化评估流程，因此不显示推测性的判断。</p>
             </div>
           </section>`;
     }
@@ -78,37 +78,29 @@
             <div class="nb-assessment-entry">
               <div class="nb-assessment-copy">
                 <h2>评估一下，让你的申请更有把握</h2>
-                <p>回答几个与你申请情况有关的问题，看看申请限制、奖励资格、当前 Offer 水平和长期价值。</p>
+                <p>回答与你申请情况和这张卡资格有关的问题，看看现在是否适合申请。</p>
               </div>
               <button class="btn secondary nb-assessment-start" data-action="assessment-start">开始申请评估 <span>→</span></button>
-              <button class="nb-assessment-preview-link" data-action="assessment-preview">了解会看到什么结果</button>
             </div>
           </section>`;
     }
 
-    if(compact){
-      return `<button class="btn secondary nb-assessment-compact" data-action="assessment-start">查看完整分析</button>`;
-    }
-
-    return `<section class="nb-assessment-section is-complete">
-      <div class="nb-offer-section-label">申请评估</div>
-      <div class="v4-result-card is-final nb-assessment-result-card">
-        <div class="v4-result-meta">${esc(result.meta)}</div>
-        <div class="v4-recommendation">${esc(result.recommendation)}</div>
-        ${result.shortSummary?`<div class="v5-short-summary">${esc(result.shortSummary)}</div>`:''}
-        ${result.primaryAlert?`<div class="v5-primary-alert">! ${esc(result.primaryAlert)}</div>`:''}
-        <div class="v4-metric-grid">
-          ${metric('开卡奖励评级',result.bonus,false)}
-          ${metric('获批可能性',result.approval,false)}
-          ${metric('能否拿奖励',result.eligible,false)}
-          ${metric('长期持有价值',result.longTerm,false)}
-        </div>
-        <div class="nb-assessment-result-actions">
-          <button class="btn secondary" data-action="assessment-start">查看完整分析</button>
-        </div>
-        <button class="v5-reassess" data-action="assessment-restart">重新评估</button>
+    const summary=`<section class="nb-assessment-inline-result ${compact?'is-compact':''}">
+      <div>
+        <span>申请评估</span>
+        <strong>${esc(result.recommendation)}</strong>
+        ${result.shortSummary?`<small>${esc(result.shortSummary)}</small>`:''}
       </div>
+      <button type="button" data-action="assessment-report">查看完整报告 <span>›</span></button>
     </section>`;
+
+    return compact
+      ? summary
+      : `<section class="nb-assessment-section is-complete">
+          <div class="nb-offer-section-label">申请评估</div>
+          ${summary}
+          <button class="v5-reassess" data-action="assessment-restart">重新评估</button>
+        </section>`;
   }
 
   function productFactFor(offerId){
@@ -244,7 +236,7 @@
   }
 
   function goldOfferPanel({esc,o,timingCurrent,saved,supportsAssessment,isEnded,hasAssessmentResult,result,state,metric}){
-    if(state.offerAnnualValueMode==='calculator'){
+    if(state.offerDetailTask==='annual-value'){
       return goldAnnualCalculatorHtml({esc,o,state});
     }
 
@@ -259,7 +251,7 @@
       ? `<button class="btn primary nb-gold-direct-apply" data-action="direct-apply">直接申请 <span>→</span></button>`
       : '';
     const assessment=assessmentHtml({
-      esc,metric,supportsAssessment,isEnded,hasAssessmentResult,result,compact:true
+      esc,supportsAssessment,isEnded,hasAssessmentResult,result,compact:true
     });
 
     return `
@@ -340,10 +332,12 @@
               ?`<div class="v4-reference-poster"><img src="${staticPosterSrc}" alt="AMEX Gold 海报" /></div>`
               :genericPoster(o)}
           </section>
-          ${goldOfferPanel({
-            esc,o,timingCurrent,saved,supportsAssessment,isEnded,
-            hasAssessmentResult,result:r,state:ctx.state,metric
-          })}
+          ${ctx.state.offerDetailTask==='assessment'&&supportsAssessment
+            ?window.NextBonusAssessmentPage?.renderPanel?.(ctx)
+            :goldOfferPanel({
+              esc,o,timingCurrent,saved,supportsAssessment,isEnded,
+              hasAssessmentResult,result:r,state:ctx.state,metric
+            })}
         </div>
       </div>`;
     }
@@ -368,7 +362,6 @@
 
     const assessment=assessmentHtml({
       esc,
-      metric,
       supportsAssessment,
       isEnded,
       hasAssessmentResult,
@@ -383,7 +376,9 @@
             :genericPoster(o)}
         </section>
 
-        <aside class="v4-decision-panel nb-credit-decision-panel">
+        ${ctx.state.offerDetailTask==='assessment'&&supportsAssessment
+          ?window.NextBonusAssessmentPage?.renderPanel?.(ctx)
+          :`<aside class="v4-decision-panel nb-credit-decision-panel">
           <button class="v4-detail-save nb-follow-control ${saved?'saved':''}" data-action="bookmark" data-id="${o.id}" aria-label="${saved?'已关注，点击取消':'关注'}" title="${saved?'已关注，点击取消':'关注'}">
             <span class="nb-follow-glyph" aria-hidden="true">${saved?'✓':'＋'}</span>
             <span>${saved?'已关注':'关注'}</span>
@@ -403,7 +398,7 @@
           ${applyHtml}
           ${assessment}
           ${!isEnded&&!applyHtml&&!assessment?`<div class="v4-no-action-note">当前暂未提供可执行的申请入口。</div>`:''}
-        </aside>
+        </aside>`}
       </div>
     </div>`;
   });

@@ -59,20 +59,6 @@
     };
   }
 
-  function closeAssessmentDialog(button){
-    const dialog = button?.closest?.('dialog');
-    const closeButton = dialog?.querySelector?.('[data-modal-action="close"]');
-    if(closeButton){
-      closeButton.click();
-      return true;
-    }
-    if(typeof dialog?.close === 'function'){
-      dialog.close();
-      return true;
-    }
-    return false;
-  }
-
   document.addEventListener('click',event=>{
     const direct = event.target.closest?.('[data-action="direct-apply"]');
     if(direct){
@@ -90,11 +76,9 @@
       return;
     }
 
-    const reportCta = event.target.closest?.('[data-modal-action="report-cta"][data-dest="current_application_url"]');
+    const reportCta = event.target.closest?.('[data-action="assessment-ui-apply"]');
     if(reportCta){
       event.preventDefault();
-      event.stopImmediatePropagation();
-      closeAssessmentDialog(reportCta);
       beginApplication({source:'assessment-full-report'});
     }
   });
