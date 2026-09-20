@@ -907,7 +907,7 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-current-offer-metrics b{
   display:block;
   margin-top:5px;
-  color:#895711;
+  color:#25324a;
   font-size:18px;
   line-height:1.15;
   font-weight:780;
@@ -971,6 +971,10 @@ body.nb-offer-overlay-open{overflow:hidden}
   font:inherit;
   font-weight:700;
 }
+.nb-annual-value-card.is-expanded p button{
+  color:#718099;
+  font-weight:560;
+}
 .nb-annual-value-breakdown{
   margin-top:10px;
 }
@@ -980,7 +984,7 @@ body.nb-offer-overlay-open{overflow:hidden}
   justify-content:space-between;
   gap:16px;
   min-height:33px;
-  border-bottom:1px solid #e8eef6;
+  border-bottom:1px solid #f0f3f7;
   color:#5f6d87;
   font-size:12px;
 }
@@ -1007,6 +1011,7 @@ body.nb-offer-overlay-open{overflow:hidden}
   grid-template-columns:1fr;
   gap:10px;
   margin-top:auto;
+  margin-bottom:92px;
   padding-top:18px;
 }
 .nb-credit-v1-actions .btn{
@@ -1039,7 +1044,10 @@ body.nb-offer-overlay-open{overflow:hidden}
     overflow:visible !important;
     padding:22px 18px 28px;
   }
-  .nb-credit-v1-actions{margin-top:18px}
+  .nb-credit-v1-actions{
+    margin-top:18px;
+    margin-bottom:0;
+  }
 }
 @media(max-width:560px){
   .nb-current-offer-v1 .nb-current-offer-value{font-size:31px}
