@@ -154,7 +154,7 @@
           <div><span>年费</span><b>-${annualMoney(result.fee)}</b></div>
         </div>
         <div class="nb-annual-value-total">
-          <span>每年净收益</span>
+          <span>净收益</span>
           <strong>${resultLabel} / 年</strong>
         </div>
         ${customized
@@ -163,7 +163,7 @@
         <button class="nb-annual-value-customize" type="button" data-action="annual-value-customize">${customized?'调整我的计算':'计算我的每年收益'} <span>›</span></button>
       `:`
         <div class="nb-annual-value-total">
-          <span>每年净收益</span>
+          <span>净收益</span>
           <strong>${resultLabel} / 年</strong>
         </div>
         ${customized
