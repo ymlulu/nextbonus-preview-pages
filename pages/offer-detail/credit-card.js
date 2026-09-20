@@ -50,7 +50,7 @@
         </div>
         ${customized
           ?`<p>已按照你的情况计算。 <button type="button" data-action="annual-value-toggle">收起明细 <span>›</span></button></p>`
-          :`<p>已扣除 ${annualMoney(result.fee)} 年费，按常见消费和福利使用情况估算。 <button type="button" data-action="annual-value-toggle">收起明细 <span>›</span></button></p>`}
+          :`<p>已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'} <button type="button" data-action="annual-value-toggle">收起明细 <span>›</span></button></p>`}
         <button class="nb-annual-value-customize" type="button" data-action="annual-value-customize">${customized?'调整我的计算':'计算我的每年收益'} <span>›</span></button>
       `:`
         <div class="nb-annual-value-total">
@@ -59,7 +59,7 @@
         </div>
         ${customized
           ?`<p>已按照你的情况计算。 <button type="button" data-action="annual-value-toggle">查看明细 <span>›</span></button></p>`
-          :`<p>已扣除 ${annualMoney(result.fee)} 年费，按常见消费和福利使用情况估算。 <button type="button" data-action="annual-value-toggle">查看明细 <span>›</span></button></p>`}
+          :`<p>已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'} <button type="button" data-action="annual-value-toggle">查看明细 <span>›</span></button></p>`}
       `}
     </section>`;
   }

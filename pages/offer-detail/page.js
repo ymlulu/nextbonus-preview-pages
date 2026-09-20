@@ -124,6 +124,7 @@
       timingCurrent,
       isPlatinum:isPlat,
       isGold,
+      usesCreditCardPanel,
       posterSrc,
       staticPosterSrc,
       hasAssessmentResult
@@ -141,13 +142,15 @@
 
     const saved=isSaved(o.id);
 
-    if(isGold){
+    if(usesCreditCardPanel){
       return `<div class="content v4-offer-detail-page nb-credit-v1-page">
         <div class="v4-offer-detail-grid">
           <section class="v4-offer-poster-shell">
-            ${staticPosterSrc
+            ${isGold&&staticPosterSrc
               ?`<div class="v4-reference-poster"><img src="${staticPosterSrc}" alt="AMEX Gold 海报" /></div>`
-              :genericPoster(o)}
+              :isPlat
+                ?`<div class="v4-reference-poster"><img src="${posterSrc}" alt="AMEX Platinum 海报" /><button class="poster-hotspot prev" data-action="poster-step" data-dir="-1" aria-label="上一张海报"></button><button class="poster-hotspot next" data-action="poster-step" data-dir="1" aria-label="下一张海报"></button></div>`
+                :genericPoster(o)}
           </section>
           ${ctx.state.offerDetailTask==='assessment'&&supportsAssessment
             ?window.NextBonusAssessmentPage?.renderPanel?.(ctx)

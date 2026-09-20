@@ -14,6 +14,7 @@
     const timingCurrent=window.NextBonusOfferDetailTiming?.cached?.(offer.id)?.current||null;
     const isPlatinum=offer.id==='amex-platinum';
     const isGold=offer.id==='amex-gold';
+    const usesCreditCardPanel=offer.category==='信用卡'&&supportsAssessment;
     const posterIndex=((state.posterIndex||0)%2+2)%2;
     const posterSrc=posterIndex===0
       ? 'assets/offer-detail/amex-platinum-poster.png'
@@ -30,6 +31,7 @@
       timingCurrent,
       isPlatinum,
       isGold,
+      usesCreditCardPanel,
       posterIndex,
       posterSrc,
       staticPosterSrc,
