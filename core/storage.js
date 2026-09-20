@@ -2,8 +2,8 @@
   'use strict';
 
   const STORAGE_KEY='nextbonus-local-v8-state';
-  const RESET_ON_LOAD=Object.freeze({modal:null,addFlow:null,editFlow:null,accountMenu:false,expandedAttentionId:null,expandedBenefitId:null});
-  const OMIT_ON_SAVE=Object.freeze({modal:null,addFlow:null,editFlow:null,accountMenu:false,returnTarget:null,returnSource:null,pendingIntent:null});
+  const RESET_ON_LOAD=Object.freeze({modal:null,addFlow:null,editFlow:null,accountMenu:false,expandedAttentionId:null,expandedBenefitId:null,annualValueDraft:null,offerAnnualValueMode:'default'});
+  const OMIT_ON_SAVE=Object.freeze({modal:null,addFlow:null,editFlow:null,accountMenu:false,returnTarget:null,returnSource:null,pendingIntent:null,annualValueDraft:null,offerAnnualValueMode:'default'});
   const MIGRATION_KEY='nextbonus-preview-overlay-migration-20260918-1';
 
   function offerOverlayFrom(state){

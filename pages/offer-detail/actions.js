@@ -64,8 +64,36 @@
         return {render:true};
       }
       if(action==='annual-value-customize'){
+        const calculator=window.NextBonusAnnualValueCalculator;
+        const offerId=ctx.state.currentOfferId;
+        const profile=calculator?.draftFor?.(ctx.state,offerId);
+        if(!profile) return {handled:true};
+        ctx.state.annualValueDraft={offerId,profile};
+        ctx.state.offerAnnualValueMode='calculator';
+        return {render:true};
+      }
+      if(action==='annual-value-cancel'){
+        ctx.state.annualValueDraft=null;
+        ctx.state.offerAnnualValueMode='default';
+        return {render:true};
+      }
+      if(action==='annual-benefit-toggle'){
+        const draft=ctx.state.annualValueDraft;
+        if(!draft?.profile) return {handled:true};
+        draft.profile.benefitUsage={...draft.profile.benefitUsage,[el.dataset.benefit]:el.dataset.value==='1'};
+        return {render:true};
+      }
+      if(action==='annual-value-done'){
+        const draft=ctx.state.annualValueDraft;
+        const calculator=window.NextBonusAnnualValueCalculator;
+        if(!draft?.offerId||!draft?.profile||!calculator) return {handled:true};
+        const normalized=calculator.normalizeProfile(draft.offerId,{...draft.profile,customized:true});
+        ctx.state.annualValueProfiles={...(ctx.state.annualValueProfiles||{}),[draft.offerId]:normalized};
+        ctx.state.annualValueDraft=null;
+        ctx.state.offerAnnualValueMode='default';
         ctx.state.offerAnnualValueExpanded=true;
-        return {handled:true};
+        ctx.persist?.();
+        return {render:true};
       }
       if(action==='assessment-start'){
         const supported=!!window.NextBonusAssessmentContract?.supported?.(ctx.state.currentOfferId);
@@ -92,6 +120,15 @@
         return {render:true};
       }
       return false;
+    },
+    change({event,ctx}){
+      const el=event.target.closest?.('[data-action="annual-spend-input"]');
+      if(!el) return false;
+      const draft=ctx.state.annualValueDraft;
+      if(!draft?.profile) return {handled:true};
+      const value=Math.max(0,Math.round(Number(el.value)||0));
+      draft.profile.monthlySpend={...draft.profile.monthlySpend,[el.dataset.category]:value};
+      return {render:true,focusId:el.id};
     }
   });
 })();

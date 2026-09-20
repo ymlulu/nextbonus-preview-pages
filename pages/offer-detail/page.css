@@ -1054,3 +1054,275 @@ body.nb-offer-overlay-open{overflow:hidden}
   .nb-current-offer-metrics b{font-size:15px}
   .nb-annual-value-total strong{font-size:20px}
 }
+
+
+/* Annual value calculator ---------------------------------------------------------
+   A right-rail drill-in owned by Offer Detail. Benefit facts are sourced from the
+   canonical credit-card Product Detail facts through features/annual-value/calculator.js. */
+.nb-annual-value-personalized{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin:9px 2px 0;
+  padding:8px 10px;
+  border-radius:9px;
+  background:#eef9f5;
+  color:#118568;
+  font-size:10.5px;
+  font-weight:650;
+}
+.nb-annual-value-personalized span{
+  width:16px;
+  height:16px;
+  display:inline-grid;
+  place-items:center;
+  border-radius:999px;
+  background:#14a47d;
+  color:#fff;
+  font-size:10px;
+}
+
+.nb-credit-v1-page .nb-annual-calculator-panel{
+  display:block !important;
+  padding:20px 22px 22px;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  scrollbar-gutter:stable;
+}
+.nb-annual-calculator-panel::-webkit-scrollbar{width:7px}
+.nb-annual-calculator-panel::-webkit-scrollbar-thumb{
+  background:rgba(120,136,160,.18);
+  border-radius:999px;
+}
+.nb-annual-calc-head{
+  position:relative;
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 44px 12px;
+  border-bottom:1px solid #edf1f5;
+}
+.nb-annual-calc-head h2{
+  margin:0;
+  color:#17213a;
+  font-size:15px;
+  font-weight:760;
+}
+.nb-annual-calc-head button{
+  position:absolute;
+  left:0;
+  top:0;
+  height:30px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#68758a;
+  font-size:11px;
+  cursor:pointer;
+}
+.nb-annual-calc-head button span{
+  margin-right:2px;
+  font-size:17px;
+  vertical-align:-1px;
+}
+.nb-annual-calc-head button:hover{color:#0d6fe8}
+
+.nb-annual-calc-result{
+  margin-top:14px;
+  padding:14px 15px;
+  border-radius:13px;
+  background:linear-gradient(145deg,#eef9f7,#f5fbff);
+}
+.nb-annual-calc-result span,
+.nb-annual-calc-result small{
+  display:block;
+}
+.nb-annual-calc-result span{
+  color:#25324a;
+  font-size:11px;
+  font-weight:690;
+}
+.nb-annual-calc-result strong{
+  display:block;
+  margin-top:4px;
+  color:#08966f;
+  font-size:25px;
+  line-height:1.05;
+  font-weight:820;
+  letter-spacing:-.03em;
+}
+.nb-annual-calc-result small{
+  margin-top:5px;
+  color:#7b8799;
+  font-size:9.5px;
+}
+
+.nb-annual-calc-section{
+  margin-top:15px;
+}
+.nb-annual-calc-section-title{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:6px;
+}
+.nb-annual-calc-section-title>span{
+  width:18px;
+  height:18px;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  background:#172d56;
+  color:#fff;
+  font-size:9px;
+  font-weight:760;
+}
+.nb-annual-calc-section-title h3{
+  margin:0;
+  color:#1f2b43;
+  font-size:11.5px;
+  font-weight:740;
+}
+
+.nb-annual-calc-row,
+.nb-annual-calc-spend-row{
+  min-height:47px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border-bottom:1px solid #f0f3f7;
+}
+.nb-annual-calc-copy,
+.nb-annual-calc-spend-row>span:first-child{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.nb-annual-calc-copy b,
+.nb-annual-calc-spend-row b{
+  color:#25324a;
+  font-size:10.5px;
+  line-height:1.2;
+  font-weight:690;
+}
+.nb-annual-calc-copy small,
+.nb-annual-calc-spend-row small{
+  color:#8a95a7;
+  font-size:8.5px;
+  line-height:1.25;
+}
+
+.nb-annual-calc-segment{
+  flex:0 0 auto;
+  display:grid;
+  grid-template-columns:46px 46px;
+  gap:4px;
+  padding:3px;
+  border-radius:10px;
+  background:#f1f4f8;
+}
+.nb-annual-calc-segment button{
+  height:26px;
+  padding:0;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:#78859a;
+  font-size:9.5px;
+  font-weight:650;
+  cursor:pointer;
+}
+.nb-annual-calc-segment button.active{
+  background:#1478f2;
+  color:#fff;
+  box-shadow:0 1px 4px rgba(13,111,232,.16);
+}
+
+.nb-annual-calc-spend-row{
+  cursor:default;
+}
+.nb-annual-calc-input-wrap{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:3px;
+  color:#263650;
+  font-size:10px;
+  font-weight:690;
+}
+.nb-annual-calc-input-wrap input{
+  width:64px;
+  height:30px;
+  padding:0 5px;
+  border:1px solid #e1e7ef;
+  border-radius:8px;
+  background:#f8fafc;
+  color:#18243a;
+  font:inherit;
+  text-align:right;
+  outline:none;
+}
+.nb-annual-calc-input-wrap input:focus{
+  border-color:#8dbcf7;
+  box-shadow:0 0 0 2px rgba(17,119,245,.08);
+}
+.nb-annual-calc-input-wrap small{
+  color:#7f8b9e;
+  font-size:9px;
+}
+.nb-annual-calc-baseline,
+.nb-annual-calc-unquantified{
+  margin:7px 0 0;
+  color:#8a95a6;
+  font-size:8.5px;
+  line-height:1.45;
+}
+
+.nb-annual-calc-summary>div:not(.nb-annual-calc-section-title){
+  min-height:29px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  color:#647188;
+  font-size:10px;
+}
+.nb-annual-calc-summary b{
+  color:#26344d;
+  font-size:10.5px;
+}
+.nb-annual-calc-summary .positive{color:#07966d}
+.nb-annual-calc-summary .negative{color:#cc4d4d}
+.nb-annual-calc-summary .total{
+  margin-top:4px;
+  padding:9px 10px;
+  border-radius:9px;
+  background:#eef6ff;
+  color:#192842 !important;
+  font-weight:720;
+}
+.nb-annual-calc-summary .total strong{
+  color:#08966f;
+  font-size:14px;
+  font-weight:800;
+}
+.nb-annual-calc-done{
+  width:100%;
+  min-height:42px;
+  margin-top:12px;
+  border-radius:11px;
+  background:#1177f5;
+  border-color:#1177f5;
+  font-size:12px;
+  font-weight:720;
+}
+
+@media(max-width:1180px){
+  .nb-credit-v1-page .nb-annual-calculator-panel{
+    padding:20px 18px 26px;
+    overflow:visible !important;
+  }
+}
