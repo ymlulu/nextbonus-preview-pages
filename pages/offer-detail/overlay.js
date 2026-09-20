@@ -244,6 +244,7 @@
       detail.classList.add('nb-overlay-detail');
       if(layoutMode==='desktop') mountDesktopCTA();
       syncFollowState();
+      window.NextBonusCreditCardStory?.afterRender?.(host);
       window.NextBonusAssessmentPage?.afterRender?.(host,lastContext);
       hydrateTiming();
     }

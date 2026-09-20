@@ -163,9 +163,14 @@
         </header>
 
         <section class="nb-current-offer nb-current-offer-v1">
-          <div class="nb-current-offer-label">当前奖励</div>
-          <div class="nb-current-offer-value">${esc(o.value)}</div>
-          <div class="nb-current-offer-requirement">${esc(o.requirement)}</div>
+          <div class="nb-current-offer-desktop-summary">
+            <div class="nb-current-offer-label">当前奖励</div>
+            <div class="nb-current-offer-value">${esc(o.value)}</div>
+            <div class="nb-current-offer-requirement">${esc(o.requirement)}</div>
+          </div>
+          <div class="nb-current-offer-mobile-summary">
+            <span>开卡奖励：</span><strong>${esc(o.value)}</strong><span>，${esc(o.requirement)}</span>
+          </div>
           <div class="nb-current-offer-metrics">
             <div>
               <span>奖励价值</span>

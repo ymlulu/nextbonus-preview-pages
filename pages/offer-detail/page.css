@@ -878,6 +878,7 @@ body.nb-offer-overlay-open{overflow:hidden}
   line-height:1.35;
   border-bottom:1px solid #e5edf7;
 }
+.nb-current-offer-mobile-summary{display:none}
 .nb-current-offer-metrics{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
@@ -1050,8 +1051,45 @@ body.nb-offer-overlay-open{overflow:hidden}
   }
 }
 @media(max-width:560px){
-  .nb-current-offer-v1 .nb-current-offer-value{font-size:31px}
-  .nb-current-offer-metrics b{font-size:15px}
+  .nb-credit-v1-page .nb-credit-v1-final{
+    padding:18px 16px 26px;
+  }
+  .nb-credit-v1-head{
+    min-height:42px;
+    padding:0 64px 12px 0;
+  }
+  .nb-credit-v1-head .nb-credit-offer-name{font-size:18px}
+  .nb-current-offer-v1{
+    margin-top:12px;
+    padding:14px 14px 0;
+    border-radius:14px;
+  }
+  .nb-current-offer-desktop-summary{display:none}
+  .nb-current-offer-mobile-summary{
+    display:block;
+    padding:0 0 13px;
+    border-bottom:1px solid #e5edf7;
+    color:#4f5f78;
+    font-size:13px;
+    line-height:1.55;
+  }
+  .nb-current-offer-mobile-summary strong{
+    color:#17213a;
+    font-weight:780;
+  }
+  .nb-current-offer-metrics{
+    margin:0 -14px;
+  }
+  .nb-current-offer-metrics>div{
+    padding:12px 8px 13px;
+  }
+  .nb-current-offer-metrics span{
+    font-size:10px;
+  }
+  .nb-current-offer-metrics b{
+    margin-top:4px;
+    font-size:15px;
+  }
   .nb-annual-value-total strong{font-size:20px}
 }
 
@@ -1624,8 +1662,14 @@ body.nb-offer-overlay-open{overflow:hidden}
 @media(max-width:780px){
   .nb-credit-story{
     min-height:560px;
-    grid-template-rows:minmax(460px,1fr) 118px;
+    grid-template-rows:minmax(560px,1fr);
   }
+  .nb-credit-story-stage{
+    touch-action:pan-y;
+    cursor:grab;
+  }
+  .nb-credit-story-stage:active{cursor:grabbing}
+  .nb-credit-story-carousel{display:none}
   .nb-credit-story-copy{
     top:9%;
     left:7%;

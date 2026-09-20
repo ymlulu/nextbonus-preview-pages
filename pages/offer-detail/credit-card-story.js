@@ -47,5 +47,34 @@
     </div>`;
   }
 
-  window.NextBonusCreditCardStory=Object.freeze({render});
+  function afterRender(root){
+    const stage=root?.querySelector?.('.nb-credit-story-stage');
+    if(!stage||stage.dataset.mobileSwipeReady==='1') return;
+    stage.dataset.mobileSwipeReady='1';
+
+    let startX=0;
+    let startY=0;
+    stage.addEventListener('touchstart',event=>{
+      const touch=event.touches?.[0];
+      if(!touch) return;
+      startX=touch.clientX;
+      startY=touch.clientY;
+    },{passive:true});
+
+    stage.addEventListener('touchend',event=>{
+      const touch=event.changedTouches?.[0];
+      if(!touch) return;
+      const dx=touch.clientX-startX;
+      const dy=touch.clientY-startY;
+      if(Math.abs(dx)<44||Math.abs(dx)<=Math.abs(dy)) return;
+
+      const buttons=[...root.querySelectorAll('.nb-credit-story-nav-item')];
+      const current=buttons.findIndex(button=>button.classList.contains('active'));
+      if(current<0) return;
+      const next=Math.max(0,Math.min(buttons.length-1,current+(dx<0?1:-1)));
+      if(next!==current) buttons[next]?.click();
+    },{passive:true});
+  }
+
+  window.NextBonusCreditCardStory=Object.freeze({render,afterRender});
 })();
