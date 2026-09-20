@@ -971,9 +971,9 @@ body.nb-offer-overlay-open{overflow:hidden}
   font:inherit;
   font-weight:700;
 }
-.nb-annual-value-card.is-expanded p button{
-  color:#718099;
-  font-weight:560;
+.nb-annual-value-card.is-customized p button{
+  color:#0d6fe8;
+  font-weight:700;
 }
 .nb-annual-value-breakdown{
   margin-top:10px;
