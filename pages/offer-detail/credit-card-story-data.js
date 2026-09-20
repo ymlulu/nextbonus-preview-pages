@@ -51,7 +51,7 @@
   function makeStory(offerId,copyBySection={},backgroundBySection={}){
     return Object.freeze({
       offerId,
-      version:'2026-09-20.4',
+      version:'2026-09-20.5',
       slides:Object.freeze(SECTION_DEFS.map(section=>makeSlide(
         section,
         copyBySection[section.id],
@@ -63,23 +63,23 @@
   const AMEX_GOLD_COPY=Object.freeze({
     intro:Object.freeze({
       eyebrow:'',
-      title:'餐饮 · 超市 · 旅行',
-      summary:'4X 餐饮｜4X 美国超市｜3X 机票'
+      title:'AMEX Gold 开卡送',
+      summary:'100,000 MR'
     }),
     highlights:Object.freeze({
       eyebrow:'',
-      title:'$424+ 日常报销',
-      summary:'Uber · Dining · Resy · Dunkin'
+      title:'4X 餐饮 · 4X 超市',
+      summary:'$424 报销福利'
     }),
     points:Object.freeze({
       eyebrow:'',
-      title:'MR 转点',
-      summary:'20 家航空 / 酒店伙伴'
+      title:'Membership Rewards',
+      summary:'转里程 · 商务头等舱\n转酒店 · 奢华入住'
     }),
     fit:Object.freeze({
       eyebrow:'',
-      title:'吃饭 · 买菜 · 旅行',
-      summary:'高频日常消费 + MR 旅行兑换'
+      title:'日常消费必备',
+      summary:'旅游出行必备'
     })
   });
 

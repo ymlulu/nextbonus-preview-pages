@@ -14,7 +14,7 @@
 
     const copyHasBody=!!(slide.eyebrow||slide.title||slide.summary);
     const copy=copyHasBody
-      ? `<div class="nb-credit-story-copy" data-placement="${esc(slide.layout?.textPlacement||'left-top')}">
+      ? `<div class="nb-credit-story-copy" data-slide-id="${esc(slide.id)}" data-placement="${esc(slide.layout?.textPlacement||'left-top')}" data-nb-typography-exempt="marketing">
           ${slide.eyebrow?`<div class="nb-credit-story-eyebrow">${esc(slide.eyebrow)}</div>`:''}
           ${slide.title?`<h2>${esc(slide.title)}</h2>`:''}
           ${slide.summary?`<p>${esc(slide.summary)}</p>`:''}

@@ -1456,7 +1456,7 @@ body.nb-offer-overlay-open{overflow:hidden}
   color:#6d7a90;
 }
 .nb-credit-story-copy h2{
-  margin:14px 0 0;
+  margin:0;
   max-width:100%;
   font-size:38px;
   line-height:1.08;
@@ -1466,11 +1466,68 @@ body.nb-offer-overlay-open{overflow:hidden}
   color:#15213a;
 }
 .nb-credit-story-copy p{
-  margin:14px 0 0;
+  margin:12px 0 0;
   max-width:100%;
-  font-size:14px;
-  line-height:1.62;
   color:#5f6d82;
+}
+
+/* Poster copy is marketing art, not app UI typography. Each slide owns its visual scale. */
+.nb-credit-story-copy[data-slide-id="intro"] h2{
+  font-size:36px;
+  line-height:1.1;
+  font-weight:700;
+  letter-spacing:-.025em;
+}
+.nb-credit-story-copy[data-slide-id="intro"] p{
+  margin-top:10px;
+  font-size:58px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:-.045em;
+  color:#15213a;
+}
+.nb-credit-story-copy[data-slide-id="highlights"] h2{
+  font-size:42px;
+  line-height:1.08;
+  font-weight:760;
+  letter-spacing:-.035em;
+}
+.nb-credit-story-copy[data-slide-id="highlights"] p{
+  margin-top:12px;
+  font-size:34px;
+  line-height:1.12;
+  font-weight:720;
+  letter-spacing:-.025em;
+  color:#15213a;
+}
+.nb-credit-story-copy[data-slide-id="points"]{
+  width:min(58%,460px);
+}
+.nb-credit-story-copy[data-slide-id="points"] h2{
+  font-size:34px;
+  line-height:1.08;
+  font-weight:740;
+  letter-spacing:-.03em;
+}
+.nb-credit-story-copy[data-slide-id="points"] p{
+  margin-top:12px;
+  font-size:27px;
+  line-height:1.45;
+  font-weight:650;
+  letter-spacing:-.02em;
+  white-space:pre-line;
+  color:#15213a;
+}
+.nb-credit-story-copy[data-slide-id="fit"] h2,
+.nb-credit-story-copy[data-slide-id="fit"] p{
+  font-size:40px;
+  line-height:1.14;
+  font-weight:740;
+  letter-spacing:-.03em;
+  color:#15213a;
+}
+.nb-credit-story-copy[data-slide-id="fit"] p{
+  margin-top:8px;
 }
 .nb-credit-story-dots{
   position:absolute;
@@ -1575,6 +1632,15 @@ body.nb-offer-overlay-open{overflow:hidden}
     width:62%;
   }
   .nb-credit-story-copy h2{font-size:30px}
+  .nb-credit-story-copy[data-slide-id="intro"] h2{font-size:28px}
+  .nb-credit-story-copy[data-slide-id="intro"] p{font-size:44px}
+  .nb-credit-story-copy[data-slide-id="highlights"] h2{font-size:31px}
+  .nb-credit-story-copy[data-slide-id="highlights"] p{font-size:27px}
+  .nb-credit-story-copy[data-slide-id="points"]{width:72%}
+  .nb-credit-story-copy[data-slide-id="points"] h2{font-size:27px}
+  .nb-credit-story-copy[data-slide-id="points"] p{font-size:21px}
+  .nb-credit-story-copy[data-slide-id="fit"] h2,
+  .nb-credit-story-copy[data-slide-id="fit"] p{font-size:30px}
   .nb-credit-story-carousel{grid-template-columns:repeat(2,minmax(0,1fr))}
   .nb-credit-story-nav-item{
     min-height:59px;
