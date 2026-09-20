@@ -21,7 +21,7 @@
   const offers=Object.entries(window.NextBonusOfferData||{}).map(([id,fact])=>{
     const product=window.NextBonusOfferProducts?.[fact.productId];
     if(!product) return null;
-    return {id,provider:product.provider,name:product.name,category:product.category,value:fact.primaryValue,requirement:fact.primaryRequirement,status:offerTagLabel(fact.statusTag),tags:[offerTagLabel(fact.valueTag),offerTagLabel(fact.attributeTag)].filter(Boolean),art:OFFER_TONES[id]||'bank',applyUrl:fact.applyUrl||null,risk:false};
+    return {id,provider:product.provider,name:product.name,category:product.category,value:fact.primaryValue,requirement:fact.primaryRequirement,status:offerTagLabel(fact.statusTag),valueTag:fact.valueTag||null,attributeTag:fact.attributeTag||null,tags:[offerTagLabel(fact.valueTag),offerTagLabel(fact.attributeTag)].filter(Boolean),art:OFFER_TONES[id]||'bank',applyUrl:fact.applyUrl||null,risk:false};
   }).filter(Boolean);
 
   const posterSets = {

@@ -127,7 +127,6 @@
     return `<section class="nb-annual-value-card ${expanded?'is-expanded':''}">
       <div class="nb-annual-value-head">
         <h2>每年福利 vs 年费</h2>
-        <button class="nb-annual-value-chevron" type="button" data-action="annual-value-toggle" aria-expanded="${expanded?'true':'false'}" aria-label="${expanded?'收起每年收益明细':'展开每年收益明细'}">${expanded?'⌃':'⌄'}</button>
       </div>
       ${expanded?`
         <div class="nb-annual-value-breakdown">
@@ -139,7 +138,7 @@
           <span>每年收益</span>
           <strong>+$279 / 年</strong>
         </div>
-        <p>按常见消费和福利使用情况估算，实际价值因人而异。</p>
+        <p>按常见消费和福利使用情况估算，实际价值因人而异。 <button type="button" data-action="annual-value-toggle">收起明细 <span>›</span></button></p>
         <button class="nb-annual-value-customize" type="button" data-action="annual-value-customize">计算我的每年收益 <span>›</span></button>
       `:`
         <div class="nb-annual-value-total">

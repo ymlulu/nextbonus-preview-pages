@@ -808,7 +808,7 @@ body.nb-offer-overlay-open{overflow:hidden}
 /* AMEX Gold V1 final decision panel ------------------------------------------------
    Scoped to the approved Gold layout. Other Offer Detail variants remain unchanged. */
 .nb-credit-v1-page .nb-credit-v1-final{
-  display:flex;
+  display:flex !important;
   flex-direction:column;
   padding:24px 24px 22px;
   background:#fff;
@@ -895,14 +895,14 @@ body.nb-offer-overlay-open{overflow:hidden}
   top:13px;
   bottom:15px;
   width:1px;
-  background:#e2e8f2;
+  background:#edf1f6;
 }
 .nb-current-offer-metrics span{
   display:block;
-  color:#68758f;
+  color:#8590a3;
   font-size:11px;
   line-height:1.2;
-  font-weight:650;
+  font-weight:580;
 }
 .nb-current-offer-metrics b{
   display:block;
@@ -932,17 +932,6 @@ body.nb-offer-overlay-open{overflow:hidden}
   font-size:15px;
   line-height:1.25;
   font-weight:760;
-}
-.nb-annual-value-chevron{
-  width:26px;
-  height:26px;
-  display:grid;
-  place-items:center;
-  padding:0;
-  border:0;
-  background:transparent;
-  color:#0d6fe8;
-  font-size:16px;
 }
 .nb-annual-value-total{
   display:flex;
