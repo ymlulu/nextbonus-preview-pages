@@ -54,28 +54,6 @@
     return answers;
   }
 
-  function resultSummaryHtml(result){
-    const decision=result.decision||{};
-    const dimensions=result.dimensions||{};
-    const rows=[
-      ['获批条件',dimensions.application?.approval_label||'无法判断'],
-      ['开卡奖励资格',dimensions.bonus?.label||'不确定']
-    ];
-    return `<section class="nb-assessment-result-summary">
-      <div class="nb-assessment-result-kicker">申请评估</div>
-      <h2>${esc(decision.recommended_action||'评估完成')}</h2>
-      <p>${esc(decision.summary||'')}</p>
-      <div class="nb-assessment-result-points">
-        ${rows.map(([label,value])=>`<div><span>${esc(label)}</span><b>${esc(value)}</b></div>`).join('')}
-      </div>
-      <div class="nb-assessment-result-buttons">
-        <button type="button" class="btn primary" data-action="assessment-ui-report">查看完整报告</button>
-        <button type="button" class="btn secondary" data-action="assessment-ui-done">完成</button>
-      </div>
-      <button type="button" class="nb-assessment-text-action" data-action="assessment-ui-restart">重新评估</button>
-    </section>`;
-  }
-
   function reportHtml(result){
     const report=result.report||{},cta=report.cta||{};
     const sections=[
@@ -93,7 +71,7 @@
       <small>${esc(result.provenance?.release_id||result.release_id||'')}</small>
       <div class="nb-assessment-report-actions">
         ${cta.dest==='current_application_url'?`<button type="button" class="btn primary" data-action="assessment-ui-apply">${esc(cta.text||'直接申请')}</button>`:''}
-        <button type="button" class="btn secondary" data-action="assessment-ui-result">返回结果</button>
+        <button type="button" class="btn secondary" data-action="assessment-ui-done">完成</button>
         <button type="button" class="nb-assessment-text-action" data-action="assessment-ui-restart">重新评估</button>
       </div>
     </div>`;
@@ -125,20 +103,10 @@
       </aside>`;
     }
 
-    if(view==='result'){
-      return `<aside class="v4-decision-panel nb-credit-decision-panel nb-assessment-rail">
-        <header class="nb-assessment-rail-head">
-          <button type="button" data-action="assessment-ui-exit"><span aria-hidden="true">‹</span> 返回</button>
-          <h2>申请评估</h2>
-        </header>
-        <div class="nb-assessment-rail-scroll">${resultSummaryHtml(session.result||result)}</div>
-      </aside>`;
-    }
-
     if(view==='report'){
       return `<aside class="v4-decision-panel nb-credit-decision-panel nb-assessment-rail">
         <header class="nb-assessment-rail-head">
-          <button type="button" data-action="assessment-ui-result"><span aria-hidden="true">‹</span> 返回</button>
+          <button type="button" data-action="assessment-ui-exit"><span aria-hidden="true">‹</span> 返回</button>
           <h2>完整报告</h2>
         </header>
         <div class="nb-assessment-rail-scroll">${reportHtml(session.result||result)}</div>
@@ -204,7 +172,7 @@
 
     const existing=ctx.state.assessmentResults?.[offerId]?.canonicalResult;
     if(!restart&&existing){
-      active={offerId,productId,contract:null,busy:false,token:0,view:view==='report'?'report':'result',result:existing,error:''};
+      active={offerId,productId,contract:null,busy:false,token:0,view:'report',result:existing,error:''};
       ctx.renderApp?.();
       return;
     }
@@ -280,7 +248,7 @@
       ctx.state.assessmentDraft=null;
       ctx.persist?.();
       active.result=result;
-      active.view='result';
+      active.view='report';
       active.busy=false;
       ctx.renderApp?.();
     }catch(error){
@@ -312,10 +280,6 @@
     }
     if(action==='assessment-ui-report'){
       if(active){active.view='report';active.error='';}
-      return {render:true};
-    }
-    if(action==='assessment-ui-result'){
-      if(active){active.view='result';active.error='';}
       return {render:true};
     }
     if(action==='assessment-ui-restart'){
