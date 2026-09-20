@@ -86,13 +86,15 @@
 
   function applyHistorySnapshot(state,snapshot){
     if(!snapshot?.nb) return false;
-    state.route=snapshot.route||'discover';
-    state.routeSource=snapshot.routeSource||'discover';
-    state.currentOfferId=snapshot.currentOfferId||state.currentOfferId;
-    state.currentProductId=snapshot.currentProductId||state.currentProductId;
-    state.offerOverlay=snapshot.nbOfferOverlay||null;
+    const offerOverlay=snapshot.nbOfferOverlay||null;
+    const productOverlay=snapshot.nbProductOverlay||null;
+    state.route=offerOverlay?'offer-detail':productOverlay?'product-detail':snapshot.route||'discover';
+    state.routeSource=offerOverlay?.source||productOverlay?.source||snapshot.routeSource||'discover';
+    state.currentOfferId=offerOverlay?.offerId||snapshot.currentOfferId||state.currentOfferId;
+    state.currentProductId=productOverlay?.productId||snapshot.currentProductId||state.currentProductId;
+    state.offerOverlay=offerOverlay;
     state.offerDetailTask=snapshot.nbOfferDetailTask||null;
-    state.productOverlay=snapshot.nbProductOverlay||null;
+    state.productOverlay=productOverlay;
     state.attentionTab=snapshot.attentionTab||'active';
     state.attentionProductFilter=snapshot.attentionProductFilter||'all';
     state.historyStatusFilter=snapshot.historyStatusFilter||'all';
