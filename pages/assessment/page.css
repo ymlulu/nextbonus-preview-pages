@@ -373,3 +373,28 @@
   .nb-oh-ranges{width:100%;display:grid;grid-template-columns:1fr 1fr}
   .nb-oh-ranges button{width:100%}
 }
+
+
+/* Desktop Assessment rail: override the generic Offer Detail block/overflow contract.
+   Header/progress/footer stay fixed; only the question/report body owns scrolling. */
+@media(min-width:1181px){
+  .nb-offer-detail-host .v4-decision-panel.nb-assessment-rail{
+    display:flex !important;
+    flex-direction:column !important;
+    overflow:hidden !important;
+  }
+
+  .nb-offer-detail-host .v4-decision-panel.nb-assessment-rail > .nb-assessment-rail-head,
+  .nb-offer-detail-host .v4-decision-panel.nb-assessment-rail > .nb-assessment-progress,
+  .nb-offer-detail-host .v4-decision-panel.nb-assessment-rail > .nb-assessment-rail-footer{
+    flex:0 0 auto !important;
+  }
+
+  .nb-offer-detail-host .v4-decision-panel.nb-assessment-rail > .nb-assessment-rail-scroll{
+    flex:1 1 0 !important;
+    min-height:0 !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain;
+  }
+}
