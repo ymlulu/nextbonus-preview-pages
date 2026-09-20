@@ -145,7 +145,7 @@
       : null;
     const productFact=productFactFor(o.id);
     const fee=productFact?.fee||'—';
-    const rewardLevel=o.valueTag==='high_bonus'?'较高':'常见水平';
+    const rewardLevel=timingCurrent ? (timingCurrent.rating||'暂无评级') : '正在读取…';
 
     const applyHtml=!isEnded&&o.applyUrl
       ? `<button class="btn primary nb-gold-direct-apply" data-action="direct-apply">直接申请 <span>→</span></button>`

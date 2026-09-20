@@ -15,6 +15,7 @@
 
   function normalize(payload){
     const current=payload?.current_offer;
+    const timingResult=payload?.timing_result||{};
     if(!current||!Number.isFinite(Number(current.comparable_value))){
       return Object.freeze({status:'unavailable',current:null});
     }
@@ -27,7 +28,14 @@
         comparableValue:Number(current.comparable_value),
         comparisonUnit:current.comparison_unit||null,
         offerMechanism:current.offer_mechanism||null,
-        expiry:current.expiry||null
+        expiry:current.expiry||null,
+        rating:timingResult.rating||null,
+        waitRecommendation:timingResult.wait||null,
+        historicalHighLabel:timingResult.historical_high_label||null,
+        historicalLowLabel:timingResult.historical_low_label||null,
+        historyCount:Number.isFinite(Number(timingResult.history_count))
+          ? Number(timingResult.history_count)
+          : null
       })
     });
   }
