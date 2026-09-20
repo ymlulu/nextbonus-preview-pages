@@ -30,8 +30,8 @@
   function annualValueHtml(state,offerId){
     const result=annualResultFor(state,offerId);
     if(!result) return '';
-    const expanded=!!state.offerAnnualValueExpanded;
     const customized=!!state.annualValueProfiles?.[offerId]?.customized;
+    const expanded=customized||!!state.offerAnnualValueExpanded;
     const resultLabel=annualMoney(result.total,{signed:true});
 
     return `<section class="nb-annual-value-card ${expanded?'is-expanded':''} ${customized?'is-customized':''}">
@@ -40,7 +40,7 @@
       </div>
       ${expanded?`
         <div class="nb-annual-value-breakdown">
-          <div><span>固定福利</span><b>${annualMoney(result.fixedBenefits)}</b></div>
+          <div><span>报销福利</span><b>${annualMoney(result.fixedBenefits)}</b></div>
           <div><span>刷卡额外回报</span><b>${annualMoney(result.spendReturn,{signed:true})}</b></div>
           <div><span>年费</span><b>-${annualMoney(result.fee)}</b></div>
         </div>
@@ -49,17 +49,15 @@
           <strong>${resultLabel} / 年</strong>
         </div>
         ${customized
-          ?`<p>已按照你的情况计算。 <button type="button" data-action="annual-value-toggle">收起明细 <span>›</span></button></p>`
-          :`<p>已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'} <button type="button" data-action="annual-value-toggle">收起明细 <span>›</span></button></p>`}
-        <button class="nb-annual-value-customize" type="button" data-action="annual-value-customize">${customized?'调整我的计算':'计算我的每年收益'} <span>›</span></button>
+          ?`<p>已按照你的情况计算。 <button type="button" data-action="annual-value-customize">调整我的计算 <span>›</span></button></p>`
+          :`<p>已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'}</p>
+            <button class="nb-annual-value-customize" type="button" data-action="annual-value-customize">计算我的每年收益 <span>›</span></button>`}
       `:`
         <div class="nb-annual-value-total">
           <span>净收益</span>
           <strong>${resultLabel} / 年</strong>
         </div>
-        ${customized
-          ?`<p>已按照你的情况计算。 <button type="button" data-action="annual-value-toggle">查看明细 <span>›</span></button></p>`
-          :`<p>已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'} <button type="button" data-action="annual-value-toggle">查看明细 <span>›</span></button></p>`}
+        <p>已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'} <button type="button" data-action="annual-value-customize">计算我的每年收益 <span>›</span></button></p>
       `}
     </section>`;
   }
