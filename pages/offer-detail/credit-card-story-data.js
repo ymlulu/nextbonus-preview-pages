@@ -22,13 +22,13 @@
     });
   }
 
-  function localizedCopy(label){
+  function localizedCopy(label,zh={}){
     return Object.freeze({
       'zh-CN':Object.freeze({
         navLabel:label,
-        eyebrow:'',
-        title:'',
-        summary:''
+        eyebrow:zh.eyebrow||'',
+        title:zh.title||'',
+        summary:zh.summary||''
       }),
       'en-US':Object.freeze({
         navLabel:'',
@@ -39,22 +39,45 @@
     });
   }
 
-  function makeSlide(section){
+  function makeSlide(section,zh={}){
     return Object.freeze({
       id:section.id,
       background:emptyBackground(),
       layout:DEFAULT_LAYOUT,
-      copy:localizedCopy(section.label)
+      copy:localizedCopy(section.label,zh)
     });
   }
 
-  function makeStory(offerId){
+  function makeStory(offerId,copyBySection={}){
     return Object.freeze({
       offerId,
-      version:'2026-09-20.1',
-      slides:Object.freeze(SECTION_DEFS.map(makeSlide))
+      version:'2026-09-20.2',
+      slides:Object.freeze(SECTION_DEFS.map(section=>makeSlide(section,copyBySection[section.id])))
     });
   }
+
+  const AMEX_GOLD_COPY=Object.freeze({
+    intro:Object.freeze({
+      eyebrow:'AMEX GOLD CARD',
+      title:'吃饭、买菜赚 MR 的主力卡',
+      summary:'餐饮和美国超市 4x MR，每年还有 Uber、Dining、Resy、Dunkin 等多项日常消费报销。'
+    }),
+    highlights:Object.freeze({
+      eyebrow:'核心亮点',
+      title:'餐饮和超市 4x MR',
+      summary:'全球餐厅和美国超市都是 4x；再叠加 Uber、Dining、Resy、Dunkin 等报销，日常消费场景很强。'
+    }),
+    points:Object.freeze({
+      eyebrow:'积分使用',
+      title:'MR 最值钱的玩法，还是转航空里程',
+      summary:'可以转 ANA、Air Canada、British Airways、Delta 等航空伙伴；直接换现金或酒店通常不划算。'
+    }),
+    fit:Object.freeze({
+      eyebrow:'适合谁',
+      title:'餐饮、超市花得多，也会用 MR 的人',
+      summary:'如果你本来就能用掉主要报销，同时餐饮和美国超市消费较高，这张卡更容易把年费赚回来。'
+    })
+  });
 
   const SUPPORTED=Object.freeze([
     'chase-sapphire',
@@ -66,7 +89,10 @@
   ]);
 
   const STORIES=Object.freeze(Object.fromEntries(
-    SUPPORTED.map(offerId=>[offerId,makeStory(offerId)])
+    SUPPORTED.map(offerId=>[
+      offerId,
+      makeStory(offerId,offerId==='amex-gold'?AMEX_GOLD_COPY:{})
+    ])
   ));
 
   function get(offerId){
