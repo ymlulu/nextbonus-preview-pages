@@ -108,6 +108,16 @@
     </div>`;
   }
 
+  function closeOfferDetailTask(){
+    if(history.state?.nbOfferDetailTask&&history.length>1){
+      history.back();
+      return true;
+    }
+    state.offerDetailTask=null;
+    render();
+    return false;
+  }
+
   function closeOfferDetail(){
     const target=state.routeSource==='wishlist'?'wishlist':'discover';
     window.NextBonusAssessmentPage?.exit?.(pageContext(),{render:false});
@@ -133,7 +143,7 @@
   }
 
   function pageContext(){
-    const ctx={ state, categories, offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionIdentity, openLogin, closeOfferDetail, closeProductDetail, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, completeAttention, historyCorrection, renderApp:render, persist:()=>storageCore.save(state) };
+    const ctx={ state, categories, offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionIdentity, openLogin, closeOfferDetail, closeOfferDetailTask, closeProductDetail, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, completeAttention, historyCorrection, renderApp:render, persist:()=>storageCore.save(state) };
     ctx.renderRoute=route=>window.NextBonusPageRegistry.render(route,ctx);
     return ctx;
   }

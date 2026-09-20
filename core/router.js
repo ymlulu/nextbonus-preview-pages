@@ -53,6 +53,9 @@
       route='products';
       routeSource='products';
     }
+    const offerDetailTask=offerOverlay&&['assessment','annual-value'].includes(state.offerDetailTask)
+      ? state.offerDetailTask
+      : null;
     return {
       nb:true,
       route,
@@ -64,6 +67,7 @@
       historyStatusFilter:state.historyStatusFilter,
       posterIndex:state.posterIndex,
       nbOfferOverlay:offerOverlay,
+      nbOfferDetailTask:offerDetailTask,
       nbProductOverlay:productOverlay
     };
   }
@@ -75,6 +79,7 @@
       snapshot.currentOfferId,
       snapshot.currentProductId,
       snapshot.nbOfferOverlay?.offerId||null,
+      snapshot.nbOfferDetailTask||null,
       snapshot.nbProductOverlay?.productId||null
     ]);
   }
@@ -86,6 +91,7 @@
     state.currentOfferId=snapshot.currentOfferId||state.currentOfferId;
     state.currentProductId=snapshot.currentProductId||state.currentProductId;
     state.offerOverlay=snapshot.nbOfferOverlay||null;
+    state.offerDetailTask=snapshot.nbOfferDetailTask||null;
     state.productOverlay=snapshot.nbProductOverlay||null;
     state.attentionTab=snapshot.attentionTab||'active';
     state.attentionProductFilter=snapshot.attentionProductFilter||'all';

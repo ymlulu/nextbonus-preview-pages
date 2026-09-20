@@ -26,12 +26,13 @@
         if(!profile) return {handled:true};
         ctx.state.annualValueDraft={offerId,profile};
         ctx.state.offerDetailTask='annual-value';
-        return {render:true};
+        ctx.renderApp?.();
+        return {handled:true};
       }
       if(action==='annual-value-cancel'){
         ctx.state.annualValueDraft=null;
-        ctx.state.offerDetailTask=null;
-        return {render:true};
+        ctx.closeOfferDetailTask?.();
+        return {handled:true};
       }
       if(action==='annual-benefit-toggle'){
         const draft=ctx.state.annualValueDraft;
@@ -46,10 +47,10 @@
         const normalized=calculator.normalizeProfile(draft.offerId,{...draft.profile,customized:true});
         ctx.state.annualValueProfiles={...(ctx.state.annualValueProfiles||{}),[draft.offerId]:normalized};
         ctx.state.annualValueDraft=null;
-        ctx.state.offerDetailTask=null;
         ctx.state.offerAnnualValueExpanded=true;
         ctx.persist?.();
-        return {render:true};
+        ctx.closeOfferDetailTask?.();
+        return {handled:true};
       }
       if(action==='assessment-start'||action==='assessment-report'){
         const supported=!!window.NextBonusAssessmentContract?.supported?.(ctx.state.currentOfferId);

@@ -153,6 +153,10 @@
   }
 
   function exit(ctx,{render=true}={}){
+    if(render&&ctx.closeOfferDetailTask){
+      ctx.closeOfferDetailTask();
+      return;
+    }
     active=null;
     ctx.state.offerDetailTask=null;
     if(render) ctx.renderApp?.();
