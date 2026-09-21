@@ -92,7 +92,6 @@
   cursor:pointer;
 }
 .v4-products-page .v4-past-head-title{display:flex;align-items:center;gap:10px}
-.v4-products-page .v4-past-head-title strong{font-weight:700}
 .v4-products-page .v4-past-head-title small{
   color:#86868b;
   background:#f2f2f7;
@@ -137,7 +136,6 @@
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-  font-weight:600;
 }
 .v4-products-page .v4-past-row-status{
   color:#86868b;
