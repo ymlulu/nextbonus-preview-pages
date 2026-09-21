@@ -218,26 +218,28 @@ body.nb-offer-overlay-open{overflow:hidden}
   justify-content:center !important;
   gap:5px !important;
   height:34px !important;
-  padding:0 8px !important;
-  border:0 !important;
+  padding:0 10px !important;
+  border:1px solid var(--nb-system-blue) !important;
   border-radius:9px !important;
-  background:transparent !important;
-  color:#68758a !important;
+  background:#fff !important;
+  color:var(--nb-system-blue) !important;
   box-shadow:none !important;
   cursor:pointer;
-  transition:background .14s ease,color .14s ease,transform .12s ease;
+  transition:background .14s ease,border-color .14s ease,color .14s ease,transform .12s ease;
 }
 .nb-offer-detail-host .nb-follow-control:hover{
-  background:rgba(120,120,128,.09) !important;
+  background:rgba(0,136,255,.06) !important;
 }
 .nb-offer-detail-host .nb-follow-control:active{
   transform:scale(.97);
 }
 .nb-offer-detail-host .nb-follow-control.saved{
-  color:#0a71ff !important;
+  border-color:#d1d5db !important;
+  background:#fff !important;
+  color:#8e8e93 !important;
 }
 .nb-offer-detail-host .nb-follow-control.saved:hover{
-  background:rgba(10,113,255,.08) !important;
+  background:#f7f7f8 !important;
 }
 .nb-offer-detail-host .nb-follow-glyph{
   width:16px;
@@ -790,14 +792,10 @@ body.nb-offer-overlay-open{overflow:hidden}
   top:auto !important;
   right:auto !important;
   flex:0 0 auto;
-  height:31px;
-  padding:0;
-  border:0;
-  background:transparent;
+  height:34px;
+  padding:0 10px;
   box-shadow:none;
-  color:var(--nb-system-blue);
 }
-.nb-credit-v1-final .v4-detail-save:hover{background:transparent;color:#0d6fe8}
 .nb-credit-v1-final .nb-follow-glyph{font-size:15px;font-weight:500}
 
 .nb-current-offer-v1{
