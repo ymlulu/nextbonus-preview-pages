@@ -63,6 +63,7 @@
   function migrate(saved){
     if(!saved||typeof saved!=='object') return saved;
     delete saved.offerAnnualValueMode;
+    delete saved.productSearch;
     if(saved.route==='offer-detail'&&saved.currentOfferId){
       const overlay=offerOverlayFrom(saved);
       saved.route=overlay.source;

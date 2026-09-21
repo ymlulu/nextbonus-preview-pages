@@ -19,7 +19,7 @@
   function section(state,type,items){
     const sorted=sortProducts(state,type,items);
     const expanded=!!state.productSectionExpanded?.[type];
-    const collapsible=items.length>=8 && !state.productSearch;
+    const collapsible=items.length>=8;
     const shown=collapsible&&!expanded?sorted.slice(0,5):sorted;
     return Object.freeze({
       type,
@@ -36,16 +36,13 @@
   }
 
   function build({state,activeAttentionSorted}){
-    const query=String(state.productSearch||'').trim().toLowerCase();
-    const current=state.products.filter(product=>
-      !query||`${product.name} ${product.institution} ${product.instance}`.toLowerCase().includes(query)
-    );
+    const current=state.products;
     const grouped=TYPES
       .map(type=>[type,current.filter(product=>product.type===type)])
       .filter(([,items])=>items.length)
       .map(([type,items])=>[type,items,section(state,type,items)]);
     const allActive=activeAttentionSorted();
-    return Object.freeze({query,current,grouped,allActive,top3:allActive.slice(0,3)});
+    return Object.freeze({current,grouped,allActive,top3:allActive.slice(0,3)});
   }
 
   root.wallet=Object.freeze({build,TYPES,sortProducts,section});

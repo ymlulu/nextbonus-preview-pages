@@ -2,7 +2,6 @@
    Presentation only: reduce section chrome and improve scanability without changing behavior. */
 
 .v4-products-page .v4-needs-attention{display:none}
-.v4-products-page .v4-product-search .search{box-shadow:none}
 
 .v4-products-page .credit-products,
 .v4-products-page .account-products,

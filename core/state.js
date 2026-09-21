@@ -18,7 +18,6 @@
       offerSearch:'',
       offerCategory:'全部',
       watchlistHistoryOpen:false,
-      productSearch:'',
       pastOpen:false,
       productSectionExpanded:{'其他':false},
       productSorts:{},

@@ -33,10 +33,6 @@
         ctx.renderApp?.();
         return {handled:true};
       }
-      if(action==='wallet-clear-product-search'){
-        ctx.state.productSearch='';
-        return {render:true,focusId:'wallet-search'};
-      }
       if(action==='wallet-toggle-past'){
         ctx.state.pastOpen=!ctx.state.pastOpen;
         return {render:true};
@@ -65,11 +61,6 @@
         return {render:true};
       }
       return false;
-    },
-    input({event,ctx}){
-      if(event.target?.id!=='wallet-search') return false;
-      ctx.state.productSearch=event.target.value;
-      return {render:true,focusId:'wallet-search'};
     }
   });
 })();
