@@ -128,3 +128,84 @@
   .discover-page .filters{gap:4px;margin-bottom:20px}
   .discover-page .pill{padding-left:9px;padding-right:9px}
 }
+
+/* Mobile Discover: keep desktop search unchanged; collapse only the phone search control. */
+@media(max-width:780px){
+  .discover-page{position:relative}
+
+  .discover-page .nb-primary-page-head{
+    min-height:44px;
+    margin-bottom:10px!important;
+    padding-right:52px;
+  }
+
+  .discover-page .discover-search-row{
+    position:absolute;
+    top:0;
+    right:0;
+    z-index:8;
+    width:44px;
+    max-width:100%;
+    margin:0;
+    transition:width .18s ease;
+  }
+
+  .discover-page .discover-search-row:focus-within,
+  .discover-page .discover-search-row.has-query{
+    width:100%;
+  }
+
+  .discover-page .discover-search-row .search-wrap{
+    width:100%;
+  }
+
+  .discover-page .discover-search-row .search{
+    height:44px;
+    border-radius:22px;
+    padding:0 42px 0 44px;
+    font-size:16px;
+    opacity:0;
+    cursor:pointer;
+    background:#fff;
+    transition:opacity .12s ease,border-radius .18s ease,box-shadow .18s ease;
+  }
+
+  .discover-page .discover-search-row:focus-within .search,
+  .discover-page .discover-search-row.has-query .search{
+    opacity:1;
+    cursor:text;
+  }
+
+  .discover-page .discover-search-row .search-icon{
+    left:11px;
+    width:22px;
+    height:22px;
+    color:rgba(60,60,67,.78);
+    z-index:2;
+  }
+
+  .discover-page .discover-search-row .search-icon svg{
+    width:22px;
+    height:22px;
+  }
+
+  .discover-page .discover-search-row:not(:focus-within):not(.has-query) .search-wrap{
+    width:44px;
+    height:44px;
+    border-radius:22px;
+    background:rgba(118,118,128,.10);
+  }
+
+  .discover-page .discover-search-row:not(:focus-within):not(.has-query) .search{
+    width:44px;
+    padding:0;
+    border-color:transparent;
+    box-shadow:none;
+  }
+
+  .discover-page .discover-search-row:not(:focus-within):not(.has-query) .search::placeholder{
+    color:transparent;
+  }
+
+  .discover-page .discover-search-row .search-clear{right:9px}
+}
