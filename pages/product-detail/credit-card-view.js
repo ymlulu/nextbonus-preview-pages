@@ -151,9 +151,9 @@
   function benefitsSection(ctx,card){
     const items=card.benefits;
     if(!items.length){
-      return '<section class="v4-pd-section nb-card-benefits-section"><div class="nb-card-section-title nb-card-benefits-title"><span class="nb-card-section-icon nb-card-crown">'+iconSvg('crown')+'</span><div><h2>卡片福利</h2><p>查看这张卡的长期福利与当前使用状态</p></div></div><div class="timeline-empty">美卡101当前文章没有列出需要单独追踪的长期福利</div></section>';
+      return '<section class="v4-pd-section nb-card-benefits-section"><div class="nb-card-section-title nb-card-benefits-title"><span class="nb-card-section-icon nb-card-crown">'+iconSvg('crown')+'</span><div><h2>持卡福利</h2></div></div><div class="timeline-empty">美卡101当前文章没有列出需要单独追踪的长期福利</div></section>';
     }
-    return `<section class="v4-pd-section nb-card-benefits-section"><div class="nb-card-section-title nb-card-benefits-title"><span class="nb-card-section-icon nb-card-crown">${iconSvg('crown')}</span><div><h2>卡片福利</h2><p>查看这张卡的长期福利与当前使用状态</p></div></div><div class="v4-benefit-lists nb-card-benefit-columns"><div>${items.map(item=>benefitRow(ctx,item)).join('')}</div></div></section>`;
+    return `<section class="v4-pd-section nb-card-benefits-section"><div class="nb-card-section-title nb-card-benefits-title"><span class="nb-card-section-icon nb-card-crown">${iconSvg('crown')}</span><div><h2>持卡福利</h2></div></div><div class="v4-benefit-lists nb-card-benefit-columns"><div>${items.map(item=>benefitRow(ctx,item)).join('')}</div></div></section>`;
   }
 
   function contactActions(card,esc){
