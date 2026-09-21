@@ -18,9 +18,17 @@
 
   function section(state,type,items){
     const sorted=sortProducts(state,type,items);
-    const expanded=!!state.productSectionExpanded?.[type];
     const collapsible=items.length>=8;
-    const shown=collapsible&&!expanded?sorted.slice(0,5):sorted;
+    const explicitExpanded=state.productSectionExpanded?.[type];
+    const expanded=collapsible ? explicitExpanded!==false : true;
+    const shown=collapsible&&!expanded?[]:sorted;
+    const sortMode=state.productSorts?.[type]||'default';
+    const sortLabel={
+      default:'默认顺序',
+      recent:'最近添加',
+      'date-desc':'最近开卡',
+      'date-asc':'最早开卡'
+    }[sortMode]||'默认顺序';
     return Object.freeze({
       type,
       items,
@@ -30,6 +38,8 @@
       collapsible,
       hidden:Math.max(0,items.length-shown.length),
       reliableDates:items.every(item=>!!item.opened),
+      sortMode,
+      sortLabel,
       sortOpen:state.productSortPicker===type,
       className:type==='信用卡'?'credit-products':type==='银行和券商账户'?'account-products':type==='会籍'?'membership-products':'other-products'
     });

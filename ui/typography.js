@@ -56,7 +56,7 @@
     ['.v4-pp-product', 'headline', false],
     ['.v4-pp-action', 'subheadline', false, 'secondary'],
     ['.v4-pp-time', 'caption1', false, 'secondary'],
-    ['.v4-show-more,.product-sort-button', 'caption1', false, 'link'],
+    ['.product-sort-button', 'caption1', false],
     ['.product-sort-menu button', 'caption1'],
     ['.v4-past-head', 'headline', false],
     ['.v4-past-head b', 'caption2', false],

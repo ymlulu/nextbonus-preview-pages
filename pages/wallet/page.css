@@ -29,6 +29,66 @@
 .v4-products-page .membership-products .v4-section-head,
 .v4-products-page .other-products .v4-section-head{margin-bottom:9px}
 
+.v4-products-page .wallet-section-controls{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-left:auto;
+}
+.v4-products-page .product-sort-wrap{position:relative;margin-left:0}
+.v4-products-page .product-sort-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  min-height:30px;
+  padding:0 10px;
+  border:1px solid rgba(60,60,67,.08);
+  border-radius:999px;
+  background:rgba(118,118,128,.07);
+  color:#3a3a3c;
+  cursor:pointer;
+  transition:background .14s ease,border-color .14s ease;
+}
+.v4-products-page .product-sort-button:hover{
+  background:rgba(118,118,128,.11);
+  border-color:rgba(60,60,67,.11);
+}
+.v4-products-page .product-sort-chevron{color:#8e8e93}
+.v4-products-page .product-sort-menu{
+  right:0;
+  top:36px;
+  width:148px;
+}
+.v4-products-page .product-sort-menu button.selected{
+  background:#f2f2f7;
+  color:#1d1d1f;
+}
+.v4-products-page .product-section-toggle{
+  width:30px;
+  height:30px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 30px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:transparent;
+  color:#8e8e93;
+  cursor:pointer;
+  transition:background .14s ease,color .14s ease;
+}
+.v4-products-page .product-section-toggle:hover{background:rgba(118,118,128,.08);color:#3a3a3c}
+.v4-products-page .product-section-chevron{
+  display:inline-flex;
+  transform:rotate(0deg);
+  transition:transform .16s ease;
+}
+.v4-products-page .product-section-chevron.is-expanded{transform:rotate(180deg)}
+.v4-products-page .v4-product-section.is-collapsed{padding-bottom:12px}
+.v4-products-page .v4-product-section.is-collapsed .v4-section-head{margin-bottom:0}
+
 .v4-products-page .credit-products .v4-owned-product-card{position:relative;text-align:left}
 .v4-products-page .credit-products .owned-product-meta{
   display:block;
@@ -158,10 +218,16 @@
     display:inline-flex;
     align-items:center;
     justify-content:center;
+  }
+  .v4-products-page .v4-add-product-glyph{
     font-size:24px;
     line-height:1;
   }
   .v4-products-page .v4-add-product-label{display:none}
+  .v4-products-page .wallet-section-controls{gap:4px}
+  .v4-products-page .product-sort-button{min-height:28px;padding:0 9px}
+  .v4-products-page .product-section-toggle{width:28px;height:28px;flex-basis:28px}
+  .v4-products-page .product-sort-menu{top:34px}
   .v4-products-page .credit-products,
   .v4-products-page .account-products,
   .v4-products-page .membership-products,
