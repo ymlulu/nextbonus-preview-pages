@@ -110,48 +110,6 @@
   color:#1c2534;
 }
 
-.nb-offer-card .bookmark,
-.nb-offer-card .mock-bookmark{
-  position:static;
-  right:auto;
-  top:auto;
-  z-index:auto;
-  flex:0 0 auto;
-  width:44px;
-  height:44px;
-  margin:-10px -8px -4px -6px;
-  padding:0;
-  border:0;
-  border-radius:9px;
-  background:transparent;
-  color:#8a94a5;
-  display:grid;
-  place-items:center;
-  box-shadow:none;
-  transition:background .15s ease,color .15s ease,transform .12s ease;
-}
-.nb-offer-card .bookmark:hover,
-.nb-offer-card .mock-bookmark:hover{background:rgba(120,120,128,.09);color:#667085}
-.nb-offer-card .bookmark:active,
-.nb-offer-card .mock-bookmark:active{transform:scale(.96)}
-.nb-offer-card .bookmark svg,
-.nb-offer-card .mock-bookmark svg{
-  width:18px;
-  height:18px;
-  display:block;
-  fill:none;
-  stroke:currentColor;
-  stroke-width:1.9;
-  stroke-linecap:round;
-  stroke-linejoin:round;
-}
-.nb-offer-card .bookmark.saved,
-.nb-offer-card .mock-bookmark.saved{
-  background:transparent;
-  color:#0a71ff;
-}
-.nb-offer-card .bookmark.saved:hover,
-.nb-offer-card .mock-bookmark.saved:hover{background:rgba(10,113,255,.08)}
 
 .nb-offer-card .nb-primary-value{
   margin-top:4px;

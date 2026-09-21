@@ -16,12 +16,6 @@
     return window.NextBonusProductLogoRegistry?.resolve?.('',product?.id||'',product?.name||'') || product?.logo || '';
   }
 
-  function followIcon(saved){
-    return saved
-      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 9.5 17 19 7"></path></svg>'
-      : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>';
-  }
-
   function shouldShowProviderFooter(product,visual){
     if(product.type==='credit-card') return true;
     if(product.type==='bank-account') return visual?.kind!=='logo';
@@ -60,7 +54,6 @@
       <div class="nb-card-body">
         <div class="nb-title-row">
           <div class="nb-offer-name">${esc(product.name)}</div>
-          <button class="bookmark nb-follow-toggle ${saved?'saved':''}" data-action="bookmark" data-id="${esc(id)}" aria-label="${saved?'已关注，点击取消':'关注'}" title="${saved?'已关注，点击取消':'关注'}">${followIcon(saved)}</button>
         </div>
         <div class="nb-primary-value">${esc(fact.primaryValue)}</div>
         <div class="nb-card-footer">
