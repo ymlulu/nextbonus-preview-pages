@@ -207,9 +207,20 @@ body.nb-offer-overlay-open{overflow:hidden}
   box-shadow:inset 1px 0 0 rgba(28,43,66,.055) !important;
 }
 
-/* Keep the close affordance in the same quiet control zone as Follow/Save. */
+/* Mobile keeps room for the explicit close control. Desktop closes through the
+   blurred backdrop / Escape, so Follow can own the upper-right action slot. */
 .nb-offer-detail-host .v4-detail-save{
   right:54px !important;
+}
+
+@media(min-width:1181px){
+  .nb-offer-detail-close{
+    display:none;
+  }
+
+  .nb-offer-detail-host .v4-detail-save{
+    right:24px !important;
+  }
 }
 
 .nb-offer-detail-host .nb-follow-control{
