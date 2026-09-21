@@ -193,8 +193,7 @@
           ?window.NextBonusAssessmentPage?.renderPanel?.(ctx)
           :`<aside class="v4-decision-panel nb-credit-decision-panel">
           <button class="v4-detail-save nb-follow-control ${saved?'saved':''}" data-action="bookmark" data-id="${o.id}" aria-label="${saved?'已关注，点击取消':'关注'}" title="${saved?'已关注，点击取消':'关注'}">
-            <span class="nb-follow-glyph" aria-hidden="true">${saved?'✓':'＋'}</span>
-            <span>${saved?'已关注':'关注'}</span>
+            <span class="nb-follow-label">${saved?'已关注':'关注'}</span>
           </button>
 
           <header class="nb-credit-offer-head">

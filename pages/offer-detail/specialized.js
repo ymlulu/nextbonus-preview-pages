@@ -11,7 +11,7 @@
   function followButton(className,id,saved){
     const label=saved?'已关注':'关注';
     const hint=saved?'已关注，点击取消':'关注';
-    return `<button class="${className} nb-follow-control ${saved?'saved':''}" data-action="bookmark" data-id="${id}" aria-label="${hint}" title="${hint}"><span class="nb-follow-glyph" aria-hidden="true">${saved?'✓':'＋'}</span><span>${label}</span></button>`;
+    return `<button class="${className} nb-follow-control ${saved?'saved':''}" data-action="bookmark" data-id="${id}" aria-label="${hint}" title="${hint}"><span class="nb-follow-label">${label}</span></button>`;
   }
 
   const REMAINING={

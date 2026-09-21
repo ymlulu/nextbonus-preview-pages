@@ -241,14 +241,6 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-offer-detail-host .nb-follow-control.saved:hover{
   background:#f7f7f8 !important;
 }
-.nb-offer-detail-host .nb-follow-glyph{
-  width:16px;
-  height:16px;
-  display:inline-grid;
-  place-items:center;
-  flex:0 0 auto;
-}
-
 .nb-offer-detail-host .v4-decision-panel{
   position:relative !important;
   display:block !important;
@@ -796,7 +788,6 @@ body.nb-offer-overlay-open{overflow:hidden}
   padding:0 10px;
   box-shadow:none;
 }
-.nb-credit-v1-final .nb-follow-glyph{font-size:15px;font-weight:500}
 
 .nb-current-offer-v1{
   margin-top:16px;

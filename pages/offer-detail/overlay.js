@@ -152,10 +152,7 @@
       button.classList.toggle('saved',isSaved);
       button.setAttribute('aria-label',hint);
       button.setAttribute('title',hint);
-      const glyph=button.querySelector('.nb-follow-glyph');
-      if(glyph) glyph.textContent=isSaved?'✓':'＋';
-      const spans=button.querySelectorAll('span');
-      const text=spans.length>1?spans[spans.length-1]:null;
+      const text=button.querySelector('.nb-follow-label');
       if(text) text.textContent=label;
     });
   }
