@@ -8,6 +8,31 @@
     'calendar-year':'今年已使用',
     'cardmember-year':'本持卡年已使用'
   });
+  const BENEFIT_STATUS_LABELS=Object.freeze({
+    used:'已使用',
+    unused:'未使用',
+    completed:'已完成',
+    complete:'已完成',
+    available:'可用',
+    unavailable:'不可用',
+    expired:'已到期',
+    pending:'待处理',
+    skipped:'已忽略',
+    active:'进行中'
+  });
+
+  function benefitStatusLabel(value){
+    const raw=String(value||'').trim();
+    if(!raw) return '';
+    const direct=BENEFIT_STATUS_LABELS[raw.toLowerCase()];
+    if(direct) return direct;
+    const overdue=raw.match(/^Overdue\s+(\d+)\s+days?$/i);
+    if(overdue) return `已逾期 ${overdue[1]} 天`;
+    if(/^Due today$/i.test(raw)) return '今日到期';
+    const due=raw.match(/^Due in\s+(\d+)\s+days?$/i);
+    if(due) return `${due[1]} 天后到期`;
+    return raw;
+  }
 
   function iconSvg(kind){
     const icons={
@@ -104,10 +129,10 @@
     const info=benefit.cycleInfo;
     if(!info) return '';
     if(info.mode==='manual'){
-      const label=info.used?'已完成':'未标记';
+      const label=info.used?benefitStatusLabel('completed'):'未标记';
       return `<button type="button" class="nb-benefit-cycle-quick ${info.used?'used':''}" data-action="benefit-manual-toggle" data-id="${esc(benefit.id)}" aria-pressed="${info.used?'true':'false'}"><span aria-hidden="true">${info.used?'✓':'○'}</span><span>${label}</span></button>`;
     }
-    const label=info.used?(CYCLE_USED_LABELS[benefit.cycleType]||'本期已使用'):'未使用';
+    const label=info.used?(CYCLE_USED_LABELS[benefit.cycleType]||BENEFIT_STATUS_LABELS.used):BENEFIT_STATUS_LABELS.unused;
     return `<button type="button" class="nb-benefit-cycle-quick ${info.used?'used':''}" data-action="benefit-cycle-toggle" data-id="${esc(benefit.id)}" aria-pressed="${info.used?'true':'false'}"><span aria-hidden="true">${info.used?'✓':'○'}</span><span>${esc(label)}</span></button>`;
   }
 
@@ -117,7 +142,7 @@
     const info=benefit.cycleInfo;
     if(info?.mode==='cycle'){
       rows.push(['本期可用至',formatDate(info.window.end)]);
-      rows.push(['当前状态',info.used?'本期已使用':'本期可使用']);
+      rows.push(['当前状态',info.used?'本期已使用':BENEFIT_STATUS_LABELS.available]);
     }else if(info?.mode==='manual'){
       rows.push(['当前状态',info.used?'已手动标记完成':'未标记；补充开卡日期后可自动计算持卡年']);
     }
@@ -131,9 +156,9 @@
       actions=`<div class="nb-benefit-attention-actions">${attention?.instruction?`<div class="instruction-title">${esc(attention.instruction)}</div>`:''}${checklist.length?`<div class="checklist">${checklist.map(item=>`<label class="check"><input type="checkbox" data-action="checklist" data-attention="${esc(attention.id)}" data-check="${esc(item.id)}" ${item.done?'checked':''}><span>${esc(item.label)}</span></label>`).join('')}</div>`:''}<div class="attention-actions">${info.mode==='manual'
         ? `<button class="btn ${info.used?'secondary':'primary'} small" type="button" data-action="benefit-manual-toggle" data-id="${esc(benefit.id)}">${info.used?'撤销完成':'标记完成'}</button>`
         : `<button class="btn ${info.used?'secondary':'primary'} small" type="button" data-action="benefit-cycle-toggle" data-id="${esc(benefit.id)}">${info.used?'撤销已使用':'已使用'}</button>`
-      }${attention?.secondaryAction?`<button class="btn secondary small" data-action="skip-attention" data-id="${esc(attention.id)}">${esc(attention.secondaryAction)}</button>`:''}</div></div>`;
+      }${attention?.secondaryAction?`<button class="btn secondary small" data-action="skip-attention" data-id="${esc(attention.id)}">${esc(benefitStatusLabel(attention.secondaryAction))}</button>`:''}</div></div>`;
     }else if(attention){
-      actions=`<div class="nb-benefit-attention-actions">${attention.instruction?`<div class="instruction-title">${esc(attention.instruction)}</div>`:''}${checklist.length?`<div class="checklist">${checklist.map(item=>`<label class="check"><input type="checkbox" data-action="checklist" data-attention="${esc(attention.id)}" data-check="${esc(item.id)}" ${item.done?'checked':''}><span>${esc(item.label)}</span></label>`).join('')}</div>`:''}<div class="attention-actions"><button class="btn primary small" data-action="complete-attention" data-id="${esc(attention.id)}">${esc(attention.primary||'确认完成')}</button>${attention.secondaryAction?`<button class="btn secondary small" data-action="skip-attention" data-id="${esc(attention.id)}">${esc(attention.secondaryAction)}</button>`:''}</div></div>`;
+      actions=`<div class="nb-benefit-attention-actions">${attention.instruction?`<div class="instruction-title">${esc(attention.instruction)}</div>`:''}${checklist.length?`<div class="checklist">${checklist.map(item=>`<label class="check"><input type="checkbox" data-action="checklist" data-attention="${esc(attention.id)}" data-check="${esc(item.id)}" ${item.done?'checked':''}><span>${esc(item.label)}</span></label>`).join('')}</div>`:''}<div class="attention-actions"><button class="btn primary small" data-action="complete-attention" data-id="${esc(attention.id)}">${esc(benefitStatusLabel(attention.primary||'确认完成'))}</button>${attention.secondaryAction?`<button class="btn secondary small" data-action="skip-attention" data-id="${esc(attention.id)}">${esc(benefitStatusLabel(attention.secondaryAction))}</button>`:''}</div></div>`;
     }
     return `<div class="benefit-detail v4-benefit-expanded nb-source-benefit-expanded"><dl>${rows.map(([label,value])=>`<dt>${esc(label)}</dt><dd>${esc(value)}</dd>`).join('')}</dl>${actions}</div>`;
   }
@@ -142,7 +167,7 @@
     const {state,esc}=ctx;
     const expanded=state.expandedBenefitId===benefit.id;
     const badge=benefit.dueLabel&&!benefit.cycleInfo?.used&&benefit.cycleInfo?.mode!=='manual'
-      ? `<span class="nb-card-benefit-due tone-${benefit.dueTone}">${esc(benefit.dueLabel)}</span>`
+      ? `<span class="nb-card-benefit-due tone-${benefit.dueTone}">${esc(benefitStatusLabel(benefit.dueLabel))}</span>`
       : '<span class="nb-card-benefit-due-slot" aria-hidden="true"></span>';
     const status=cycleStatusMarkup(ctx,benefit);
     return `<div class="v4-benefit-item-wrap"><div class="v4-benefit-row nb-source-benefit-row" data-action="toggle-card-benefit" data-id="${esc(benefit.id)}" role="button" tabindex="0" aria-expanded="${expanded?'true':'false'}" ${benefit.benefitId?`data-benefit-id="${esc(benefit.benefitId)}"`:''} ${benefit.cycleType?`data-cycle-type="${esc(benefit.cycleType)}"`:''}><span class="nb-card-benefit-main"><span class="v4-benefit-icon nb-card-benefit-icon">${iconSvg(benefitIconFor(benefit.title))}</span><strong>${esc(benefit.title)}</strong></span><small>${esc(benefit.short)}</small>${badge}<span class="nb-card-benefit-status">${status}<b class="chev ${expanded?'up':''}" aria-hidden="true">›</b></span></div>${expanded?benefitDetail(ctx,benefit):''}</div>`;

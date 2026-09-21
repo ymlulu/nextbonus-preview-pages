@@ -133,10 +133,10 @@
   function dueLabel(attention){
     const days=daysUntil(attention?.dueDate);
     if(days===null||days>7) return '';
-    if(days<0) return `Overdue ${Math.abs(days)} days`;
-    if(days===0) return 'Due today';
-    if(days===1) return 'Due in 1 day';
-    return `Due in ${days} days`;
+    if(days<0) return `已逾期 ${Math.abs(days)} 天`;
+    if(days===0) return '今日到期';
+    if(days===1) return '1 天后到期';
+    return `${days} 天后到期`;
   }
 
   function sortBenefits(items){
