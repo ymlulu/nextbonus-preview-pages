@@ -203,6 +203,7 @@ body.nb-product-overlay-open{overflow:hidden}
 .edit-footer.split{justify-content:space-between;align-items:center}
 .edit-footer .btn{min-width:132px}
 .edit-product-page .task-card{margin-top:10px}
+.edit-product-page #edit-opened{width:min(320px,100%)}
 
 
 
@@ -245,6 +246,7 @@ body.nb-product-overlay-open{overflow:hidden}
   .edit-reward-head{margin-top:22px}
   .edit-product-page .edit-reward-row{min-height:54px;padding:9px 12px}
   .edit-footer.split{flex-direction:column-reverse;align-items:stretch}
+  .edit-product-page #edit-opened{width:100%}
   .edit-footer.split .btn{width:100%}
 }
 
