@@ -73,7 +73,7 @@
 
     if(!hasAssessmentResult){
       return compact
-        ? `<button class="btn secondary nb-assessment-compact" data-action="assessment-start"><span>评估一下，让你的申请更有把握</span><span class="nb-assessment-row-chevron" aria-hidden="true">›</span></button>`
+        ? `<button class="btn secondary nb-assessment-compact" data-action="assessment-start">查看申请资格</button>`
         : `<section class="nb-assessment-section">
             <div class="nb-assessment-entry">
               <div class="nb-assessment-copy">

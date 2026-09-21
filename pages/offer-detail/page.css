@@ -915,17 +915,32 @@ body.nb-offer-overlay-open{overflow:hidden}
   display:grid;
   grid-template-columns:1fr;
   gap:10px;
-  margin-top:auto;
+  margin-top:14px;
   margin-bottom:0;
-  padding-top:20px;
-  border-top:1px solid #edf1f5;
+  padding-top:0;
+  border-top:0;
   background:#fff;
 }
 .nb-credit-v1-actions .btn{
   width:100%;
   min-height:48px;
   border-radius:12px;
-
+}
+.nb-credit-v1-actions .nb-assessment-compact{
+  min-height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 14px;
+  border:1px solid var(--nb-system-blue);
+  background:#fff;
+  color:var(--nb-system-blue);
+  text-align:center;
+  box-shadow:none;
+}
+.nb-credit-v1-actions .nb-assessment-compact:hover{
+  border-color:#0d6fe8;
+  background:rgba(13,111,232,.05);
 }
 .nb-credit-v1-actions .nb-credit-direct-apply{
   background:#1177f5;
@@ -933,29 +948,6 @@ body.nb-offer-overlay-open{overflow:hidden}
   border-color:#1177f5;
 }
 .nb-credit-v1-actions .nb-credit-direct-apply:hover{background:#0f6fe5}
-.nb-credit-v1-actions .nb-assessment-compact{
-  min-height:44px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:0 14px;
-  background:#fff;
-  border-color:#e5e7eb;
-  color:#17213a;
-  text-align:left;
-  box-shadow:none;
-}
-.nb-credit-v1-actions .nb-assessment-compact:hover{
-  background:#f7f7f8;
-  border-color:#d1d5db;
-}
-.nb-credit-v1-actions .nb-assessment-row-chevron{
-  flex:0 0 auto;
-  color:#8e8e93;
-  font-size:20px;
-  line-height:1;
-}
 
 @media(max-width:1180px){
   .nb-credit-v1-page .nb-credit-v1-final{
@@ -963,7 +955,7 @@ body.nb-offer-overlay-open{overflow:hidden}
     padding:22px 18px 28px;
   }
   .nb-credit-v1-actions{
-    margin-top:18px;
+    margin-top:14px;
     margin-bottom:0;
   }
 }

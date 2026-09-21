@@ -69,7 +69,85 @@
   transform:translateY(-1px);
 }
 .v4-products-page .v10-info-logo{border-color:rgba(60,60,67,.08);background:rgba(118,118,128,.04)}
-.v4-products-page .v4-past-products{padding-left:0;padding-right:0}
+.v4-products-page .v4-past-products{
+  margin-top:10px;
+  padding:0;
+  background:transparent;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  overflow:visible;
+}
+.v4-products-page .v4-past-head{
+  width:100%;
+  border:0;
+  border-top:1px solid rgba(0,0,0,.065);
+  background:transparent;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:15px 2px;
+  color:#1d1d1f;
+  text-align:left;
+  cursor:pointer;
+}
+.v4-products-page .v4-past-head-title{display:flex;align-items:center;gap:10px}
+.v4-products-page .v4-past-head-title strong{font-weight:700}
+.v4-products-page .v4-past-head-title small{
+  color:#86868b;
+  background:#f2f2f7;
+  border-radius:999px;
+  padding:3px 8px;
+}
+.v4-products-page .v4-past-head-chevron{
+  font-size:22px;
+  line-height:1;
+  color:#b0b0b5;
+  transform:rotate(0deg);
+  transition:transform .16s ease;
+}
+.v4-products-page .v4-past-products.is-open .v4-past-head-chevron{transform:rotate(90deg)}
+.v4-products-page .v4-past-list{
+  margin-top:2px;
+  padding:0;
+  background:#fff;
+  border:1px solid rgba(0,0,0,.055);
+  border-radius:16px;
+  overflow:hidden;
+}
+.v4-products-page .v4-past-row{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto 18px;
+  gap:14px;
+  align-items:center;
+  border:0;
+  border-bottom:1px solid rgba(0,0,0,.045);
+  background:#fff;
+  padding:15px 16px;
+  color:#1d1d1f;
+  text-align:left;
+  cursor:pointer;
+  transition:background .15s ease;
+}
+.v4-products-page .v4-past-row:last-child{border-bottom:0}
+.v4-products-page .v4-past-row:hover{background:#fafafa}
+.v4-products-page .v4-past-row-title{
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-weight:600;
+}
+.v4-products-page .v4-past-row-status{
+  color:#86868b;
+  white-space:nowrap;
+}
+.v4-products-page .v4-past-row-chevron{
+  font-size:22px;
+  line-height:1;
+  color:#b0b0b5;
+}
 
 @media(max-width:780px){
   .v4-products-page .credit-products,
@@ -82,6 +160,22 @@
     padding-bottom:13px;
   }
   .v4-products-page .credit-products .owned-product-meta{right:7px;bottom:6px}
+  .v4-products-page .v4-past-list{border-radius:14px}
+  .v4-products-page .v4-past-row{
+    grid-template-columns:minmax(0,1fr) 16px;
+    gap:10px;
+    padding:14px;
+  }
+  .v4-products-page .v4-past-row-status{
+    grid-column:1;
+    grid-row:2;
+    margin-top:-6px;
+  }
+  .v4-products-page .v4-past-row-chevron{
+    grid-column:2;
+    grid-row:1 / span 2;
+    align-self:center;
+  }
 }
 
 /* Product logo fitting belongs to Wallet presentation. */

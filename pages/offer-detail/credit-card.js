@@ -191,8 +191,8 @@
         ${annualValueHtml(state,o.id)}
 
         <div class="nb-credit-v1-actions">
-          ${applyHtml}
           ${assessment}
+          ${applyHtml}
         </div>
       </aside>`;
   }
