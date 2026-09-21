@@ -783,10 +783,6 @@ body.nb-offer-overlay-open{overflow:hidden}
 
 .nb-credit-v1-head .nb-credit-offer-name{
   color:#15213a;
-  font-size:19px;
-  line-height:1.25;
-  font-weight:760;
-  letter-spacing:-.02em;
 }
 
 .nb-credit-v1-head .v4-detail-save{
@@ -800,7 +796,6 @@ body.nb-offer-overlay-open{overflow:hidden}
   background:transparent;
   box-shadow:none;
   color:#263657;
-  font-size:12px;
   font-weight:650;
 }
 .nb-credit-v1-final .v4-detail-save:hover{background:transparent;color:#0d6fe8}
@@ -816,24 +811,15 @@ body.nb-offer-overlay-open{overflow:hidden}
 }
 .nb-current-offer-v1 .nb-current-offer-label{
   color:#16213b;
-  font-size:13px;
-  line-height:1.2;
-  font-weight:760;
 }
 .nb-current-offer-v1 .nb-current-offer-value{
   margin-top:7px;
   color:#0d6fe8;
-  font-size:36px;
-  line-height:1.02;
-  font-weight:820;
-  letter-spacing:-.035em;
 }
 .nb-current-offer-v1 .nb-current-offer-requirement{
   margin-top:8px;
   padding-bottom:16px;
   color:#56647e;
-  font-size:14px;
-  line-height:1.35;
   border-bottom:1px solid #e5edf7;
 }
 .nb-current-offer-mobile-summary{display:none}
@@ -859,17 +845,11 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-current-offer-metrics span{
   display:block;
   color:#8590a3;
-  font-size:11px;
-  line-height:1.2;
-  font-weight:580;
 }
 .nb-current-offer-metrics b{
   display:block;
   margin-top:5px;
   color:#25324a;
-  font-size:18px;
-  line-height:1.15;
-  font-weight:780;
 }
 
 .nb-annual-value-card{
@@ -888,9 +868,6 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-annual-value-head h2{
   margin:0;
   color:#17213a;
-  font-size:15px;
-  line-height:1.25;
-  font-weight:760;
 }
 .nb-annual-value-total{
   display:flex;
@@ -904,23 +881,14 @@ body.nb-offer-overlay-open{overflow:hidden}
 }
 .nb-annual-value-total span{
   color:#17213a;
-  font-size:14px;
-  line-height:1.2;
-  font-weight:740;
 }
 .nb-annual-value-total strong{
   color:#08966f;
-  font-size:22px;
-  line-height:1;
-  font-weight:800;
-  letter-spacing:-.025em;
   white-space:nowrap;
 }
 .nb-annual-value-card p{
   margin:10px 2px 0;
   color:#7b879d;
-  font-size:10.5px;
-  line-height:1.5;
 }
 .nb-annual-value-card p button{
   padding:0;
@@ -949,8 +917,6 @@ body.nb-offer-overlay-open{overflow:hidden}
 }
 .nb-annual-value-breakdown b{
   color:#24314d;
-  font-size:13px;
-  font-weight:730;
 }
 .nb-annual-value-breakdown>div:nth-child(2) b{color:#0d8f69}
 .nb-annual-value-breakdown>div:nth-child(3) b{color:#c94444}
@@ -961,8 +927,6 @@ body.nb-offer-overlay-open{overflow:hidden}
   border:0;
   background:transparent;
   color:#0d6fe8;
-  font-size:11px;
-  font-weight:700;
 }
 
 .nb-credit-v1-actions{
@@ -1016,7 +980,6 @@ body.nb-offer-overlay-open{overflow:hidden}
     min-height:42px;
     padding:0 0 12px 0;
   }
-  .nb-credit-v1-head .nb-credit-offer-name{font-size:18px}
   .nb-current-offer-v1{
     margin-top:12px;
     padding:14px 14px 0;
@@ -1024,19 +987,15 @@ body.nb-offer-overlay-open{overflow:hidden}
   }
   .nb-current-offer-desktop-summary{display:none}
   .nb-current-offer-mobile-summary{
-    display:block;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
     padding:0 0 13px;
     border-bottom:1px solid #e5edf7;
-    color:#4f5f78;
-    font-size:15px;
-    line-height:20px;
-    font-weight:400;
   }
   .nb-current-offer-mobile-summary strong{
-    color:#17213a;
-    font-size:15px;
-    line-height:20px;
-    font-weight:600;
+    display:block;
+    color:#0d6fe8;
   }
   .nb-current-offer-metrics{
     margin:0 -14px;
@@ -1048,16 +1007,8 @@ body.nb-offer-overlay-open{overflow:hidden}
     flex-direction:column;
     justify-content:center;
   }
-  .nb-current-offer-metrics span{
-    font-size:15px;
-    line-height:20px;
-    font-weight:400;
-  }
   .nb-current-offer-metrics b{
     margin-top:2px;
-    font-size:15px;
-    line-height:20px;
-    font-weight:600;
   }
 
   /* Mobile decision cards use one text size; hierarchy comes from weight and tone. */
@@ -1067,24 +1018,11 @@ body.nb-offer-overlay-open{overflow:hidden}
     border-radius:14px;
     background:linear-gradient(145deg,#f7fbff,#fbfdff);
   }
-  .nb-annual-value-head h2{
-    font-size:15px;
-    line-height:20px;
-    font-weight:600;
-  }
   .nb-annual-value-breakdown{
     margin-top:8px;
   }
   .nb-annual-value-breakdown>div{
     min-height:34px;
-    font-size:15px;
-    line-height:20px;
-    font-weight:400;
-  }
-  .nb-annual-value-breakdown b{
-    font-size:15px;
-    line-height:20px;
-    font-weight:600;
   }
   .nb-annual-value-total{
     margin-top:8px;
@@ -1093,26 +1031,9 @@ body.nb-offer-overlay-open{overflow:hidden}
   }
   .nb-annual-value-total span{
     color:#8590a3;
-    font-size:15px;
-    line-height:20px;
-    font-weight:400;
-  }
-  .nb-annual-value-total strong{
-    font-size:15px;
-    line-height:20px;
-    font-weight:600;
   }
   .nb-annual-value-card p{
     margin:8px 0 0;
-    font-size:15px;
-    line-height:20px;
-    font-weight:400;
-  }
-  .nb-annual-value-card p button,
-  .nb-annual-value-customize{
-    font-size:15px;
-    line-height:20px;
-    font-weight:600;
   }
 }
 

@@ -36,28 +36,28 @@
 
     return `<section class="nb-annual-value-card ${expanded?'is-expanded':''} ${customized?'is-customized':''}">
       <div class="nb-annual-value-head">
-        <h2>每年持有价值</h2>
+        <h2 data-nb-type="headline">每年持有价值</h2>
       </div>
       ${expanded?`
         <div class="nb-annual-value-breakdown">
-          <div><span>报销福利</span><b>${annualMoney(result.fixedBenefits)}</b></div>
-          <div><span>刷卡额外回报</span><b>${annualMoney(result.spendReturn,{signed:true})}</b></div>
-          <div><span>年费</span><b>-${annualMoney(result.fee)}</b></div>
+          <div><span data-nb-type="subheadline" data-nb-tone="secondary">报销福利</span><b data-nb-type="headline">${annualMoney(result.fixedBenefits)}</b></div>
+          <div><span data-nb-type="subheadline" data-nb-tone="secondary">刷卡额外回报</span><b data-nb-type="headline">${annualMoney(result.spendReturn,{signed:true})}</b></div>
+          <div><span data-nb-type="subheadline" data-nb-tone="secondary">年费</span><b data-nb-type="headline">-${annualMoney(result.fee)}</b></div>
         </div>
         <div class="nb-annual-value-total">
-          <span>净收益</span>
-          <strong>${resultLabel} / 年</strong>
+          <span data-nb-type="headline">净收益</span>
+          <strong data-nb-type="headline">${resultLabel} / 年</strong>
         </div>
         ${customized
-          ?`<p>已按照你的情况计算。 <button type="button" data-action="annual-value-customize">调整我的计算 <span>›</span></button></p>`
-          :`<p>已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'}</p>
-            <button class="nb-annual-value-customize" type="button" data-action="annual-value-customize">计算我的每年收益 <span>›</span></button>`}
+          ?`<p data-nb-type="subheadline" data-nb-tone="secondary">已按照你的情况计算。 <button data-nb-type="subheadline" data-nb-tone="link" type="button" data-action="annual-value-customize">调整我的计算 <span>›</span></button></p>`
+          :`<p data-nb-type="subheadline" data-nb-tone="secondary">已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'}</p>
+            <button class="nb-annual-value-customize" data-nb-type="subheadline" data-nb-tone="link" type="button" data-action="annual-value-customize">计算我的每年收益 <span>›</span></button>`}
       `:`
         <div class="nb-annual-value-total">
-          <span>净收益</span>
-          <strong>${resultLabel} / 年</strong>
+          <span data-nb-type="headline">净收益</span>
+          <strong data-nb-type="headline">${resultLabel} / 年</strong>
         </div>
-        <p>已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'} <button type="button" data-action="annual-value-customize">计算我的每年收益 <span>›</span></button></p>
+        <p data-nb-type="subheadline" data-nb-tone="secondary">已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'} <button data-nb-type="subheadline" data-nb-tone="link" type="button" data-action="annual-value-customize">计算我的每年收益 <span>›</span></button></p>
       `}
     </section>`;
   }
@@ -155,7 +155,7 @@
     return `
       <aside class="v4-decision-panel nb-credit-decision-panel nb-credit-v1-final">
         <header class="nb-credit-v1-head">
-          <div class="nb-credit-offer-name">${esc(o.name)}</div>
+          <div class="nb-credit-offer-name" data-nb-type="title2">${esc(o.name)}</div>
           <button class="v4-detail-save nb-follow-control ${saved?'saved':''}" data-action="bookmark" data-id="${o.id}" aria-label="${saved?'已关注，点击取消':'关注'}" title="${saved?'已关注，点击取消':'关注'}">
             <span class="nb-follow-glyph" aria-hidden="true">${saved?'✓':'＋'}</span>
             <span>${saved?'已关注':'关注'}</span>
@@ -164,25 +164,27 @@
 
         <section class="nb-current-offer nb-current-offer-v1">
           <div class="nb-current-offer-desktop-summary">
-            <div class="nb-current-offer-label">当前奖励</div>
-            <div class="nb-current-offer-value">${esc(o.value)}</div>
-            <div class="nb-current-offer-requirement">${esc(o.requirement)}</div>
+            <div class="nb-current-offer-label" data-nb-type="headline">当前奖励</div>
+            <div class="nb-current-offer-value" data-nb-type="result-value">${esc(o.value)}</div>
+            <div class="nb-current-offer-requirement" data-nb-type="subheadline" data-nb-tone="secondary">${esc(o.requirement)}</div>
           </div>
           <div class="nb-current-offer-mobile-summary">
-            <span>开卡奖励：</span><strong>${esc(o.value)}</strong><span>，${esc(o.requirement)}</span>
+            <span data-nb-type="headline">当前奖励</span>
+            <strong data-nb-type="result-value">${esc(o.value)}</strong>
+            <span data-nb-type="subheadline" data-nb-tone="secondary">${esc(o.requirement)}</span>
           </div>
           <div class="nb-current-offer-metrics">
             <div>
-              <span>奖励价值</span>
-              <b>${estimated?`约 ${esc(estimated)}`:'正在读取…'}</b>
+              <span data-nb-type="subheadline" data-nb-tone="secondary">奖励价值</span>
+              <b data-nb-type="headline">${estimated?`约 ${esc(estimated)}`:'正在读取…'}</b>
             </div>
             <div>
-              <span>首年年费</span>
-              <b>${esc(fee)}</b>
+              <span data-nb-type="subheadline" data-nb-tone="secondary">首年年费</span>
+              <b data-nb-type="headline">${esc(fee)}</b>
             </div>
             <div>
-              <span>当前奖励水平</span>
-              <b>${esc(rewardLevel)}</b>
+              <span data-nb-type="subheadline" data-nb-tone="secondary">当前奖励水平</span>
+              <b data-nb-type="headline">${esc(rewardLevel)}</b>
             </div>
           </div>
         </section>
