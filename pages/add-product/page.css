@@ -240,7 +240,7 @@
   gap:14px;
   padding-top:6px;
 }
-.add-reward-status{padding:0 2px}
+.add-reward-prompt,.add-reward-status{padding:0 2px}
 .add-reward-list{
   display:block!important;
   gap:0!important;

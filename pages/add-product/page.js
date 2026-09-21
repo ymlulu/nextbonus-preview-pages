@@ -103,13 +103,12 @@
         const label=requirement?`${value} · ${requirement}`:value;
         return `<button class="option-row add-reward-row ${f.offer===choice.id?'selected':''}" type="button" data-action="add-offer-choice" data-id="${esc(choice.id)}"><span class="radio-dot"></span><span class="option-main"><span class="option-title">${esc(label)}</span></span></button>`;
       }).join('');
+      const rewardPrompt=isCard?'选择你的开卡奖励':'选择你的开户奖励';
       const status = f.offerLoading || result.status === 'loading'
         ? '<div class="muted add-reward-status" data-nb-reviewed-message="loading">正在加载已审核的历史奖励…</div>'
         : result.status === 'error'
           ? '<div class="muted add-reward-status" data-nb-reviewed-message="error">历史奖励暂时无法加载；当前公开奖励仍可选择，也可以按实际奖励手动填写。</div>'
-          : result.status === 'ready' && visibleChoices.length <= 1
-            ? '<div class="muted add-reward-status" data-nb-reviewed-message="empty">暂无其他可直接选择的已审核历史奖励。</div>'
-            : '';
+          : '';
       const manualCards = (f.tasks||[]).map((t,i)=>`<div class="task-card"><div class="task-head"><span>完成条件 ${i+1}</span><button class="icon-btn" type="button" data-action="delete-task" data-id="${esc(t.id)}" aria-label="删除条件">×</button></div><input class="input task-desc" data-id="${esc(t.id)}" value="${esc(t.desc)}" placeholder="例如 消费 $12,000" /><label class="label nb-due-label">截止日期</label><div class="date-field-row"><input type="date" class="input task-due" data-id="${esc(t.id)}" value="${esc(t.due)}" />${t.due?`<button class="btn ghost small" type="button" data-action="clear-task-due" data-id="${esc(t.id)}">清除</button>`:''}</div></div>`).join('');
       const manualPanel = f.offer==='manual'
         ? `<div class="add-manual-panel"><div class="form-group"><label class="label">奖励内容</label><input id="add-reward" class="input" value="${esc(f.reward)}" placeholder="例如 175,000 MR" /></div><div><label class="label">完成条件</label>${manualCards}<button class="btn secondary small" type="button" data-action="add-task">＋ 添加条件</button></div></div>`
@@ -118,7 +117,7 @@
       const actionLabel=f.offer?'添加并追踪奖励':'添加到钱包';
       view = {
         title: '添加奖励',
-        body: `<div class="add-reward-flow">${selectedProductHeader(f.product,esc)}${status}<div class="option-list add-reward-list">${offerRows}<button class="option-row add-reward-row ${f.offer==='manual'?'selected':''}" type="button" data-action="add-offer-choice" data-id="manual"><span class="radio-dot"></span><span class="option-main"><span class="option-title">都不是，手动填写</span></span></button>${manualPanel}</div></div>`,
+        body: `<div class="add-reward-flow">${selectedProductHeader(f.product,esc)}<div class="add-reward-prompt">${rewardPrompt}</div>${status}<div class="option-list add-reward-list">${offerRows}<button class="option-row add-reward-row ${f.offer==='manual'?'selected':''}" type="button" data-action="add-offer-choice" data-id="manual"><span class="radio-dot"></span><span class="option-main"><span class="option-title">都不是，手动填写</span></span></button>${manualPanel}</div></div>`,
         foot: footer(back(), next('add-offer-next',actionLabel,!canSubmit))
       };
     }else if(f.step === 'membership-confirm'){

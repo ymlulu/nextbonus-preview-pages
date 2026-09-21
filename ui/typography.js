@@ -258,6 +258,7 @@
     ['.add-product-modal .category-title,.category-title', 'headline', false],
     ['.add-product-modal .category-sub,.category-sub', 'caption1', false, 'secondary'],
     ['.add-product-modal .option-title,.option-title', 'headline', false],
+    ['.add-product-modal .add-reward-prompt', 'title3', false],
     ['.add-product-modal .option-sub,.option-sub', 'caption1', false, 'secondary'],
     ['.add-product-modal .label,.label', 'subheadline', false],
     ['.add-product-modal .input,.add-product-modal .textarea,.input,.textarea', 'callout'],
