@@ -19,6 +19,7 @@
 #nb-application-handoff-root .nb-ah-close{border:0;background:#f2f4f7;width:32px;height:32px;border-radius:50%;cursor:pointer}
 #nb-application-handoff-root .nb-ah-body{padding:16px 26px 24px}
 #nb-application-handoff-root .nb-ah-foot{padding:0 26px 24px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+#nb-application-handoff-root .nb-ah-choice-foot{justify-content:flex-end}
 #nb-application-handoff-root .nb-ah-result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 #nb-application-handoff-root .nb-ah-result{border:1px solid #e5e7eb;background:#fff;border-radius:16px;padding:18px 10px;cursor:pointer}
 #nb-application-handoff-root .nb-ah-result:hover{border-color:#98a2b3;background:#fafafa}
