@@ -13,17 +13,42 @@
     return src?`<img src="${ctx.esc(src)}" alt="" />`:`<span>${ctx.esc(shortBrand(product?.institution||identity.name))}</span>`;
   }
 
+  function attentionDateLabel(item){
+    const raw=String(item?.dueDate||'').slice(0,10);
+    const match=raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if(!match) return String(item?.time||'');
+    const year=Number(match[1]);
+    const month=Number(match[2]);
+    const day=Number(match[3]);
+    const now=new Date();
+    const date=year===now.getFullYear()?`${month} 月 ${day} 日`:`${year} 年 ${month} 月 ${day} 日`;
+    const suffix=item.type==='bonus'?'截止'
+      :item.type==='benefit'?'到期'
+      :item.type==='annual'?'收取'
+      :item.type==='change'?'生效'
+      :'';
+    return suffix?`${date} ${suffix}`:date;
+  }
+
+  function attentionSecondary(item){
+    const secondary=String(item?.secondary||'').trim();
+    if(item?.type==='change'&&/^生效日期\s*/.test(secondary)) return '年费及部分福利发生调整';
+    return secondary;
+  }
+
   function activeItem(ctx,item){
     const {state,esc,attentionIdentity}=ctx;
     const expanded=state.expandedAttentionId===item.id;
-    const tone=String(item.time||'').includes('截止')?'due':String(item.time||'').includes('生效')?'info':'soft';
+    const timeLabel=attentionDateLabel(item);
+    const secondary=attentionSecondary(item);
+    const tone=item.type==='bonus'||item.type==='benefit'?'due':item.type==='change'?'info':'soft';
     const identity=attentionIdentity(item);
     const details=window.NextBonusAttentionUI;
     if(!details) throw new Error('Attention UI unavailable');
     return `<div class="attention-item"><button class="attention-row" data-action="toggle-attention" data-id="${esc(item.id)}" data-history="0">
       <span class="att-product-cell"><span class="att-thumb">${thumb(ctx,item,identity)}</span><span class="att-product-copy"><strong>${esc(identity.name)}</strong><small>${esc(identity.instance)}</small></span></span>
-      <span class="att-action-cell"><strong>${esc(item.action)}</strong>${item.secondary?`<small>${esc(item.secondary)}</small>`:''}</span>
-      <span class="att-time att-time-${tone}">${esc(item.time)}</span><span class="chev ${expanded?'up':''}">›</span>
+      <span class="att-action-cell"><strong>${esc(item.action)}</strong>${secondary?`<small>${esc(secondary)}</small>`:''}</span>
+      <span class="att-time att-time-${tone}">${esc(timeLabel)}</span><span class="chev ${expanded?'up':''}">›</span>
     </button>${expanded?details.expanded(ctx,item):''}</div>`;
   }
 
