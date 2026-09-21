@@ -1,12 +1,49 @@
 (() => {
   'use strict';
 
+  const EARNING_ICONS=Object.freeze({
+    hotel:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11"/><path d="M4 15h16"/><path d="M8 7V5h8v2"/><path d="M7 12h3M14 12h3"/></svg>',
+    plane:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 21 5l-6.5 16-2.7-6.8L3 11.5Z"/><path d="m11.8 14.2 3.6-3.6"/></svg>',
+    dining:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3v7M8 3v7M5 7h3M6.5 10v11"/><path d="M14 3v8c0 1.7 1.3 3 3 3v7"/><path d="M17 3c1.5 2.8 1.5 5.5 0 8"/></svg>',
+    car:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 16 1.3-4.2A2 2 0 0 1 8.2 10h7.6a2 2 0 0 1 1.9 1.8L19 16"/><path d="M4 16h16v3H4z"/><circle cx="7" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></svg>',
+    grocery:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10h14l-1.2 8.2A2 2 0 0 1 15.8 20H8.2a2 2 0 0 1-2-1.8L5 10Z"/><path d="m9 10 3-6 3 6"/></svg>',
+    fuel:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v14"/><path d="M6 11h10"/><path d="M16 7h2l2 2v6a2 2 0 0 1-2 2h-1"/></svg>',
+    media:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3Z"/></svg>',
+    home:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10.5 9-7.5 9 7.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9 20v-6h6v6"/></svg>',
+    travel:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="7" width="14" height="13" rx="2"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M9 12h6M8 20v1M16 20v1"/></svg>',
+    card:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>'
+  });
+
+  function earningIconKind(text){
+    const value=String(text||'');
+    const categoryHits=[
+      /酒店|Hilton|Marriott|Hyatt|Ritz|预付酒店/i.test(value),
+      /机票|航空|航班|airline|flight/i.test(value),
+      /餐饮|restaurant|dining/i.test(value),
+      /租车|Hertz|Avis|National|car rental/i.test(value)
+    ].filter(Boolean).length;
+    if(categoryHits>1 || /旅行|travel/i.test(value)) return 'travel';
+    if(/酒店|Hilton|Marriott|Hyatt|Ritz|预付酒店/i.test(value)) return 'hotel';
+    if(/机票|航空|航班|airline|flight/i.test(value)) return 'plane';
+    if(/餐饮|restaurant|dining/i.test(value)) return 'dining';
+    if(/租车|Hertz|Avis|National|car rental/i.test(value)) return 'car';
+    if(/超市|grocery|supermarket/i.test(value)) return 'grocery';
+    if(/加油|充电|fuel|gas|EV/i.test(value)) return 'fuel';
+    if(/流媒体|娱乐|streaming|digital/i.test(value)) return 'media';
+    if(/房租|房贷|rent|mortgage/i.test(value)) return 'home';
+    return 'card';
+  }
+
+  function earningIcon(text){
+    return EARNING_ICONS[earningIconKind(text)]||EARNING_ICONS.card;
+  }
+
   function earningBlock(product,esc){
     const parts=String(product.earning||'—').split('·').map(item=>item.trim()).filter(Boolean).slice(0,3);
     if(!parts.length||parts[0]==='—'){
-      return '<div class="v4-pd-earning single"><div><span class="earn-icon blue">•</span><span><b>—</b></span></div></div>';
+      return `<div class="v4-pd-earning single"><div><span class="earn-icon">${EARNING_ICONS.card}</span><span><b>—</b></span></div></div>`;
     }
-    return `<div class="v4-pd-earning cols-${parts.length} ${parts.length===1?'single':''}">${parts.map((item,index)=>`${index?'<i></i>':''}<div><span class="earn-icon ${index===0?'blue':index===1?'purple':'green'}">${index===0?'✦':index===1?'▥':'♧'}</span><span><b>${esc(item)}</b></span></div>`).join('')}</div>`;
+    return `<div class="v4-pd-earning cols-${parts.length} ${parts.length===1?'single':''}">${parts.map((item,index)=>`${index?'<i></i>':''}<div><span class="earn-icon">${earningIcon(item)}</span><span><b>${esc(item)}</b></span></div>`).join('')}</div>`;
   }
 
   function nonCreditRows(title,rows,esc){

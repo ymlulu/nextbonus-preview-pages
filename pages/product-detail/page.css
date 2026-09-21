@@ -85,6 +85,25 @@ body.nb-product-overlay-open{overflow:hidden}
 .v4-pd-earning.cols-2{grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr)}
 .v4-pd-earning.cols-3{grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr) 1px minmax(0,1fr)}
 .v4-pd-earning>div{display:flex;align-items:center;justify-content:center;gap:11px}.v4-pd-earning>i{width:1px;height:40px;background:#dde4ee}
+.earn-icon{
+  width:22px;
+  height:22px;
+  flex:0 0 22px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--nb-system-blue);
+}
+.earn-icon svg{
+  width:22px;
+  height:22px;
+  display:block;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.75;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
 .v4-pd-earning b{display:block;}
 .v4-pd-section{margin-top:14px;border:1px solid #e4ebf4;border-radius:15px;background:#fff;box-shadow:0 5px 18px rgba(28,51,89,.025);padding:13px 18px}
 .v4-pd-section .v4-section-head{margin-bottom:8px}
