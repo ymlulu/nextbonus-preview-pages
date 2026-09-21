@@ -773,7 +773,7 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-credit-v1-head{
   min-height:48px;
   display:flex;
-  align-items:flex-start;
+  align-items:baseline;
   justify-content:space-between;
   gap:18px;
   padding:0 0 15px 0;
