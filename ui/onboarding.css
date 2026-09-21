@@ -6,10 +6,10 @@
 .nb-onboarding-image{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;object-position:center;opacity:0;transition:opacity .16s ease;pointer-events:none;user-select:none;background:#fff}
 .nb-onboarding-image.is-ready{opacity:1}
 .nb-onboarding-art.is-loading:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,#f5f9ff 8%,#fff 22%,#eef5ff 38%);background-size:220% 100%;animation:nbOnboardingShimmer 1.15s linear infinite}
-.nb-onboarding-error{position:absolute;inset:0;display:grid;place-items:center;padding:28px;text-align:center;color:#50688d;font:600 16px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;background:#f7fbff}
+.nb-onboarding-error{position:absolute;inset:0;display:grid;place-items:center;padding:28px;text-align:center;color:#50688d;background:#f7fbff}
 @keyframes nbOnboardingShimmer{to{background-position:-220% 0}}
 .nb-onboarding-controls{position:absolute;z-index:4;left:0;right:0;bottom:0;height:72px;display:flex;align-items:center;justify-content:center;padding:0 18px;background:#fff;border-top:1px solid rgba(217,228,241,.9);box-shadow:0 -8px 22px rgba(255,255,255,.96);}
-.nb-onboarding-btn{position:absolute;top:16px;height:40px;border:0;border-radius:13px;padding:0 20px;font:600 14px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;letter-spacing:.01em;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,background .15s ease}
+.nb-onboarding-btn{position:absolute;top:16px;height:40px;border:0;border-radius:13px;padding:0 20px;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,background .15s ease}
 .nb-onboarding-btn:hover{transform:translateY(-1px)}
 .nb-onboarding-prev{left:16px;color:#1668e8;background:rgba(237,245,255,.98);box-shadow:inset 0 0 0 1px rgba(69,137,232,.16)}
 .nb-onboarding-next,.nb-onboarding-start{right:16px;color:#fff;background:linear-gradient(135deg,#168cff,#075cf2);box-shadow:0 7px 18px rgba(15,102,240,.22)}
@@ -17,4 +17,4 @@
 .nb-onboarding-dot{width:8px;height:8px;border:0;border-radius:999px;padding:0;background:#cfd9ea;cursor:pointer;transition:width .16s ease,background .16s ease}
 .nb-onboarding-dot.is-active{width:22px;background:#1478ff}
 .nb-onboarding [hidden]{display:none!important}
-@media(max-width:760px){.nb-onboarding{padding:12px}.nb-onboarding-frame{width:min(720px,calc(100vw - 24px));max-height:calc(100vh - 24px);border-radius:16px}.nb-onboarding-controls{height:60px;padding:0 12px}.nb-onboarding-btn{top:11px;height:38px;padding:0 14px;font-size:13px}.nb-onboarding-prev{left:10px}.nb-onboarding-next,.nb-onboarding-start{right:10px}}
+@media(max-width:760px){.nb-onboarding{padding:12px}.nb-onboarding-frame{width:min(720px,calc(100vw - 24px));max-height:calc(100vh - 24px);border-radius:16px}.nb-onboarding-controls{height:60px;padding:0 12px}.nb-onboarding-btn{top:11px;height:38px;padding:0 14px;}.nb-onboarding-prev{left:10px}.nb-onboarding-next,.nb-onboarding-start{right:10px}}

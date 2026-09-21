@@ -21,8 +21,7 @@
 .nb-assessment-rail-head h2{
   margin:0;
   color:#17213a;
-  font-size:15px;
-  font-weight:760;
+
 }
 .nb-assessment-rail-head button{
   position:absolute;
@@ -33,7 +32,6 @@
   border:0;
   background:transparent;
   color:#68758a;
-  font-size:11px;
   cursor:pointer;
 }
 .nb-assessment-rail-head button span{
@@ -55,13 +53,11 @@
 }
 .nb-assessment-progress span{
   color:#8090a7;
-  font-size:10px;
-  font-weight:650;
+
 }
 .nb-assessment-progress b{
   color:#1d2a44;
-  font-size:13px;
-  font-weight:760;
+
 }
 .nb-assessment-progress progress{
   width:100%;
@@ -73,8 +69,7 @@
 .nb-assessment-progress p{
   margin:7px 0 0;
   color:#7a879a;
-  font-size:9.5px;
-  line-height:1.4;
+
 }
 
 .nb-assessment-rail-scroll{
@@ -101,16 +96,12 @@
 .nb-assessment-question h3{
   margin:0 0 10px;
   color:#21304a;
-  font-size:11.5px;
-  line-height:1.45;
-  font-weight:720;
+
 }
 .nb-assessment-group-title{
   margin:0 0 9px;
   color:#7b8799;
-  font-size:9px;
-  font-weight:690;
-  letter-spacing:.01em;
+
 }
 .assessment-compound{
   display:grid;
@@ -139,9 +130,7 @@
   justify-content:flex-start;
   text-align:left;
   color:#4b5a72;
-  font-size:9.5px;
-  line-height:1.3;
-  font-weight:600;
+
   cursor:pointer;
   transition:border .14s ease,background .14s ease,box-shadow .14s ease,color .14s ease;
 }
@@ -162,7 +151,6 @@
   gap:12px;
   margin-top:8px;
   color:#66748b;
-  font-size:9.5px;
 }
 .nb-assessment-number input{
   width:80px;
@@ -178,8 +166,7 @@
   min-height:16px;
   margin:8px 0 0;
   color:#c24b4b;
-  font-size:9px;
-  line-height:1.35;
+
 }
 
 .nb-assessment-rail-footer{
@@ -194,8 +181,7 @@
 .nb-assessment-rail-footer .btn{
   min-height:42px;
   border-radius:10px;
-  font-size:11px;
-  font-weight:700;
+
 }
 .nb-assessment-rail-footer .btn:disabled{
   opacity:.4;
@@ -210,17 +196,14 @@
 }
 .nb-assessment-loading{
   color:#77859a;
-  font-size:11px;
 }
 .nb-assessment-error h3{
   margin:0;
   color:#24324b;
-  font-size:13px;
 }
 .nb-assessment-error p{
   margin:7px 0 14px;
   color:#7b8799;
-  font-size:10px;
 }
 
 .nb-assessment-result-summary{
@@ -228,24 +211,19 @@
 }
 .nb-assessment-result-kicker{
   color:#0d6fe8;
-  font-size:10px;
-  font-weight:720;
+
 }
 .nb-assessment-result-summary h2,
 .nb-assessment-report h2{
   margin:6px 0 0;
   color:#17233b;
-  font-size:24px;
-  line-height:1.1;
-  font-weight:820;
-  letter-spacing:-.025em;
+
 }
 .nb-assessment-result-summary>p,
 .nb-assessment-report-summary{
   margin:8px 0 0;
   color:#68768c;
-  font-size:10.5px;
-  line-height:1.55;
+
 }
 .nb-assessment-result-points{
   margin-top:16px;
@@ -261,11 +239,9 @@
 }
 .nb-assessment-result-points span{
   color:#68768b;
-  font-size:10px;
 }
 .nb-assessment-result-points b{
   color:#23314a;
-  font-size:11px;
 }
 .nb-assessment-result-buttons{
   display:grid;
@@ -276,8 +252,7 @@
 .nb-assessment-result-buttons .btn{
   min-height:42px;
   border-radius:10px;
-  font-size:11px;
-  font-weight:700;
+
 }
 .nb-assessment-text-action{
   display:block;
@@ -286,8 +261,7 @@
   border:0;
   background:transparent;
   color:#6f7d91;
-  font-size:9.5px;
-  font-weight:620;
+
   cursor:pointer;
 }
 .nb-assessment-text-action:hover{color:#0d6fe8}
@@ -303,21 +277,18 @@
 .nb-assessment-report>section h3{
   margin:0;
   color:#223049;
-  font-size:11px;
-  font-weight:730;
+
 }
 .nb-assessment-report>section p{
   margin:7px 0 0;
   color:#68768b;
-  font-size:10px;
-  line-height:1.55;
+
   white-space:pre-wrap;
 }
 .nb-assessment-report>small{
   display:block;
   margin-top:14px;
   color:#9aa4b3;
-  font-size:8px;
 }
 .nb-assessment-report-actions{
   display:grid;
@@ -327,7 +298,6 @@
 .nb-assessment-report-actions .btn{
   min-height:40px;
   border-radius:10px;
-  font-size:10.5px;
 }
 
 /* Assessment Offer History chart. */

@@ -1,29 +1,29 @@
 .nb-card-detail .nb-card-bonus-section,
 .nb-card-detail .nb-card-benefits-section{background:#fff;border:1px solid #edf1f6;box-shadow:none;border-radius:16px;padding:16px 18px}
 .nb-card-section-title{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.nb-card-section-title h2{margin:0;font-size:18px;line-height:1.2;color:#111d3d;letter-spacing:-.25px}
-.nb-card-section-title p{margin:4px 0 0;font-size:11px;color:#7d8aaa}
+.nb-card-section-title h2{margin:0;color:#111d3d}
+.nb-card-section-title p{margin:4px 0 0;color:#7d8aaa}
 .nb-card-section-icon{width:36px;height:36px;border-radius:11px;background:#f4f8ff;color:#0a6eff;display:grid;place-items:center;flex:0 0 auto}
 .nb-card-section-icon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .nb-card-crown{color:#5e6f90;background:#f5f7fb}
 .nb-card-bonus-stack{display:grid;gap:12px}
 .nb-card-bonus-card{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.9fr);border:1px solid #e6ebf3;border-radius:14px;overflow:hidden;background:#fff}
 .nb-card-bonus-main{min-height:116px;padding:20px 26px;position:relative;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(135deg,#fbfdff 0%,#f4f8fd 100%);border-right:1px solid #edf1f5}
-.nb-card-bonus-main strong{font-size:34px;line-height:1;color:#071334;letter-spacing:-1px}
-.nb-card-bonus-main>span{margin-top:10px;font-size:16px;color:#60719a}
+.nb-card-bonus-main strong{color:#071334}
+.nb-card-bonus-main>span{margin-top:10px;color:#60719a}
 .nb-card-bonus-main i{position:absolute;right:34px;top:50%;transform:translateY(-50%);width:74px;height:74px;border-radius:50%;background:#eff5fc;color:#c4d5ed;display:grid;place-items:center;opacity:.78}
 .nb-card-bonus-main i svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nb-card-bonus-actions{padding:10px 14px 12px;display:flex;flex-direction:column;justify-content:center;background:#fff}
-.nb-card-bonus-due{border:0;background:transparent;padding:0 0 8px;display:flex;align-items:center;justify-content:flex-end;gap:7px;font-size:13px;cursor:pointer}
+.nb-card-bonus-due{border:0;background:transparent;padding:0 0 8px;display:flex;align-items:center;justify-content:flex-end;gap:7px;cursor:pointer}
 .nb-card-bonus-due.tone-calm{color:#6f7e9f}.nb-card-bonus-due.tone-warning{color:#c77616}.nb-card-bonus-due.tone-urgent{color:#ff3b30}
 .nb-card-clock{width:16px;height:16px;color:currentColor}.nb-card-clock svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nb-card-chevron{font-size:22px;line-height:1;color:#59719e;font-weight:300;margin-left:6px}
-.nb-card-single-task{min-height:50px;border-radius:11px;background:#f8fafc;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 10px 0 14px;color:#14203f;font-size:13px}
+.nb-card-single-task{min-height:50px;border-radius:11px;background:#f8fafc;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 10px 0 14px;color:#14203f;}
 .nb-card-single-task>span{min-width:0}
 .nb-card-multi-task{display:grid;gap:8px}
-.nb-card-bonus-check{min-height:46px;border-radius:10px;background:#f8fafc;display:flex;align-items:center;gap:10px;padding:0 13px;color:#14203f;font-size:13px}
+.nb-card-bonus-check{min-height:46px;border-radius:10px;background:#f8fafc;display:flex;align-items:center;gap:10px;padding:0 13px;color:#14203f;}
 .nb-card-bonus-check input{width:18px;height:18px;accent-color:#0a71ff}
-.nb-card-complete-btn{flex:0 0 auto;border:0;border-radius:10px;background:#edf4ff;color:#0a71ff;font-weight:700;padding:9px 14px;cursor:pointer}
+.nb-card-complete-btn{flex:0 0 auto;border:0;border-radius:10px;background:#edf4ff;color:#0a71ff;padding:9px 14px;cursor:pointer}
 .nb-card-multi-task .nb-card-complete-btn{justify-self:start;margin-top:2px}
 .nb-card-complete-btn:hover{background:#e4efff}
 .nb-card-benefits-title{margin-bottom:10px}
@@ -33,16 +33,16 @@
 .nb-card-benefit-columns .v4-benefit-row:last-child{border-bottom:0}
 .nb-card-benefit-columns .v4-benefit-row:hover{background:#fbfcfe}
 .nb-card-benefit-main{display:flex;align-items:center;gap:10px;min-width:0}
-.nb-card-benefit-columns .v4-benefit-row strong{font-size:12px;line-height:1.35;color:#111d3d;white-space:normal;overflow:visible;text-overflow:clip}
-.nb-card-benefit-columns .v4-benefit-row small{font-size:10px;line-height:1.35;color:#7382a2;text-align:left;white-space:normal;max-width:none}
+.nb-card-benefit-columns .v4-benefit-row strong{color:#111d3d;white-space:normal;overflow:visible;text-overflow:clip}
+.nb-card-benefit-columns .v4-benefit-row small{color:#7382a2;text-align:left;white-space:normal;max-width:none}
 .nb-card-benefit-due,.nb-card-benefit-due-slot{justify-self:start}
 .nb-card-benefit-status{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-width:0}
 .nb-card-benefit-status>.chev{font-size:19px;color:#4f68a1;flex:0 0 auto}
 .nb-card-benefit-icon{width:28px;height:28px;display:grid;place-items:center;color:#14203f;flex:0 0 auto}
 .nb-card-benefit-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.nb-card-benefit-due{border-radius:999px;padding:3px 8px;font-size:9.5px;font-weight:700;white-space:nowrap;line-height:1.2}
+.nb-card-benefit-due{border-radius:999px;padding:3px 8px;white-space:nowrap}
 .nb-card-benefit-due.tone-calm{color:#60719a;background:#f2f5f9}.nb-card-benefit-due.tone-warning{color:#b86a14;background:#fff4e8}.nb-card-benefit-due.tone-urgent{color:#d8453c;background:#fff0ef}
-.nb-benefit-cycle-quick{appearance:none;border:1px solid #dfe5ee;background:#f8fafc;color:#71809d;border-radius:999px;padding:4px 8px;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:9.5px;font-weight:700;line-height:1;white-space:nowrap;cursor:pointer;transition:background .15s ease,border-color .15s ease,color .15s ease}
+.nb-benefit-cycle-quick{appearance:none;border:1px solid #dfe5ee;background:#f8fafc;color:#71809d;border-radius:999px;padding:4px 8px;display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;cursor:pointer;transition:background .15s ease,border-color .15s ease,color .15s ease}
 .nb-benefit-cycle-quick:hover{background:#f1f5f9;border-color:#cfd8e5;color:#4f607f}
 .nb-benefit-cycle-quick.used{background:#edf9f1;border-color:#c9ead5;color:#18864b}
 .nb-benefit-cycle-quick.used:hover{background:#e4f6eb;border-color:#b9e1c7}
@@ -55,8 +55,8 @@
 .nb-card-generic-benefit-item+.nb-card-generic-benefit-item{border-top:1px solid #eef2f6!important}
 .nb-card-generic-benefit-item .benefit-head{display:grid;grid-template-columns:32px minmax(0,1fr) auto auto;align-items:center;min-height:56px;padding:9px 12px;gap:8px}
 .nb-card-generic-benefit-item .benefit-head>div{min-width:0}
-.nb-card-generic-benefit-item .benefit-title{font-size:12px;line-height:1.35;color:#111d3d;white-space:normal;overflow:visible;text-overflow:clip}
-.nb-card-generic-benefit-item .benefit-short{font-size:10px;line-height:1.35;color:#7382a2;margin-top:2px;white-space:normal}
+.nb-card-generic-benefit-item .benefit-title{color:#111d3d;white-space:normal;overflow:visible;text-overflow:clip}
+.nb-card-generic-benefit-item .benefit-short{color:#7382a2;margin-top:2px;white-space:normal}
 .nb-card-generic-benefit-icon{width:28px;height:28px;display:grid;place-items:center;color:#14203f}
 .nb-card-generic-benefit-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .nb-card-generic-benefit-item .chev{font-size:19px;color:#4f68a1}
@@ -70,7 +70,7 @@
 }
 @media(max-width:600px){
   .nb-card-detail .nb-card-bonus-section,.nb-card-detail .nb-card-benefits-section{padding:14px}
-  .nb-card-bonus-main{padding:20px 18px}.nb-card-bonus-main strong{font-size:30px}.nb-card-bonus-main>span{font-size:15px}.nb-card-bonus-main i{right:14px;width:62px;height:62px}.nb-card-bonus-main i svg{width:30px;height:30px}
+  .nb-card-bonus-main{padding:20px 18px}.nb-card-bonus-main strong{}.nb-card-bonus-main>span{}.nb-card-bonus-main i{right:14px;width:62px;height:62px}.nb-card-bonus-main i svg{width:30px;height:30px}
   .nb-card-single-task{align-items:flex-start;flex-direction:column;padding:12px}.nb-card-complete-btn{width:100%}
   .nb-card-benefit-columns .v4-benefit-row{grid-template-columns:minmax(0,1fr) auto;row-gap:4px;column-gap:10px}.nb-card-benefit-main{grid-column:1}.nb-card-benefit-columns .v4-benefit-row small{grid-column:1;text-align:left;max-width:none;padding-left:38px}.nb-card-benefit-due,.nb-card-benefit-due-slot{grid-column:1;padding-left:38px}.nb-card-benefit-status{grid-column:2;grid-row:1 / span 3;align-self:center}.nb-benefit-cycle-quick{justify-self:end}
 }
@@ -79,14 +79,14 @@
 .nb-welcome-bonus-section{padding-top:12px!important;padding-bottom:12px!important}
 .nb-welcome-bonus-section .nb-card-section-title{margin-bottom:10px}
 .nb-welcome-bonus-card{min-height:92px;border:1px solid #e6ebf3;border-radius:14px;background:#fff;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(150px,.72fr) auto;grid-template-rows:1fr 1fr;column-gap:28px;align-items:center;padding:14px 18px}
-.nb-welcome-bonus-value{grid-column:1;grid-row:1;margin:0;align-self:end;font-size:29px;line-height:1.08;letter-spacing:-.65px;color:#071334}
-.nb-welcome-bonus-requirement{grid-column:1;grid-row:2;margin:4px 0 0;align-self:start;min-height:0;white-space:normal;overflow:visible;text-overflow:clip;font-size:15px;line-height:1.35;color:#60719a}
+.nb-welcome-bonus-value{grid-column:1;grid-row:1;margin:0;align-self:end;color:#071334}
+.nb-welcome-bonus-requirement{grid-column:1;grid-row:2;margin:4px 0 0;align-self:start;min-height:0;white-space:normal;overflow:visible;text-overflow:clip;color:#60719a}
 .nb-welcome-bonus-complete{grid-column:3;grid-row:1 / span 2;justify-self:end;align-self:center;min-width:100px;min-height:36px;padding:8px 14px;border-radius:10px}
-.nb-welcome-bonus-deadline{grid-column:2;grid-row:1 / span 2;justify-self:center;align-self:center;display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;padding:4px 0;border:0;background:transparent;font:inherit;line-height:1.25;text-align:left}
+.nb-welcome-bonus-deadline{grid-column:2;grid-row:1 / span 2;justify-self:center;align-self:center;display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;padding:4px 0;border:0;background:transparent;text-align:left}
 button.nb-welcome-bonus-deadline{cursor:pointer}
-.nb-bonus-deadline-label{color:#8a96af;font-size:11.5px;font-weight:600}
-.nb-bonus-deadline-value{color:#32415f;font-size:14px;font-weight:700;white-space:nowrap}
-.nb-bonus-edit-link{color:#0a71ff;font-size:12px;font-weight:700;white-space:nowrap;margin-top:2px}
+.nb-bonus-deadline-label{color:#8a96af}
+.nb-bonus-deadline-value{color:#32415f;white-space:nowrap}
+.nb-bonus-edit-link{color:#0a71ff;white-space:nowrap;margin-top:2px}
 button.nb-welcome-bonus-deadline:hover .nb-bonus-edit-link{text-decoration:underline;text-underline-offset:2px}
 .nb-welcome-bonus-focus{border-radius:12px;box-shadow:0 0 0 4px rgba(10,113,255,.08)}
-@media(max-width:600px){.nb-welcome-bonus-card{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto;column-gap:14px;row-gap:6px;padding:12px 14px}.nb-welcome-bonus-value{font-size:26px;grid-column:1;grid-row:1}.nb-welcome-bonus-requirement{grid-column:1;grid-row:2}.nb-welcome-bonus-deadline{grid-column:1;grid-row:3;justify-self:start;align-self:start}.nb-welcome-bonus-complete{grid-column:2;grid-row:1 / span 3;align-self:center}}
+@media(max-width:600px){.nb-welcome-bonus-card{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto;column-gap:14px;row-gap:6px;padding:12px 14px}.nb-welcome-bonus-value{grid-column:1;grid-row:1}.nb-welcome-bonus-requirement{grid-column:1;grid-row:2}.nb-welcome-bonus-deadline{grid-column:1;grid-row:3;justify-self:start;align-self:start}.nb-welcome-bonus-complete{grid-column:2;grid-row:1 / span 3;align-self:center}}

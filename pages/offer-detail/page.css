@@ -796,7 +796,6 @@ body.nb-offer-overlay-open{overflow:hidden}
   background:transparent;
   box-shadow:none;
   color:#263657;
-  font-weight:650;
 }
 .nb-credit-v1-final .v4-detail-save:hover{background:transparent;color:#0d6fe8}
 .nb-credit-v1-final .nb-follow-glyph{font-size:15px;font-weight:500}
@@ -895,12 +894,10 @@ body.nb-offer-overlay-open{overflow:hidden}
   border:0;
   background:transparent;
   color:#0d6fe8;
-  font:inherit;
-  font-weight:700;
+
 }
 .nb-annual-value-card.is-customized p button{
   color:#0d6fe8;
-  font-weight:700;
 }
 .nb-annual-value-breakdown{
   margin-top:10px;
@@ -913,7 +910,6 @@ body.nb-offer-overlay-open{overflow:hidden}
   min-height:33px;
   border-bottom:1px solid #f0f3f7;
   color:#5f6d87;
-  font-size:12px;
 }
 .nb-annual-value-breakdown b{
   color:#24314d;
@@ -941,8 +937,7 @@ body.nb-offer-overlay-open{overflow:hidden}
   width:100%;
   min-height:48px;
   border-radius:12px;
-  font-size:14px;
-  font-weight:720;
+
 }
 .nb-credit-v1-actions .nb-credit-direct-apply{
   background:#1177f5;
@@ -955,7 +950,6 @@ body.nb-offer-overlay-open{overflow:hidden}
   background:#fff;
   border-color:#dce4ef;
   color:#17213a;
-  font-weight:670;
 }
 .nb-credit-v1-actions .nb-assessment-compact:hover{
   background:#f8fafc;
@@ -1050,8 +1044,7 @@ body.nb-offer-overlay-open{overflow:hidden}
   border-radius:9px;
   background:#eef9f5;
   color:#118568;
-  font-size:10.5px;
-  font-weight:650;
+
 }
 .nb-annual-value-personalized span{
   width:16px;
@@ -1088,8 +1081,7 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-annual-calc-head h2{
   margin:0;
   color:#17213a;
-  font-size:15px;
-  font-weight:760;
+
 }
 .nb-annual-calc-head button{
   position:absolute;
@@ -1100,7 +1092,6 @@ body.nb-offer-overlay-open{overflow:hidden}
   border:0;
   background:transparent;
   color:#68758a;
-  font-size:11px;
   cursor:pointer;
 }
 .nb-annual-calc-head button span{
@@ -1122,22 +1113,17 @@ body.nb-offer-overlay-open{overflow:hidden}
 }
 .nb-annual-calc-result span{
   color:#25324a;
-  font-size:11px;
-  font-weight:690;
+
 }
 .nb-annual-calc-result strong{
   display:block;
   margin-top:4px;
   color:#08966f;
-  font-size:25px;
-  line-height:1.05;
-  font-weight:820;
-  letter-spacing:-.03em;
+
 }
 .nb-annual-calc-result small{
   margin-top:5px;
   color:#7b8799;
-  font-size:9.5px;
 }
 
 .nb-annual-calc-section{
@@ -1157,14 +1143,12 @@ body.nb-offer-overlay-open{overflow:hidden}
   border-radius:999px;
   background:#172d56;
   color:#fff;
-  font-size:9px;
-  font-weight:760;
+
 }
 .nb-annual-calc-section-title h3{
   margin:0;
   color:#1f2b43;
-  font-size:11.5px;
-  font-weight:740;
+
 }
 
 .nb-annual-calc-row,
@@ -1185,15 +1169,12 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-annual-calc-copy b,
 .nb-annual-calc-spend-row b{
   color:#25324a;
-  font-size:10.5px;
-  line-height:1.2;
-  font-weight:690;
+
 }
 .nb-annual-calc-copy small,
 .nb-annual-calc-spend-row small{
   color:#8a95a7;
-  font-size:8.5px;
-  line-height:1.25;
+
 }
 
 .nb-annual-calc-segment{
@@ -1212,8 +1193,7 @@ body.nb-offer-overlay-open{overflow:hidden}
   border-radius:8px;
   background:transparent;
   color:#78859a;
-  font-size:9.5px;
-  font-weight:650;
+
   cursor:pointer;
 }
 .nb-annual-calc-segment button.active{
@@ -1232,8 +1212,7 @@ body.nb-offer-overlay-open{overflow:hidden}
   justify-content:flex-end;
   gap:3px;
   color:#263650;
-  font-size:10px;
-  font-weight:690;
+
 }
 .nb-annual-calc-input-wrap input{
   width:64px;
@@ -1243,7 +1222,6 @@ body.nb-offer-overlay-open{overflow:hidden}
   border-radius:8px;
   background:#f8fafc;
   color:#18243a;
-  font:inherit;
   text-align:right;
   outline:none;
 }
@@ -1253,14 +1231,12 @@ body.nb-offer-overlay-open{overflow:hidden}
 }
 .nb-annual-calc-input-wrap small{
   color:#7f8b9e;
-  font-size:9px;
 }
 .nb-annual-calc-baseline,
 .nb-annual-calc-unquantified{
   margin:7px 0 0;
   color:#8a95a6;
-  font-size:8.5px;
-  line-height:1.45;
+
 }
 
 .nb-annual-calc-summary>div:not(.nb-annual-calc-section-title){
@@ -1270,11 +1246,9 @@ body.nb-offer-overlay-open{overflow:hidden}
   justify-content:space-between;
   gap:12px;
   color:#647188;
-  font-size:10px;
 }
 .nb-annual-calc-summary b{
   color:#26344d;
-  font-size:10.5px;
 }
 .nb-annual-calc-summary .positive{color:#07966d}
 .nb-annual-calc-summary .negative{color:#cc4d4d}
@@ -1284,12 +1258,10 @@ body.nb-offer-overlay-open{overflow:hidden}
   border-radius:9px;
   background:#eef6ff;
   color:#192842 !important;
-  font-weight:720;
 }
 .nb-annual-calc-summary .total strong{
   color:#08966f;
-  font-size:14px;
-  font-weight:800;
+
 }
 .nb-annual-calc-done{
   width:100%;
@@ -1298,8 +1270,7 @@ body.nb-offer-overlay-open{overflow:hidden}
   border-radius:11px;
   background:#1177f5;
   border-color:#1177f5;
-  font-size:12px;
-  font-weight:720;
+
 }
 
 @media(max-width:1180px){
@@ -1368,23 +1339,19 @@ body.nb-offer-overlay-open{overflow:hidden}
 .nb-assessment-inline-result>div>span{
   display:block;
   color:#7f8ba0;
-  font-size:9.5px;
-  font-weight:650;
+
 }
 .nb-assessment-inline-result>div>strong{
   display:block;
   margin-top:4px;
   color:#1d2a43;
-  font-size:16px;
-  line-height:1.15;
-  font-weight:790;
+
 }
 .nb-assessment-inline-result>div>small{
   display:block;
   margin-top:5px;
   color:#68768b;
-  font-size:9.5px;
-  line-height:1.45;
+
 }
 .nb-assessment-inline-result>button{
   margin-top:10px;
@@ -1392,8 +1359,7 @@ body.nb-offer-overlay-open{overflow:hidden}
   border:0;
   background:transparent;
   color:#0d6fe8;
-  font-size:9.5px;
-  font-weight:700;
+
   cursor:pointer;
 }
 .nb-assessment-inline-result.is-compact{
@@ -1412,21 +1378,18 @@ body.nb-offer-overlay-open{overflow:hidden}
   gap:4px;
   margin:0 2px;
   color:#7b879d;
-  font-size:10.5px;
-  line-height:1.5;
+
   white-space:nowrap;
 }
 .nb-credit-assessment-check{
   color:#0d9b73;
-  font-weight:700;
 }
 .nb-credit-assessment-line button{
   padding:0;
   border:0;
   background:transparent;
   color:#0d6fe8;
-  font:inherit;
-  font-weight:700;
+
   cursor:pointer;
 }
 
@@ -1591,9 +1554,6 @@ body.nb-offer-overlay-open{overflow:hidden}
   border-right:1px solid #edf0f4;
   background:#fff;
   color:#7a8598;
-  font:inherit;
-  font-size:12px;
-  font-weight:680;
   cursor:pointer;
   padding:8px 8px 7px;
   display:flex;
@@ -1619,7 +1579,6 @@ body.nb-offer-overlay-open{overflow:hidden}
 }
 .nb-credit-story-nav-label{
   display:block;
-  line-height:1.15;
 }
 .nb-credit-story-nav-item:last-child{border-right:0}
 .nb-credit-story-nav-item::after{
@@ -1638,7 +1597,6 @@ body.nb-offer-overlay-open{overflow:hidden}
 }
 .nb-credit-story-nav-item.active{
   color:#17213a;
-  font-weight:760;
 }
 .nb-credit-story-nav-item.active::after{
   background:#17213a;
