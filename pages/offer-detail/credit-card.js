@@ -31,36 +31,34 @@
     const result=annualResultFor(state,offerId);
     if(!result) return '';
     const customized=!!state.annualValueProfiles?.[offerId]?.customized;
-    const expanded=customized;
     const resultLabel=annualMoney(result.total,{signed:true});
 
-    return `<section class="nb-annual-value-card ${expanded?'is-expanded':''} ${customized?'is-customized':''}">
+    if(!customized){
+      return `<section class="nb-annual-value-card nb-annual-value-entry">
+        <div class="nb-annual-value-head">
+          <h2 data-nb-type="headline">长期持有收益</h2>
+          <button class="nb-annual-value-customize" data-nb-type="subheadline" data-nb-tone="link" data-nb-emphasis="true" type="button" data-action="annual-value-customize">计算我的 <span>›</span></button>
+        </div>
+        <div class="nb-annual-value-estimate">
+          <strong data-nb-type="result-value" data-nb-emphasis="true">约 ${annualMoney(result.total)} / 年</strong>
+        </div>
+      </section>`;
+    }
+
+    return `<section class="nb-annual-value-card is-expanded is-customized">
       <div class="nb-annual-value-head">
-        <h2 data-nb-type="headline">每年持有价值</h2>
+        <h2 data-nb-type="headline">长期持有收益</h2>
+        <button class="nb-annual-value-customize" data-nb-type="subheadline" data-nb-tone="link" data-nb-emphasis="true" type="button" data-action="annual-value-customize">调整我的计算 <span>›</span></button>
       </div>
-      ${expanded?`
-        <div class="nb-annual-value-breakdown">
-          <div><span data-nb-type="subheadline" data-nb-tone="secondary">报销福利</span><b data-nb-type="headline">${annualMoney(result.fixedBenefits)}</b></div>
-          <div><span data-nb-type="subheadline" data-nb-tone="secondary">刷卡额外回报</span><b data-nb-type="headline">${annualMoney(result.spendReturn,{signed:true})}</b></div>
-          <div><span data-nb-type="subheadline" data-nb-tone="secondary">年费</span><b data-nb-type="headline">-${annualMoney(result.fee)}</b></div>
-        </div>
-        <div class="nb-annual-value-total">
-          <span data-nb-type="headline">净收益</span>
-          <strong data-nb-type="headline" data-nb-emphasis="true">${resultLabel} / 年</strong>
-        </div>
-        ${customized
-          ?`<p data-nb-type="subheadline" data-nb-tone="secondary">已按照你的情况计算。</p>
-            <button class="nb-annual-value-customize" data-nb-type="subheadline" data-nb-tone="link" data-nb-emphasis="true" type="button" data-action="annual-value-customize">调整我的计算 <span>›</span></button>`
-          :`<p data-nb-type="subheadline" data-nb-tone="secondary">已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'}</p>
-            <button class="nb-annual-value-customize" data-nb-type="subheadline" data-nb-tone="link" data-nb-emphasis="true" type="button" data-action="annual-value-customize">计算我的每年收益 <span>›</span></button>`}
-      `:`
-        <div class="nb-annual-value-total">
-          <span data-nb-type="headline">净收益</span>
-          <strong data-nb-type="headline" data-nb-emphasis="true">${resultLabel} / 年</strong>
-        </div>
-        <p data-nb-type="subheadline" data-nb-tone="secondary">已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'}</p>
-        <button class="nb-annual-value-customize" data-nb-type="subheadline" data-nb-tone="link" data-nb-emphasis="true" type="button" data-action="annual-value-customize">计算我的每年收益 <span>›</span></button>
-      `}
+      <div class="nb-annual-value-breakdown">
+        <div><span data-nb-type="subheadline" data-nb-tone="secondary">报销福利</span><b data-nb-type="headline">${annualMoney(result.fixedBenefits)}</b></div>
+        <div><span data-nb-type="subheadline" data-nb-tone="secondary">刷卡回报</span><b data-nb-type="headline">${annualMoney(result.spendReturn,{signed:true})}</b></div>
+        <div><span data-nb-type="subheadline" data-nb-tone="secondary">年费</span><b data-nb-type="headline">-${annualMoney(result.fee)}</b></div>
+      </div>
+      <div class="nb-annual-value-total">
+        <span data-nb-type="headline">净收益</span>
+        <strong data-nb-type="result-value" data-nb-emphasis="true">${resultLabel} / 年</strong>
+      </div>
     </section>`;
   }
 
