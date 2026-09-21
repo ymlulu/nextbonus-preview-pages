@@ -63,12 +63,14 @@
     grid-template-columns:minmax(0,1fr);
     gap:8px;
     align-items:stretch;
+    height:auto;
+    min-height:0;
   }
 
   .attention-page .mock-tabs{
     width:100%;
     min-width:0;
-    overflow-x:auto;
+    overflow:visible;
   }
 
   .attention-page .mock-status-select{
