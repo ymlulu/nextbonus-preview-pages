@@ -12,23 +12,6 @@
   function tag(id){ return id ? window.NextBonusOfferTags?.[id]||null : null; }
   function visualFor(product){ return window.NextBonusOfferVisuals?.[product?.visualId]||null; }
 
-  function providerLogoFor(product){
-    return window.NextBonusProductLogoRegistry?.resolve?.('',product?.id||'',product?.name||'') || product?.logo || '';
-  }
-
-  function shouldShowProviderFooter(product,visual){
-    if(product.type==='credit-card') return true;
-    if(product.type==='bank-account') return visual?.kind!=='logo';
-    return false;
-  }
-
-  function providerFooterHtml(product,visual,esc){
-    if(!shouldShowProviderFooter(product,visual)) return '';
-    const logo=providerLogoFor(product);
-    if(logo)return `<span class="nb-provider"><img src="${esc(logo)}" alt="${esc(product.provider)}" /></span>`;
-    return `<span class="nb-provider"><span class="nb-provider-text">${esc(product.provider)}</span></span>`;
-  }
-
   function visualHtml(visual,product,esc){
     if(!visual)return `<div class="nb-brand-art">${esc(product.provider)}</div>`;
     if(visual.kind==='image'||visual.kind==='logo'){
@@ -61,7 +44,6 @@
             ${statusLabel?`<span class="nb-status-tag${unavailable?' is-unavailable':''}">${esc(statusLabel)}</span>`:''}
             ${attributeTag?`<span class="nb-tag attribute">${esc(attributeTag.label)}</span>`:''}
           </div>
-          ${providerFooterHtml(product,visual,esc)}
         </div>
       </div>
     </article>`;
