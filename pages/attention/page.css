@@ -9,9 +9,7 @@
 .attention-page .attention-row:hover{background:#fafafa}
 .attention-page .att-product-cell{gap:9px}
 .attention-page .att-thumb{width:50px;height:32px;border-color:rgba(60,60,67,.08);background:#fafafa}
-.attention-page .att-time-soft{background:transparent;border:0;padding:0}
-.attention-page .att-time-due,
-.attention-page .att-time-info{box-shadow:none}
+.attention-page .att-time{background:transparent;border:0;padding:0;box-shadow:none}
 .attention-page .attention-expanded{padding:15px 14px;background:#fafafa;border-bottom-color:rgba(60,60,67,.08)}
 .attention-page .attention-expanded-inner{gap:18px}
 .attention-page .key-card{margin-top:12px;background:transparent;border-radius:0;border-top:1px solid rgba(60,60,67,.10);padding:10px 0 0}
