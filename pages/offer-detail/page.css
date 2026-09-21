@@ -207,20 +207,9 @@ body.nb-offer-overlay-open{overflow:hidden}
   box-shadow:inset 1px 0 0 rgba(28,43,66,.055) !important;
 }
 
-/* Mobile keeps room for the explicit close control. Desktop closes through the
-   blurred backdrop / Escape, so Follow can own the upper-right action slot. */
+/* Offer Detail closes through backdrop / history. Follow owns the panel action slot. */
 .nb-offer-detail-host .v4-detail-save{
-  right:54px !important;
-}
-
-@media(min-width:1181px){
-  .nb-offer-detail-close{
-    display:none;
-  }
-
-  .nb-offer-detail-host .v4-detail-save{
-    right:24px !important;
-  }
+  right:18px !important;
 }
 
 .nb-offer-detail-host .nb-follow-control{
@@ -256,44 +245,6 @@ body.nb-offer-overlay-open{overflow:hidden}
   display:inline-grid;
   place-items:center;
   flex:0 0 auto;
-}
-
-.nb-offer-detail-close{
-  position:absolute;
-  z-index:9;
-  top:13px;
-  right:14px;
-  width:34px;
-  height:34px;
-  border:0;
-  border-radius:10px;
-  background:transparent;
-  color:#7a879a;
-  box-shadow:none;
-  display:grid;
-  place-items:center;
-  padding:0;
-  cursor:pointer;
-  transition:background .14s ease,color .14s ease;
-}
-
-.nb-offer-detail-close:hover{
-  background:#f1f4f8;
-  color:#243650;
-}
-
-.nb-offer-detail-close:focus-visible{
-  outline:2px solid rgba(10,110,255,.42);
-  outline-offset:2px;
-}
-
-.nb-offer-detail-close svg{
-  width:16px;
-  height:16px;
-  fill:none;
-  stroke:currentColor;
-  stroke-width:1.8;
-  stroke-linecap:round;
 }
 
 .nb-offer-detail-host .v4-decision-panel{
@@ -384,13 +335,6 @@ body.nb-offer-overlay-open{overflow:hidden}
     border-radius:0;
     box-shadow:none;
     overflow:auto;
-  }
-  .nb-offer-detail-close{
-    position:fixed;
-    top:10px;
-    right:10px;
-    background:rgba(255,255,255,.86);
-    backdrop-filter:blur(8px);
   }
   .nb-offer-detail-host{
     height:auto;
@@ -832,7 +776,8 @@ body.nb-offer-overlay-open{overflow:hidden}
   align-items:flex-start;
   justify-content:space-between;
   gap:18px;
-  padding:0 72px 15px 0;
+  padding:0 0 15px 0;
+  position:relative;
   border-bottom:1px solid #edf1f5;
 }
 
@@ -844,9 +789,11 @@ body.nb-offer-overlay-open{overflow:hidden}
   letter-spacing:-.02em;
 }
 
-.nb-credit-v1-final .v4-detail-save{
-  top:16px;
-  right:58px;
+.nb-credit-v1-head .v4-detail-save{
+  position:static !important;
+  top:auto !important;
+  right:auto !important;
+  flex:0 0 auto;
   height:31px;
   padding:0;
   border:0;
@@ -1067,7 +1014,7 @@ body.nb-offer-overlay-open{overflow:hidden}
   }
   .nb-credit-v1-head{
     min-height:42px;
-    padding:0 64px 12px 0;
+    padding:0 0 12px 0;
   }
   .nb-credit-v1-head .nb-credit-offer-name{font-size:18px}
   .nb-current-offer-v1{
@@ -1449,9 +1396,6 @@ body.nb-offer-overlay-open{overflow:hidden}
 @media(max-width:1180px){
   .nb-offer-detail-frame.nb-mobile-task-open{
     overflow:hidden;
-  }
-  .nb-offer-detail-frame.nb-mobile-task-open > .nb-offer-detail-close{
-    display:none;
   }
   .nb-offer-detail-frame.nb-mobile-task-open .nb-offer-detail-host,
   .nb-offer-detail-frame.nb-mobile-task-open .v4-offer-detail-page,

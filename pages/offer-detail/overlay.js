@@ -49,10 +49,8 @@
     overlay.setAttribute('aria-label','Offer Detail');
     overlay.innerHTML=`
       <div class="nb-offer-detail-frame">
-        <button class="nb-offer-detail-close" type="button" aria-label="关闭 Offer Detail">×</button>
         <div class="nb-offer-detail-host"></div>
       </div>`;
-    overlay.querySelector('.nb-offer-detail-close').addEventListener('click',requestClose);
     overlay.addEventListener('click',event=>{ if(event.target===overlay) requestClose(); });
     document.body.appendChild(overlay);
     document.body.classList.add('nb-offer-overlay-open');
