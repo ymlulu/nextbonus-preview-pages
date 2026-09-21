@@ -1,6 +1,10 @@
 /* Wallet page-owned presentation.
    Presentation only: reduce section chrome and improve scanability without changing behavior. */
 
+.v4-products-page .v4-products-head{
+  align-items:center;
+}
+
 .v4-products-page .v4-needs-attention{display:none}
 
 .v4-products-page .credit-products,
