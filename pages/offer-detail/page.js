@@ -169,7 +169,7 @@
 
     const applyHtml=!isEnded&&o.applyUrl
       ? `<div class="nb-offer-apply-primary">
-          <button class="btn primary" data-action="direct-apply">直接申请 <span>→</span></button>
+          <button class="btn primary" data-action="direct-apply">直接申请</button>
         </div>`
       : '';
 

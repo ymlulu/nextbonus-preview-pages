@@ -3,7 +3,7 @@
 
   function progress(step){
     const stage = step === 'product' ? 1 : step === 'info' ? 2 : step === 'offer' ? 3 : 4;
-    const labels=['选择产品','基本信息','奖励','完成'];
+    const labels=['选择产品','基本信息','添加奖励','完成'];
     return `<div class="add-progress">${labels.map((label,index)=>{
       const number=index+1;
       const done=stage>=number;
@@ -53,7 +53,7 @@
       return `<button class="option-row add-product-selector-row" type="button" data-action="add-product-select" data-id="${esc(product.id)}" data-category="${esc(category)}" data-nb-add-product-id="${esc(product.id)}" data-nb-add-category="${esc(category)}">${art}<span class="option-main"><span class="option-title">${esc(product.name)}</span><span class="option-sub">${esc(product.institution)}${product.subtype?` · ${esc(product.subtype)}`:''}</span></span><span class="add-product-row-chevron" aria-hidden="true">›</span></button>`;
     }).join('');
     return {
-      title: '添加产品',
+      title: '选择产品',
       body: `<div class="search-wrap nb-add-search-wrap"><span class="search-icon">⌕</span><input id="nb-add-search" class="search" value="${esc(flow.search||'')}" placeholder="搜索信用卡、银行账户、券商或会籍" />${flow.search?'<button class="search-clear" type="button" data-action="add-clear-search" data-nb-clear-search>×</button>':''}</div><div class="filters nb-add-filter-row">${model.FILTERS.map(([label])=>`<button class="pill ${flow.filter===label?'active':''}" type="button" data-action="add-filter" data-value="${esc(label)}" data-nb-add-filter="${esc(label)}">${esc(label)}</button>`).join('')}</div>${rows?`<div class="option-list add-product-selector-list">${rows}</div>`:'<div class="empty"><h3>没有找到这个产品</h3><p>换个关键词试试。</p></div>'}`,
       foot: ''
     };
@@ -79,7 +79,7 @@
     }else if(f.step === 'info'){
       const isCard = f.category === '信用卡';
       view = {
-        title: '补充信息',
+        title: '基本信息',
         body: `<div class="add-info-flow">${selectedProductHeader(f.product,esc)}<div class="add-info-section"><div class="add-info-section-head"><span class="option-title">账户信息</span><span class="option-sub">以下信息都可以稍后修改。</span></div><div class="add-info-fields">${isCard?`<div class="form-group"><label class="label">卡号后四位（可选）</label><input id="add-last4" class="input" maxlength="4" inputmode="numeric" value="${esc(f.last4)}" placeholder="例如 1005" /></div>`:`<div class="form-group"><label class="label">账户昵称（可选）</label><input id="add-nickname" class="input" value="${esc(f.nickname)}" placeholder="例如 主账户" /></div>`}<div class="form-group"><label class="label">${isCard?'开卡日期':'开户日期'}（可选）</label><div class="date-field-row add-info-date-row"><input id="add-opened" type="date" max="${localDateISO()}" class="input" value="${esc(f.opened)}" /><button class="btn ghost small add-info-clear-date" type="button" data-action="add-clear-opened" ${f.opened?'':'hidden'}>清除</button></div></div></div></div></div>`,
         foot: footer(back(), next('add-to-track','继续'))
       };
@@ -117,19 +117,19 @@
       const canSubmit=model.rewardChoiceReady(f);
       const actionLabel=f.offer?'添加并追踪奖励':'添加到钱包';
       view = {
-        title: isCard ? '添加你的开卡奖励（可选）' : '添加你的开户奖励（可选）',
+        title: '添加奖励',
         body: `<div class="add-reward-flow">${selectedProductHeader(f.product,esc)}${status}<div class="option-list add-reward-list">${offerRows}<button class="option-row add-reward-row ${f.offer==='manual'?'selected':''}" type="button" data-action="add-offer-choice" data-id="manual"><span class="radio-dot"></span><span class="option-main"><span class="option-title">都不是，手动填写</span></span></button>${manualPanel}</div></div>`,
         foot: footer(back(), next('add-offer-next',actionLabel,!canSubmit))
       };
     }else if(f.step === 'membership-confirm'){
       view = {
-        title: '确认添加',
+        title: '完成',
         body: `<div class="report"><h3>${esc(f.product?.name||'')}</h3><p>${esc(f.product?.institution||'')} · ${esc(f.product?.subtype||'会籍')}</p></div>`,
         foot: footer(back(), next('add-membership-submit','添加到钱包'))
       };
     }else if(f.step === 'success'){
       view = {
-        title: '已添加到钱包',
+        title: '完成',
         body: `<div class="add-success-flow">${selectedProductHeader(f.product,esc)}<div class="success"><div class="success-icon">✓</div><h2>已添加到钱包</h2>${f.track?'<p>奖励也已经加入提醒。</p>':''}<div class="actions two"><button class="btn primary" data-action="add-view-product">查看详情</button><button class="btn secondary" data-action="add-another">继续添加</button></div></div></div>`,
         foot: ''
       };
