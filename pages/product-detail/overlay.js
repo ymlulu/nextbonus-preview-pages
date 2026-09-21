@@ -34,11 +34,9 @@
     overlay.setAttribute('aria-label','产品详情');
     overlay.innerHTML=
       '<section class="nb-product-detail-panel">'+
-        '<button class="nb-product-detail-close" type="button" aria-label="关闭产品详情">×</button>'+
         '<div class="nb-product-detail-host"></div>'+
       '</section>';
     host=overlay.querySelector('.nb-product-detail-host');
-    overlay.querySelector('.nb-product-detail-close').addEventListener('click',requestClose);
     overlay.addEventListener('click',event=>{ if(event.target===overlay) requestClose(); });
     document.body.appendChild(overlay);
     document.body.classList.add('nb-product-overlay-open');
