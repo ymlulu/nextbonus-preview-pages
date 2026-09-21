@@ -26,7 +26,7 @@
   }
 
   function choice(){
-    return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">申请结果怎么样？</div></div><button class="nb-ah-close" data-handoff-action="defer" aria-label="稍后再说">×</button></div><div class="nb-ah-body"><div class="nb-ah-result-grid"><button class="nb-ah-result" data-handoff-action="result" data-result="approved">已通过</button><button class="nb-ah-result" data-handoff-action="result" data-result="pending">审核中</button><button class="nb-ah-result" data-handoff-action="result" data-result="denied">未通过</button></div></div><div class="nb-ah-foot nb-ah-choice-foot"><button class="nb-ah-btn secondary" data-handoff-action="not-submitted">没有提交申请</button></div></div></div>`;
+    return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">申请结果怎么样？</div></div><button class="nb-ah-close" data-handoff-action="not-submitted" aria-label="没有提交申请">×</button></div><div class="nb-ah-body"><div class="nb-ah-result-grid"><button class="nb-ah-result" data-handoff-action="result" data-result="approved">已通过</button><button class="nb-ah-result" data-handoff-action="result" data-result="pending">审核中</button><button class="nb-ah-result" data-handoff-action="result" data-result="denied">未通过</button></div></div><div class="nb-ah-foot nb-ah-choice-foot"><button class="nb-ah-btn secondary" data-handoff-action="not-submitted">没有提交申请</button></div></div></div>`;
   }
 
   function followup(attempt,kind){
