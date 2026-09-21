@@ -46,18 +46,20 @@
         </div>
         <div class="nb-annual-value-total">
           <span data-nb-type="headline">净收益</span>
-          <strong data-nb-type="headline">${resultLabel} / 年</strong>
+          <strong data-nb-type="headline" data-nb-emphasis="true">${resultLabel} / 年</strong>
         </div>
         ${customized
-          ?`<p data-nb-type="subheadline" data-nb-tone="secondary">已按照你的情况计算。 <button data-nb-type="subheadline" data-nb-tone="link" type="button" data-action="annual-value-customize">调整我的计算 <span>›</span></button></p>`
+          ?`<p data-nb-type="subheadline" data-nb-tone="secondary">已按照你的情况计算。</p>
+            <button class="nb-annual-value-customize" data-nb-type="subheadline" data-nb-tone="link" data-nb-emphasis="true" type="button" data-action="annual-value-customize">调整我的计算 <span>›</span></button>`
           :`<p data-nb-type="subheadline" data-nb-tone="secondary">已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'}</p>
-            <button class="nb-annual-value-customize" data-nb-type="subheadline" data-nb-tone="link" type="button" data-action="annual-value-customize">计算我的每年收益 <span>›</span></button>`}
+            <button class="nb-annual-value-customize" data-nb-type="subheadline" data-nb-tone="link" data-nb-emphasis="true" type="button" data-action="annual-value-customize">计算我的每年收益 <span>›</span></button>`}
       `:`
         <div class="nb-annual-value-total">
           <span data-nb-type="headline">净收益</span>
-          <strong data-nb-type="headline">${resultLabel} / 年</strong>
+          <strong data-nb-type="headline" data-nb-emphasis="true">${resultLabel} / 年</strong>
         </div>
-        <p data-nb-type="subheadline" data-nb-tone="secondary">已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'} <button data-nb-type="subheadline" data-nb-tone="link" type="button" data-action="annual-value-customize">计算我的每年收益 <span>›</span></button></p>
+        <p data-nb-type="subheadline" data-nb-tone="secondary">已扣除 ${annualMoney(result.fee)} 年费，${result.defaultSummary||'按当前配置估算。'}</p>
+        <button class="nb-annual-value-customize" data-nb-type="subheadline" data-nb-tone="link" data-nb-emphasis="true" type="button" data-action="annual-value-customize">计算我的每年收益 <span>›</span></button>
       `}
     </section>`;
   }
