@@ -9,7 +9,6 @@
     ['券商','券商账户'],
     ['会籍','其他']
   ]);
-  const RECENT_REWARD_MONTHS=6;
 
   function createFlow(){
     return {
@@ -81,22 +80,8 @@
     return true;
   }
 
-  function monthIndex(value){
-    const match=String(value||'').match(/^(\d{4})-(\d{2})/);
-    if(!match) return null;
-    const month=Number(match[2]);
-    if(month<1||month>12) return null;
-    return Number(match[1])*12+(month-1);
-  }
-
   function recentRewardChoices(choices,now=new Date()){
-    const currentMonth=now.getFullYear()*12+now.getMonth();
-    const firstMonth=currentMonth-(RECENT_REWARD_MONTHS-1);
-    return (choices||[]).filter(choice=>{
-      if(choice?.kind==='current') return true;
-      const month=monthIndex(choice?.dateLabel);
-      return month!==null&&month>=firstMonth&&month<=currentMonth;
-    });
+    return window.NextBonusBonusOfferChoice?.recentChoices?.(choices,now)||[];
   }
 
   function back(flow){
@@ -114,7 +99,6 @@
 
   root.addProduct=Object.freeze({
     FILTERS,
-    RECENT_REWARD_MONTHS,
     createFlow,
     visibleEntries,
     resetAfterCategory,

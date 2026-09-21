@@ -17,26 +17,6 @@
   const next = (action, label, disabled=false) => `<button class="btn primary" data-action="${action}" ${disabled?'disabled':''}>${label}</button>`;
   const footer = (left, right='') => `<div class="modal-foot"><div class="add-product-foot-inner">${left}${right || '<span></span>'}</div></div>`;
 
-  function displayRewardValue(value){
-    const raw=String(value||'').trim();
-    const withoutHighest=raw.replace(/^最高\s*/,'').trim();
-    const match=withoutHighest.match(/^AS\s+HIGH\s+AS\s+([\d,.]+(?:\.\d+)?)\s*([Kk])?\s*(MR|UR|TYP|MILES?|POINTS?)$/i);
-    if(!match) return withoutHighest||raw;
-    const numeric=Number(match[1].replace(/,/g,''));
-    if(!Number.isFinite(numeric)) return withoutHighest||raw;
-    const amount=match[2] ? numeric*1000 : numeric;
-    return `${Math.round(amount).toLocaleString('en-US')} ${match[3].toUpperCase()}`;
-  }
-
-  function displayRewardRequirement(requirement){
-    const raw=String(requirement||'').trim();
-    let match=raw.match(/^\$([\d,.]+)\s*\/\s*(\d+)\s*months?$/i);
-    if(match) return `${match[2]} 个月内消费 ${match[1]}`;
-    match=raw.match(/^spend\s+\$([\d,.]+)\s+(?:in|within)\s+(\d+)\s*months?$/i);
-    if(match) return `${match[2]} 个月内消费 ${match[1]}`;
-    return raw;
-  }
-
   function selectedProductHeader(product, esc){
     const art=product?.cardImageLocal
       ? `<div class="add-selected-product-art"><img src="${esc(product.cardImageLocal)}" alt="${esc(product?.name||'')}" /></div>`
@@ -86,21 +66,9 @@
     }else if(f.step === 'offer'){
       const isCard = f.category === '信用卡';
       const result = offerChoice.offerChoicesFor(f.product);
-      const recentChoices=model.recentRewardChoices(result.choices);
-      const seenOfferLabels=new Set();
-      const visibleChoices=recentChoices.filter(choice=>{
-        const value=displayRewardValue(choice.value);
-        const requirement=displayRewardRequirement(choice.req);
-        const label=requirement?`${value} · ${requirement}`:value;
-        const key=label.toLowerCase();
-        if(seenOfferLabels.has(key)) return false;
-        seenOfferLabels.add(key);
-        return true;
-      });
+      const visibleChoices=offerChoice.visibleChoices(result.choices);
       const offerRows = visibleChoices.map(choice => {
-        const value=displayRewardValue(choice.value);
-        const requirement=displayRewardRequirement(choice.req);
-        const label=requirement?`${value} · ${requirement}`:value;
+        const label=offerChoice.displayRewardLabel(choice);
         return `<button class="option-row add-reward-row ${f.offer===choice.id?'selected':''}" type="button" data-action="add-offer-choice" data-id="${esc(choice.id)}"><span class="radio-dot"></span><span class="option-main"><span class="option-title">${esc(label)}</span></span></button>`;
       }).join('');
       const rewardPrompt=isCard?'选择你的开卡奖励':'选择你的开户奖励';
