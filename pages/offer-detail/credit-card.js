@@ -31,7 +31,7 @@
     const result=annualResultFor(state,offerId);
     if(!result) return '';
     const customized=!!state.annualValueProfiles?.[offerId]?.customized;
-    const expanded=customized||!!state.offerAnnualValueExpanded;
+    const expanded=customized;
     const resultLabel=annualMoney(result.total,{signed:true});
 
     return `<section class="nb-annual-value-card ${expanded?'is-expanded':''} ${customized?'is-customized':''}">

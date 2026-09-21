@@ -39,7 +39,6 @@
       annualValueProfiles:{},
       annualValueDraft:null,
       offerDetailTask:null,
-      offerAnnualValueExpanded:false,
       posterIndex:0,
       modal:null,
       addFlow:null,

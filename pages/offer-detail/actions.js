@@ -15,10 +15,6 @@
       if(!el) return false;
       const action=el.dataset.action;
 
-      if(action==='annual-value-toggle'){
-        ctx.state.offerAnnualValueExpanded=!ctx.state.offerAnnualValueExpanded;
-        return {render:true};
-      }
       if(action==='annual-value-customize'){
         const calculator=window.NextBonusAnnualValueCalculator;
         const offerId=ctx.state.currentOfferId;
@@ -47,7 +43,6 @@
         const normalized=calculator.normalizeProfile(draft.offerId,{...draft.profile,customized:true});
         ctx.state.annualValueProfiles={...(ctx.state.annualValueProfiles||{}),[draft.offerId]:normalized};
         ctx.state.annualValueDraft=null;
-        ctx.state.offerAnnualValueExpanded=true;
         ctx.persist?.();
         ctx.closeOfferDetailTask?.();
         return {handled:true};
