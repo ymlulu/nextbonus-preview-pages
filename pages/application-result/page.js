@@ -1,6 +1,8 @@
 (() => {
   'use strict';
 
+  const icon=(name,className='')=>window.NextBonusIcons?.svg?.(name,className)||'';
+
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
   }[char]));
@@ -26,7 +28,7 @@
   }
 
   function choice(){
-    return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">申请结果怎么样？</div></div><button class="nb-ah-close" data-handoff-action="not-submitted" aria-label="没有提交申请">×</button></div><div class="nb-ah-body"><div class="nb-ah-result-grid"><button class="nb-ah-result" data-handoff-action="result" data-result="approved">已通过</button><button class="nb-ah-result" data-handoff-action="result" data-result="pending">审核中</button><button class="nb-ah-result" data-handoff-action="result" data-result="denied">未通过</button></div></div><div class="nb-ah-foot nb-ah-choice-foot"><button class="nb-ah-btn secondary" data-handoff-action="not-submitted">没有提交申请</button></div></div></div>`;
+    return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">申请结果怎么样？</div></div><button class="nb-ah-close nb-icon-button nb-icon-button--round nb-icon-button--soft" data-handoff-action="not-submitted" aria-label="没有提交申请">${icon('close')}</button></div><div class="nb-ah-body"><div class="nb-ah-result-grid"><button class="nb-ah-result" data-handoff-action="result" data-result="approved">已通过</button><button class="nb-ah-result" data-handoff-action="result" data-result="pending">审核中</button><button class="nb-ah-result" data-handoff-action="result" data-result="denied">未通过</button></div></div><div class="nb-ah-foot nb-ah-choice-foot"><button class="nb-ah-btn secondary" data-handoff-action="not-submitted">没有提交申请</button></div></div></div>`;
   }
 
   function followup(attempt,kind){
@@ -49,11 +51,11 @@
 
     const guidance=entry?(pending?entry.pendingGuidance:entry.reconGuidance):null;
     const guidanceItems=Array.isArray(guidance)?guidance:(typeof guidance==='string'&&guidance.trim()?[guidance]:[]);
-    return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">${title}</div><div class="nb-ah-sub">${esc(attempt.productName)}</div></div><button class="nb-ah-close" data-handoff-action="hide" aria-label="稍后再说">×</button></div><div class="nb-ah-body">${note?`<div class="nb-ah-note">${esc(note)}</div>`:''}${external.length?`<div class="nb-ah-row nb-ah-row-start">${external.join('')}</div>`:''}${guidanceItems.length?`<ul>${guidanceItems.map(item=>`<li>${esc(item)}</li>`).join('')}</ul>`:''}</div><div class="nb-ah-foot"><button class="nb-ah-btn ghost" data-handoff-action="hide">稍后再说</button><div class="nb-ah-row"><button class="nb-ah-btn secondary" data-handoff-action="result" data-result="${pending?'denied':'pending'}">${pending?'改为未通过':'状态有变化'}</button><button class="nb-ah-btn primary" data-handoff-action="result" data-result="approved">已通过</button></div></div></div></div>`;
+    return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">${title}</div><div class="nb-ah-sub">${esc(attempt.productName)}</div></div><button class="nb-ah-close nb-icon-button nb-icon-button--round nb-icon-button--soft" data-handoff-action="hide" aria-label="稍后再说">${icon('close')}</button></div><div class="nb-ah-body">${note?`<div class="nb-ah-note">${esc(note)}</div>`:''}${external.length?`<div class="nb-ah-row nb-ah-row-start">${external.join('')}</div>`:''}${guidanceItems.length?`<ul>${guidanceItems.map(item=>`<li>${esc(item)}</li>`).join('')}</ul>`:''}</div><div class="nb-ah-foot"><button class="nb-ah-btn ghost" data-handoff-action="hide">稍后再说</button><div class="nb-ah-row"><button class="nb-ah-btn secondary" data-handoff-action="result" data-result="${pending?'denied':'pending'}">${pending?'改为未通过':'状态有变化'}</button><button class="nb-ah-btn primary" data-handoff-action="result" data-result="approved">已通过</button></div></div></div></div>`;
   }
 
   function login(attempt){
-    return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">登录后保存到钱包</div><div class="nb-ah-sub">${esc(attempt.productName)} 已确认通过</div></div><button class="nb-ah-close" data-handoff-action="hide" aria-label="稍后再说">×</button></div><div class="nb-ah-body"><div class="nb-ah-note">登录后即可把这个产品添加到钱包，并保存相关奖励进度和提醒。</div></div><div class="nb-ah-foot"><button class="nb-ah-btn secondary" data-handoff-action="hide">稍后再说</button><button class="nb-ah-btn primary" data-handoff-action="login">登录并继续</button></div></div></div>`;
+    return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">登录后保存到钱包</div><div class="nb-ah-sub">${esc(attempt.productName)} 已确认通过</div></div><button class="nb-ah-close nb-icon-button nb-icon-button--round nb-icon-button--soft" data-handoff-action="hide" aria-label="稍后再说">${icon('close')}</button></div><div class="nb-ah-body"><div class="nb-ah-note">登录后即可把这个产品添加到钱包，并保存相关奖励进度和提醒。</div></div><div class="nb-ah-foot"><button class="nb-ah-btn secondary" data-handoff-action="hide">稍后再说</button><button class="nb-ah-btn primary" data-handoff-action="login">登录并继续</button></div></div></div>`;
   }
 
   function denied(attempt){
@@ -64,7 +66,7 @@
     const note=entry
       ? '这次申请已经记录为未通过。如果银行支持，你可以尝试联系人工重新审核。'
       : '部分银行可以在被拒后联系人工重新审核，目前还没有确认可靠的联系方式。';
-    return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">这次申请没有通过</div><div class="nb-ah-sub">${esc(attempt?.productName||'')}</div></div><button class="nb-ah-close" data-denied-action="dismiss" aria-label="关闭">×</button></div><div class="nb-ah-body"><div class="nb-ah-note">${esc(note)}</div></div><div class="nb-ah-foot"><span></span><div class="nb-ah-row">${recon}<button class="nb-ah-btn primary" data-denied-action="dismiss">知道了</button></div></div></div></div>`;
+    return `<div class="nb-ah-backdrop"><div class="nb-ah-modal" role="dialog" aria-modal="true"><div class="nb-ah-head"><div><div class="nb-ah-title">这次申请没有通过</div><div class="nb-ah-sub">${esc(attempt?.productName||'')}</div></div><button class="nb-ah-close nb-icon-button nb-icon-button--round nb-icon-button--soft" data-denied-action="dismiss" aria-label="关闭">${icon('close')}</button></div><div class="nb-ah-body"><div class="nb-ah-note">${esc(note)}</div></div><div class="nb-ah-foot"><span></span><div class="nb-ah-row">${recon}<button class="nb-ah-btn primary" data-denied-action="dismiss">知道了</button></div></div></div></div>`;
   }
 
   function success(productName){
