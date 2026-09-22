@@ -18,7 +18,7 @@
       ${thumb(info,esc)}
       <span class="nb-watchlist-copy">
         <strong>${esc(info.product.name)}</strong>
-        <small>${esc(meta)}</small>
+        ${meta?`<small>${esc(meta)}</small>`:''}
       </span>
       <span class="nb-watchlist-value">${esc(info.fact.primaryValue||'')}</span>
       ${saved?'':`<span class="nb-watchlist-status tone-${esc(statusTone)}">${esc(statusLabel)}</span>`}
