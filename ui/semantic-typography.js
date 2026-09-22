@@ -80,6 +80,8 @@
       ['.v4-product-detail-page .v4-pd-status>strong', 'subheadline', 'success', 'subheadline', null],
       ['.v4-product-detail-page .v4-pd-facts small', 'caption1', 'secondary', 'caption1', 'secondary'],
       ['.v4-product-detail-page .v4-pd-facts strong', 'body', null, 'body', null],
+      ['.v4-product-detail-page .v4-pd-facts.credit-card-facts small', 'body', 'secondary', 'body', 'secondary'],
+      ['.v4-product-detail-page .v4-pd-facts.credit-card-facts strong', 'body', null, 'body', null],
       ['.v4-product-detail-page .v4-pd-earning b', 'callout', null, 'title3', null],
       ['.v4-product-detail-page .v4-pd-earning small', 'caption1', 'secondary', 'caption1', 'secondary']
     ];
