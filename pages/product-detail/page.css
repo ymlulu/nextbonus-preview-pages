@@ -82,9 +82,39 @@ body.nb-product-overlay-open{overflow:hidden}
   .v4-product-detail-page .v4-pd-right{padding-top:0!important}
   .v4-product-detail-page .v4-pd-title-row{width:100%!important;min-width:0!important}
   .v4-product-detail-page .v4-pd-title-row>div{min-width:0!important;max-width:100%!important}
+  .v4-product-detail-page.nb-card-detail .v4-pd-title-row>div{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    align-items:center!important;
+    gap:8px 12px!important;
+    width:100%!important;
+  }
+  .v4-product-detail-page.nb-card-detail .v4-pd-title-row h1{
+    flex:0 0 auto;
+    max-width:100%;
+  }
+  .v4-product-detail-page.nb-card-detail .v4-pd-status{
+    flex:0 0 auto;
+    margin:0 0 0 auto;
+    white-space:nowrap;
+  }
   .v4-product-detail-page .v4-pd-facts{display:flex!important;flex-direction:column!important;width:100%!important;min-width:0!important}
   .v4-product-detail-page .v4-pd-facts>div{width:100%!important;min-width:0!important;border-left:0!important;border-top:1px solid #edf1f5;padding:10px 0!important}
   .v4-product-detail-page .v4-pd-facts>div:first-child{border-top:0}
+  .v4-product-detail-page.nb-card-detail .v4-pd-facts.credit-card-facts{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    column-gap:18px!important;
+    align-items:center!important;
+  }
+  .v4-product-detail-page.nb-card-detail .v4-pd-facts.credit-card-facts>div{
+    width:auto!important;
+    border-top:0!important;
+    padding:10px 0!important;
+  }
+  .v4-product-detail-page.nb-card-detail .v4-pd-facts.credit-card-facts>div:last-child{
+    justify-self:end!important;
+  }
   .v4-product-detail-page .v4-pd-earning{display:flex!important;flex-direction:column!important;align-items:stretch!important;width:100%!important;max-width:100%!important;min-width:0!important;padding:8px 12px!important}
   .v4-product-detail-page .v4-pd-earning>i{display:none!important}
   .v4-product-detail-page .v4-pd-earning>div{display:flex!important;width:100%!important;min-width:0!important;justify-content:flex-start!important;padding:7px 0!important}
