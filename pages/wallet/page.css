@@ -4,6 +4,23 @@
 .v4-products-page .v4-products-head{
   align-items:center;
 }
+.v4-products-page .v4-add-product{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.v4-products-page .v4-add-product-glyph{
+  width:16px;
+  height:16px;
+  display:block;
+  flex:0 0 16px;
+  margin:0;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2.25;
+  stroke-linecap:round;
+}
 
 .v4-products-page .v4-needs-attention{display:none}
 
@@ -220,8 +237,15 @@
     justify-content:center;
   }
   .v4-products-page .v4-add-product-glyph{
-    font-size:24px;
-    line-height:1;
+    width:24px;
+    height:24px;
+    display:block;
+    flex:0 0 24px;
+    margin:0;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:2.25;
+    stroke-linecap:round;
   }
   .v4-products-page .v4-add-product-label{display:none}
   .v4-products-page .wallet-section-controls{gap:4px}
