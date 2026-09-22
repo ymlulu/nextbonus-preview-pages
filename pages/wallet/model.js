@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const root=window.NextBonusPageModels=window.NextBonusPageModels||{};
-  const TYPES=Object.freeze(['信用卡','银行和券商账户','会籍','其他']);
+  const TYPES=Object.freeze(['信用卡','银行和券商账户','会籍']);
 
   function sortProducts(state,type,items){
     const mode=state.productSorts?.[type]||'default';
@@ -41,7 +41,7 @@
       sortMode,
       sortLabel,
       sortOpen:state.productSortPicker===type,
-      className:type==='信用卡'?'credit-products':type==='银行和券商账户'?'account-products':type==='会籍'?'membership-products':'other-products'
+      className:type==='信用卡'?'credit-products':type==='银行和券商账户'?'account-products':'membership-products'
     });
   }
 

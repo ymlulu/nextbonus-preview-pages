@@ -23,16 +23,7 @@ const defaultProducts = [
     {id:'p-hyatt', type:'会籍', name:'World of Hyatt Globalist', institution:'Hyatt', instance:'Globalist', opened:'2026-01-01', annualFee:'—', status:'正常', earning:'—'},
     {id:'p-delta-status', type:'会籍', name:'Delta SkyMiles Platinum', institution:'Delta', instance:'Platinum', opened:'2026-01-01', annualFee:'—', status:'正常', earning:'—'},
 
-    {id:'p-rakuten', type:'其他', name:'Rakuten', institution:'Rakuten', instance:'返现平台', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
-    {id:'p-topcashback', type:'其他', name:'TopCashback', institution:'TopCashback', instance:'返现平台', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
-    {id:'p-rebatesme', type:'其他', name:'RebatesMe', institution:'RebatesMe', instance:'返现平台', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
-    {id:'p-gocashback', type:'其他', name:'GoCashBack', institution:'GoCashBack', instance:'返现平台', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
-    {id:'p-awardwallet', type:'其他', name:'AwardWallet', institution:'AwardWallet', instance:'积分工具', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
-    {id:'p-pointsyeah', type:'其他', name:'PointsYeah', institution:'PointsYeah', instance:'里程工具', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
-    {id:'p-cardpointers', type:'其他', name:'CardPointers', institution:'CardPointers', instance:'信用卡工具', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
-    {id:'p-maxrewards', type:'其他', name:'MaxRewards', institution:'MaxRewards', instance:'信用卡工具', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
-    {id:'p-bilt-rent', type:'其他', name:'Bilt Rewards', institution:'Bilt', instance:'积分工具', opened:'2024-01-01', annualFee:'$0', status:'正常', earning:'—'},
-    {id:'p-google-one', type:'其他', name:'Google One', institution:'Google', instance:'订阅', opened:'2024-01-01', annualFee:'—', status:'正常', earning:'—'}
+
   ];
 
   const defaultPastProducts = [

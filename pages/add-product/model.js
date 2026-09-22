@@ -2,12 +2,13 @@
   'use strict';
   const root=window.NextBonusPageModels=window.NextBonusPageModels||{};
 
+  const V1_CATEGORIES=Object.freeze(['信用卡','银行账户','券商账户','会籍']);
   const FILTERS=Object.freeze([
     ['全部',null],
     ['信用卡','信用卡'],
     ['银行','银行账户'],
     ['券商','券商账户'],
-    ['会籍','其他']
+    ['会籍','会籍']
   ]);
 
   function createFlow(){
@@ -32,9 +33,11 @@
   }
 
   function catalogEntries(catalog){
-    return Object.entries(catalog||{}).flatMap(([category,products])=>
-      (products||[]).map(product=>({category,product}))
-    );
+    return Object.entries(catalog||{})
+      .filter(([category])=>V1_CATEGORIES.includes(category))
+      .flatMap(([category,products])=>
+        (products||[]).map(product=>({category,product}))
+      );
   }
 
   function visibleEntries(catalog,flow){

@@ -45,7 +45,7 @@
     flow.submitting=true;
     const type=flow.category==='信用卡'
       ? '信用卡'
-      : flow.category==='其他'
+      : flow.category==='会籍'
         ? '会籍'
         : '银行和券商账户';
 
@@ -181,7 +181,7 @@
         flow.category=category;
         flow.product=next;
         void offerChoice.ensureReviewedOfferHistory(next);
-        flow.step=category==='其他'?'membership-confirm':'info';
+        flow.step=category==='会籍'?'membership-confirm':'info';
         rerender(ctx);
         return {handled:true};
       }

@@ -20,14 +20,14 @@
       {id:'br-robinhood', offerId:'robinhood', name:'Robinhood Brokerage', institution:'Robinhood', art:'bank'},
       {id:'br-tradeup', name:'TradeUP Brokerage', institution:'TradeUP', art:'bank'}
     ],
-    '其他':[
+    '会籍':[
       {id:'m-hilton-gold', name:'Hilton Honors Gold Status', institution:'Hilton', subtype:'等级', art:'bank'},
       {id:'m-hilton-diamond', name:'Hilton Honors Diamond Status', institution:'Hilton', subtype:'等级', art:'bank'},
       {id:'m-hyatt', name:'World of Hyatt Globalist', institution:'Hyatt', subtype:'等级', art:'bank'}
     ]
   };
 
-  const typeForCategory = category => category === '信用卡' ? '信用卡' : category === '其他' ? '会籍' : '银行和券商账户';
+  const typeForCategory = category => category === '信用卡' ? '信用卡' : category === '会籍' ? '会籍' : '银行和券商账户';
 
   function withCanonicalArt(category, product){
     const asset = window.NextBonusProductArtRegistry?.resolveProduct?.({...product, type:typeForCategory(category)});
