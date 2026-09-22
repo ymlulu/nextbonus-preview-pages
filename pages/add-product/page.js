@@ -13,6 +13,7 @@
     }).join('')}</div>`;
   }
 
+  const icon=(name,className='')=>window.NextBonusIcons?.svg?.(name,className)||'';
   const back = () => '<button class="btn secondary" data-action="add-back">上一步</button>';
   const next = (action, label, disabled=false) => `<button class="btn primary" data-action="${action}" ${disabled?'disabled':''}>${label}</button>`;
   const footer = (left, right='') => `<div class="modal-foot"><div class="add-product-foot-inner">${left}${right || '<span></span>'}</div></div>`;
@@ -30,11 +31,11 @@
       const art=product.cardImageLocal
         ? `<div class="add-product-art"><img src="${esc(product.cardImageLocal)}" alt="${esc(product.name)}" /></div>`
         : `<div class="add-product-art"><div class="mini-art ${esc(product.art||'bank')}"></div></div>`;
-      return `<button class="option-row add-product-selector-row" type="button" data-action="add-product-select" data-id="${esc(product.id)}" data-category="${esc(category)}" data-nb-add-product-id="${esc(product.id)}" data-nb-add-category="${esc(category)}">${art}<span class="option-main"><span class="option-title">${esc(product.name)}</span><span class="option-sub">${esc(product.institution)}${product.subtype?` · ${esc(product.subtype)}`:''}</span></span><span class="add-product-row-chevron" aria-hidden="true">›</span></button>`;
+      return `<button class="option-row add-product-selector-row" type="button" data-action="add-product-select" data-id="${esc(product.id)}" data-category="${esc(category)}" data-nb-add-product-id="${esc(product.id)}" data-nb-add-category="${esc(category)}">${art}<span class="option-main"><span class="option-title">${esc(product.name)}</span><span class="option-sub">${esc(product.institution)}${product.subtype?` · ${esc(product.subtype)}`:''}</span></span>${icon('chevron-right','add-product-row-chevron nb-disclosure-icon')}</button>`;
     }).join('');
     return {
       title: '选择产品',
-      body: `<div class="search-wrap nb-add-search-wrap"><span class="search-icon">⌕</span><input id="nb-add-search" class="search" value="${esc(flow.search||'')}" placeholder="搜索信用卡、银行账户、券商或会籍" />${flow.search?'<button class="search-clear" type="button" data-action="add-clear-search" data-nb-clear-search>×</button>':''}</div><div class="filters nb-add-filter-row">${model.FILTERS.map(([label])=>`<button class="pill ${flow.filter===label?'active':''}" type="button" data-action="add-filter" data-value="${esc(label)}" data-nb-add-filter="${esc(label)}">${esc(label)}</button>`).join('')}</div>${rows?`<div class="option-list add-product-selector-list">${rows}</div>`:'<div class="empty"><h3>没有找到这个产品</h3><p>换个关键词试试。</p></div>'}`,
+      body: `<div class="search-wrap nb-add-search-wrap"><span class="search-icon">${icon('search')}</span><input id="nb-add-search" class="search" value="${esc(flow.search||'')}" placeholder="搜索信用卡、银行账户、券商或会籍" />${flow.search?`<button class="search-clear nb-icon-button nb-icon-button--round nb-icon-button--soft" type="button" data-action="add-clear-search" data-nb-clear-search aria-label="清除搜索">${icon('close')}</button>`:''}</div><div class="filters nb-add-filter-row">${model.FILTERS.map(([label])=>`<button class="pill ${flow.filter===label?'active':''}" type="button" data-action="add-filter" data-value="${esc(label)}" data-nb-add-filter="${esc(label)}">${esc(label)}</button>`).join('')}</div>${rows?`<div class="option-list add-product-selector-list">${rows}</div>`:'<div class="empty"><h3>没有找到这个产品</h3><p>换个关键词试试。</p></div>'}`,
       foot: ''
     };
   }
@@ -77,9 +78,9 @@
         : result.status === 'error'
           ? '<div class="muted add-reward-status" data-nb-reviewed-message="error">历史奖励暂时无法加载；当前公开奖励仍可选择，也可以按实际奖励手动填写。</div>'
           : '';
-      const manualCards = (f.tasks||[]).map((t,i)=>`<div class="task-card"><div class="task-head"><span>完成条件 ${i+1}</span><button class="icon-btn" type="button" data-action="delete-task" data-id="${esc(t.id)}" aria-label="删除条件">×</button></div><input class="input task-desc" data-id="${esc(t.id)}" value="${esc(t.desc)}" placeholder="例如 消费 $12,000" /><label class="label nb-due-label">截止日期</label><div class="date-field-row"><input type="date" class="input task-due" data-id="${esc(t.id)}" value="${esc(t.due)}" />${t.due?`<button class="btn ghost small" type="button" data-action="clear-task-due" data-id="${esc(t.id)}">清除</button>`:''}</div></div>`).join('');
+      const manualCards = (f.tasks||[]).map((t,i)=>`<div class="task-card"><div class="task-head"><span>完成条件 ${i+1}</span><button class="icon-btn nb-icon-button nb-icon-button--round" type="button" data-action="delete-task" data-id="${esc(t.id)}" aria-label="删除条件">${icon('close')}</button></div><input class="input task-desc" data-id="${esc(t.id)}" value="${esc(t.desc)}" placeholder="例如 消费 $12,000" /><label class="label nb-due-label">截止日期</label><div class="date-field-row"><input type="date" class="input task-due" data-id="${esc(t.id)}" value="${esc(t.due)}" />${t.due?`<button class="btn ghost small" type="button" data-action="clear-task-due" data-id="${esc(t.id)}">清除</button>`:''}</div></div>`).join('');
       const manualPanel = f.offer==='manual'
-        ? `<div class="add-manual-panel"><div class="form-group"><label class="label">奖励内容</label><input id="add-reward" class="input" value="${esc(f.reward)}" placeholder="例如 175,000 MR" /></div><div><label class="label">完成条件</label>${manualCards}<button class="btn secondary small" type="button" data-action="add-task">＋ 添加条件</button></div></div>`
+        ? `<div class="add-manual-panel"><div class="form-group"><label class="label">奖励内容</label><input id="add-reward" class="input" value="${esc(f.reward)}" placeholder="例如 175,000 MR" /></div><div><label class="label">完成条件</label>${manualCards}<button class="btn secondary small" type="button" data-action="add-task">${icon('plus','nb-inline-action-icon nb-inline-action-icon--leading')}添加条件</button></div></div>`
         : '';
       const canSubmit=model.rewardChoiceReady(f);
       const actionLabel=f.offer?'添加并追踪奖励':'添加到钱包';
@@ -104,7 +105,7 @@
       view = selector(f, catalog, esc, model);
     }
 
-    return `<div class="modal-backdrop add-product-backdrop"><div class="modal large add-product-modal" data-nb-stage="${esc(f.step)}"><div class="modal-head"><div class="add-product-head-inner"><div class="modal-title">${view.title}</div><button class="close-btn" type="button" data-action="add-close" aria-label="关闭添加产品">×</button></div></div><div class="add-progress-wrap"><div class="add-progress-inner">${progress(f.step)}</div></div><div class="modal-body"><div class="add-product-body-inner">${view.body}</div></div>${view.foot||''}</div></div>`;
+    return `<div class="modal-backdrop add-product-backdrop"><div class="modal large add-product-modal" data-nb-stage="${esc(f.step)}"><div class="modal-head"><div class="add-product-head-inner"><div class="modal-title">${view.title}</div><button class="close-btn nb-icon-button nb-icon-button--round nb-icon-button--soft" type="button" data-action="add-close" aria-label="关闭添加产品">${icon('close')}</button></div></div><div class="add-progress-wrap"><div class="add-progress-inner">${progress(f.step)}</div></div><div class="modal-body"><div class="add-product-body-inner">${view.body}</div></div>${view.foot||''}</div></div>`;
   }
 
   window.NextBonusAddProductPage = Object.freeze({render});
