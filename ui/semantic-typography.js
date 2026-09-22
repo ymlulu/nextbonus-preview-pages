@@ -78,7 +78,9 @@
     if (!mobileQuery.matches) return;
     const rules = [
       ['.wishlist-page .nb-watchlist-section.saved .nb-watchlist-copy strong', 'callout', null],
-      ['.wishlist-page .nb-watchlist-section.saved .nb-watchlist-value', 'subheadline', 'secondary']
+      ['.wishlist-page .nb-watchlist-section.saved .nb-watchlist-value', 'subheadline', 'secondary'],
+      ['.wishlist-page .nb-watchlist-section.in-progress .nb-watchlist-copy strong', 'callout', null],
+      ['.wishlist-page .nb-watchlist-section.in-progress .nb-watchlist-value', 'subheadline', 'secondary']
     ];
     rules.forEach(([selector, type, tone]) => {
       root.querySelectorAll?.(selector).forEach(node => mark(node, type, tone));
