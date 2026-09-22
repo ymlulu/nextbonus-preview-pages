@@ -86,6 +86,21 @@
     });
   }
 
+  function syncMobileAttentionHierarchy(root = document) {
+    const rules = [
+      ['.attention-page .attention-row:not(.history-row) .att-product-copy strong', 'headline', null, 'subheadline', 'secondary'],
+      ['.attention-page .attention-row:not(.history-row) .att-action-cell strong', 'headline', null, 'headline', null],
+      ['.attention-page .attention-row:not(.history-row) .att-product-copy small', 'subheadline', 'secondary', 'subheadline', 'secondary'],
+      ['.attention-page .attention-row:not(.history-row) .att-time', 'subheadline', 'secondary', 'subheadline', 'secondary']
+    ];
+    rules.forEach(([selector, mobileType, mobileTone, desktopType, desktopTone]) => {
+      const type = mobileQuery.matches ? mobileType : desktopType;
+      const tone = mobileQuery.matches ? mobileTone : desktopTone;
+      root.querySelectorAll?.(selector).forEach(node => mark(node, type, tone));
+      if (root.matches?.(selector)) mark(root, type, tone);
+    });
+  }
+
   function syncMobileProductDetailHierarchy(root = document) {
     const rules = [
       ['.v4-product-detail-page .v4-pd-title-row h1', 'title2', null, 'title2', null],
@@ -114,6 +129,7 @@
     syncDiscoverNameHierarchy(root);
     syncDiscoverValueHierarchy(root);
     syncSavedWatchlistHierarchy(root);
+    syncMobileAttentionHierarchy(root);
     syncMobileProductDetailHierarchy(root);
   }
 
