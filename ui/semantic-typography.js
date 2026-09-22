@@ -27,11 +27,12 @@
     ['.v4-pp-time', 'caption1', 'secondary'],
     ['.credit-products .owned-product-meta small', 'caption1', 'on-accent'],
 
-    /* Attention page: keep product/action hierarchy explicit and time subordinate. */
-    ['.att-product-copy strong,.att-product', 'callout', 'secondary'],
+    /* Attention page: action is focal; all supporting lines share one level. */
+    ['.att-product-copy strong,.att-product', 'subheadline', 'secondary'],
     ['.att-action-cell strong,.att-action', 'headline', null],
-    ['.att-product-copy small,.att-action-cell small', 'caption1', 'secondary'],
-    ['.att-time,.history-status', 'caption1', 'secondary'],
+    ['.att-product-copy small,.att-action-cell small', 'subheadline', 'secondary'],
+    ['.att-time', 'subheadline', 'secondary'],
+    ['.history-status', 'caption1', 'secondary'],
 
     /* Offer Detail: useful decision explanation must not read like legal fine print. */
     ['.v4-metric .metric-sub,.mock-result-block .metric-sub,.metric-sub', 'subheadline', 'secondary'],
