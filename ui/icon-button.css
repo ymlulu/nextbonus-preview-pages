@@ -1,0 +1,73 @@
+/* Shared interactive icon system. Page owners choose meaning and placement; UI owns geometry. */
+
+.nb-ui-icon{
+  display:block;
+  width:20px;
+  height:20px;
+  flex:0 0 auto;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  pointer-events:none;
+}
+
+.nb-icon-button{
+  appearance:none;
+  width:34px;
+  height:34px;
+  min-width:34px;
+  min-height:34px;
+  padding:0;
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:var(--nb-label-secondary,#6e6e73);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .14s ease,color .14s ease,box-shadow .14s ease,transform .12s ease;
+}
+.nb-icon-button--round{border-radius:50%}
+.nb-icon-button--soft{background:rgba(118,118,128,.10)}
+.nb-icon-button:hover{background:rgba(118,118,128,.14);color:var(--nb-label-primary,#1d1d1f)}
+.nb-icon-button:active{background:rgba(118,118,128,.20);transform:scale(.96)}
+.nb-icon-button:focus-visible{
+  outline:2px solid var(--nb-system-blue,#0088ff);
+  outline-offset:2px;
+}
+.nb-icon-button:disabled{opacity:.4;cursor:default;transform:none}
+.nb-icon-button>.nb-ui-icon{width:20px;height:20px}
+
+.nb-disclosure-icon{
+  display:inline-block;
+  width:20px;
+  height:20px;
+  vertical-align:middle;
+  color:var(--nb-label-secondary,#8e8e93);
+  transition:transform .16s ease;
+}
+.nb-disclosure-icon.is-expanded{transform:rotate(180deg)}
+
+.nb-inline-action-icon{
+  display:inline-block;
+  width:16px;
+  height:16px;
+  vertical-align:-3px;
+  margin-left:2px;
+}
+.nb-inline-action-icon--leading{margin-left:0;margin-right:3px}
+
+@media(max-width:780px){
+  .nb-icon-button{
+    width:44px;
+    height:44px;
+    min-width:44px;
+    min-height:44px;
+  }
+  .nb-icon-button>.nb-ui-icon{width:24px;height:24px}
+  .nb-inline-action-icon{width:18px;height:18px}
+}
