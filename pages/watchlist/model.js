@@ -50,7 +50,7 @@
     const lifecycle=window.NextBonusDealWatchlistLifecycle?.lifecycleFor?.(item.offerId)||null;
     const dealCompletable=item.stage==='in_progress'&&item.status==='deal_active'&&!!lifecycle;
     const baseMeta=item.stage==='history'
-      ? [statusLabel,formatDate(item.completedAt||item.updatedAt)].filter(Boolean).join(' · ')
+      ? formatDate(item.completedAt||item.updatedAt)
       : info.fact.primaryRequirement||'';
     const meta=dealCompletable&&lifecycle?.endDate
       ? [baseMeta,`截止 ${lifecycle.endDate}`].filter(Boolean).join(' · ')
