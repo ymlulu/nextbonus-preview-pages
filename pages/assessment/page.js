@@ -2,6 +2,8 @@
 (() => {
   'use strict';
 
+  const icon=(name,className='')=>window.NextBonusIcons?.svg?.(name,className)||'';
+
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
   }[char]));
@@ -86,7 +88,7 @@
     if(view==='loading'){
       return `<aside class="v4-decision-panel nb-credit-decision-panel nb-assessment-rail">
         <header class="nb-assessment-rail-head">
-          <button type="button" data-action="assessment-ui-exit"><span aria-hidden="true">‹</span> 返回</button>
+          <button type="button" data-action="assessment-ui-exit">${icon('chevron-left','nb-inline-action-icon nb-inline-action-icon--leading')}返回</button>
           <h2>申请评估</h2>
         </header>
         <div class="nb-assessment-loading">正在加载评估…</div>
@@ -96,7 +98,7 @@
     if(view==='error'){
       return `<aside class="v4-decision-panel nb-credit-decision-panel nb-assessment-rail">
         <header class="nb-assessment-rail-head">
-          <button type="button" data-action="assessment-ui-exit"><span aria-hidden="true">‹</span> 返回</button>
+          <button type="button" data-action="assessment-ui-exit">${icon('chevron-left','nb-inline-action-icon nb-inline-action-icon--leading')}返回</button>
           <h2>申请评估</h2>
         </header>
         <div class="nb-assessment-error"><h3>暂时无法加载评估</h3><p>${esc(session.error||'请稍后重试。')}</p><button type="button" class="btn primary" data-action="assessment-ui-retry">重试</button></div>
@@ -106,7 +108,7 @@
     if(view==='report'){
       return `<aside class="v4-decision-panel nb-credit-decision-panel nb-assessment-rail">
         <header class="nb-assessment-rail-head">
-          <button type="button" data-action="assessment-ui-exit"><span aria-hidden="true">‹</span> 返回</button>
+          <button type="button" data-action="assessment-ui-exit">${icon('chevron-left','nb-inline-action-icon nb-inline-action-icon--leading')}返回</button>
           <h2>完整报告</h2>
         </header>
         <div class="nb-assessment-rail-scroll">${reportHtml(session.result||result)}</div>
@@ -128,7 +130,7 @@
 
     return `<aside class="v4-decision-panel nb-credit-decision-panel nb-assessment-rail">
       <header class="nb-assessment-rail-head">
-        <button type="button" data-action="assessment-ui-exit"><span aria-hidden="true">‹</span> 返回</button>
+        <button type="button" data-action="assessment-ui-exit">${icon('chevron-left','nb-inline-action-icon nb-inline-action-icon--leading')}返回</button>
         <h2>申请评估</h2>
       </header>
       <div class="nb-assessment-progress">
