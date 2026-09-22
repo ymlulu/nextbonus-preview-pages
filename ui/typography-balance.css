@@ -75,7 +75,8 @@
 .overview-name[data-nb-type],
 .nb-account-row strong[data-nb-type]{color:var(--nb-label-primary)!important}
 
-/* Attention: action is focal; product context remains clearly readable. */
+/* Attention: desktop keeps product context quieter; mobile pending rows
+   promote product and action to the same primary Headline level. */
 .att-product-copy strong[data-nb-type],
 .att-product[data-nb-type]{color:var(--nb-label-secondary-strong)!important}
 .att-action-cell strong[data-nb-type],
@@ -84,6 +85,13 @@
 .att-action-cell small[data-nb-type],
 .att-time[data-nb-type],
 .history-status[data-nb-type]{color:var(--nb-label-secondary-strong)!important}
+
+@media(max-width:780px){
+  .attention-page .attention-row:not(.history-row) .att-product-copy strong[data-nb-type],
+  .attention-page .attention-row:not(.history-row) .att-action-cell strong[data-nb-type]{
+    color:var(--nb-label-primary)!important;
+  }
+}
 
 /* Supporting text: reserve tertiary for genuinely optional information. */
 .nb-watchlist-header p[data-nb-type],
