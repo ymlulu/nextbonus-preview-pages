@@ -13,7 +13,7 @@
         <div class="search-wrap">
           <span class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg></span>
           <input id="discover-search" class="search" value="${esc(state.offerSearch)}" placeholder="搜索信用卡、银行、券商或优惠…" aria-label="搜索" />
-          ${state.offerSearch?`<button class="search-clear" data-action="discover-clear-search" aria-label="清除搜索">×</button>`:''}
+          ${state.offerSearch?`<button class="search-clear nb-icon-button nb-icon-button--round nb-icon-button--soft" data-action="discover-clear-search" aria-label="清除搜索">${window.NextBonusIcons?.svg?.('close')||''}</button>`:''}
         </div>
       </div>
       <div class="filters">${categories.map(c=>`<button class="pill cat-${c} ${state.offerCategory===c?'active':''}" data-action="discover-category" data-category="${c}"><span class="pill-icon">${categoryIcon(c)}</span><span>${c}</span></button>`).join('')}</div>
