@@ -182,7 +182,7 @@
   transform:rotate(0deg);
   transition:transform .16s ease;
 }
-.v4-products-page .v4-past-products.is-open .v4-past-head-chevron{transform:rotate(90deg)}
+.v4-products-page .v4-past-products.is-open .v4-past-head-chevron{transform:rotate(180deg)}
 .v4-products-page .v4-past-list{
   margin-top:2px;
   padding:0;
