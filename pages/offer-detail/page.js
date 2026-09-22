@@ -1,6 +1,8 @@
 (() => {
   'use strict';
 
+  const icon=(name,className='')=>window.NextBonusIcons?.svg?.(name,className)||'';
+
   function money(value){
     return Number.isFinite(Number(value))
       ? '$'+Math.round(Number(value)).toLocaleString('en-US')
@@ -103,7 +105,7 @@
       return `<div class="nb-credit-assessment-line">
         <span class="nb-credit-assessment-check" aria-hidden="true">✓</span>
         <span>${esc(compactRecommendation)}。</span>
-        <button type="button" data-action="assessment-report">查看完整报告 <span>›</span></button>
+        <button type="button" data-action="assessment-report">查看完整报告 ${icon('chevron-right','nb-inline-action-icon')}</button>
       </div>`;
     }
 
@@ -113,7 +115,7 @@
         <strong>${esc(result.recommendation)}</strong>
         ${result.shortSummary?`<small>${esc(result.shortSummary)}</small>`:''}
       </div>
-      <button type="button" data-action="assessment-report">查看完整报告 <span>›</span></button>
+      <button type="button" data-action="assessment-report">查看完整报告 ${icon('chevron-right','nb-inline-action-icon')}</button>
     </section>`;
 
     return `<section class="nb-assessment-section is-complete">
