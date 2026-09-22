@@ -215,12 +215,7 @@
           </button>
 
           <header class="nb-credit-offer-head">
-            <div class="nb-credit-offer-meta">
-              <span class="nb-credit-offer-name">${esc(o.name)}</span>
-              <span aria-hidden="true">·</span>
-              <span>新开户奖励</span>
-            </div>
-            <div class="nb-credit-offer-provider">${esc(o.provider)}</div>
+            <div class="nb-credit-offer-name" data-nb-type="title2">${esc(o.name)}</div>
           </header>
 
           ${offerSummary}
