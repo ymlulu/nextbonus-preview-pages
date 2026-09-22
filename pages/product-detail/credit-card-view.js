@@ -1,6 +1,8 @@
 (() => {
   'use strict';
 
+  const icon=(name,className='')=>window.NextBonusIcons?.svg?.(name,className)||'';
+
   const CYCLE_USED_LABELS=Object.freeze({
     month:'本月已使用',
     quarter:'本季度已使用',
@@ -170,7 +172,7 @@
       ? `<span class="nb-card-benefit-due tone-${benefit.dueTone}">${esc(benefitStatusLabel(benefit.dueLabel))}</span>`
       : '<span class="nb-card-benefit-due-slot" aria-hidden="true"></span>';
     const status=cycleStatusMarkup(ctx,benefit);
-    return `<div class="v4-benefit-item-wrap"><div class="v4-benefit-row nb-source-benefit-row" data-action="toggle-card-benefit" data-id="${esc(benefit.id)}" role="button" tabindex="0" aria-expanded="${expanded?'true':'false'}" ${benefit.benefitId?`data-benefit-id="${esc(benefit.benefitId)}"`:''} ${benefit.cycleType?`data-cycle-type="${esc(benefit.cycleType)}"`:''}><span class="nb-card-benefit-main"><span class="v4-benefit-icon nb-card-benefit-icon">${iconSvg(benefitIconFor(benefit.title))}</span><strong>${esc(benefit.title)}</strong></span><small>${esc(benefit.short)}</small>${badge}<span class="nb-card-benefit-status">${status}<b class="chev ${expanded?'up':''}" aria-hidden="true">›</b></span></div>${expanded?benefitDetail(ctx,benefit):''}</div>`;
+    return `<div class="v4-benefit-item-wrap"><div class="v4-benefit-row nb-source-benefit-row" data-action="toggle-card-benefit" data-id="${esc(benefit.id)}" role="button" tabindex="0" aria-expanded="${expanded?'true':'false'}" ${benefit.benefitId?`data-benefit-id="${esc(benefit.benefitId)}"`:''} ${benefit.cycleType?`data-cycle-type="${esc(benefit.cycleType)}"`:''}><span class="nb-card-benefit-main"><span class="v4-benefit-icon nb-card-benefit-icon">${iconSvg(benefitIconFor(benefit.title))}</span><strong>${esc(benefit.title)}</strong></span><small>${esc(benefit.short)}</small>${badge}<span class="nb-card-benefit-status">${status}${icon('chevron-down',`nb-disclosure-icon ${expanded?'is-expanded':''}`)}</span></div>${expanded?benefitDetail(ctx,benefit):''}</div>`;
   }
 
   function benefitsSection(ctx,card){
@@ -184,7 +186,7 @@
   function contactActions(card,esc){
     const {phone,loginUrl}=card.contact;
     if(!phone&&!loginUrl) return '';
-    return `<div class="v4-pd-actions">${phone?`<button data-action="product-call" data-phone="${esc(phone)}"><svg class="v4-pd-action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4H4.5A1.5 1.5 0 0 0 3 5.5C3 14.1 9.9 21 18.5 21a1.5 1.5 0 0 0 1.5-1.5V17l-3.6-1.2-1.5 2a15.2 15.2 0 0 1-8.7-8.7l2-1.5L7 4Z"/></svg><span>客服电话</span></button>`:''}${phone&&loginUrl?'<i></i>':''}${loginUrl?`<button data-action="product-login-external" data-url="${esc(loginUrl)}"><svg class="v4-pd-action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6"/><path d="m20 4-9 9"/><path d="M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6"/></svg><span>网上银行</span></button>`:''}</div>`;
+    return `<div class="v4-pd-actions">${phone?`<button data-action="product-call" data-phone="${esc(phone)}">${icon('phone','nb-inline-action-icon nb-inline-action-icon--leading')}<span>客服电话</span></button>`:''}${phone&&loginUrl?'<i></i>':''}${loginUrl?`<button data-action="product-login-external" data-url="${esc(loginUrl)}">${icon('external-link','nb-inline-action-icon nb-inline-action-icon--leading')}<span>网上银行</span></button>`:''}</div>`;
   }
 
   window.NextBonusCreditCardProductDetailView=Object.freeze({
