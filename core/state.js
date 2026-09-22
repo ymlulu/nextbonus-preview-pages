@@ -28,8 +28,6 @@
       expandedBenefitId:null,
       productHistoryOpen:false,
       attentionTab:'active',
-      attentionProductFilter:'all',
-      historyStatusFilter:'all',
       historyVisibleCount:20,
       products:structuredClone(seed.defaultProducts),
       pastProducts:structuredClone(seed.defaultPastProducts),

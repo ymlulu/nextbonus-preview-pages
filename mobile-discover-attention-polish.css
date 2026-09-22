@@ -40,22 +40,9 @@
     scroll-snap-align:start;
   }
 
-  /* Attention: mobile top controls stack vertically so the page title never
-     competes with the product filter for horizontal space. */
+  /* Attention: the top area only carries the page title on mobile. */
   .attention-page .attention-top{
-    display:grid;
-    grid-template-columns:minmax(0,1fr);
-    gap:14px;
-    align-items:stretch;
-  }
-
-  .attention-page .attention-top>div{
-    min-width:0;
-  }
-
-  .attention-page .mock-filter-select{
-    width:100%;
-    max-width:none;
+    display:block;
   }
 
   .attention-page .attention-toolbar{
@@ -71,11 +58,6 @@
     width:100%;
     min-width:0;
     overflow:visible;
-  }
-
-  .attention-page .mock-status-select{
-    width:100%;
-    max-width:none;
   }
 
   /* Attention rows keep product context and date on the first line, then place

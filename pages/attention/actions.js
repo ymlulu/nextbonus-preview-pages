@@ -18,27 +18,6 @@
         ctx.state.historyVisibleCount=(ctx.state.historyVisibleCount||20)+20;
         return {render:true};
       }
-      if(action==='attention-clear-filter'){
-        ctx.state.attentionProductFilter='all';
-        ctx.state.expandedAttentionId=null;
-        ctx.state.historyVisibleCount=20;
-        return {render:true};
-      }
-      return false;
-    },
-    change({event,ctx}){
-      if(event.target?.id==='attention-product-filter-local'){
-        ctx.state.attentionProductFilter=event.target.value;
-        ctx.state.expandedAttentionId=null;
-        ctx.state.historyVisibleCount=20;
-        return {render:true};
-      }
-      if(event.target?.id==='history-status-filter-local'){
-        ctx.state.historyStatusFilter=event.target.value;
-        ctx.state.expandedAttentionId=null;
-        ctx.state.historyVisibleCount=20;
-        return {render:true};
-      }
       return false;
     }
   });

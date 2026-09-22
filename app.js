@@ -212,8 +212,7 @@
     captureScroll();
     state.accountMenu=false;
     state.expandedAttentionId=null;
-    if(route==='attention' && opts.productId){ state.attentionProductFilter=opts.productId; state.attentionTab=opts.tab||'active'; state.historyVisibleCount=20; }
-    else if(route==='attention' && !opts.keepFilter){ state.attentionProductFilter='all'; state.attentionTab=opts.tab||'active'; state.historyVisibleCount=20; }
+    if(route==='attention'){ state.attentionTab=opts.tab||'active'; state.historyVisibleCount=20; }
     state.route=route;
     if(opts.source) state.routeSource=opts.source;
     render();
@@ -478,8 +477,8 @@
     if(action==='complete-attention'){ completeAttention(el.dataset.id,'complete');return; }
     if(action==='skip-attention'){ completeAttention(el.dataset.id,'skip');return; }
     if(action==='history-correction'){ historyCorrection(el.dataset.id);return; }
-    if(action==='attention-for-product'){ state.attentionProductFilter=el.dataset.id;state.attentionTab='active';state.route='attention';render();window.scrollTo(0,0);return; }
-    if(action==='history-deeplink'){ state.attentionProductFilter=el.dataset.product;state.attentionTab='history';state.historyStatusFilter='all';state.historyVisibleCount=20;state.route='attention'; const candidate=state.attentionHistory.find(h=>h.id===el.dataset.historyId);state.expandedAttentionId=candidate?.id||null;render();window.scrollTo(0,0);return; }
+    if(action==='attention-for-product'){ state.attentionTab='active';state.historyVisibleCount=20;state.route='attention';render();window.scrollTo(0,0);return; }
+    if(action==='history-deeplink'){ state.attentionTab='history';state.historyVisibleCount=20;state.route='attention'; const candidate=state.attentionHistory.find(h=>h.id===el.dataset.historyId);state.expandedAttentionId=candidate?.id||null;render();window.scrollTo(0,0);return; }
 
 
   });
