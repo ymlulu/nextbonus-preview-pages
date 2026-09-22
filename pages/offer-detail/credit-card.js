@@ -1,6 +1,8 @@
 (() => {
   'use strict';
 
+  const icon=(name,className='')=>window.NextBonusIcons?.svg?.(name,className)||'';
+
   function productFactFor(offerId){
     const map={
       'chase-sapphire':'chase-sapphire-preferred',
@@ -37,7 +39,7 @@
       return `<section class="nb-annual-value-card nb-annual-value-entry">
         <div class="nb-annual-value-head">
           <h2 data-nb-type="headline">长期持有收益</h2>
-          <button class="nb-annual-value-customize" data-nb-type="subheadline" data-nb-tone="link" data-nb-emphasis="true" type="button" data-action="annual-value-customize">计算我的 <span>›</span></button>
+          <button class="nb-annual-value-customize" data-nb-type="subheadline" data-nb-tone="link" data-nb-emphasis="true" type="button" data-action="annual-value-customize">计算我的 ${icon('chevron-right','nb-inline-action-icon')}</button>
         </div>
         <div class="nb-annual-value-estimate">
           <strong data-nb-type="result-value" data-nb-emphasis="true">约 ${annualMoney(result.total)} / 年</strong>
@@ -48,7 +50,7 @@
     return `<section class="nb-annual-value-card is-expanded is-customized">
       <div class="nb-annual-value-head">
         <h2 data-nb-type="headline">长期持有收益</h2>
-        <button class="nb-annual-value-customize" data-nb-type="subheadline" data-nb-tone="link" data-nb-emphasis="true" type="button" data-action="annual-value-customize">调整我的计算 <span>›</span></button>
+        <button class="nb-annual-value-customize" data-nb-type="subheadline" data-nb-tone="link" data-nb-emphasis="true" type="button" data-action="annual-value-customize">调整我的计算 ${icon('chevron-right','nb-inline-action-icon')}</button>
       </div>
       <div class="nb-annual-value-breakdown">
         <div><span data-nb-type="subheadline" data-nb-tone="secondary">报销福利</span><b data-nb-type="headline">${annualMoney(result.fixedBenefits)}</b></div>
@@ -99,7 +101,7 @@
 
     return `<aside class="v4-decision-panel nb-credit-decision-panel nb-credit-v1-final nb-annual-calculator-panel">
       <header class="nb-annual-calc-head">
-        <button type="button" data-action="annual-value-cancel"><span aria-hidden="true">‹</span> 返回</button>
+        <button type="button" data-action="annual-value-cancel">${icon('chevron-left','nb-inline-action-icon nb-inline-action-icon--leading')}返回</button>
         <h2>计算我的每年收益</h2>
       </header>
 
