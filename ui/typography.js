@@ -92,6 +92,7 @@
     ['.v4-pd-status>strong', 'subheadline', false],
     ['.v4-pd-facts small,.pd-facts .fact-label,.fact-label', 'caption1', false, 'secondary'],
     ['.v4-pd-facts strong,.pd-facts .fact-value,.fact-value', 'body', false],
+    ['.v4-pd-facts.credit-card-facts small,.v4-pd-facts.credit-card-facts strong', 'body', false],
     ['.v4-pd-earning b', 'title3', false],
     ['.v4-pd-earning small', 'caption1', false, 'secondary'],
     ['.v4-pd-section .v4-section-head h2', 'title3', false],
