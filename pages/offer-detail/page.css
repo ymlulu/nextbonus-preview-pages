@@ -141,6 +141,8 @@
 
 body.nb-offer-overlay-open{overflow:hidden}
 
+.nb-mobile-detail-toolbar{display:none}
+
 .nb-offer-detail-overlay{
   position:fixed;
   inset:0;
@@ -321,6 +323,56 @@ body.nb-offer-overlay-open{overflow:hidden}
     background:#fff;
     backdrop-filter:none;
   }
+  .nb-offer-detail-host .nb-mobile-detail-toolbar{
+    position:sticky;
+    top:0;
+    z-index:40;
+    box-sizing:border-box;
+    min-height:54px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:8px 16px;
+    padding-top:max(8px,env(safe-area-inset-top));
+    border-bottom:1px solid rgba(60,60,67,.10);
+    background:rgba(255,255,255,.96);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+  }
+  .nb-offer-detail-host .nb-mobile-detail-back{
+    width:38px;
+    height:38px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 38px;
+    padding:0;
+    border:0;
+    border-radius:50%;
+    background:transparent;
+    color:#1d1d1f;
+    cursor:pointer;
+  }
+  .nb-offer-detail-host .nb-mobile-detail-back:active{background:rgba(118,118,128,.10)}
+  .nb-offer-detail-host .nb-mobile-detail-back svg{
+    width:26px;
+    height:26px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:2;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+  .nb-offer-detail-host .nb-mobile-detail-toolbar-spacer{flex:1 1 auto}
+  .nb-offer-detail-host .nb-mobile-detail-toolbar .nb-follow-control{
+    position:static !important;
+    top:auto !important;
+    right:auto !important;
+    flex:0 0 auto;
+  }
+  .nb-offer-detail-host .v4-decision-panel .nb-follow-control{display:none !important}
+  .nb-offer-detail-frame.nb-mobile-task-open .nb-mobile-detail-toolbar{display:none !important}
   .nb-offer-detail-frame{
     width:100%;
     height:100%;

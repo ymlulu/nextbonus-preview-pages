@@ -15,6 +15,10 @@
       if(!el) return false;
       const action=el.dataset.action;
 
+      if(action==='offer-detail-back'){
+        window.NextBonusOfferDetailOverlay?.close?.();
+        return {handled:true};
+      }
       if(action==='annual-value-customize'){
         const calculator=window.NextBonusAnnualValueCalculator;
         const offerId=ctx.state.currentOfferId;

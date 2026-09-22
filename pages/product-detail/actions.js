@@ -131,6 +131,10 @@
       const action=el.dataset.action;
       const state=ctx.state;
 
+      if(action==='product-detail-back'){
+        window.NextBonusProductDetailOverlay?.close?.();
+        return {handled:true};
+      }
       if(action==='toggle-benefit'||action==='toggle-card-benefit'){
         state.expandedBenefitId=state.expandedBenefitId===el.dataset.id?null:el.dataset.id;
         return {render:true};

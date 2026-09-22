@@ -56,6 +56,19 @@
     </section>`;
   }
 
+  function mobileOfferToolbar(esc,offer,saved){
+    const hint=saved?'已关注，点击取消':'关注';
+    return `<div class="nb-mobile-detail-toolbar nb-mobile-offer-toolbar">
+      <button class="nb-mobile-detail-back" type="button" data-action="offer-detail-back" aria-label="返回">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div class="nb-mobile-detail-toolbar-spacer" aria-hidden="true"></div>
+      <button class="v4-detail-save nb-follow-control nb-mobile-detail-action ${saved?'saved':''}" data-action="bookmark" data-id="${esc(offer.id)}" aria-label="${hint}" title="${hint}">
+        <span class="nb-follow-label">${saved?'已关注':'关注'}</span>
+      </button>
+    </div>`;
+  }
+
   function assessmentHtml({esc,supportsAssessment,isEnded,hasAssessmentResult,result,compact=false}){
     if(isEnded) return '';
 
@@ -127,9 +140,12 @@
       hasAssessmentResult
     }=model.build(ctx);
 
-    const special=window.NextBonusOfferDetailSpecialized?.render?.(o,isSaved(o.id));
+    const saved=isSaved(o.id);
+    const mobileToolbar=mobileOfferToolbar(esc,o,saved);
+    const special=window.NextBonusOfferDetailSpecialized?.render?.(o,saved);
     if(special){
       return `<div class="content v4-offer-detail-page ${special.className||''}">
+        ${mobileToolbar}
         <div class="v4-offer-detail-grid">
           <section class="v4-offer-poster-shell">${special.poster||genericPoster(o)}</section>
           <aside class="v4-decision-panel">${special.panel}</aside>
@@ -137,10 +153,9 @@
       </div>`;
     }
 
-    const saved=isSaved(o.id);
-
     if(usesCreditCardPanel){
       return `<div class="content v4-offer-detail-page nb-credit-v1-page">
+        ${mobileToolbar}
         <div class="v4-offer-detail-grid">
           <section class="v4-offer-poster-shell nb-credit-story-shell">
             ${window.NextBonusCreditCardStory?.render?.({esc,offer:o,state:ctx.state})||''}
@@ -182,6 +197,7 @@
     });
 
     return `<div class="content v4-offer-detail-page">
+      ${mobileToolbar}
       <div class="v4-offer-detail-grid">
         <section class="v4-offer-poster-shell">
           ${isPlat
