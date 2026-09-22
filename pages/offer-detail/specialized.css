@@ -152,3 +152,9 @@
     grid-template-columns:minmax(0,1fr) minmax(88px,.72fr) !important;
   }
 }
+
+.v4-offer-detail-page .nb-specialized-offer-title{
+  min-width:0;
+  flex:1 1 auto;
+  color:var(--nb-label-primary,#000);
+}
