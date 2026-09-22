@@ -92,16 +92,6 @@ body.nb-product-overlay-open{overflow:hidden}
     height:18px;
     background:rgba(60,60,67,.16);
   }
-  .v4-product-detail-page.nb-card-detail .v4-pd-action-icon{
-    width:16px;
-    height:16px;
-    flex:0 0 16px;
-    fill:none;
-    stroke:currentColor;
-    stroke-width:1.8;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-  }
   .v4-product-detail-page .v4-pd-right{padding-top:0!important}
   .v4-product-detail-page .v4-pd-title-row{width:100%!important;min-width:0!important}
   .v4-product-detail-page .v4-pd-title-row>div{min-width:0!important;max-width:100%!important}
@@ -170,7 +160,7 @@ body.nb-product-overlay-open{overflow:hidden}
 .v4-pd-card{width:315px;max-width:100%;border-radius:11px;overflow:hidden;background:#f6f7fa;box-shadow:0 4px 12px rgba(25,43,72,.08)}
 .v4-pd-card img{display:block;width:100%;height:auto}
 .v4-pd-actions{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:12px;width:100%}
-.v4-pd-actions button{border:0;background:transparent;display:flex;align-items:center;gap:9px;padding:4px 10px}.v4-pd-actions i{width:1px;height:20px;background:#dce3ee}
+.v4-pd-actions button{border:0;background:transparent;display:flex;align-items:center;gap:9px;padding:4px 10px;white-space:nowrap;flex:0 0 auto}.v4-pd-actions i{width:1px;height:20px;background:#dce3ee}
 .v4-pd-right{min-width:0;padding-top:7px}
 .v4-pd-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
 .v4-pd-title-row h1{margin:0;}
