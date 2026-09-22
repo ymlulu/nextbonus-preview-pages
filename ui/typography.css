@@ -399,12 +399,6 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 .nb-offer-card .nb-status-tag[data-nb-type],
 .fallback-offer-card .status-tag[data-nb-type]{font-weight:500!important}
 
-/* Attention gets a single focal line: the action. Product context recedes. */
-.att-product-copy strong[data-nb-type],
-.att-product[data-nb-type]{font-weight:400!important;color:var(--nb-label-secondary)!important}
-.att-action-cell strong[data-nb-type],
-.att-action[data-nb-type]{font-weight:600!important;color:var(--nb-label-primary)!important}
-
 /* Tabs rely on selection color/indicator, not heavy text. */
 .tab[data-nb-type],.mock-tabs .tab[data-nb-type]{font-weight:400!important}
 .tab.active[data-nb-type],.mock-tabs .tab.active[data-nb-type]{font-weight:500!important}
