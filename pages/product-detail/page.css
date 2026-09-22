@@ -120,6 +120,7 @@ body.nb-product-overlay-open{overflow:hidden}
     flex:0 0 auto;
     margin:0 0 0 auto;
     white-space:nowrap;
+    text-align:right;
   }
   .v4-product-detail-page .v4-pd-facts{display:flex!important;flex-direction:column!important;width:100%!important;min-width:0!important}
   .v4-product-detail-page .v4-pd-facts>div{width:100%!important;min-width:0!important;border-left:0!important;border-top:1px solid #edf1f5;padding:10px 0!important}
@@ -131,23 +132,28 @@ body.nb-product-overlay-open{overflow:hidden}
     align-items:center!important;
     margin-top:10px!important;
   }
-  .v4-product-detail-page.nb-card-detail .v4-pd-facts.credit-card-facts .fact-icon{
-    display:none!important;
-  }
   .v4-product-detail-page.nb-card-detail .v4-pd-facts.credit-card-facts>div{
     width:100%!important;
-    border-top:0!important;
+    min-width:0!important;
+    border:0!important;
+    gap:0!important;
     padding:8px 0!important;
+    white-space:nowrap;
   }
   .v4-product-detail-page.nb-card-detail .v4-pd-facts.credit-card-facts>div:first-child{
+    justify-content:flex-start!important;
     padding-right:18px!important;
   }
   .v4-product-detail-page.nb-card-detail .v4-pd-facts.credit-card-facts>div:last-child{
     justify-self:stretch!important;
     justify-content:flex-end!important;
     padding-left:18px!important;
-    border-left:1px solid rgba(60,60,67,.12)!important;
     text-align:right;
+  }
+  .v4-product-detail-page.nb-card-detail .v4-pd-facts.credit-card-facts small,
+  .v4-product-detail-page.nb-card-detail .v4-pd-facts.credit-card-facts strong{
+    display:inline!important;
+    margin:0!important;
   }
   .v4-product-detail-page .v4-pd-earning{display:flex!important;flex-direction:column!important;align-items:stretch!important;width:100%!important;max-width:100%!important;min-width:0!important;padding:8px 12px!important}
   .v4-product-detail-page .v4-pd-earning>i{display:none!important}

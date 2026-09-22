@@ -202,7 +202,7 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 .detail-back,.mock-back,.v4-pd-status,.pd-status-strip,.pd-id,.pd-inline-note{color:var(--nb-label-secondary)!important}
 .detail-back:hover,.pd-status-strip strong,.fact-value,.v4-pd-facts strong{color:var(--nb-label-primary)!important}
 .v4-pd-status>strong{color:var(--nb-system-green)!important}
-.v4-pd-status>b.past+strong{color:var(--nb-label-tertiary)!important}
+.v4-pd-status>b.past+strong,.v4-pd-status.is-past>strong{color:var(--nb-label-tertiary)!important}
 .v4-pd-actions button,.pd-quick-actions button,.v4-pd-edit,.pd-edit,.official-link{color:var(--nb-system-blue)!important}
 .fact-label,.v4-pd-facts small,.v4-pd-att-copy small,.v4-pd-att-time,.v4-feature-benefit small,.v4-benefit-row small,.timeline-date,.v4-pd-earning small{color:var(--nb-label-secondary)!important}
 .v4-pd-att-time.urgent{color:var(--nb-system-red)!important}

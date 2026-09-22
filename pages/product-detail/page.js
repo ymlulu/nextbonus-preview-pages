@@ -160,6 +160,23 @@
       : nonCredit
         ? `${related.length?`<section class="v4-pd-section v4-pd-attention"><div class="v4-section-head"><h2>待处理 <span class="attention-count-dot">${related.length}</span></h2>${related.length>3?`<button class="mock-link" data-action="attention-for-product" data-id="${product.id}">查看全部</button>`:''}</div><div class="v4-pd-attention-list">${top.map(item=>pdAttentionItem(ctx,item)).join('')}</div></section>`:''}${nonCreditSections(nonCredit,esc)}`
         : `${related.length?`<section class="v4-pd-section v4-pd-attention"><div class="v4-section-head"><h2>待处理 <span class="attention-count-dot">${related.length}</span></h2>${related.length>3?`<button class="mock-link" data-action="attention-for-product" data-id="${product.id}">查看全部</button>`:''}</div><div class="v4-pd-attention-list">${top.map(item=>pdAttentionItem(ctx,item)).join('')}</div></section>`:''}<section class="v4-pd-section v4-pd-benefits"><div class="v4-section-head"><h2>福利</h2></div>${benefits.length?`<div class="benefit-grid pd-benefit-grid">${benefits.map(item=>benefitCard(ctx,item)).join('')}</div>`:'<div class="timeline-empty">暂时没有可展示的福利信息</div>'}</section>`;
+    const cardStatusLabel=product.type==='信用卡'
+      ? (isPast
+          ? (product.status==='已关闭'
+              ? (product.closedAt?`${formatLongDate(product.closedAt)}关卡`:'已关卡')
+              : (product.statusText||'历史产品'))
+          : (product.status==='正常'?'持有中':product.status||'不确定'))
+      : null;
+    const overviewTitle=product.type==='信用卡'
+      ? `${esc(product.name)}${product.instance?` ${esc(product.instance)}`:''}`
+      : esc(product.name);
+    const overviewStatus=product.type==='信用卡'
+      ? `<div class="v4-pd-status ${isPast?'is-past':''}"><strong>${esc(cardStatusLabel)}</strong></div>`
+      : `<div class="v4-pd-status"><span>${esc(product.instance||'')}</span>${product.instance?'<i></i>':''}<b class="${isPast?'past':''}"></b><strong>${isPast?'历史产品':esc(product.status||'不确定')}</strong></div>`;
+    const overviewFacts=product.type==='信用卡'
+      ? `<div class="v4-pd-facts credit-card-facts"><div><small>开卡日期：</small><strong>${product.opened?formatLongDate(product.opened):'未填写'}</strong></div><div><small>年费：</small><strong>${esc(product.annualFee||'—')}</strong></div></div>`
+      : `<div class="v4-pd-facts"><div><span class="fact-icon">▣</span><span><small>${nonCredit?.dateLabel||'开户日期'}</small><strong>${nonCredit?.opened?formatLongDate(nonCredit.opened):'未填写'}</strong></span></div></div>`;
+
     const mobileToolbar=`<div class="nb-mobile-detail-toolbar nb-mobile-product-toolbar">
       <button class="nb-mobile-detail-back" type="button" data-action="product-detail-back" aria-label="返回">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
@@ -171,8 +188,8 @@
       ${mobileToolbar}
       <section class="v4-pd-overview">
         <div class="v4-pd-left"><div class="v4-pd-card ${product.type==='信用卡'?'credit-card-art':nonCredit?.logo?'nb-account-logo-card':''}">${nonCredit?.logo?`<img src="${esc(nonCredit.logo)}" alt="${esc(product.institution||product.name)}" />`:detailArt.primarySrc?`<img src="${detailArt.primarySrc}"${detailArt.fallbackAttr} alt="${esc(product.name)}" />`:`<span class="fallback-brand large">${esc(shortBrand(product.institution))}</span>`}</div>${contactActions}</div>
-        <div class="v4-pd-right"><div class="v4-pd-title-row"><div><h1>${esc(product.name)}</h1><div class="v4-pd-status"><span>${esc(product.instance||'')}</span>${product.instance?'<i></i>':''}<b class="${isPast?'past':''}"></b><strong>${isPast?'历史产品':esc(product.status||'不确定')}</strong></div></div>${isPast?'':`<button class="v4-pd-edit" data-action="edit-product">编辑</button>`}</div>
-          <div class="v4-pd-facts ${product.type==='信用卡'?'credit-card-facts':''}"><div><span class="fact-icon">▣</span><span><small>${product.type==='信用卡'?'开卡日期':nonCredit?.dateLabel||'开户日期'}</small><strong>${nonCredit?(nonCredit.opened?formatLongDate(nonCredit.opened):'未填写'):(product.opened?formatLongDate(product.opened):'未填写')}</strong></span></div>${product.type==='信用卡'?`<div><span class="fact-icon">$</span><span><small>年费</small><strong>${esc(product.annualFee||'—')}</strong></span></div>`:''}</div>
+        <div class="v4-pd-right"><div class="v4-pd-title-row"><div><h1>${overviewTitle}</h1>${overviewStatus}</div>${isPast?'':`<button class="v4-pd-edit" data-action="edit-product">编辑</button>`}</div>
+          ${overviewFacts}
           ${nonCredit?'':earningBlock(product,esc)}
         </div>
       </section>

@@ -27,8 +27,8 @@ const defaultProducts = [
   ];
 
   const defaultPastProducts = [
-    {id:'p-old-amex-gold', type:'信用卡', name:'AMEX Gold', institution:'American Express', instance:'•••• 5510', statusText:'已于 2026 年 9 月 12 日关闭', status:'已关闭', opened:'2023-02-12', annualFee:'$325', earning:'餐饮 / 超市 4x'},
-    {id:'p-old-freedom-flex', type:'信用卡', name:'Chase Freedom Flex', institution:'Chase', instance:'•••• 1948', statusText:'已于 2026 年 1 月 5 日关闭', status:'已关闭', opened:'2022-07-09', annualFee:'$0', earning:'季度 5x'},
+    {id:'p-old-amex-gold', type:'信用卡', name:'AMEX Gold', institution:'American Express', instance:'•••• 5510', statusText:'已于 2026 年 9 月 12 日关闭', status:'已关闭', closedAt:'2026-09-12', opened:'2023-02-12', annualFee:'$325', earning:'餐饮 / 超市 4x'},
+    {id:'p-old-freedom-flex', type:'信用卡', name:'Chase Freedom Flex', institution:'Chase', instance:'•••• 1948', statusText:'已于 2026 年 1 月 5 日关闭', status:'已关闭', closedAt:'2026-01-05', opened:'2022-07-09', annualFee:'$0', earning:'季度 5x'},
     {id:'p-old-hilton-gold', type:'会籍', name:'Hilton Gold Status', institution:'Hilton', instance:'Gold', statusText:'已于 2025 年 12 月 31 日关闭', status:'已结束', opened:'2025-01-01', annualFee:'—', earning:'—'}
   ];
 

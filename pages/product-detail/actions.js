@@ -53,7 +53,8 @@
     if(status!=='已关闭') return;
     const state=ctx.state;
     state.products=state.products.filter(item=>item.id!==product.id);
-    product.statusText=`已于 ${ctx.formatLongDate(ctx.localDateISO())}关闭`;
+    product.closedAt=ctx.localDateISO();
+    product.statusText=`已于 ${ctx.formatLongDate(product.closedAt)}关闭`;
     state.pastProducts.unshift(product);
     const stopped=state.activeAttention.filter(item=>item.productId===product.id);
     state.activeAttention=state.activeAttention.filter(item=>item.productId!==product.id);
