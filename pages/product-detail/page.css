@@ -75,7 +75,7 @@ body.nb-product-overlay-open{overflow:hidden}
   .v4-product-detail-page .v4-pd-title-row>.v4-pd-edit{display:none}
   .nb-product-detail-host>.content,.nb-product-detail-host>.edit-product-page{padding:0}
   .v4-product-detail-page{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden}
-  .v4-product-detail-page .v4-pd-overview{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:18px!important;width:100%!important;max-width:100%!important;min-width:0!important;padding:14px!important;overflow:hidden}
+  .v4-product-detail-page .v4-pd-overview{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:12px!important;width:100%!important;max-width:100%!important;min-width:0!important;padding:14px!important;overflow:hidden}
   .v4-product-detail-page .v4-pd-left,.v4-product-detail-page .v4-pd-right{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;flex:0 0 auto!important}
   .v4-product-detail-page .v4-pd-card,.v4-product-detail-page .v4-pd-card.credit-card-art{width:min(100%,320px)!important;max-width:320px!important;margin:0 auto!important}
   .v4-product-detail-page .v4-pd-actions{width:min(100%,320px)!important;margin-left:auto!important;margin-right:auto!important}
@@ -103,7 +103,7 @@ body.nb-product-overlay-open{overflow:hidden}
   .v4-product-detail-page .v4-pd-facts>div:first-child{border-top:0}
   .v4-product-detail-page.nb-card-detail .v4-pd-facts.credit-card-facts{
     display:grid!important;
-    grid-template-columns:minmax(0,1fr) auto!important;
+    grid-template-columns:minmax(0,3fr) minmax(0,2fr)!important;
     column-gap:18px!important;
     align-items:center!important;
   }
@@ -114,6 +114,7 @@ body.nb-product-overlay-open{overflow:hidden}
   }
   .v4-product-detail-page.nb-card-detail .v4-pd-facts.credit-card-facts>div:last-child{
     justify-self:end!important;
+    text-align:right;
   }
   .v4-product-detail-page .v4-pd-earning{display:flex!important;flex-direction:column!important;align-items:stretch!important;width:100%!important;max-width:100%!important;min-width:0!important;padding:8px 12px!important}
   .v4-product-detail-page .v4-pd-earning>i{display:none!important}
