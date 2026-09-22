@@ -152,7 +152,7 @@
     const contactActions=creditCard&&creditCardView
       ? creditCardView.contactActions(creditCard,esc)
       : (product.phone||product.loginUrl)
-        ? `<div class="v4-pd-actions">${product.phone?`<button data-action="product-call" data-phone="${esc(product.phone)}">☎ <span>致电</span></button>`:''}${product.phone&&product.loginUrl?'<i></i>':''}${product.loginUrl?`<button data-action="product-login-external" data-url="${esc(product.loginUrl)}">↗ <span>登录</span></button>`:''}</div>`
+        ? `<div class="v4-pd-actions">${product.phone?`<button data-action="product-call" data-phone="${esc(product.phone)}">☎ <span>客服电话</span></button>`:''}${product.phone&&product.loginUrl?'<i></i>':''}${product.loginUrl?`<button data-action="product-login-external" data-url="${esc(product.loginUrl)}">↗ <span>网上银行</span></button>`:''}</div>`
         : '';
 
     const productSections=creditCard&&creditCardView

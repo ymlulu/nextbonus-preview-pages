@@ -184,7 +184,7 @@
   function contactActions(card,esc){
     const {phone,loginUrl}=card.contact;
     if(!phone&&!loginUrl) return '';
-    return `<div class="v4-pd-actions">${phone?`<button data-action="product-call" data-phone="${esc(phone)}">☎ <span>致电</span></button>`:''}${phone&&loginUrl?'<i></i>':''}${loginUrl?`<button data-action="product-login-external" data-url="${esc(loginUrl)}">↗ <span>登录</span></button>`:''}</div>`;
+    return `<div class="v4-pd-actions">${phone?`<button data-action="product-call" data-phone="${esc(phone)}">☎ <span>客服电话</span></button>`:''}${phone&&loginUrl?'<i></i>':''}${loginUrl?`<button data-action="product-login-external" data-url="${esc(loginUrl)}">↗ <span>网上银行</span></button>`:''}</div>`;
   }
 
   window.NextBonusCreditCardProductDetailView=Object.freeze({

@@ -204,7 +204,7 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 .v4-pd-status>strong{color:var(--nb-system-green)!important}
 .v4-pd-status>b.past+strong{color:var(--nb-label-tertiary)!important}
 .v4-pd-actions button,.pd-quick-actions button,.v4-pd-edit,.pd-edit,.official-link{color:var(--nb-system-blue)!important}
-.v4-pd-actions button span,.pd-quick-actions button span,.fact-label,.v4-pd-facts small,.v4-pd-att-copy small,.v4-pd-att-time,.v4-feature-benefit small,.v4-benefit-row small,.timeline-date,.v4-pd-earning small{color:var(--nb-label-secondary)!important}
+.fact-label,.v4-pd-facts small,.v4-pd-att-copy small,.v4-pd-att-time,.v4-feature-benefit small,.v4-benefit-row small,.timeline-date,.v4-pd-earning small{color:var(--nb-label-secondary)!important}
 .v4-pd-att-time.urgent{color:var(--nb-system-red)!important}
 .v4-pp-chevron,.v4-pd-att-chevron,.v4-feature-benefit>b,.v4-benefit-row>b,.owned-product-chevron{color:var(--nb-label-secondary)!important}
 

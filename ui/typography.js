@@ -86,7 +86,7 @@
     ['.v4-pd-title-row h1,.pd-name,.overview-name', 'title2', false],
     ['.detail-back,.mock-back', 'subheadline', false, 'secondary'],
     ['.v4-pd-actions button,.pd-quick-actions button', 'callout', false, 'link'],
-    ['.v4-pd-actions button span,.pd-quick-actions button span', 'caption1', false, 'secondary'],
+    ['.v4-pd-actions button span,.pd-quick-actions button span', 'callout', false, 'link'],
     ['.v4-pd-edit,.pd-edit', 'callout', false],
     ['.v4-pd-status,.pd-status-strip', 'subheadline'],
     ['.v4-pd-status>strong', 'subheadline', false],
