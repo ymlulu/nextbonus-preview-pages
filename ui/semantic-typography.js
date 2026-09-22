@@ -74,6 +74,18 @@
     nodes.forEach(node => mark(node, mobileQuery.matches ? 'headline' : 'display-value-compact', null));
   }
 
+  function syncSavedWatchlistHierarchy(root = document) {
+    if (!mobileQuery.matches) return;
+    const rules = [
+      ['.wishlist-page .nb-watchlist-section.saved .nb-watchlist-copy strong', 'callout', null],
+      ['.wishlist-page .nb-watchlist-section.saved .nb-watchlist-value', 'subheadline', 'secondary']
+    ];
+    rules.forEach(([selector, type, tone]) => {
+      root.querySelectorAll?.(selector).forEach(node => mark(node, type, tone));
+      if (root.matches?.(selector)) mark(root, type, tone);
+    });
+  }
+
   function syncMobileProductDetailHierarchy(root = document) {
     const rules = [
       ['.v4-product-detail-page .v4-pd-title-row h1', 'title2', null, 'title2', null],
@@ -101,6 +113,7 @@
     });
     syncDiscoverNameHierarchy(root);
     syncDiscoverValueHierarchy(root);
+    syncSavedWatchlistHierarchy(root);
     syncMobileProductDetailHierarchy(root);
   }
 
