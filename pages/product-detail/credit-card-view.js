@@ -184,7 +184,7 @@
   function contactActions(card,esc){
     const {phone,loginUrl}=card.contact;
     if(!phone&&!loginUrl) return '';
-    return `<div class="v4-pd-actions">${phone?`<button data-action="product-call" data-phone="${esc(phone)}">☎ <span>客服电话</span></button>`:''}${phone&&loginUrl?'<i></i>':''}${loginUrl?`<button data-action="product-login-external" data-url="${esc(loginUrl)}">↗ <span>网上银行</span></button>`:''}</div>`;
+    return `<div class="v4-pd-actions">${phone?`<button data-action="product-call" data-phone="${esc(phone)}"><svg class="v4-pd-action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4H4.5A1.5 1.5 0 0 0 3 5.5C3 14.1 9.9 21 18.5 21a1.5 1.5 0 0 0 1.5-1.5V17l-3.6-1.2-1.5 2a15.2 15.2 0 0 1-8.7-8.7l2-1.5L7 4Z"/></svg><span>客服电话</span></button>`:''}${phone&&loginUrl?'<i></i>':''}${loginUrl?`<button data-action="product-login-external" data-url="${esc(loginUrl)}"><svg class="v4-pd-action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6"/><path d="m20 4-9 9"/><path d="M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6"/></svg><span>网上银行</span></button>`:''}</div>`;
   }
 
   window.NextBonusCreditCardProductDetailView=Object.freeze({
