@@ -21,7 +21,7 @@
   }
 
   function panelHead(className,followClass,offer,saved){
-    return `<div class="${className}"><div class="nb-specialized-offer-title" data-nb-type="title2">${productName(offer)}</div>${followButton(followClass,offer.id,saved)}</div>`;
+    return `<div class="${className} nb-offer-detail-head"><div class="nb-specialized-offer-title" data-nb-type="title2">${productName(offer)}</div>${followButton(followClass,offer.id,saved)}</div>`;
   }
 
   const REMAINING={

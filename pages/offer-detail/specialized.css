@@ -138,9 +138,6 @@
   text-align:center;
 }
 
-.nb-offer-detail-host :where(.mm-head,.nb-bank-head,.remaining-head,.deal-head){
-  padding-right:96px !important;
-}
 
 @media(max-width:420px){
   .v4-offer-detail-page .mm-tier-head,

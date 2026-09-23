@@ -210,12 +210,11 @@
         ${ctx.state.offerDetailTask==='assessment'&&supportsAssessment
           ?window.NextBonusAssessmentPage?.renderPanel?.(ctx)
           :`<aside class="v4-decision-panel nb-credit-decision-panel">
-          <button class="v4-detail-save nb-follow-control ${saved?'saved':''}" data-action="bookmark" data-id="${o.id}" aria-label="${saved?'已关注，点击取消':'关注'}" title="${saved?'已关注，点击取消':'关注'}">
-            <span class="nb-follow-label">${saved?'已关注':'关注'}</span>
-          </button>
-
-          <header class="nb-credit-offer-head">
+          <header class="nb-credit-offer-head nb-offer-detail-head">
             <div class="nb-credit-offer-name" data-nb-type="title2">${esc(o.name)}</div>
+            <button class="v4-detail-save nb-follow-control ${saved?'saved':''}" data-action="bookmark" data-id="${o.id}" aria-label="${saved?'已关注，点击取消':'关注'}" title="${saved?'已关注，点击取消':'关注'}">
+              <span class="nb-follow-label">${saved?'已关注':'关注'}</span>
+            </button>
           </header>
 
           ${offerSummary}
