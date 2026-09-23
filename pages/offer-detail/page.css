@@ -210,8 +210,11 @@ body.nb-offer-overlay-open{overflow:hidden}
 }
 
 /* Offer Detail closes through backdrop / history. Follow owns the panel action slot. */
-.nb-offer-detail-host .v4-detail-save{
-  right:18px !important;
+.nb-offer-detail-host .v4-decision-panel .nb-follow-control:not(.nb-mobile-detail-action){
+  position:absolute !important;
+  top:24px !important;
+  right:24px !important;
+  z-index:4;
 }
 
 .nb-offer-detail-host .nb-follow-control{
@@ -822,7 +825,7 @@ body.nb-offer-overlay-open{overflow:hidden}
   align-items:baseline;
   justify-content:space-between;
   gap:18px;
-  padding:0 0 15px 0;
+  padding:0 96px 15px 0;
   position:relative;
   border-bottom:1px solid #edf1f5;
 }
@@ -832,9 +835,6 @@ body.nb-offer-overlay-open{overflow:hidden}
 }
 
 .nb-credit-v1-head .v4-detail-save{
-  position:static !important;
-  top:auto !important;
-  right:auto !important;
   flex:0 0 auto;
   height:34px;
   padding:0 10px;
