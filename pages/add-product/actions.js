@@ -120,6 +120,7 @@
         anchorKind:'user_product_opened_date',
         category:flow.category,
         dueDate:bankPlan?.dueDate||(flow.offer==='manual'?manualDue:null),
+        deadlineStatus:bankPlan?.hasUnresolvedDeadlines?'needs_anchor_date':null,
         preserveEmptyReward:flow.offer==='manual',
         action:flow.category==='信用卡'?'完成开卡奖励':'完成开户奖励条件',
         summary:'这是你在添加产品时建立的奖励追踪。逐项完成条件即可。'

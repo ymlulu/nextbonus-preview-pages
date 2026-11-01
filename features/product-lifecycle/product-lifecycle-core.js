@@ -106,14 +106,14 @@
         requirement: spec.requirement || '',
         createdAt: spec.createdAt || nowIso()
       };
-      if(derivedPlan?.unresolvedAnchorDate){
+      if(derivedPlan?.unresolvedAnchorDate || spec.deadlineStatus==='needs_anchor_date'){
         tracking.deadlineStatus='needs_anchor_date';
       }
       state.offerTrackings.push(tracking);
       state.trackingTasks.push(...tasks);
     }
 
-    const missingAnchor=!!derivedPlan?.unresolvedAnchorDate;
+    const missingAnchor=!!derivedPlan?.unresolvedAnchorDate || spec.deadlineStatus==='needs_anchor_date';
     const isCard=(spec.category || product?.type)==='信用卡';
     const attention = {
       id: spec.attentionId || `a-${token}`,
