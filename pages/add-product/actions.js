@@ -87,11 +87,12 @@
         : flow.offer==='manual'
           ? String(flow.reward||'').trim()
           : (chosen?.value||'开户 / 开卡奖励');
-      const tasks=flow.offer==='manual'
+      const bankPlan=bankOffer?window.NextBonusBankChecklist?.build(bankOffer,flow.opened||''):null;
+      const tasks=bankPlan?.tasks|| (flow.offer==='manual'
         ? manualEntries
             .filter(task=>String(task.desc||'').trim())
             .map(task=>({id:task.id,label:String(task.desc||'').trim(),dueDate:task.due||null}))
-        : null;
+        : null);
       const manualDue=flow.offer==='manual'
         ? (manualEntries.find(task=>task.due)?.due||null)
         : null;
@@ -118,7 +119,7 @@
         anchorDate:flow.opened||null,
         anchorKind:'user_product_opened_date',
         category:flow.category,
-        dueDate:flow.offer==='manual'?manualDue:null,
+        dueDate:bankPlan?.dueDate||(flow.offer==='manual'?manualDue:null),
         preserveEmptyReward:flow.offer==='manual',
         action:flow.category==='信用卡'?'完成开卡奖励':'完成开户奖励条件',
         summary:'这是你在添加产品时建立的奖励追踪。逐项完成条件即可。'
