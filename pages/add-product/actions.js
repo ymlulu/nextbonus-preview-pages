@@ -67,6 +67,10 @@
       earning:flow.product.earning||'—'
     });
 
+    if(flow.category==='银行账户'){
+      product.bankAccount=true;
+      product.bankDdReportsUrl=flow.product.ddReportsUrl||null;
+    }
     flow.savedProductId=product.id;
     state.productSearch='';
     state.productSectionExpanded=state.productSectionExpanded||{};
@@ -90,6 +94,8 @@
       const bankPlan=bankOffer?window.NextBonusBankChecklist?.build(bankOffer,flow.opened||''):null;
       const bankSnapshot=bankOffer?{
         slug:bankOffer.slug,version:bankOffer.version,
+        title:bankOffer.title||null,
+        bonusAmountCents:Number.isSafeInteger(bankOffer.bonusAmountCents)?bankOffer.bonusAmountCents:null,
         checklistReady:!!bankOffer.checklistReady,
         requirements:bankPlan?JSON.parse(JSON.stringify(bankOffer.requirements)):null,
         officialTermsUrl:bankOffer.officialTermsUrl||null,
@@ -109,6 +115,10 @@
         ? (manualEntries.find(task=>task.due)?.due||null)
         : null;
 
+      if(flow.category==='银行账户'){
+        product.bankAccount=true;
+        product.bankDdReportsUrl=bankOffer?.ddReportsUrl||flow.product.ddReportsUrl||null;
+      }
       if(bankOffer){
         product.bankOfferSlug=bankOffer.slug;
         product.bankOfferVersion=bankOffer.version;

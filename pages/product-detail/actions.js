@@ -132,6 +132,52 @@
       const action=el.dataset.action;
       const state=ctx.state;
 
+      if(action==='bank-receipt-add'||action==='bank-receipt-edit'){
+        const product=ctx.currentProduct?.();
+        const ledger=window.NextBonusBankBonusLedger;
+        const trackingId=el.dataset.tracking;
+        const owned=ledger?.ownedTracking?.(state,product?.id,trackingId);
+        if(!owned||!(state.products||[]).some(p=>p.id===product.id))return {handled:true};
+        const paymentId=action==='bank-receipt-edit'?el.dataset.payment:null;
+        const payment=paymentId?(owned.tracking.bankBonusPayments||[]).find(p=>p.id===paymentId):null;
+        if(paymentId&&!payment)return {handled:true};
+        state.bankReceiptDraft={
+          productId:product.id,trackingId,paymentId:paymentId||null,
+          receivedOn:payment?.receivedOn||ctx.localDateISO(),
+          amount:payment?ledger.amountInput(payment.amountCents):'',
+          error:null
+        };
+        return {render:true};
+      }
+      if(action==='bank-receipt-cancel'){
+        state.bankReceiptDraft=null;
+        return {render:true};
+      }
+      if(action==='bank-receipt-save'){
+        const draft=state.bankReceiptDraft;
+        const product=ctx.currentProduct?.();
+        if(!draft||draft.productId!==product?.id||!(state.products||[]).some(p=>p.id===product.id))
+          return {handled:true};
+        const ledger=window.NextBonusBankBonusLedger;
+        const result=ledger?.record?.(state,{...draft,today:ctx.localDateISO()});
+        if(result?.ok){
+          state.bankReceiptDraft=null;
+          ctx.toast?.('已保存到账记录');
+        }else if(draft){
+          draft.error=result?.error||'保存失败，请检查输入。';
+        }
+        return {render:true};
+      }
+      if(action==='bank-receipt-remove'){
+        const product=ctx.currentProduct?.();
+        if(!(state.products||[]).some(p=>p.id===product?.id))return {handled:true};
+        const removed=window.NextBonusBankBonusLedger?.remove?.(state,{
+          productId:product.id,trackingId:el.dataset.tracking,paymentId:el.dataset.payment
+        });
+        if(removed)ctx.toast?.('已删除到账记录');
+        if(state.bankReceiptDraft?.paymentId===el.dataset.payment)state.bankReceiptDraft=null;
+        return {render:true};
+      }
       if(action==='product-detail-back'){
         window.NextBonusProductDetailOverlay?.close?.();
         return {handled:true};
@@ -390,6 +436,13 @@
 
     input({event,ctx}){
       const target=event.target;
+      const receipt=ctx.state.bankReceiptDraft;
+      if(receipt&&(target.id==='nb-bank-receipt-date'||target.id==='nb-bank-receipt-amount')){
+        if(target.id==='nb-bank-receipt-date')receipt.receivedOn=target.value;
+        else receipt.amount=target.value;
+        receipt.error=null;
+        return {handled:true};
+      }
       const flow=ctx.state.editFlow;
       if(!flow) return false;
       if(target.id==='edit-instance'){

@@ -41,6 +41,7 @@
       sourceProduct,
       creditCard,
       nonCredit,
+      bankBonus:window.NextBonusBankBonusLedger?.summary?.(ctx.state,sourceProduct)||null,
       related,
       top:related.slice(0,3),
       isPast:ctx.state.pastProducts.some(item=>item.id===sourceProduct.id),

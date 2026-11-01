@@ -41,6 +41,7 @@
       modal:null,
       addFlow:null,
       editFlow:null,
+      bankReceiptDraft:null,
       accountMenu:false
     };
   }
