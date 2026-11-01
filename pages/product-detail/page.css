@@ -399,3 +399,36 @@ body.nb-product-overlay-open{overflow:hidden}
  .v4-product-detail-page .nb-bank-bonus-status{text-align:left;white-space:normal}
  .v4-product-detail-page .nb-bank-bonus-editor-fields{grid-template-columns:1fr}
 }
+
+/* Bank accounts only: compact identity, one reward panel and actionable checklist. */
+.v4-product-detail-page.nb-bank-account-detail .v4-pd-overview{grid-template-columns:116px minmax(0,1fr);gap:22px;align-items:center}
+.v4-product-detail-page.nb-bank-account-detail .v4-pd-left{min-width:0}
+.v4-product-detail-page.nb-bank-account-detail .v4-pd-card{width:104px;min-height:72px;max-width:104px;display:flex;align-items:center;justify-content:center;box-shadow:none;background:#f8fafc}
+.v4-product-detail-page.nb-bank-account-detail .v4-pd-card img{width:100%;max-height:74px;object-fit:contain}
+.v4-product-detail-page.nb-bank-account-detail .nb-account-logo-card{padding:10px}
+.v4-product-detail-page.nb-bank-account-detail .v4-pd-right{min-width:0}
+.v4-product-detail-page.nb-bank-account-detail .nb-account-bonus-section{gap:10px}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-entry{border:0;padding:0;gap:12px}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-entry-top{align-items:center}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-stats>div{display:grid;gap:4px;min-width:0}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-stats strong{display:block;overflow-wrap:anywhere}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-stats small{color:#687383}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-group-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-group-head>span{color:#687383}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-tasks{margin-top:10px;gap:0;border-top:1px solid #edf1f5}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-task{padding:12px 0;align-items:flex-start;border-bottom:1px solid #edf1f5;cursor:pointer}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-task input{flex:none;width:17px;height:17px;margin:3px 0 0;accent-color:#16805e}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-task>span:last-child{width:auto;flex:1;min-width:0}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-task-mark{flex:none;min-width:17px;color:#8b96a6}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-group-head h4{margin:0}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-status{white-space:nowrap}
+.v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-links{gap:18px}
+@media(max-width:780px){
+ .v4-product-detail-page.nb-bank-account-detail .v4-pd-overview{display:grid!important;grid-template-columns:72px minmax(0,1fr)!important;gap:12px!important;align-items:center!important}
+ .v4-product-detail-page.nb-bank-account-detail .v4-pd-left{align-items:center!important}
+ .v4-product-detail-page.nb-bank-account-detail .v4-pd-card{width:68px!important;max-width:68px!important;min-height:52px!important;margin:0!important}
+ .v4-product-detail-page.nb-bank-account-detail .v4-pd-card img{max-height:50px}
+ .v4-product-detail-page.nb-bank-account-detail .nb-account-logo-card{padding:6px}
+ .v4-product-detail-page.nb-bank-account-detail .nb-bank-bonus-stats{gap:12px}
+}

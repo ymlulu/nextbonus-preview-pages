@@ -27,9 +27,10 @@
     return '$'+(cents/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   }
 
-  function isBankProduct(product){
+  function isBankProduct(product,state=null){
     if(product?.type!=='银行和券商账户')return false;
     if(product.bankAccount===true||product.bankOfferSlug||product.catalogProductId)return true;
+    if(state&&(state.offerTrackings||[]).some(t=>t.userProductId===product.id&&!!t.bankOfferSnapshot))return true;
     const bankCatalog=window.NextBonusProductRegistry?.list?.('银行账户')||[];
     return bankCatalog.some(item=>
       (item.offerId&&product.offerId&&item.offerId===product.offerId)||
@@ -44,7 +45,7 @@
 
   function ownedTracking(state,productId,trackingId){
     const product=accountProduct(state,productId);
-    if(!isBankProduct(product))return null;
+    if(!isBankProduct(product,state))return null;
     const tracking=(state?.offerTrackings||[]).find(item=>
       item?.id===trackingId&&item.userProductId===productId
     );
@@ -82,7 +83,7 @@
     const tasks=(state.trackingTasks||[]).filter(item=>item.trackingId===tracking.id);
     const attention=(state.activeAttention||[]).find(item=>item.trackingId===tracking.id);
     const fallback=attention?.checklist||[];
-    const checks=tasks.length?tasks.map(task=>({
+    const rawChecks=tasks.length?tasks.map(task=>({
       id:task.id,label:task.description||'完成奖励条件',
       done:task.status==='completed',
       dueDate:task.dueDate||null
@@ -90,11 +91,12 @@
       id:task.id,label:task.label||'完成奖励条件',
       done:!!task.done,dueDate:task.dueDate||null
     }));
+    const snapshot=tracking.bankOfferSnapshot||null;
+    const checks=window.NextBonusBankPostOpenTasks?.visibleTasks(rawChecks,snapshot)||rawChecks;
     const completedCount=checks.filter(item=>item.done).length;
     const conditionsCompleted=tracking.status==='completed';
     const payments=paymentsFor(tracking);
     const receivedCents=payments.reduce((total,item)=>total+item.amountCents,0);
-    const snapshot=tracking.bankOfferSnapshot||null;
     const expectedCents=Number.isSafeInteger(snapshot?.bonusAmountCents)?snapshot.bonusAmountCents:null;
     const history=[];
     for(const item of state.attentionHistory||[]){
@@ -126,7 +128,7 @@
   }
 
   function summary(state,product){
-    if(!isBankProduct(product))return null;
+    if(!isBankProduct(product,state))return null;
     const trackings=(state?.offerTrackings||[])
       .filter(item=>item.userProductId===product.id)
       .slice().sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));

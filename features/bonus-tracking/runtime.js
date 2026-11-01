@@ -187,8 +187,10 @@
     if(!attention||!check)return {handled:false,completed:false};
     check.done=!!checked;
     syncChecklistTaskState(state,attention);
-    const isBank=(state.offerTrackings||[]).some(item=>item.id===attention.trackingId&&!!item.bankOfferSnapshot);
-    if(checked&&attention.type==='bonus'&&(attention.checklist.length>1||isBank)&&attention.checklist.every(item=>item.done)){
+    const bankTracking=window.NextBonusBankPostOpenTasks?.trackingForAttention?.(state,attention);
+    const actionable=bankTracking?window.NextBonusBankPostOpenTasks.visibleTasks(attention.checklist,bankTracking.bankOfferSnapshot):attention.checklist;
+    const isBank=!!bankTracking||(state.offerTrackings||[]).some(item=>item.id===attention.trackingId&&!!item.bankOfferSnapshot);
+    if(checked&&attention.type==='bonus'&&(attention.checklist.length>1||isBank)&&actionable.length>0&&actionable.every(item=>item.done)){
       return {handled:true,completed:completeChecklistAttention(state,attention,check.id)};
     }
     return {handled:true,completed:false};

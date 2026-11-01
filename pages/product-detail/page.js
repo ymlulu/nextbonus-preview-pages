@@ -67,35 +67,38 @@
   }
 
 
-  function bankBonusSections(ctx,bankBonus,isPast){
+  function bankBonusSections(ctx,bankBonus,isPast,product){
     if(!bankBonus)return '';
     const {esc,state}=ctx;
     const ledger=window.NextBonusBankBonusLedger;
     const draft=state.bankReceiptDraft;
-    const ddLink=bankBonus.ddReportsUrl
-      ? '<a href="'+esc(bankBonus.ddReportsUrl)+'" target="_blank" rel="noopener noreferrer">查看哪些转账可以触发 Direct Deposit</a>'
-      : '';
     const offers=bankBonus.offers.map(offer=>{
       const completed=offer.conditionsCompleted;
-      const progress=offer.totalCount?offer.completedCount+' / '+offer.totalCount+' 项完成':'尚无 Checklist';
-      const receiptStatus=offer.payments.length?'已记录到账 '+ledger.money(offer.receivedCents):'尚未记录到账';
-      const expected=offer.expectedCents!==null?'预计奖励 '+ledger.money(offer.expectedCents):offer.reward;
-      const checked=offer.checks.length?
-        '<div class="nb-bank-bonus-tasks">'+offer.checks.map(task=>
-          '<div class="nb-bank-bonus-task"><span class="'+(task.done?'is-done':'')+'">'+
-          (task.done?'✓':'○')+'</span><div><strong>'+esc(task.label)+'</strong>'+
-          (task.dueDate?'<small>截止 '+esc(task.dueDate)+'</small>':'')+'</div></div>'
-        ).join('')+'</div>':'<p class="nb-bank-bonus-note">此奖励没有可显示的结构化 Checklist。</p>';
+      const progress=offer.totalCount?offer.completedCount+' / '+offer.totalCount:'—';
+      const expected=offer.expectedCents!==null?ledger.money(offer.expectedCents):(offer.reward||'—');
+      const received=ledger.money(offer.receivedCents);
+      const missingDate=!product.opened&&offer.totalCount>0&&!completed;
+      const status=completed?'条件已完成':'进行中';
+      const dateHint=missingDate&&!isPast?'<button type="button" class="btn secondary small" data-action="edit-product" data-focus-opened="1">填写开户日期，计算截止日期</button>':'';
+      const checks=offer.checks.length?'<div class="nb-bank-bonus-tasks">'+offer.checks.map(task=>
+        '<label class="nb-bank-bonus-task">'+
+        (offer.activeAttentionId&&!isPast?
+          '<input type="checkbox" data-action="checklist" data-attention="'+esc(offer.activeAttentionId)+'" data-check="'+esc(task.id)+'" '+(task.done?'checked':'')+'/>':
+          '<span class="nb-bank-task-mark">'+(task.done?'✓':'○')+'</span>')+
+        '<span><strong>'+esc(task.label)+'</strong>'+
+        (task.dueDate?'<small>截止 '+esc(task.dueDate)+'</small>':'')+
+        '</span></label>'
+      ).join('')+'</div>':'<p class="nb-bank-bonus-note">没有需要追踪的开户后任务。</p>';
       const paymentRows=offer.payments.length?'<div class="nb-bank-bonus-payments">'+offer.payments.map(payment=>
         '<div class="nb-bank-bonus-payment"><span>'+esc(payment.receivedOn)+'</span><strong>'+
         esc(ledger.money(payment.amountCents))+'</strong>'+
         (!isPast?'<button type="button" class="btn ghost small" data-action="bank-receipt-edit" data-tracking="'+esc(offer.id)+'" data-payment="'+esc(payment.id)+'">编辑</button>'+
         '<button type="button" class="btn ghost small" data-action="bank-receipt-remove" data-tracking="'+esc(offer.id)+'" data-payment="'+esc(payment.id)+'">删除</button>':'')+
-        '</div>').join('')+'</div>':'<p class="nb-bank-bonus-note">收到奖金后，在这里记录实际到账金额与日期。</p>';
+        '</div>').join('')+'</div>':'<p class="nb-bank-bonus-note">尚未记录到账。</p>';
       const showDraft=!isPast&&draft?.productId===bankBonus.productId&&draft.trackingId===offer.id;
       const editor=showDraft?'<div class="nb-bank-bonus-receipt-editor">'+
         '<div class="nb-bank-bonus-editor-fields"><label>到账日期<input id="nb-bank-receipt-date" type="date" class="input" value="'+esc(draft.receivedOn||'')+'"/></label>'+
-        '<label>实际到账金额（美元）<input id="nb-bank-receipt-amount" type="text" inputmode="decimal" class="input" placeholder="例如 300.00" value="'+esc(draft.amount||'')+'"/></label></div>'+
+        '<label>实际到账金额（美元）<input id="nb-bank-receipt-amount" type="text" inputmode="decimal" class="input" placeholder="例如 250.00" value="'+esc(draft.amount||'')+'"/></label></div>'+
         (draft.error?'<p class="nb-bank-bonus-error" role="alert">'+esc(draft.error)+'</p>':'')+
         '<div class="nb-bank-bonus-editor-actions"><button type="button" class="btn primary small" data-action="bank-receipt-save">保存到账记录</button>'+
         '<button type="button" class="btn secondary small" data-action="bank-receipt-cancel">取消</button></div></div>':'';
@@ -103,23 +106,24 @@
         '<div><time>'+esc(event.date||'—')+'</time><span>'+esc(event.label)+'</span></div>'
       ).join('')+'</div>':'';
       const links=[
-        offer.ddReportsUrl?'<a href="'+esc(offer.ddReportsUrl)+'" target="_blank" rel="noopener noreferrer">Direct Deposit 数据</a>':'',
+        offer.ddReportsUrl?'<a href="'+esc(offer.ddReportsUrl)+'" target="_blank" rel="noopener noreferrer">DD 来源查询</a>':'',
         offer.officialTermsUrl?'<a href="'+esc(offer.officialTermsUrl)+'" target="_blank" rel="noopener noreferrer">官方奖励条款</a>':''
       ].filter(Boolean).join('');
-      return '<article class="nb-bank-bonus-entry"><div class="nb-bank-bonus-entry-top"><div><h3>'+esc(offer.title)+'</h3>'+
-        '<p>'+esc(expected)+'</p></div><div class="nb-bank-bonus-status"><span>'+(completed?'条件已完成':'条件进行中')+'</span>'+
-        '<small>'+esc(progress)+'</small></div></div>'+
-        '<div class="nb-bank-bonus-group"><h4>完成条件</h4>'+checked+'</div>'+
-        '<div class="nb-bank-bonus-group"><div class="nb-bank-bonus-receipt-head"><div><h4>奖励到账</h4><p>'+esc(receiptStatus)+'</p></div>'+
+      return '<article class="nb-bank-bonus-entry">'+
+        '<div class="nb-bank-bonus-entry-top"><h3>'+esc(offer.title)+'</h3><span class="nb-bank-bonus-status">'+status+'</span></div>'+
+        '<div class="nb-bank-bonus-stats"><div><small>预计奖励</small><strong>'+esc(expected)+'</strong></div>'+
+        '<div><small>已到账</small><strong>'+esc(received)+'</strong></div></div>'+
+        '<div class="nb-bank-bonus-group"><div class="nb-bank-bonus-group-head"><h4>开户后任务</h4><span>'+esc(progress)+' 已完成</span></div>'+dateHint+checks+'</div>'+
+        '<div class="nb-bank-bonus-group"><div class="nb-bank-bonus-receipt-head"><div><h4>奖励到账记录</h4></div>'+
         (!isPast&&!showDraft?'<button type="button" class="btn secondary small" data-action="bank-receipt-add" data-tracking="'+esc(offer.id)+'">记录到账</button>':'')+
         '</div>'+paymentRows+editor+'</div>'+history+
         (links?'<div class="nb-bank-bonus-links">'+links+'</div>':'')+
         '</article>';
     }).join('');
-    return '<section class="v4-pd-section nb-account-bonus-section"><div class="v4-section-head"><h2>开户奖励管理</h2></div>'+
-      (bankBonus.offers.length?offers:'<p class="nb-bank-bonus-note">这个账户还没有关联开户奖励。你可以先管理账户资料。</p>')+
-      (!bankBonus.offers.length&&ddLink?'<div class="nb-bank-bonus-links">'+ddLink+'</div>':'')+
-      '</section>';
+    const genericDD=!bankBonus.offers.length&&bankBonus.ddReportsUrl?
+      '<div class="nb-bank-bonus-links"><a href="'+esc(bankBonus.ddReportsUrl)+'" target="_blank" rel="noopener noreferrer">DD 来源查询</a></div>':'';
+    return '<section class="v4-pd-section nb-account-bonus-section"><div class="v4-section-head"><h2>开户奖励</h2></div>'+
+      (offers||'<p class="nb-bank-bonus-note">这个账户目前没有正在追踪的开户奖励。</p>')+genericDD+'</section>';
   }
 
   function benefitCard(ctx,benefit){
@@ -216,7 +220,7 @@
     const productSections=creditCard&&creditCardView
       ? `${creditCardView.bonusSection(ctx,creditCard)}${creditCardView.benefitsSection(ctx,creditCard)}`
       : nonCredit
-        ? `${related.length?`<section class="v4-pd-section v4-pd-attention"><div class="v4-section-head"><h2>待处理 <span class="attention-count-dot">${related.length}</span></h2>${related.length>3?`<button class="mock-link" data-action="attention-for-product" data-id="${product.id}">查看全部</button>`:''}</div><div class="v4-pd-attention-list">${top.map(item=>pdAttentionItem(ctx,item)).join('')}</div></section>`:''}${bankBonusSections(ctx,bankBonus,isPast)}${nonCreditSections(nonCredit,esc)}`
+        ? `${bankBonus?bankBonusSections(ctx,bankBonus,isPast,product):`${related.length?`<section class="v4-pd-section v4-pd-attention"><div class="v4-section-head"><h2>待处理 <span class="attention-count-dot">${related.length}</span></h2>${related.length>3?`<button class="mock-link" data-action="attention-for-product" data-id="${product.id}">查看全部</button>`:''}</div><div class="v4-pd-attention-list">${top.map(item=>pdAttentionItem(ctx,item)).join('')}</div></section>`:''}`}${bankBonus&&!nonCredit?.resolved?'':nonCreditSections(nonCredit,esc)}`
         : `${related.length?`<section class="v4-pd-section v4-pd-attention"><div class="v4-section-head"><h2>待处理 <span class="attention-count-dot">${related.length}</span></h2>${related.length>3?`<button class="mock-link" data-action="attention-for-product" data-id="${product.id}">查看全部</button>`:''}</div><div class="v4-pd-attention-list">${top.map(item=>pdAttentionItem(ctx,item)).join('')}</div></section>`:''}<section class="v4-pd-section v4-pd-benefits"><div class="v4-section-head"><h2>福利</h2></div>${benefits.length?`<div class="benefit-grid pd-benefit-grid">${benefits.map(item=>benefitCard(ctx,item)).join('')}</div>`:'<div class="timeline-empty">暂时没有可展示的福利信息</div>'}</section>`;
     const cardStatusLabel=product.type==='信用卡'
       ? (isPast
@@ -242,7 +246,7 @@
       <div class="nb-mobile-detail-toolbar-spacer" aria-hidden="true"></div>
       ${isPast?'':`<button class="v4-pd-edit nb-mobile-detail-action" data-action="edit-product">编辑</button>`}
     </div>`;
-    return `<div class="content v4-product-detail-page ${creditCard?'nb-card-detail':nonCredit?'nb-account-detail':''}">
+    return `<div class="content v4-product-detail-page ${creditCard?'nb-card-detail':bankBonus?'nb-account-detail nb-bank-account-detail':nonCredit?'nb-account-detail':''}">
       ${mobileToolbar}
       <section class="v4-pd-overview">
         <div class="v4-pd-left"><div class="v4-pd-card ${product.type==='信用卡'?'credit-card-art':nonCredit?.logo?'nb-account-logo-card':''}">${nonCredit?.logo?`<img src="${esc(nonCredit.logo)}" alt="${esc(product.institution||product.name)}" />`:detailArt.primarySrc?`<img src="${detailArt.primarySrc}"${detailArt.fallbackAttr} alt="${esc(product.name)}" />`:`<span class="fallback-brand large">${esc(shortBrand(product.institution))}</span>`}</div>${contactActions}</div>
