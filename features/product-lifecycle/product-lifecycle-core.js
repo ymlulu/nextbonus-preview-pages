@@ -81,12 +81,13 @@
         ? derivedPlan.tasks
         : [{id: spec.taskId || `task-${token}-1`, label: spec.requirement || '完成对应奖励条件', dueDate: spec.dueDate || null}];
     const tasks = rawTasks.map((task,index) => ({
-      id: task.id || `task-${token}-${index+1}`,
+      id: spec.bankOfferSnapshot && task.id ? `task-${token}-${task.id}` : (task.id || `task-${token}-${index+1}`),
       trackingId,
       ...(spec.applicationHandoffId ? {applicationHandoffId: spec.applicationHandoffId} : {}),
       description: task.description || task.label || spec.requirement || '完成对应奖励条件',
       dueDate: task.dueDate || task.due || null,
-      status: task.status || 'pending'
+      status: task.status || 'pending',
+      ...(task.deadlineRule ? {deadlineRule:clone(task.deadlineRule)} : {})
     }));
     const dueDate = spec.dueDate || derivedPlan?.dueDate || tasks.find(task => task.dueDate)?.dueDate || null;
     const reward = spec.preserveEmptyReward ? String(spec.reward ?? '') : (spec.reward || '开户 / 开卡奖励');
@@ -104,16 +105,19 @@
         anchorKind: spec.anchorKind || null,
         reward,
         requirement: spec.requirement || '',
+        ...(spec.bankOfferSnapshot ? {bankOfferSnapshot:clone(spec.bankOfferSnapshot)} : {}),
         createdAt: spec.createdAt || nowIso()
       };
       if(derivedPlan?.unresolvedAnchorDate || spec.deadlineStatus==='needs_anchor_date'){
         tracking.deadlineStatus='needs_anchor_date';
       }
+      if(spec.deadlineStatus==='unresolved_rule')tracking.deadlineStatus='unresolved_rule';
       state.offerTrackings.push(tracking);
       state.trackingTasks.push(...tasks);
     }
 
     const missingAnchor=!!derivedPlan?.unresolvedAnchorDate || spec.deadlineStatus==='needs_anchor_date';
+    const unresolvedRule=spec.deadlineStatus==='unresolved_rule';
     const isCard=(spec.category || product?.type)==='信用卡';
     const attention = {
       id: spec.attentionId || `a-${token}`,
@@ -126,14 +130,15 @@
       ...(spec.requirement ? {requirement:spec.requirement} : {}),
       action: spec.action || '完成开卡奖励',
       secondary: reward,
-      time: missingAnchor ? '截止日期暂时无法计算' : dueDate ? `截止 ${shortDate(dueDate)}` : '截止日期以所选奖励规则为准',
+      time: missingAnchor ? '截止日期暂时无法计算' : dueDate ? `截止 ${shortDate(dueDate)}` : unresolvedRule?'截止日期需要核对':'截止日期以所选奖励规则为准',
       dueDate,
       type: 'bonus',
-      summary: spec.summary || (missingAnchor ? `奖励条件已经保存。补充${isCard?'开卡':'开户'}日期后，NextBonus 会自动计算截止日期。` : '奖励条件正在追踪中。'),
+      summary: (missingAnchor ? `奖励条件已保存，请补充${isCard?'开卡':'开户'}日期。` : null) || spec.summary || (missingAnchor ? `奖励条件已经保存。补充${isCard?'开卡':'开户'}日期后，NextBonus 会自动计算截止日期。` : '奖励条件正在追踪中。'),
       key: reward,
-      keySub: spec.keySub || (missingAnchor ? `补充${isCard?'开卡':'开户'}日期后自动计算` : derivedPlan?.distinctDueDates > 1 ? `最早 ${shortDate(dueDate)} 截止；各项日期见任务` : dueDate ? `最晚 ${shortDate(dueDate)} 完成` : '按所选奖励规则'),
+      keySub: spec.keySub || (missingAnchor ? `补充${isCard?'开卡':'开户'}日期后自动计算` : (spec.distinctDueDates||derivedPlan?.distinctDueDates) > 1 ? `最早 ${shortDate(dueDate)} 截止；各项日期见任务` : dueDate ? `最晚 ${shortDate(dueDate)} 完成` : '按所选奖励规则'),
       instruction: spec.instruction || '完成以下条件',
-      checklist: tasks.map(task => ({id:task.id,label:task.description,done:false,...(task.dueDate?{dueDate:task.dueDate}:{})})),
+      checklist: tasks.map(task => ({id:task.id,label:task.description,done:task.status==='completed',...(task.dueDate?{dueDate:task.dueDate}:{})})),
+      trackingId,
       primary: '我已完成',
       secondaryAction: null,
       completionKind: 'completed'

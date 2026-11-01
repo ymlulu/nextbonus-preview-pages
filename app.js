@@ -405,13 +405,15 @@
     else if(a.completionKind==='viewed'){ result='已查看'; correction='撤销已查看'; }
     else if(a.completionKind==='confirmed'){ result='已了解'; correction='撤销确认'; }
     const identity=attentionIdentity(a);
-    const history=window.NextBonusAttentionHistory.stamp({id:`h-${a.id}-${Date.now()}`,productId:a.productId,product:identity.name,productInstance:identity.instance,action:a.action,time:a.time,dueDate:a.dueDate||null,result,statusClass,ended:historyDateLabel(),correction,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,...(a.benefitId?{benefitId:a.benefitId,cycleType:a.cycleType||null,cycleId:a.cycleId||null}:{}),source:{...a,product:identity.name,productInstance:identity.instance}},'user');
+    const history=window.NextBonusAttentionHistory.stamp({id:`h-${a.id}-${Date.now()}`,productId:a.productId,product:identity.name,productInstance:identity.instance,action:a.action,time:a.time,dueDate:a.dueDate||null,result,statusClass,ended:historyDateLabel(),correction,summary:a.summary,key:a.key,keySub:a.keySub,instruction:a.instruction,...(a.benefitId?{benefitId:a.benefitId,cycleType:a.cycleType||null,cycleId:a.cycleId||null}:{}),source:JSON.parse(JSON.stringify({...a,product:identity.name,productInstance:identity.instance}))},'user');
+    if(mode==='complete')window.NextBonusBonusTrackingRuntime?.markAttentionCompleted?.(state,a);
     state.activeAttention.splice(idx,1); state.attentionHistory.unshift(history); state.expandedAttentionId=null;
-    render(); toast(`${result} · `,()=>undoHistory(history.id,a));
+    render(); toast(`${result} · `,()=>undoHistory(history.id,history.source));
   }
   function undoHistory(historyId, original){
     state.attentionHistory=state.attentionHistory.filter(h=>h.id!==historyId);
     if(!state.activeAttention.find(a=>a.id===original.id)) state.activeAttention.push(original);
+    window.NextBonusBonusTrackingRuntime?.restoreAttentionTracking?.(state,original);
     render(); toast('已撤销');
   }
 

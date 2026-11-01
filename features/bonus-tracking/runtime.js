@@ -134,6 +134,23 @@
     }
   }
 
+  function markAttentionCompleted(state,attention){
+    if(attention?.type!=='bonus')return false;
+    for(const item of attention.checklist||[])item.done=true;
+    syncChecklistTaskState(state,attention);
+    const tracking=(state.offerTrackings||[]).find(item=>item.id===attention.trackingId);
+    if(tracking)tracking.status='completed';
+    return true;
+  }
+
+  function restoreAttentionTracking(state,attention){
+    if(attention?.type!=='bonus')return false;
+    syncChecklistTaskState(state,attention);
+    const tracking=(state.offerTrackings||[]).find(item=>item.id===attention.trackingId);
+    if(tracking)tracking.status='in_progress';
+    return true;
+  }
+
   function completeChecklistAttention(state,attention,triggerId){
     const index=(state.activeAttention||[]).findIndex(item=>item.id===attention.id);if(index<0)return false;
     attention.completionTriggerCheckId=triggerId;
@@ -170,10 +187,53 @@
     if(!attention||!check)return {handled:false,completed:false};
     check.done=!!checked;
     syncChecklistTaskState(state,attention);
-    if(checked&&attention.type==='bonus'&&attention.checklist.length>1&&attention.checklist.every(item=>item.done)){
+    const isBank=(state.offerTrackings||[]).some(item=>item.id===attention.trackingId&&!!item.bankOfferSnapshot);
+    if(checked&&attention.type==='bonus'&&(attention.checklist.length>1||isBank)&&attention.checklist.every(item=>item.done)){
       return {handled:true,completed:completeChecklistAttention(state,attention,check.id)};
     }
     return {handled:true,completed:false};
+  }
+
+  function reanchorBankTracking(state,product,attention,newOpened){
+    const tracking=(state.offerTrackings||[]).find(item=>
+      item.id===attention.trackingId&&item.userProductId===product.id);
+    const snapshot=tracking?.bankOfferSnapshot;
+    if(!snapshot?.requirements||!snapshot.checklistReady)return false;
+    const planner=window.NextBonusBankChecklist;
+    const plan=planner?.build(snapshot,newOpened);
+    if(!plan?.tasks?.length)return false;
+    const oldTasks=(state.trackingTasks||[]).filter(task=>task.trackingId===tracking.id);
+    const oldById=new Map(oldTasks.map(task=>[task.id,task]));
+    const previous=new Map((attention.checklist||[]).map(task=>[task.id,task]));
+    const generated=plan.tasks.map(task=>{
+      const id='task-'+product.id+'-'+task.id;
+      const old=oldById.get(id);
+      const check=previous.get(id);
+      return {
+        id,trackingId:tracking.id,description:task.label,dueDate:task.dueDate,
+        status:old?.status==='completed'||check?.done?'completed':'pending',
+        ...(task.deadlineRule?{deadlineRule:clone(task.deadlineRule)}:{})
+      };
+    });
+    state.trackingTasks=[
+      ...(state.trackingTasks||[]).filter(task=>task.trackingId!==tracking.id),
+      ...generated
+    ];
+    tracking.anchorDate=newOpened;
+    if(plan.needsAnchorDate)tracking.deadlineStatus='needs_anchor_date';
+    else if(plan.hasUnresolvedDeadlines)tracking.deadlineStatus='unresolved_rule';
+    else delete tracking.deadlineStatus;
+    attention.checklist=generated.map(task=>({
+      id:task.id,label:task.description,done:task.status==='completed',
+      ...(task.dueDate?{dueDate:task.dueDate}:{})
+    }));
+    attention.dueDate=plan.dueDate;
+    attention.time=plan.dueDate?'截止 '+shortDate(plan.dueDate):
+      plan.needsAnchorDate?'截止日期暂时无法计算':'截止日期需要核对';
+    attention.keySub=plan.needsAnchorDate?'补充开户日期后自动计算':
+      plan.distinctDueDates>1?'最早 '+shortDate(plan.dueDate)+' 截止；各项日期见任务':
+      plan.dueDate?'最晚 '+shortDate(plan.dueDate)+' 完成':'请查看奖励条款';
+    return true;
   }
 
   function reanchorProduct(state,product,oldOpened,newOpened,preferred=null){
@@ -181,6 +241,11 @@
     let changed=false;
     const bonuses=(state.activeAttention||[]).filter(item=>item.productId===product.id&&item.type==='bonus');
     for(const attention of bonuses){
+      if(reanchorBankTracking(state,product,attention,newOpened)){
+        changed=true;
+        continue;
+      }
+      if(product.bankOfferSlug)continue; // Never reinterpret reviewed bank terms as free text.
       const source=sourceForAttention(state,product,attention,preferred);
       if(!source?.requirement)continue;
       const plan=planFor(source,newOpened,product.type);
@@ -201,6 +266,8 @@
     sourceForAttention,
     reanchorProduct,
     syncChecklistTaskState,
+    markAttentionCompleted,
+    restoreAttentionTracking,
     setChecklistItem,
     restoreHistoryDirect
   });

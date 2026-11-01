@@ -88,7 +88,19 @@
           ? String(flow.reward||'').trim()
           : (chosen?.value||'开户 / 开卡奖励');
       const bankPlan=bankOffer?window.NextBonusBankChecklist?.build(bankOffer,flow.opened||''):null;
-      const tasks=bankPlan?.tasks|| (flow.offer==='manual'
+      const bankSnapshot=bankOffer?{
+        slug:bankOffer.slug,version:bankOffer.version,
+        checklistReady:!!bankOffer.checklistReady,
+        requirements:bankPlan?JSON.parse(JSON.stringify(bankOffer.requirements)):null,
+        officialTermsUrl:bankOffer.officialTermsUrl||null,
+        ddReportsUrl:bankOffer.ddReportsUrl||null
+      }:null;
+      // Legacy text is display-only: never guess a deadline from its wording.
+      const bankFallback=bankOffer&&!bankPlan?[...(
+        bankOffer.ddRequired&&bankOffer.ddRequirement?[bankOffer.ddRequirement]:[]),
+        ...(Array.isArray(bankOffer.extraRequirements)?bankOffer.extraRequirements:[])
+      ].filter(Boolean).map((label,index)=>({id:'legacy-'+(index+1),label,dueDate:null})):null;
+      const tasks=bankPlan?.tasks||bankFallback|| (flow.offer==='manual'
         ? manualEntries
             .filter(task=>String(task.desc||'').trim())
             .map(task=>({id:task.id,label:String(task.desc||'').trim(),dueDate:task.due||null}))
@@ -120,7 +132,9 @@
         anchorKind:'user_product_opened_date',
         category:flow.category,
         dueDate:bankPlan?.dueDate||(flow.offer==='manual'?manualDue:null),
-        deadlineStatus:bankPlan?.hasUnresolvedDeadlines?'needs_anchor_date':null,
+        deadlineStatus:bankPlan?.needsAnchorDate?'needs_anchor_date':bankPlan?.hasUnresolvedDeadlines?'unresolved_rule':null,
+        distinctDueDates:bankPlan?.distinctDueDates||0,
+        bankOfferSnapshot:bankSnapshot,
         preserveEmptyReward:flow.offer==='manual',
         action:flow.category==='信用卡'?'完成开卡奖励':'完成开户奖励条件',
         summary:'这是你在添加产品时建立的奖励追踪。逐项完成条件即可。'
