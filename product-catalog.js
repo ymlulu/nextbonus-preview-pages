@@ -11,9 +11,9 @@
       {id:'c-citi-elite', offerId:'citi-strata', name:'Citi Strata Elite', institution:'Citi', art:'dark'}
     ],
     '银行账户':[
-      {id:'b-usbank', offerId:'usbank-checking', name:'U.S. Bank Smartly Checking', institution:'U.S. Bank', art:'bank'},
-      {id:'b-hsbc', offerId:'hsbc-checking', name:'HSBC Premier Checking', institution:'HSBC', art:'bank'},
-      {id:'b-truist', offerId:'truist-checking', name:'Truist One Checking', institution:'Truist', art:'bank'}
+      {id:'b-usbank', bankProductId:'us-bank/smartly-checking', offerId:'usbank-checking', name:'U.S. Bank Smartly Checking', institution:'U.S. Bank', art:'bank'},
+      {id:'b-hsbc', bankProductId:null, offerId:'hsbc-checking', name:'HSBC Premier Checking', institution:'HSBC', art:'bank'},
+      {id:'b-truist', bankProductId:'truist/truist-one-checking', offerId:'truist-checking', name:'Truist One Checking', institution:'Truist', art:'bank'}
     ],
     '券商账户':[
       {id:'br-moomoo', offerId:'moomoo', name:'Moomoo Brokerage', institution:'Moomoo', art:'bank'},
@@ -35,23 +35,46 @@
     return {...product, cardImageLocal:asset.web || asset.local || undefined, cardArtKey:asset.key || undefined};
   }
 
-  const frozenCategories = Object.freeze(Object.fromEntries(
+  const catalog = Object.fromEntries(
     Object.entries(categories).map(([category, products]) => [
       category,
       Object.freeze(products.map(product => Object.freeze(withCanonicalArt(category, product))))
     ])
-  ));
+  );
 
-  const byId = Object.freeze(Object.fromEntries(
-    Object.values(frozenCategories).flat().map(product => [product.id, product])
-  ));
+  let byId = Object.freeze({});
+  function rebuildIndex(){
+    byId=Object.freeze(Object.fromEntries(
+      Object.values(catalog).flat().map(product=>[product.id,product])
+    ));
+  }
+  function replaceBankProducts(products){
+    catalog['银行账户']=Object.freeze(
+      (products||[]).map(product=>Object.freeze(withCanonicalArt('银行账户',product)))
+    );
+    rebuildIndex();
+  }
+  rebuildIndex();
 
-  window.NextBonusProductCatalog = frozenCategories;
+  window.NextBonusProductCatalog = catalog;
   window.NextBonusProductRegistry = Object.freeze({
-    schemaVersion: '1.1',
-    categories: frozenCategories,
-    byId,
+    schemaVersion: '1.2',
+    categories: catalog,
+    get byId(){ return byId; },
     getById(id){ return byId[id] || null; },
-    list(category){ return frozenCategories[category] || Object.freeze([]); }
+    list(category){ return catalog[category] || Object.freeze([]); },
+    bankCatalogState(){ return window.NextBonusBankProductCatalog?.getState?.()||null; },
+    retryBankCatalog(){ return window.NextBonusBankProductCatalog?.retry?.(); }
   });
+
+  const bankCatalog=window.NextBonusBankProductCatalog;
+  if(bankCatalog){
+    bankCatalog.prime(catalog['银行账户']);
+    replaceBankProducts(bankCatalog.list());
+    bankCatalog.subscribe(({products})=>{
+      replaceBankProducts(products);
+      window.dispatchEvent?.(new CustomEvent('nextbonus:product-catalog-updated'));
+    });
+    void bankCatalog.load();
+  }
 })();

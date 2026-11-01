@@ -125,6 +125,25 @@
   box-shadow:none;
 }
 .add-product-modal .nb-add-filter-row{margin:10px 0 14px}
+.add-bank-catalog-status{
+  min-height:42px;
+  margin:-2px 0 12px;
+  padding:10px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border:1px solid #dfe7f2;
+  border-radius:10px;
+  background:#f7f9fc;
+  color:#506079;
+}
+.add-bank-catalog-status.error{
+  border-color:#f0d7d7;
+  background:#fff7f7;
+  color:#8c3e3e;
+}
+.add-bank-catalog-status .btn{flex:0 0 auto}
 .add-product-selector-list{
   display:block!important;
   gap:0!important;

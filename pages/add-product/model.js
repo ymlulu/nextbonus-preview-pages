@@ -43,10 +43,20 @@
   function visibleEntries(catalog,flow){
     const category=Object.fromEntries(FILTERS)[flow.filter]||null;
     const query=String(flow.search||'').trim().toLowerCase();
+    const compactQuery=query.replace(/[^a-z0-9\u3400-\u9fff]+/g,'');
     return catalogEntries(catalog).filter(({category:itemCategory,product})=>{
       if(category&&itemCategory!==category) return false;
       if(!query) return true;
-      return `${product.name||''} ${product.institution||''} ${product.subtype||''}`.toLowerCase().includes(query);
+      const searchable=[
+        product.name,
+        product.institution,
+        product.subtype,
+        product.bankProductId,
+        product.bankSlug,
+        product.productSlug
+      ].filter(Boolean).join(' ').toLowerCase();
+      const compactSearchable=searchable.replace(/[^a-z0-9\u3400-\u9fff]+/g,'');
+      return searchable.includes(query)||(compactQuery&&compactSearchable.includes(compactQuery));
     });
   }
 

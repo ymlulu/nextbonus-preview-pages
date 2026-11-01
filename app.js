@@ -514,5 +514,9 @@
     if(primary) restoreScroll(primary); else window.scrollTo({top:0,behavior:'instant'});
   });
 
+  window.addEventListener?.('nextbonus:product-catalog-updated',()=>{
+    if(state.addFlow) render();
+  });
+
   render();
 })();

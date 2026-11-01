@@ -27,6 +27,19 @@
 
   function selector(flow, catalog, esc, model){
     const items = model.visibleEntries(catalog, flow);
+    const bankState=window.NextBonusProductRegistry?.bankCatalogState?.();
+    const showBankState=flow.filter==='全部'||flow.filter==='银行';
+    let bankNotice='';
+    if(showBankState&&bankState?.status==='loading'){
+      bankNotice='<div class="add-bank-catalog-status" data-nb-bank-catalog-status="loading" role="status">正在加载银行账户…</div>';
+    }else if(showBankState&&bankState?.status==='refreshing'){
+      bankNotice='<div class="add-bank-catalog-status" data-nb-bank-catalog-status="refreshing" role="status">正在更新银行账户；当前先显示上次保存的数据。</div>';
+    }else if(showBankState&&bankState?.status==='error'){
+      const message=bankState.source==='cache'
+        ? '银行账户目录暂时无法更新，当前显示上次保存的数据。'
+        : '银行账户目录暂时无法加载，信用卡、券商、会籍和已有银行账户仍可正常添加。';
+      bankNotice=`<div class="add-bank-catalog-status error" data-nb-bank-catalog-status="error" role="alert"><span>${message}</span><button class="btn ghost small" type="button" data-action="add-bank-catalog-retry">重新加载</button></div>`;
+    }
     const rows = items.map(({category, product}) => {
       const art=product.cardImageLocal
         ? `<div class="add-product-art"><img src="${esc(product.cardImageLocal)}" alt="${esc(product.name)}" /></div>`
@@ -35,7 +48,7 @@
     }).join('');
     return {
       title: '选择产品',
-      body: `<div class="search-wrap nb-add-search-wrap"><span class="search-icon">${icon('search')}</span><input id="nb-add-search" class="search" value="${esc(flow.search||'')}" placeholder="搜索信用卡、银行账户、券商或会籍" />${flow.search?`<button class="search-clear nb-icon-button nb-icon-button--round nb-icon-button--soft" type="button" data-action="add-clear-search" data-nb-clear-search aria-label="清除搜索">${icon('close')}</button>`:''}</div><div class="filters nb-add-filter-row">${model.FILTERS.map(([label])=>`<button class="pill ${flow.filter===label?'active':''}" type="button" data-action="add-filter" data-value="${esc(label)}" data-nb-add-filter="${esc(label)}">${esc(label)}</button>`).join('')}</div>${rows?`<div class="option-list add-product-selector-list">${rows}</div>`:'<div class="empty"><h3>没有找到这个产品</h3><p>换个关键词试试。</p></div>'}`,
+      body: `<div class="search-wrap nb-add-search-wrap"><span class="search-icon">${icon('search')}</span><input id="nb-add-search" class="search" value="${esc(flow.search||'')}" placeholder="搜索信用卡、银行账户、券商或会籍" />${flow.search?`<button class="search-clear nb-icon-button nb-icon-button--round nb-icon-button--soft" type="button" data-action="add-clear-search" data-nb-clear-search aria-label="清除搜索">${icon('close')}</button>`:''}</div><div class="filters nb-add-filter-row">${model.FILTERS.map(([label])=>`<button class="pill ${flow.filter===label?'active':''}" type="button" data-action="add-filter" data-value="${esc(label)}" data-nb-add-filter="${esc(label)}">${esc(label)}</button>`).join('')}</div>${bankNotice}${rows?`<div class="option-list add-product-selector-list">${rows}</div>`:'<div class="empty"><h3>没有找到这个产品</h3><p>换个关键词试试。</p></div>'}`,
       foot: ''
     };
   }

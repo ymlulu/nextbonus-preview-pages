@@ -52,6 +52,7 @@
     const product=lifecycle.createUserProduct(state,{
       idPrefix:'p-local',
       offerId:flow.product.offerId||null,
+      catalogProductId:flow.category==='银行账户'?(flow.product.bankProductId||null):null,
       type,
       name:flow.product.name,
       institution:flow.product.institution,
@@ -171,6 +172,10 @@
         flow.search='';
         flow.reportStatus=null;
         rerender(ctx,'nb-add-search');
+        return {handled:true};
+      }
+      if(action==='add-bank-catalog-retry'){
+        void window.NextBonusProductRegistry?.retryBankCatalog?.();
         return {handled:true};
       }
       if(action==='add-product-select'){

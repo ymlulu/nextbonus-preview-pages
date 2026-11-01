@@ -44,6 +44,7 @@
     const product = {
       id,
       offerId: spec.offerId || null,
+      ...(spec.catalogProductId ? {catalogProductId:spec.catalogProductId} : {}),
       ...(spec.offerVersionId ? {offerVersionId: spec.offerVersionId} : {}),
       ...(spec.applicationHandoffId ? {applicationHandoffId: spec.applicationHandoffId} : {}),
       type: spec.type || '其他',
