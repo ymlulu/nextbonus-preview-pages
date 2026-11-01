@@ -27,7 +27,8 @@
     flow.offerLoading=true;
     rerender(ctx);
     try{
-      await offerChoice.ensureReviewedOfferHistory(flow.product);
+      if(flow.category==='银行账户') await window.NextBonusBankOffersCatalog.load();
+      else await offerChoice.ensureReviewedOfferHistory(flow.product);
     }finally{
       if(ctx.state.addFlow!==flow) return;
       flow.offerLoading=false;
@@ -74,13 +75,18 @@
     }
 
     if(flow.track){
-      const chosen=flow.offer==='manual'?null:offerChoice.resolveOfferChoice(flow.product,flow.offer);
+      const bankOffer=flow.category==='银行账户'&&flow.offer!=='manual'
+        ? window.NextBonusBankOffersCatalog.forProduct(flow.product).find(item=>item.slug===flow.offer)
+        : null;
+      const chosen=flow.offer==='manual'||bankOffer?null:offerChoice.resolveOfferChoice(flow.product,flow.offer);
       const manualEntries=flow.offer==='manual'
         ? (flow.tasks||[]).filter(task=>String(task.desc||'').trim()||task.due)
         : [];
-      const reward=flow.offer==='manual'
-        ? String(flow.reward||'').trim()
-        : (chosen?.value||'开户 / 开卡奖励');
+      const reward=bankOffer
+        ? (Number.isFinite(bankOffer.bonusAmountCents)?'$'+(bankOffer.bonusAmountCents/100).toLocaleString('en-US')+' 开户奖励':bankOffer.title)
+        : flow.offer==='manual'
+          ? String(flow.reward||'').trim()
+          : (chosen?.value||'开户 / 开卡奖励');
       const tasks=flow.offer==='manual'
         ? manualEntries
             .filter(task=>String(task.desc||'').trim())
@@ -90,6 +96,10 @@
         ? (manualEntries.find(task=>task.due)?.due||null)
         : null;
 
+      if(bankOffer){
+        product.bankOfferSlug=bankOffer.slug;
+        product.bankOfferVersion=bankOffer.version;
+      }
       if(chosen){
         product.offerVersionId=chosen.offerVersionId||product.offerVersionId||null;
         product.sourceOfferChoiceId=chosen.sourceOfferChoiceId||chosen.id||null;
@@ -99,11 +109,11 @@
         productId:product.id,
         productName:product.name,
         productLabel:product.name,
-        offerId:chosen?.sourceOfferId||flow.product.offerId||null,
+        offerId:bankOffer?.slug||chosen?.sourceOfferId||flow.product.offerId||null,
         offerVersionId:chosen?.offerVersionId||null,
         sourceOfferChoiceId:chosen?.sourceOfferChoiceId||chosen?.id||null,
         reward,
-        requirement:chosen?.req||'完成对应奖励条件',
+        requirement:bankOffer?.ddRequirement||chosen?.req||'完成对应奖励条件',
         tasks,
         anchorDate:flow.opened||null,
         anchorKind:'user_product_opened_date',
@@ -185,7 +195,7 @@
         if(flow.product?.id!==next.id) model.resetAfterProduct(flow);
         flow.category=category;
         flow.product=next;
-        void offerChoice.ensureReviewedOfferHistory(next);
+        if(category!=='银行账户') void offerChoice.ensureReviewedOfferHistory(next);
         flow.step=category==='会籍'?'membership-confirm':'info';
         rerender(ctx);
         return {handled:true};
@@ -293,4 +303,4 @@
   });
 
   window.NextBonusAddProductActions=Object.freeze({submit});
-})();
+})()

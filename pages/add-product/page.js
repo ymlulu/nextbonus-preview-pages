@@ -79,18 +79,28 @@
       };
     }else if(f.step === 'offer'){
       const isCard = f.category === '信用卡';
-      const result = offerChoice.offerChoicesFor(f.product);
-      const visibleChoices=offerChoice.visibleChoices(result.choices);
-      const offerRows = visibleChoices.map(choice => {
-        const label=offerChoice.displayRewardLabel(choice);
-        return `<button class="option-row add-reward-row ${f.offer===choice.id?'selected':''}" type="button" data-action="add-offer-choice" data-id="${esc(choice.id)}"><span class="radio-dot"></span><span class="option-main"><span class="option-title">${esc(label)}</span></span></button>`;
-      }).join('');
+      const isBank=f.category==='银行账户';
+      const result=isBank?null:offerChoice.offerChoicesFor(f.product);
+      const bankCatalog=window.NextBonusBankOffersCatalog;
+      const bankOffers=isBank?(bankCatalog?.forProduct(f.product)||[]):[];
+      const choices=isBank?bankOffers.map(offer=>({
+        id:offer.slug,
+        label:offer.title+(Number.isFinite(offer.bonusAmountCents)?' · $'+(offer.bonusAmountCents/100).toLocaleString('en-US'):'')
+      })):offerChoice.visibleChoices(result.choices).map(choice=>({
+        id:choice.id,label:offerChoice.displayRewardLabel(choice)
+      }));
+      const offerRows=choices.map(choice=>`<button class="option-row add-reward-row ${f.offer===choice.id?'selected':''}" type="button" data-action="add-offer-choice" data-id="${esc(choice.id)}"><span class="radio-dot"></span><span class="option-main"><span class="option-title">${esc(choice.label)}</span></span></button>`).join('');
       const rewardPrompt=isCard?'选择你的开卡奖励':'选择你的开户奖励';
-      const status = f.offerLoading || result.status === 'loading'
-        ? '<div class="muted add-reward-status" data-nb-reviewed-message="loading">正在加载已审核的历史奖励…</div>'
-        : result.status === 'error'
-          ? '<div class="muted add-reward-status" data-nb-reviewed-message="error">历史奖励暂时无法加载；当前公开奖励仍可选择，也可以按实际奖励手动填写。</div>'
-          : '';
+      const bankStatus=bankCatalog?.getState();
+      const loading=f.offerLoading||(isBank?bankStatus?.status==='loading':result.status==='loading');
+      const failed=isBank?bankStatus?.status==='error':result.status==='error';
+      const status=loading
+        ? '<div class="muted add-reward-status" data-nb-reviewed-message="loading">正在加载开户奖励…</div>'
+        : failed
+          ? (isBank?'<div class="muted add-reward-status" data-nb-reviewed-message="error">开户奖励暂时无法更新，可以手动填写或直接添加账户。</div>':'<div class="muted add-reward-status" data-nb-reviewed-message="error">历史奖励暂时无法加载；可以手动填写。</div>')
+          : isBank&&!bankOffers.length
+            ? '<div class="muted add-reward-status">该账户目前没有匹配的已发布开户奖励，可以手动填写或直接添加。</div>'
+            : '';
       const manualCards = (f.tasks||[]).map((t,i)=>`<div class="task-card"><div class="task-head"><span>完成条件 ${i+1}</span><button class="icon-btn nb-icon-button nb-icon-button--round" type="button" data-action="delete-task" data-id="${esc(t.id)}" aria-label="删除条件">${icon('close')}</button></div><input class="input task-desc" data-id="${esc(t.id)}" value="${esc(t.desc)}" placeholder="例如 消费 $12,000" /><label class="label nb-due-label">截止日期</label><div class="date-field-row"><input type="date" class="input task-due" data-id="${esc(t.id)}" value="${esc(t.due)}" />${t.due?`<button class="btn ghost small" type="button" data-action="clear-task-due" data-id="${esc(t.id)}">清除</button>`:''}</div></div>`).join('');
       const manualPanel = f.offer==='manual'
         ? `<div class="add-manual-panel"><div class="form-group"><label class="label">奖励内容</label><input id="add-reward" class="input" value="${esc(f.reward)}" placeholder="例如 175,000 MR" /></div><div><label class="label">完成条件</label>${manualCards}<button class="btn secondary small" type="button" data-action="add-task">${icon('plus','nb-inline-action-icon nb-inline-action-icon--leading')}添加条件</button></div></div>`
