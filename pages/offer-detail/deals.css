@@ -54,3 +54,51 @@
 .nb-dynamic-deal-panel .deal-cta:disabled{background:#a3acb8;cursor:not-allowed}
 .nb-dynamic-disclosure{color:#8390a0;margin:0}
 @media(max-width:780px){.nb-dynamic-poster-placeholder{min-height:290px}.nb-dynamic-poster-image{max-height:430px}}
+
+
+/* Admin and Dealmoon D1 offers share the original editorial Deal detail
+   poster/value/steps/CTA/terms visual system; content remains API-driven. */
+.nb-curated-deal-detail .nb-curated-deal-poster{
+  background:radial-gradient(circle at 85% 50%,rgba(16,203,147,.27),transparent 35%),
+    linear-gradient(145deg,#063d38,#006a5e 60%,#00483d);
+  width:100%;
+}
+.nb-curated-deal-detail .deal-poster-kicker{margin-top:86px}
+.nb-curated-deal-detail .deal-poster-title{overflow-wrap:anywhere}
+.nb-curated-deal-detail .deal-poster-copy{overflow-wrap:anywhere}
+.nb-curated-deal-detail .nb-deal-poster-image-wrap{
+  margin-top:28px;
+  max-width:300px;
+  max-height:240px;
+  border-radius:16px;
+  overflow:hidden;
+  background:rgba(255,255,255,.96);
+  padding:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.nb-curated-deal-detail .nb-deal-poster-image{
+  display:block;
+  width:100%;
+  max-height:205px;
+  object-fit:contain;
+}
+.nb-curated-deal-detail .nb-dynamic-deal-panel{display:block}
+.nb-curated-deal-detail .deal-brand strong{overflow-wrap:anywhere}
+.nb-curated-deal-detail .deal-steps{margin-bottom:4px}
+.nb-curated-deal-detail .deal-step-copy{overflow-wrap:anywhere}
+.nb-curated-deal-detail .deal-terms-copy{overflow-wrap:anywhere;white-space:pre-wrap}
+.nb-curated-deal-detail .deal-cta{text-decoration:none}
+.nb-curated-deal-detail .deal-cta:disabled{background:#a3acb8;cursor:not-allowed}
+.nb-curated-deal-detail .nb-dynamic-disclosure{margin-top:12px}
+@media(max-width:1180px){
+  .nb-curated-deal-detail .nb-curated-deal-poster{min-height:520px}
+}
+@media(max-width:780px){
+  .nb-curated-deal-detail .nb-curated-deal-poster{min-height:340px}
+  .nb-curated-deal-detail .deal-poster-kicker{margin-top:35px}
+  .nb-curated-deal-detail .deal-poster-title{font-size:36px}
+  .nb-curated-deal-detail .nb-deal-poster-image-wrap{max-height:180px}
+  .nb-curated-deal-detail .nb-deal-poster-image{max-height:145px}
+}

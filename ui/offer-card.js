@@ -22,32 +22,31 @@
   }
 
   function dynamicRender(offer,esc){
+    // API-backed Deals (Admin and JSONL imports) use the same uncluttered
+    // Discover card contract as the original product/offer cards.
     const money=window.NextBonusDealsCatalog?.money||((cents)=>'$'+(cents/100).toFixed(2));
-    const hasPrice=Number.isSafeInteger(offer.priceCents);
-    const price=hasPrice?money(offer.priceCents,offer.currency):'';
-    const original=Number.isSafeInteger(offer.originalPriceCents)?money(offer.originalPriceCents,offer.currency):'';
-    const discount=hasPrice&&Number.isSafeInteger(offer.originalPriceCents)&&offer.originalPriceCents>offer.priceCents
-      ?Math.round((1-offer.priceCents/offer.originalPriceCents)*100):null;
-    const mainValue=offer.rewardText||(price||offer.value||'查看优惠');
-    const image=offer.imageUrl
-      ?`<img src="${esc(offer.imageUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer" />`
-      :`<div class="nb-brand-art">${esc(offer.provider||'Deal')}</div>`;
-    const status=offer.featured?'<span class="nb-status-tag">Featured</span>':'';
-    return `<article class="offer-card nb-offer-card nb-dynamic-deal-card" data-action="open-offer" data-id="${esc(offer.id)}" tabindex="0" role="button" aria-label="${esc(offer.name)}">
-      <div class="nb-offer-visual">${image}</div>
-      <div class="nb-card-body">
-        <div class="nb-title-row"><div class="nb-offer-name">${esc(offer.name)}</div></div>
-        <div class="nb-deal-merchant">${esc(offer.provider||'')}</div>
-        <div class="nb-primary-value">${esc(mainValue)}${discount!==null?` <span class="nb-deal-discount">-${discount}%</span>`:''}</div>
-        ${original?`<div class="nb-deal-was">原价 <s>${esc(original)}</s></div>`:''}
-        ${offer.requirement?`<p class="nb-deal-summary">${esc(offer.requirement)}</p>`:''}
-        <div class="nb-card-footer"><div class="nb-card-meta">
-          ${status}<span class="nb-tag attribute">${esc(offer.category||'其他')}</span>
-        </div></div>
-      </div>
-    </article>`;
+    const mainValue=offer.rewardText||(
+      Number.isSafeInteger(offer.priceCents)?money(offer.priceCents,offer.currency):offer.value||'查看优惠'
+    );
+    const fullTitle=String(offer.name||'').trim();
+    const title=mainValue&&fullTitle.endsWith(' '+mainValue)
+      ?fullTitle.slice(0,-mainValue.length-1).trim()||fullTitle
+      :fullTitle;
+    const art=offer.imageUrl
+      ?'<div class="nb-main-art is-brand-logo nb-deal-card-art"><img src="'+esc(offer.imageUrl)+'" alt="" loading="lazy" referrerpolicy="no-referrer" /></div>'
+      :'<div class="nb-brand-art nb-deal-card-art">'+esc(offer.provider||'Deal')+'</div>';
+    const status=offer.featured?'<span class="nb-status-tag">精选</span>':'';
+    return '<article class="offer-card nb-offer-card nb-dynamic-deal-card" data-action="open-offer" data-id="'+esc(offer.id)+'" tabindex="0" role="button" aria-label="'+esc(offer.name)+'">'+
+      '<div class="nb-offer-visual">'+art+'</div>'+
+      '<div class="nb-card-body">'+
+        '<div class="nb-title-row"><div class="nb-offer-name">'+esc(title)+'</div></div>'+
+        '<div class="nb-primary-value">'+esc(mainValue)+'</div>'+
+        '<div class="nb-card-footer"><div class="nb-card-meta">'+
+          status+'<span class="nb-tag attribute">'+esc(offer.category||'其他')+'</span>'+
+        '</div></div>'+
+      '</div>'+
+    '</article>';
   }
-
   function bankRender(offer,esc){
     // Reuse the existing product-offer card layout, but source text only from DD.
     return `<article class="offer-card nb-offer-card nb-bank-api-card" data-action="open-offer" data-id="${esc(offer.id)}" tabindex="0" role="button" aria-label="${esc(offer.name)}">
