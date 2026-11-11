@@ -1,8 +1,7 @@
 (() => {
   'use strict';
-  // Set this to the standalone Deals Worker URL after deployment. Never use the DD API.
-  // Keep empty while the backend is not configured; Discover then retains Preview fixtures.
+  // Isolated Preview Deals Worker; separate from dd.nextbonus.app.
   window.NextBonusDealsConfig = Object.freeze({
-    apiBase: '',
+    apiBase: 'https://nextbonus-preview-deals.uscc101-data.workers.dev',
   });
 })();
