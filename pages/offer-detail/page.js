@@ -144,6 +144,9 @@
 
     const saved=isSaved(o.id);
     const mobileToolbar=mobileOfferToolbar(esc,o,saved);
+    if(o.source==='deals-api'){
+      return window.NextBonusDynamicDealDetail?.render?.(o,{esc,saved,mobileToolbar})||'';
+    }
     const special=window.NextBonusOfferDetailSpecialized?.render?.(o,saved);
     if(special){
       return `<div class="content v4-offer-detail-page ${special.className||''}">

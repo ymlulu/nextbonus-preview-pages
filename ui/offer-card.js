@@ -21,8 +21,36 @@
     return `<div class="nb-brand-art ${esc(visual.tone||'')}">${esc(visual.label||product.provider)}</div>`;
   }
 
+  function dynamicRender(offer,esc){
+    const money=window.NextBonusDealsCatalog?.money||((cents)=>'$'+(cents/100).toFixed(2));
+    const hasPrice=Number.isSafeInteger(offer.priceCents);
+    const price=hasPrice?money(offer.priceCents,offer.currency):'';
+    const original=Number.isSafeInteger(offer.originalPriceCents)?money(offer.originalPriceCents,offer.currency):'';
+    const discount=hasPrice&&Number.isSafeInteger(offer.originalPriceCents)&&offer.originalPriceCents>offer.priceCents
+      ?Math.round((1-offer.priceCents/offer.originalPriceCents)*100):null;
+    const mainValue=offer.rewardText||(price||offer.value||'查看优惠');
+    const image=offer.imageUrl
+      ?`<img src="${esc(offer.imageUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer" />`
+      :`<div class="nb-brand-art">${esc(offer.provider||'Deal')}</div>`;
+    const status=offer.featured?'<span class="nb-status-tag">Featured</span>':'';
+    return `<article class="offer-card nb-offer-card nb-dynamic-deal-card" data-action="open-offer" data-id="${esc(offer.id)}" tabindex="0" role="button" aria-label="${esc(offer.name)}">
+      <div class="nb-offer-visual">${image}</div>
+      <div class="nb-card-body">
+        <div class="nb-title-row"><div class="nb-offer-name">${esc(offer.name)}</div></div>
+        <div class="nb-deal-merchant">${esc(offer.provider||'')}</div>
+        <div class="nb-primary-value">${esc(mainValue)}${discount!==null?` <span class="nb-deal-discount">-${discount}%</span>`:''}</div>
+        ${original?`<div class="nb-deal-was">原价 <s>${esc(original)}</s></div>`:''}
+        ${offer.requirement?`<p class="nb-deal-summary">${esc(offer.requirement)}</p>`:''}
+        <div class="nb-card-footer"><div class="nb-card-meta">
+          ${status}<span class="nb-tag attribute">${esc(offer.category||'其他')}</span>
+        </div></div>
+      </div>
+    </article>`;
+  }
+
   function render(offer,{saved=false,unavailable=false,esc=escapeHtml}={}){
     const id=offer?.id;
+    if(offer?.source==='deals-api')return dynamicRender(offer,esc);
     const {fact,product}=productFor(id);
     if(!id||!fact||!product)return '';
     const visual=visualFor(product);

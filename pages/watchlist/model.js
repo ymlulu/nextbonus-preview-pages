@@ -5,7 +5,16 @@
   function offerInfo(offerId){
     const fact=window.NextBonusOfferData?.[offerId]||null;
     const product=fact?window.NextBonusOfferProducts?.[fact.productId]||null:null;
-    if(!fact||!product)return null;
+    if(!fact||!product){
+      const dynamic=window.NextBonusDealsCatalog?.getById?.(offerId);
+      if(!dynamic)return null;
+      return {
+        offerId,
+        fact:{primaryRequirement:dynamic.requirement,primaryValue:dynamic.value},
+        product:{name:dynamic.name,provider:dynamic.provider},
+        visual:dynamic.imageUrl?{src:dynamic.imageUrl,kind:'image'}:null
+      };
+    }
     const visual=window.NextBonusOfferVisuals?.[product.visualId||offerId]||null;
     return {offerId,fact,product,visual};
   }

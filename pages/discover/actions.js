@@ -8,6 +8,10 @@
       const el=event.target.closest?.('[data-action]');
       if(!el) return false;
       const action=el.dataset.action;
+      if(action==='discover-retry-deals'){
+        void window.NextBonusDealsCatalog?.load?.({force:true});
+        return false;
+      }
       if(action==='discover-category'){
         ctx.state.offerCategory=el.dataset.category;
         return {render:true};

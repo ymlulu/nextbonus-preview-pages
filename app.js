@@ -44,7 +44,7 @@
     return String(v).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   }
 
-  function currentOffer(){ return offers.find(o=>o.id===state.currentOfferId) || offers[0]; }
+  function currentOffer(){ return window.NextBonusDealsCatalog?.getById?.(state.currentOfferId) || offers.find(o=>o.id===state.currentOfferId) || offers[0]; }
   function currentProduct(){ return state.products.find(p=>p.id===state.currentProductId) || state.pastProducts.find(p=>p.id===state.currentProductId) || state.products[0]; }
   function isSaved(id){ return !!window.NextBonusWatchlistState?.getActive?.(id); }
 
@@ -143,7 +143,7 @@
   }
 
   function pageContext(){
-    const ctx={ state, categories, offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionIdentity, openLogin, closeOfferDetail, closeOfferDetailTask, closeProductDetail, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, completeAttention, historyCorrection, renderApp:render, persist:()=>storageCore.save(state) };
+    const ctx={ state, categories, offers, discoverOffers:window.NextBonusDealsCatalog?.isConfigured?.()?window.NextBonusDealsCatalog.list():offers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionIdentity, openLogin, closeOfferDetail, closeOfferDetailTask, closeProductDetail, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, completeAttention, historyCorrection, renderApp:render, persist:()=>storageCore.save(state) };
     ctx.renderRoute=route=>window.NextBonusPageRegistry.render(route,ctx);
     return ctx;
   }
@@ -514,6 +514,10 @@
     suppressBrowserHistory=false;
     const primary=['discover','wishlist','products','attention'].includes(state.route)?state.route:null;
     if(primary) restoreScroll(primary); else window.scrollTo({top:0,behavior:'instant'});
+  });
+
+  window.addEventListener?.('nextbonus:deals-updated',()=>{
+    if(['discover','offer-detail','wishlist'].includes(state.route)) render();
   });
 
   window.addEventListener?.('nextbonus:product-catalog-updated',()=>{

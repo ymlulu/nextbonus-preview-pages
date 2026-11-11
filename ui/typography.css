@@ -472,3 +472,19 @@ input::placeholder,textarea::placeholder{color:var(--nb-label-placeholder)!impor
 @media(max-width:780px){
   .nb-current-offer-value{font-size:28px}
 }
+
+/* NextBonus dynamic Deals: central text styles shared by existing page owners. */
+.nb-dynamic-deal-card .nb-deal-merchant{font-size:12px}
+.nb-dynamic-deal-card .nb-deal-discount{font-size:12px}
+.nb-dynamic-deal-card .nb-deal-was{font-size:12px}
+.nb-dynamic-deal-card .nb-deal-summary{font-size:12px;line-height:1.45}
+.nb-deals-status{font-size:13px}
+.nb-deals-status button{font-size:12px}
+.nb-dynamic-deal-panel .deal-brand strong{font-size:20px;line-height:1.3}
+.nb-dynamic-deal-panel .deal-value{font-size:30px;font-weight:800}
+.nb-dynamic-description h2{font-size:15px}
+.nb-dynamic-description p{font-size:14px;line-height:1.65}
+.nb-dynamic-promo span{font-size:12px}
+.nb-dynamic-promo strong{font-family:ui-monospace,monospace;font-size:15px}
+.nb-dynamic-deal-panel .deal-cta{font-weight:750}
+.nb-dynamic-disclosure{font-size:11px;line-height:1.5}

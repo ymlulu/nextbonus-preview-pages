@@ -5,7 +5,11 @@
     const { state, esc, categories, categoryIcon, offerCard }=ctx;
     const model=window.NextBonusPageModels?.discover;
     if(!model) throw new Error('Discover page model unavailable');
-    const {items}=model.build(ctx);
+    const {items,categories:availableCategories,category}=model.build({...ctx,offers:ctx.discoverOffers||ctx.offers});
+    const catalog=window.NextBonusDealsCatalog;
+    const catalogState=catalog?.isConfigured?.()?catalog.getState():null;
+    const statusMessage=catalogState?.status==='loading'?'<div class="nb-deals-status">正在读取最新 Deals…</div>'
+      :catalogState?.status==='error'?'<div class="nb-deals-status is-error">Deals 加载失败，请检查 API 连接。 <button type="button" data-action="discover-retry-deals">重试</button></div>':'';
 
     return `<div class="content discover-page">
       <header class="nb-primary-page-head"><h1>发现</h1></header>
@@ -16,8 +20,9 @@
           ${state.offerSearch?`<button class="search-clear nb-icon-button nb-icon-button--round nb-icon-button--soft" data-action="discover-clear-search" aria-label="清除搜索">${window.NextBonusIcons?.svg?.('close')||''}</button>`:''}
         </div>
       </div>
-      <div class="filters">${categories.map(c=>`<button class="pill cat-${c} ${state.offerCategory===c?'active':''}" data-action="discover-category" data-category="${c}"><span class="pill-icon">${categoryIcon(c)}</span><span>${c}</span></button>`).join('')}</div>
-      ${items.length?`<div class="offer-grid">${items.map(offerCard).join('')}</div>`:`<div class="empty compact-empty"><h3>没有匹配的内容</h3><p>换一个关键词或分类试试。</p></div>`}
+      <div class="filters">${availableCategories.map(c=>`<button class="pill cat-${esc(c)} ${category===c?'active':''}" data-action="discover-category" data-category="${esc(c)}"><span class="pill-icon">${categoryIcon(c)}</span><span>${esc(c)}</span></button>`).join('')}</div>
+      ${statusMessage}
+      ${items.length?`<div class="offer-grid">${items.map(offerCard).join('')}</div>`:`<div class="empty compact-empty"><h3>没有匹配的内容</h3><p>换一个关键词或分类试试，或通过 Admin 发布第一条 Deal。</p></div>`}
     </div>`;
   });
 })();

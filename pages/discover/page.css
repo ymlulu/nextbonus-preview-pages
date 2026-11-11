@@ -208,3 +208,14 @@
 
   .discover-page .discover-search-row .search-clear{right:9px}
 }
+
+/* API-backed shopping/deal cards reuse the existing Discover grid. */
+.discover-page .nb-dynamic-deal-card .nb-offer-visual{display:flex;align-items:center;justify-content:center;overflow:hidden}
+.discover-page .nb-dynamic-deal-card .nb-offer-visual img{display:block;width:100%;height:100%;object-fit:contain}
+.discover-page .nb-dynamic-deal-card .nb-deal-merchant{color:#788499;margin:5px 0 0}
+.discover-page .nb-dynamic-deal-card .nb-deal-discount{display:inline-block;padding:3px 7px;border-radius:6px;background:#edfff3;color:#0c873c;vertical-align:middle}
+.discover-page .nb-dynamic-deal-card .nb-deal-was{color:#929cac;margin-top:4px}
+.discover-page .nb-dynamic-deal-card .nb-deal-summary{color:#6d7a90;margin:7px 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nb-deals-status{margin:0 0 14px;padding:12px 14px;border-radius:9px;border:1px solid #d8e6f8;background:#f5f9ff;color:#3e5b7b;}
+.nb-deals-status.is-error{border-color:#f6c2b9;background:#fff6f3;color:#9b3526}
+.nb-deals-status button{padding:3px 9px;margin-left:8px;border:1px solid currentColor;color:inherit;border-radius:6px;background:transparent;cursor:pointer}
