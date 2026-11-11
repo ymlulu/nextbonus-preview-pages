@@ -1,0 +1,10 @@
+/* DD Bank Offer: existing two-column Offer Detail, text-only poster. */
+.nb-bank-api-detail .v4-decision-panel{padding:18px 18px 16px;background:#fff}
+.nb-api-bank-poster{background:linear-gradient(145deg,#11264a,#23519a 58%,#537ab8)}
+.nb-api-bank-poster .remaining-title{overflow-wrap:anywhere}
+.nb-bank-api-detail .remaining-step-card .remaining-step-title{display:block;overflow-wrap:anywhere}
+.nb-bank-api-detail .remaining-tier span:first-child{overflow-wrap:anywhere;}
+.nb-bank-api-detail .remaining-head strong{overflow-wrap:anywhere}
+.nb-bank-api-detail .remaining-eligibility-copy{white-space:pre-wrap;overflow-wrap:anywhere}
+.nb-bank-api-detail .remaining-deadline a{color:#126ae0;text-decoration:underline}
+@media(max-width:1180px){.nb-api-bank-poster{min-height:320px!important}.nb-api-bank-poster .remaining-kicker{margin-top:36px}}

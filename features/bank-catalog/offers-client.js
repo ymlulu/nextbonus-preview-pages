@@ -15,8 +15,11 @@
       bonusAmountCents:Number.isFinite(input.bonusAmountCents)?input.bonusAmountCents:null,
       expiresOn:str(input.expiresOn)||null,verifiedOn:str(input.verifiedOn)||null,
       eligibilityNotes:str(input.eligibilityNotes)||null,
+      availability:input.availability||null,
       applicationUrl:str(input.applicationUrl)||null,officialTermsUrl:str(input.officialTermsUrl)||null,
       ddReportsUrl:str(input.ddReportsUrl)||null,
+      payoutTiming:str(input.payoutTiming)||null,bonusClawback:str(input.bonusClawback)||null,
+      promoCode:str(input.promoCode)||null,
       ddRequired:input.ddRequired===true,ddRequirement:str(input.ddRequirement),
       extraRequirements:input.extraRequirements,
       checklistReady:input.checklistReady===true&&!!input.requirements,
@@ -52,7 +55,7 @@
   function load(options={}){
     if(pending)return pending;
     const cached=cacheRead();
-    if(cached)publish(cached.offers,{status:'refreshing',stale:true,error:null,updatedAt:cached.updatedAt});
+    if(cached&&!options.force)publish(cached.offers,{status:'refreshing',stale:true,error:null,updatedAt:cached.updatedAt});
     else publish(offers,{status:'loading',stale:false,error:null});
     const fetcher=options.fetcher||window.fetch?.bind(window);
     pending=(async()=>{

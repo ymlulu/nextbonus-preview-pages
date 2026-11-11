@@ -48,9 +48,24 @@
     </article>`;
   }
 
+  function bankRender(offer,esc){
+    // Reuse the existing product-offer card layout, but source text only from DD.
+    return `<article class="offer-card nb-offer-card nb-bank-api-card" data-action="open-offer" data-id="${esc(offer.id)}" tabindex="0" role="button" aria-label="${esc(offer.name)}">
+      <div class="nb-offer-visual"><div class="nb-brand-art">${esc(offer.provider||'Bank')}</div></div>
+      <div class="nb-card-body">
+        <div class="nb-title-row"><div class="nb-offer-name">${esc(offer.name)}</div></div>
+        <div class="nb-primary-value">${esc(offer.value)}</div>
+        <div class="nb-card-footer"><div class="nb-card-meta">
+          <span class="nb-tag attribute">银行账户</span>
+        </div></div>
+      </div>
+    </article>`;
+  }
+
   function render(offer,{saved=false,unavailable=false,esc=escapeHtml}={}){
     const id=offer?.id;
     if(offer?.source==='deals-api')return dynamicRender(offer,esc);
+    if(offer?.source==='bank-offers-api')return bankRender(offer,esc);
     const {fact,product}=productFor(id);
     if(!id||!fact||!product)return '';
     const visual=visualFor(product);
