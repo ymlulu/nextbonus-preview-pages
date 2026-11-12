@@ -1,7 +1,7 @@
 (() => {
   'use strict';
-  const ENDPOINT='https://dd.nextbonus.app/api/public/bank-offers';
-  const CACHE_KEY='nextbonus-bank-offers-v1';
+  const ENDPOINT='https://dd.nextbonus.app/api/public/bank-offers?locale=zh-CN';
+  const CACHE_KEY='nextbonus-bank-offers-zh-cn-v1';
   const listeners=new Set();
   let offers=Object.freeze([]);
   let pending=null;
@@ -11,6 +11,7 @@
     if(!input||typeof input!=='object'||!str(input.slug)||!Array.isArray(input.productIds))return null;
     return Object.freeze({
       slug:str(input.slug),title:str(input.title),bank:str(input.bank),account:str(input.account),
+      textLocale:input.textLocale==='zh-CN'?'zh-CN':'en-US',
       productIds:Object.freeze(input.productIds.filter(x=>typeof x==='string'&&x.includes('/'))),
       bonusAmountCents:Number.isFinite(input.bonusAmountCents)?input.bonusAmountCents:null,
       expiresOn:str(input.expiresOn)||null,verifiedOn:str(input.verifiedOn)||null,
@@ -29,7 +30,8 @@
     });
   }
   function parse(payload){
-    if(!payload||Number(payload.version)!==1||!Array.isArray(payload.offers))throw Error('Invalid Bank Offers response');
+    if(!payload||Number(payload.version)!==1||payload.locale!=='zh-CN'||!Array.isArray(payload.offers))
+      throw Error('Invalid localized Bank Offers response');
     const seen=new Set();
     return Object.freeze(payload.offers.map(normalize).filter(offer=>{
       if(!offer||seen.has(offer.slug))return false;

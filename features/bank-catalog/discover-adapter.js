@@ -47,6 +47,7 @@
       .filter(Boolean).join(' · ');
     return Object.freeze({
       id:idForSlug(slug),slug,source:'bank-offers-api',type:'bank',
+      textLocale:offer.textLocale==='zh-CN'?'zh-CN':'en-US',
       provider:bank,name,title,account,category:'银行',
       value:money(offer.bonusAmountCents),
       bonusAmountCents:offer.bonusAmountCents,requirement,
