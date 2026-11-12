@@ -79,7 +79,8 @@
   }
 
   function creditCardRender(offer,esc){
-    const image=offer.imageUrl?'<div class="nb-main-art"><img src="'+esc(offer.imageUrl)+'" alt="'+esc(offer.name)+'" loading="lazy" /></div>':
+    const smallImage=offer.cardImageUrl||offer.imageUrl;
+    const image=smallImage?'<div class="nb-main-art"><img src="'+esc(smallImage)+'" alt="'+esc(offer.name)+'" loading="lazy" decoding="async" /></div>':
       '<div class="nb-brand-art">'+esc(offer.provider)+'</div>';
     return '<article class="offer-card nb-offer-card nb-wp-api-card" data-action="open-offer" data-id="'+esc(offer.id)+'" tabindex="0" role="button" aria-label="'+esc(offer.name)+'">'+
       '<div class="nb-offer-visual">'+image+'</div>'+

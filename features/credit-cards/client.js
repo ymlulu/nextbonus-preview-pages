@@ -21,7 +21,7 @@
       value:primary.value||primary.bonus||'查看奖励',
       requirement:primary.requirement||'',
       bonusRaw:primary.bonus||'',status:'',tags:[],
-      imageUrl:valid(card.imageUrl),highlight:valid(card.highlight),
+      imageUrl:valid(card.imageUrl),cardImageUrl:valid(card.cardImageUrl),highlight:valid(card.highlight),
       spending:valid(card.spending),reward:valid(card.reward),
       fee:valid(card.fee),feeCurrency:valid(card.feeCurrency),
       feeExtra:valid(card.feeExtra),articleUrl:valid(card.articleUrl),
