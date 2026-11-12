@@ -143,18 +143,15 @@
   }
 
   function pageContext(){
-    // DD owns Bank Offers, the static source owns credit cards / non-bank demos,
-    // and the standalone Deals D1 owns shopping. Discover only combines views.
+    // Discover lists only live catalog entries: published WordPress credit cards,
+    // DD Bank Offers, and Deals D1. Local legacy Offer facts are retained
+    // for existing assessment, tracking and Watchlist compatibility only.
     window.NextBonusCreditCardsCatalog?.ensure?.();
     const cardOffers=window.NextBonusCreditCardsCatalog?.list?.()||[];
     const bankCatalog=window.NextBonusDiscoverBankOffers;
     if(['discover','wishlist','offer-detail'].includes(state.route))bankCatalog?.ensure?.();
-    const bankState=bankCatalog?.getState?.();
     const bankOffers=bankCatalog?.list?.()||[];
-    const legacyNonBank=offers.filter(o=>o.category!=='银行');
-    const legacyBank=!bankOffers.length&&(bankState?.status==='error'||bankState?.status==='unavailable')
-      ?offers.filter(o=>o.category==='银行'):[]; // Offline fallback only.
-    const discoverOffers=[...legacyNonBank,...cardOffers,...bankOffers,...legacyBank,...(window.NextBonusDealsCatalog?.list?.()||[])];
+    const discoverOffers=[...cardOffers,...bankOffers,...(window.NextBonusDealsCatalog?.list?.()||[])];
     const ctx={ state, categories, offers, discoverOffers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionIdentity, openLogin, closeOfferDetail, closeOfferDetailTask, closeProductDetail, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, completeAttention, historyCorrection, renderApp:render, persist:()=>storageCore.save(state) };
     ctx.renderRoute=route=>window.NextBonusPageRegistry.render(route,ctx);
     return ctx;
