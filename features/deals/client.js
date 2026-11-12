@@ -3,8 +3,13 @@
   const base = String(window.NextBonusDealsConfig?.apiBase || '').trim().replace(/\/+$/,'');
   const listeners=new Set();
   const configured=/^https:\/\//.test(base);
-  let items=Object.freeze([]), pending=null;
-  let state=Object.freeze({status:configured?'idle':'unconfigured',error:null,updatedAt:null});
+  const today=()=>new Date().toISOString().slice(0,10);
+  const isActive=row=>row?.status==='published'&&
+    (!row.startsOn||row.startsOn<=today())&&(!row.expiresOn||row.expiresOn>=today());
+  const cache=window.NextBonusDiscoverCache;
+  const cached=configured?cache?.read?.('deals',isActive):null;
+  let items=Object.freeze((cached?.items||[]).map(normalize).filter(Boolean)), pending=null;
+  let state=Object.freeze({status:configured?'idle':'unconfigured',error:null,updatedAt:cached?.updatedAt||null});
 
   const money=(cents,currency='USD')=>{
     if(!Number.isSafeInteger(cents)) return '';
@@ -39,10 +44,9 @@
     if(pending) return pending;
     if(!force && state.status==='ready') return {items,state};
     state=Object.freeze({...state,status:'loading',error:null});
-    window.dispatchEvent(new CustomEvent('nextbonus:deals-updated'));
     pending=(async()=>{
       try{
-        const all=[],seen=new Set();
+        const all=[],rawRows=[],seen=new Set();
         let offset=0,turns=0;
         while(turns++<20){
           const response=await fetch(base+'/api/public/deals?limit=100&offset='+offset,{mode:'cors',credentials:'omit',cache:'no-store'});
@@ -51,12 +55,13 @@
           if(!payload||!Array.isArray(payload.items)) throw Error('Invalid Deals response');
           for(const raw of payload.items){
             const item=normalize(raw);
-            if(item&&!seen.has(item.id)){all.push(item);seen.add(item.id);}
+            if(item&&!seen.has(item.id)){all.push(item);rawRows.push(raw);seen.add(item.id);}
           }
           if(payload.nextOffset===null||payload.nextOffset===undefined) break;
           if(!Number.isSafeInteger(payload.nextOffset)||payload.nextOffset<=offset) throw Error('Invalid Deals pagination');
           offset=payload.nextOffset;
         }
+        cache?.write?.('deals',rawRows.filter(isActive));
         publish(all,{status:'ready',error:null,updatedAt:new Date().toISOString()});
         return {items,state};
       }catch(error){
@@ -76,7 +81,7 @@
   });
   if(configured) {
     const refreshOnReturn=()=>{
-      if(Date.now()-Date.parse(state.updatedAt||0)>=5000)void load({force:true});
+      if(Date.now()-Date.parse(state.updatedAt||0)>=5*60*1000)void load({force:true});
     };
     window.addEventListener?.('focus',refreshOnReturn);
     if(typeof document!=='undefined')document.addEventListener?.('visibilitychange',()=>{

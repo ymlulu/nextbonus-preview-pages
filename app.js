@@ -527,16 +527,49 @@
     if(primary) restoreScroll(primary); else window.scrollTo({top:0,behavior:'instant'});
   });
 
+  let discoverUpdateTimer=null;
+  let discoverInitialTimer=null;
+  let discoverInitialSettled=false;
+  const catalogStates=()=>[
+    window.NextBonusDealsCatalog?.getState?.(),
+    window.NextBonusCreditCardsCatalog?.getState?.(),
+    window.NextBonusDiscoverBankOffers?.getState?.()
+  ];
+  const catalogsSettled=()=>catalogStates().every(s=>s&&
+    ['ready','error','unconfigured','unavailable'].includes(s.status));
+  function scheduleCatalogRender(){
+    if(!['discover','wishlist'].includes(state.route)||hasDetailLayer())return;
+    if(discoverUpdateTimer!==null)window.clearTimeout(discoverUpdateTimer);
+    if(!discoverInitialSettled&&!catalogsSettled()){
+      if(discoverInitialTimer===null){
+        discoverInitialTimer=window.setTimeout(()=>{
+          discoverInitialTimer=null;
+          discoverInitialSettled=true;
+          scheduleCatalogRender();
+        },1800);
+      }
+      return;
+    }
+    if(discoverInitialTimer!==null){
+      window.clearTimeout(discoverInitialTimer);
+      discoverInitialTimer=null;
+    }
+    discoverInitialSettled=true;
+    discoverUpdateTimer=window.setTimeout(()=>{
+      discoverUpdateTimer=null;
+      if(['discover','wishlist'].includes(state.route)&&!hasDetailLayer())render();
+    },160);
+  }
   window.addEventListener?.('nextbonus:deals-updated',()=>{
     // Preserve the Discover base DOM beneath Offer Detail for all async catalogs.
-    if(['discover','wishlist'].includes(state.route)&&!hasDetailLayer()) render();
+    scheduleCatalogRender();
   });
   window.addEventListener?.('nextbonus:credit-cards-updated',()=>{
-    if(['discover','wishlist'].includes(state.route)&&!hasDetailLayer())render();
+    scheduleCatalogRender();
   });
   window.addEventListener?.('nextbonus:bank-offers-updated',()=>{
     // A late API response must never replace Discover beneath an open detail overlay.
-    if(['discover','wishlist'].includes(state.route)&&!hasDetailLayer()) render();
+    scheduleCatalogRender();
   });
 
   window.addEventListener?.('nextbonus:product-catalog-updated',()=>{

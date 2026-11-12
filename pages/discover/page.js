@@ -24,7 +24,7 @@
     const {items,pageItems,page,pageCount,total,categories:availableCategories,category,sort}=model.build({...ctx,offers:ctx.discoverOffers||[]});
     const catalog=window.NextBonusDealsCatalog;
     const catalogState=catalog?.isConfigured?.()?catalog.getState():null;
-    const statusMessage=catalogState?.status==='loading'?'<div class="nb-deals-status">正在读取最新 Deals…</div>'
+    const statusMessage=catalogState?.status==='loading'&&!catalog?.list?.()?.length?'<div class="nb-deals-status">正在读取最新 Deals…</div>'
       :catalogState?.status==='error'?'<div class="nb-deals-status is-error">Deals 加载失败，请检查 API 连接。 <button type="button" data-action="discover-retry-deals">重试</button></div>':'';
     const sourceStatuses=[
       catalogState?.status,

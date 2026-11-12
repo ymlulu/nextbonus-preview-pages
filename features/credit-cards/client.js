@@ -2,8 +2,13 @@
   'use strict';
   // Public read-only card catalog. WordPress credentials never reach the browser.
   const API='https://nextbonus-preview-deals.uscc101-data.workers.dev/api/public/credit-cards';
-  let cards=Object.freeze([]),offers=Object.freeze([]),pending=null;
-  let state=Object.freeze({status:'idle',error:null});
+  const cache=window.NextBonusDiscoverCache;
+  const cached=cache?.read?.('credit-cards',c=>c.status==='published'&&
+    typeof c.slug==='string'&&Array.isArray(c.offers)&&
+    c.offers.some(o=>o.id===c.primaryOfferId&&o.goUrl&&o.bonus));
+  let cards=Object.freeze((cached?.items||[]).map(c=>Object.freeze(c)));
+  let offers=Object.freeze([]),pending=null;
+  let state=Object.freeze({status:'idle',error:null,updatedAt:cached?.updatedAt||null});
   const valid=v=>typeof v==='string'?v.trim():'';
   const listeners=new Set();
   function adapt(card){
@@ -23,10 +28,11 @@
       applyUrl:valid(primary.goUrl),offers:card.offers
     });
   }
+  offers=Object.freeze(cards.map(adapt).filter(Boolean));
   async function load({force=false}={}){
     if(pending)return pending;
     if(!force&&state.status==='ready')return {cards,offers,state};
-    state=Object.freeze({status:'loading',error:null});
+    state=Object.freeze({...state,status:'loading',error:null});
     pending=(async()=>{
       try{
         const all=[];
@@ -43,13 +49,14 @@
           if(page===99)throw Error('Credit card catalog exceeded pagination safety limit');
         }
         cards=Object.freeze(all.filter(c=>c.status==='published').map(c=>Object.freeze(c)));
+        cache?.write?.('credit-cards',cards);
         offers=Object.freeze(cards.map(adapt).filter(Boolean));
-        state=Object.freeze({status:'ready',error:null});
+        state=Object.freeze({status:'ready',error:null,updatedAt:new Date().toISOString()});
         for(const cb of listeners)cb({cards,offers,state});
         window.dispatchEvent?.(new CustomEvent('nextbonus:credit-cards-updated'));
         return {cards,offers,state};
       }catch(e){
-        state=Object.freeze({status:'error',error:String(e?.message||e)});
+        state=Object.freeze({...state,status:'error',error:String(e?.message||e)});
         return {cards,offers,state};
       }finally{pending=null;}
     })();
