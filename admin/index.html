@@ -28,6 +28,7 @@
       <nav id="admin-tabs" class="admin-tabs" aria-label="后台模块" hidden>
         <button type="button" class="admin-tab active" id="tab-deals" aria-selected="true">Deals</button>
         <button type="button" class="admin-tab" id="tab-cards" aria-selected="false">信用卡</button>
+        <button type="button" class="admin-tab" id="tab-bank-offers" aria-selected="false">银行奖励</button>
       </nav>
       <section id="card-view" hidden>
         <div class="heading"><div><h1>信用卡</h1><p>选择主 Offer 后直接发布；可直接编辑和新增 Offer；主 Offer 默认采用 WordPress Go Link 第一条；锁定后不再自动同步该卡。</p></div><button id="cards-reload" class="secondary" type="button">刷新</button></div>
@@ -37,6 +38,19 @@
         </div>
         <p class="small" id="cards-count"></p>
         <div id="cards-list" class="credit-admin-list" aria-live="polite"></div>
+      </section>
+      <section id="bank-offers-view" hidden>
+        <div class="heading"><div><h1>银行奖励</h1><p>DD Database 简体中文展示快照。修改、发布、撤回、Featured、同步锁都只影响 NextBonus。</p></div>
+          <button id="bank-offers-reload" class="secondary" type="button">刷新</button></div>
+        <div class="toolbar">
+          <label>搜索 <input id="bank-offers-search" type="search" placeholder="银行、账户或 Offer Slug"/></label>
+          <label>状态 <select id="bank-offers-status">
+            <option value="">全部</option><option value="draft">Draft</option>
+            <option value="published">Published</option><option value="archived">Archived</option>
+          </select></label>
+        </div>
+        <p class="small" id="bank-offers-count"></p>
+        <div id="bank-offers-list" class="bank-admin-list"></div>
       </section>
       <section id="list-view" hidden>
         <div class="heading"><div><h1>Deals</h1><p>添加、修改、发布和下架优惠。发布后 Discover 自动读取最新内容。</p></div><button class="primary" id="new-deal" type="button">＋ Add Deal</button></div>
@@ -77,5 +91,6 @@
   <script src="../features/deals/config.js"></script>
   <script src="./admin.js?v=20261112-2"></script>
   <script src="./credit-cards-admin.js?v=20261112-5"></script>
+  <script src="./bank-display-admin.js?v=20261112-1"></script>
 </body>
 </html>

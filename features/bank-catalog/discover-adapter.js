@@ -1,9 +1,9 @@
 (() => {
   'use strict';
 
-  // Discover adapts the public DD Bank Offer catalog for display only.
-  // No copying bank offers into the shopping Deals D1 or changing Tracker rules.
-  const catalog=window.NextBonusBankOffersCatalog;
+  // Discover uses Preview D1's reviewed snapshots, not DD's live raw catalog.
+  // The original DD API client remains separate for Tracker and product workflows.
+  const catalog=window.NextBonusBankDisplayCatalog;
   const ORIGIN='https://dd.nextbonus.app';
   const idForSlug=slug=>'bank-offer:'+slug;
   const text=value=>typeof value==='string'?value.trim():'';
@@ -54,7 +54,7 @@
       ddRequired:offer.ddRequired===true,ddRequirement:text(offer.ddRequirement),
       extraRequirements:extras,eligibilityNotes:text(offer.eligibilityNotes),
       expiresOn:text(offer.expiresOn)||null,verifiedOn:text(offer.verifiedOn)||null,
-      applyUrl:safeDdUrl(offer.applicationUrl,'/go/'),
+      applyUrl:safeDdUrl(offer.applicationUrl,'/go/')||safeOfficialUrl(offer.applicationUrl),
       officialTermsUrl:safeOfficialUrl(offer.officialTermsUrl),
       ddReportsUrl:safeDdUrl(offer.ddReportsUrl,'/accounts/'),
       payoutTiming:text(offer.payoutTiming),bonusClawback:text(offer.bonusClawback),
@@ -64,7 +64,8 @@
       requirements:offer.checklistReady===true?offer.requirements:null,
       tiers:Array.isArray(offer.tiers)?offer.tiers:[],
       version:text(offer.version),tags:['开户奖励'],
-      status:'',featured:false
+      status:'',featured:offer.featured===true,
+      sortOrder:Number.isSafeInteger(offer.sortOrder)?offer.sortOrder:0
     });
   }
   function list(){
@@ -78,11 +79,11 @@
     catalog.subscribe(()=>{
       window.dispatchEvent?.(new CustomEvent('nextbonus:bank-offers-updated'));
     });
-    // Load on Discover/Watchlist demand, not on every Wallet startup.
+    // Load reviewed display records only on Discover/Watchlist demand.
   }
   window.NextBonusDiscoverBankOffers=Object.freeze({
     list,getById,money,adapt,getState:()=>catalog?.getState?.()||{status:'unavailable'},
-    ensure:()=>catalog?.getState?.().status==='idle'?catalog.load():null,
-    reload:()=>catalog?.load?.({force:true})
+    ensure:()=>catalog?.ensure?.(),
+    reload:()=>catalog?.load?.()
   });
 })();

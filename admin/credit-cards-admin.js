@@ -255,15 +255,20 @@
     }finally{busy=false;$('cards-reload').disabled=false;}
   }
   async function activate(){
+    window.NextBonusBankDisplayAdmin?.deactivate?.();
     $('list-view').hidden=true;$('editor-view').hidden=true;$('card-view').hidden=false;
     $('tab-cards').classList.add('active');
+    $('tab-bank-offers').classList.remove('active');
+    $('tab-bank-offers').setAttribute('aria-selected','false');
     $('tab-deals').classList.remove('active');
     $('tab-cards').setAttribute('aria-selected','true');
     $('tab-deals').setAttribute('aria-selected','false');
     if(!loaded)await reload();
   }
   function deactivate(){
-    $('card-view').hidden=true;$('list-view').hidden=false;$('editor-view').hidden=true;
+    $('card-view').hidden=true;
+    window.NextBonusBankDisplayAdmin?.deactivate?.();
+    $('list-view').hidden=false;$('editor-view').hidden=true;
     $('tab-deals').classList.add('active');$('tab-cards').classList.remove('active');
     $('tab-deals').setAttribute('aria-selected','true');$('tab-cards').setAttribute('aria-selected','false');
     notice('');

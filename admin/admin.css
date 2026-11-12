@@ -49,3 +49,20 @@
 /* Card source-sync lock: independent from Draft / Published. */
 .credit-admin-actions .credit-sync-lock{width:100%;text-align:center}
 .credit-admin-actions .credit-sync-lock.locked{background:#fff7e7;border-color:#d5ad64;color:#70480d}
+
+/* Bank display review, reuses the existing Preview Admin system. */
+.bank-admin-list{display:grid;gap:12px}
+.bank-admin-row{background:#fff;border:1px solid #e3e8f0;border-radius:14px;padding:18px;display:grid;gap:10px}
+.bank-admin-heading{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.bank-admin-heading strong{font-size:16px}
+.bank-admin-muted{font-size:12px;color:#788599;overflow-wrap:anywhere}
+.bank-admin-summary{margin:2px 0 5px;color:#536279;font-size:13px;white-space:pre-wrap}
+.bank-admin-buttons{display:flex;flex-wrap:wrap;gap:8px}
+.bank-admin-buttons button{min-width:100px}
+.bank-admin-buttons .bank-locked{background:#fff7e7;color:#70480d;border-color:#d5ad64}
+.bank-admin-editor{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;background:#f8fafd;border:1px solid #e4eaf4;border-radius:11px;padding:16px}
+.bank-admin-editor[hidden]{display:none}
+.bank-admin-field{display:grid;gap:5px;color:#53647c;font-size:12px}
+.bank-admin-field textarea{min-height:66px}
+.bank-admin-editor .bank-admin-buttons{grid-column:1/-1}
+@media(max-width:680px){.bank-admin-editor{grid-template-columns:1fr}.bank-admin-buttons button{flex:1}}

@@ -14,7 +14,9 @@
     $('editor-view').hidden=true;
     $('admin-tabs').hidden=true;
     $('card-view').hidden=true;
+    $('bank-offers-view').hidden=true;
     window.NextBonusCardAdmin?.reset?.();
+    window.NextBonusBankDisplayAdmin?.reset?.();
     $('logout').hidden=true;
     $('login-submit').disabled=false;
     if(error)message(error,true);
@@ -25,9 +27,12 @@
     $('list-view').hidden=false;
     $('editor-view').hidden=true;
     $('card-view').hidden=true;
+    $('bank-offers-view').hidden=true;
     $('admin-tabs').hidden=false;
     $('tab-deals').classList.add('active');
     $('tab-deals').setAttribute('aria-selected','true');
+    $('tab-bank-offers').classList.remove('active');
+    $('tab-bank-offers').setAttribute('aria-selected','false');
     $('tab-cards').classList.remove('active');
     $('tab-cards').setAttribute('aria-selected','false');
     message('');
