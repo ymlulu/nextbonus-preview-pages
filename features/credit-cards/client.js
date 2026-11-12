@@ -29,11 +29,20 @@
     state=Object.freeze({status:'loading',error:null});
     pending=(async()=>{
       try{
-        const response=await window.fetch(API,{method:'GET',mode:'cors',credentials:'omit'});
-        if(!response.ok)throw Error('Credit Card API HTTP '+response.status);
-        const data=await response.json();
-        if(data?.version!==1||!Array.isArray(data.items))throw Error('Invalid Credit Card API payload');
-        cards=Object.freeze(data.items.filter(c=>c.status==='published').map(c=>Object.freeze(c)));
+        const all=[];
+        let offset=0;
+        for(let page=0;page<100;page++){
+          const response=await window.fetch(API+'?offset='+offset,{method:'GET',mode:'cors',credentials:'omit'});
+          if(!response.ok)throw Error('Credit Card API HTTP '+response.status);
+          const data=await response.json();
+          if(data?.version!==1||!Array.isArray(data.items))throw Error('Invalid Credit Card API payload');
+          all.push(...data.items);
+          if(data.nextOffset==null)break;
+          if(!Number.isSafeInteger(data.nextOffset)||data.nextOffset<=offset)throw Error('Invalid credit card pagination');
+          offset=data.nextOffset;
+          if(page===99)throw Error('Credit card catalog exceeded pagination safety limit');
+        }
+        cards=Object.freeze(all.filter(c=>c.status==='published').map(c=>Object.freeze(c)));
         offers=Object.freeze(cards.map(adapt).filter(Boolean));
         state=Object.freeze({status:'ready',error:null});
         for(const cb of listeners)cb({cards,offers,state});

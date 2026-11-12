@@ -146,9 +146,18 @@
     busy=true;$('cards-reload').disabled=true;
     root.replaceChildren(node('div','credit-admin-empty','正在读取信用卡数据…'));
     try{
-      const data=await api('/api/admin/credit-cards');
-      if(!Array.isArray(data.items))throw Error('信用卡列表格式异常');
-      cards=data.items;loaded=true;render();notice('');
+      const all=[];
+      let offset=0;
+      for(let page=0;page<100;page++){
+        const data=await api('/api/admin/credit-cards?offset='+offset);
+        if(!Array.isArray(data.items))throw Error('信用卡列表格式异常');
+        all.push(...data.items);
+        if(data.nextOffset==null)break;
+        if(!Number.isSafeInteger(data.nextOffset)||data.nextOffset<=offset)throw Error('信用卡分页数据异常');
+        offset=data.nextOffset;
+        if(page===99)throw Error('信用卡数量超过当前分页上限');
+      }
+      cards=all;loaded=true;render();notice('');
     }catch(e){
       root.replaceChildren(node('div','credit-admin-empty','读取失败：'+e.message));
       notice(e.message,true);
