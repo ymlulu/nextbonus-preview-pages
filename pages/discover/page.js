@@ -21,7 +21,7 @@
     const { state, esc, categories, categoryIcon, offerCard }=ctx;
     const model=window.NextBonusPageModels?.discover;
     if(!model) throw new Error('Discover page model unavailable');
-    const {items,pageItems,page,pageCount,total,categories:availableCategories,category}=model.build({...ctx,offers:ctx.discoverOffers||[]});
+    const {items,pageItems,page,pageCount,total,categories:availableCategories,category,sort}=model.build({...ctx,offers:ctx.discoverOffers||[]});
     const catalog=window.NextBonusDealsCatalog;
     const catalogState=catalog?.isConfigured?.()?catalog.getState():null;
     const statusMessage=catalogState?.status==='loading'?'<div class="nb-deals-status">正在读取最新 Deals…</div>'
@@ -46,6 +46,10 @@
         </div>
       </div>
       <div class="filters">${availableCategories.map(c=>`<button class="pill cat-${esc(c)} ${category===c?'active':''}" data-action="discover-category" data-category="${esc(c)}"><span class="pill-icon">${categoryIcon(c)}</span><span>${esc(c)}</span></button>`).join('')}</div>
+      <div class="discover-sort" role="group" aria-label="优惠排序">
+        <button type="button" class="discover-sort-button ${sort==='personal'?'is-active':''}" data-action="discover-sort" data-sort="personal" aria-pressed="${sort==='personal'}">为你推荐</button>
+        <button type="button" class="discover-sort-button ${sort==='latest'?'is-active':''}" data-action="discover-sort" data-sort="latest" aria-pressed="${sort==='latest'}">最新</button>
+      </div>
       ${statusMessage}
       ${items.length?`<div class="offer-grid">${pageItems.map(offerCard).join('')}</div>${pagination({page,pageCount,total})}`:emptyState}
     </div>`;

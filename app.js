@@ -44,6 +44,7 @@
     return String(v).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   }
 
+  function liveOfferById(id){ return window.NextBonusCreditCardsCatalog?.getById?.(id) || window.NextBonusDiscoverBankOffers?.getById?.(id) || window.NextBonusDealsCatalog?.getById?.(id) || null; }
   function currentOffer(){ return window.NextBonusCreditCardsCatalog?.getById?.(state.currentOfferId) || window.NextBonusDiscoverBankOffers?.getById?.(state.currentOfferId) || window.NextBonusDealsCatalog?.getById?.(state.currentOfferId) || offers.find(o=>o.id===state.currentOfferId) || offers[0]; }
   function currentProduct(){ return state.products.find(p=>p.id===state.currentProductId) || state.pastProducts.find(p=>p.id===state.currentProductId) || state.products[0]; }
   function isSaved(id){ return !!window.NextBonusWatchlistState?.getActive?.(id); }
@@ -245,6 +246,7 @@
     state.returnTarget=null; state.pendingIntent=null; state.returnSource=null;
     if(intent?.type==='bookmark'){
       window.NextBonusWatchlistRouting?.followExplicitly?.(intent.offerId);
+      window.NextBonusDiscoverInterests?.recordOffer?.(liveOfferById(intent.offerId),'follow');
       state.currentOfferId=intent.offerId;
       state.route=source || target || 'discover';
       toast('已关注');
@@ -277,7 +279,7 @@
   function toggleSaved(id){
     if(!state.loggedIn){ openLogin(state.route,{type:'bookmark',offerId:id},state.route); return; }
     if(isSaved(id)){ removeSaved(id); toast('已取消关注'); }
-    else { window.NextBonusWatchlistRouting?.followExplicitly?.(id); toast('已关注'); }
+    else { window.NextBonusWatchlistRouting?.followExplicitly?.(id); window.NextBonusDiscoverInterests?.recordOffer?.(liveOfferById(id),'follow'); toast('已关注'); }
     render();
   }
 
@@ -469,10 +471,10 @@
       state.productOverlay=null;
       const r=el.dataset.route;
       if(r==='login'){ openLogin(null,null,state.route); }
-      else navigate(r,{source:r});
+      else { if(r==='discover')window.NextBonusDiscoverInterests?.refresh?.(); navigate(r,{source:r}); }
       return;
     }
-    if(action==='open-offer'){ captureScroll(); window.NextBonusAssessmentPage?.exit?.(pageContext(),{render:false}); state.offerDetailTask=null; state.annualValueDraft=null; state.currentOfferId=el.dataset.id; state.routeSource=state.route==='wishlist'?'wishlist':'discover'; state.posterIndex=0; state.productOverlay=null; state.route='offer-detail'; render(); window.scrollTo(0,0); return; }
+    if(action==='open-offer'){ captureScroll(); window.NextBonusDiscoverInterests?.recordOffer?.(liveOfferById(el.dataset.id),'view'); window.NextBonusAssessmentPage?.exit?.(pageContext(),{render:false}); state.offerDetailTask=null; state.annualValueDraft=null; state.currentOfferId=el.dataset.id; state.routeSource=state.route==='wishlist'?'wishlist':'discover'; state.posterIndex=0; state.productOverlay=null; state.route='offer-detail'; render(); window.scrollTo(0,0); return; }
     if(action==='back-offer-list'){ closeOfferDetail(); return; }
     if(action==='direct-apply'){ const o=currentOffer(), r=state.assessmentResults[o.id]; if(!o.applyUrl)return; const appRestriction=!!(r&&['BLOCK','WAIT'].includes(r.internal?.appHard)); const bonusRestriction=!!(r&&(r.eligible==='不可以'||['BLOCK','WAIT'].includes(r.internal?.bonusHard))); const risky=appRestriction||bonusRestriction||!!(r&&r.recommendation==='暂不建议申请'); if(risky){state.modal={type:'apply-risk',copy:appRestriction?'按当前已知规则，你现在申请可能不符合申请限制。仍要继续申请吗？':'你可能无法获得当前开卡奖励。仍要继续申请吗？'};render();}else{window.open(o.applyUrl,'_blank','noopener,noreferrer');} return; }
     if(action==='apply-confirm'){ const o=currentOffer(); state.modal=null; render(); if(o.applyUrl) window.open(o.applyUrl,'_blank','noopener,noreferrer'); return; }

@@ -18,6 +18,7 @@
       offerSearch:'',
       offerCategory:'全部',
       offerPage:1,
+      offerSort:'personal',
       watchlistHistoryOpen:false,
       pastOpen:false,
       productSectionExpanded:{'其他':false},

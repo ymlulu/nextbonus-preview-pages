@@ -304,3 +304,12 @@
 .discover-page .discover-pagination-button:disabled{opacity:.4;cursor:default}
 .discover-page .discover-pagination-button:focus-visible{outline:2px solid #0a84ff;outline-offset:2px}
 @media(max-width:780px){.discover-page .discover-pagination{justify-content:center;gap:10px}.discover-page .discover-pagination-total{width:100%;text-align:center}.discover-page .discover-pagination-controls{justify-content:center}}
+
+/* Discover sort uses the established type scale and card styling. */
+.discover-page .filters{margin-bottom:10px}
+.discover-page .discover-sort{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin:0 0 14px}
+.discover-page .discover-sort-button{padding:8px 12px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--nb-label-secondary,#718096);cursor:pointer}
+.discover-page .discover-sort-button.is-active{background:rgba(10,132,255,.09);border-color:rgba(10,132,255,.15);color:#086dc9}
+.discover-page .discover-sort-button:hover:not(.is-active){background:rgba(120,120,128,.08)}
+.discover-page .discover-sort-button:focus-visible{outline:2px solid #0a84ff;outline-offset:2px}
+@media(max-width:780px){.discover-page .discover-sort{justify-content:flex-start}}

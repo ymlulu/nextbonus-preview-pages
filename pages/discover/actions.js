@@ -3,6 +3,11 @@
   const events=window.NextBonusEvents;
   if(!events) throw new Error('Page event registry unavailable');
 
+  let pendingSearch=null;
+  function stopSearchTimer(){
+    if(pendingSearch!==null)window.clearTimeout?.(pendingSearch);
+    pendingSearch=null;
+  }
   events.register('discover',{
     click({event,ctx}){
       const el=event.target.closest?.('[data-action]');
@@ -23,12 +28,27 @@
         requestAnimationFrame(()=>window.scrollTo({top:0,behavior:'instant'}));
         return {render:true};
       }
+      if(action==='discover-sort'){
+        const next=el.dataset.sort;
+        if(!['personal','latest'].includes(next)||next===ctx.state.offerSort)return false;
+        stopSearchTimer();
+        window.NextBonusDiscoverInterests?.refresh?.();
+        ctx.state.offerSort=next;
+        ctx.state.offerPage=1;
+        if(ctx.state.pageScroll)ctx.state.pageScroll.discover=0;
+        requestAnimationFrame(()=>window.scrollTo({top:0,behavior:'instant'}));
+        return {render:true};
+      }
       if(action==='discover-category'){
+        stopSearchTimer();
+        if(ctx.state.offerCategory!==el.dataset.category)
+          window.NextBonusDiscoverInterests?.recordCategory?.(el.dataset.category);
         ctx.state.offerCategory=el.dataset.category;
         ctx.state.offerPage=1;
         return {render:true};
       }
       if(action==='discover-clear-search'){
+        stopSearchTimer();
         ctx.state.offerSearch='';
         ctx.state.offerPage=1;
         return {render:true,focusId:'discover-search'};
@@ -39,6 +59,14 @@
       if(event.target?.id!=='discover-search') return false;
       ctx.state.offerSearch=event.target.value;
       ctx.state.offerPage=1;
+      stopSearchTimer();
+      if(window.setTimeout&&ctx.state.offerSearch.trim()){
+        const query=ctx.state.offerSearch,category=ctx.state.offerCategory,offers=ctx.discoverOffers||[];
+        pendingSearch=window.setTimeout(()=>{
+          window.NextBonusDiscoverInterests?.recordSearch?.(query,offers,category);
+          pendingSearch=null;
+        },650);
+      }
       return {render:true,focusId:'discover-search'};
     }
   });
