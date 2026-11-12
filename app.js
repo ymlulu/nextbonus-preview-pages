@@ -44,7 +44,7 @@
     return String(v).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   }
 
-  function currentOffer(){ return window.NextBonusDiscoverBankOffers?.getById?.(state.currentOfferId) || window.NextBonusDealsCatalog?.getById?.(state.currentOfferId) || offers.find(o=>o.id===state.currentOfferId) || offers[0]; }
+  function currentOffer(){ return window.NextBonusCreditCardsCatalog?.getById?.(state.currentOfferId) || window.NextBonusDiscoverBankOffers?.getById?.(state.currentOfferId) || window.NextBonusDealsCatalog?.getById?.(state.currentOfferId) || offers.find(o=>o.id===state.currentOfferId) || offers[0]; }
   function currentProduct(){ return state.products.find(p=>p.id===state.currentProductId) || state.pastProducts.find(p=>p.id===state.currentProductId) || state.products[0]; }
   function isSaved(id){ return !!window.NextBonusWatchlistState?.getActive?.(id); }
 
@@ -145,6 +145,8 @@
   function pageContext(){
     // DD owns Bank Offers, the static source owns credit cards / non-bank demos,
     // and the standalone Deals D1 owns shopping. Discover only combines views.
+    window.NextBonusCreditCardsCatalog?.ensure?.();
+    const cardOffers=window.NextBonusCreditCardsCatalog?.list?.()||[];
     const bankCatalog=window.NextBonusDiscoverBankOffers;
     if(['discover','wishlist','offer-detail'].includes(state.route))bankCatalog?.ensure?.();
     const bankState=bankCatalog?.getState?.();
@@ -152,7 +154,7 @@
     const legacyNonBank=offers.filter(o=>o.category!=='银行');
     const legacyBank=!bankOffers.length&&(bankState?.status==='error'||bankState?.status==='unavailable')
       ?offers.filter(o=>o.category==='银行'):[]; // Offline fallback only.
-    const discoverOffers=[...legacyNonBank,...bankOffers,...legacyBank,...(window.NextBonusDealsCatalog?.list?.()||[])];
+    const discoverOffers=[...legacyNonBank,...cardOffers,...bankOffers,...legacyBank,...(window.NextBonusDealsCatalog?.list?.()||[])];
     const ctx={ state, categories, offers, discoverOffers, catalog, esc, currentOffer, currentProduct, isSaved, removeSaved, categoryIcon, offerCard, offerResult, metric, genericPoster, activeAttentionSorted, currentActiveAttention, uniqueAttentionProducts, historyBucket, historyDateISO, historyDateLabel, attentionIdentity, openLogin, closeOfferDetail, closeOfferDetailTask, closeProductDetail, productCardDisplay, shortBrand, formatLongDate, formatAnniversary, shortDate, localDateISO, daysUntil, toast, completeAttention, historyCorrection, renderApp:render, persist:()=>storageCore.save(state) };
     ctx.renderRoute=route=>window.NextBonusPageRegistry.render(route,ctx);
     return ctx;
@@ -529,6 +531,9 @@
   window.addEventListener?.('nextbonus:deals-updated',()=>{
     // Preserve the Discover base DOM beneath Offer Detail for all async catalogs.
     if(['discover','wishlist'].includes(state.route)&&!hasDetailLayer()) render();
+  });
+  window.addEventListener?.('nextbonus:credit-cards-updated',()=>{
+    if(['discover','wishlist'].includes(state.route)&&!hasDetailLayer())render();
   });
   window.addEventListener?.('nextbonus:bank-offers-updated',()=>{
     // A late API response must never replace Discover beneath an open detail overlay.

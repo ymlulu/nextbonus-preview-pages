@@ -6,7 +6,7 @@
     const fact=window.NextBonusOfferData?.[offerId]||null;
     const product=fact?window.NextBonusOfferProducts?.[fact.productId]||null:null;
     if(!fact||!product){
-      const dynamic=window.NextBonusDiscoverBankOffers?.getById?.(offerId)||window.NextBonusDealsCatalog?.getById?.(offerId);
+      const dynamic=window.NextBonusCreditCardsCatalog?.getById?.(offerId)||window.NextBonusDiscoverBankOffers?.getById?.(offerId)||window.NextBonusDealsCatalog?.getById?.(offerId);
       if(!dynamic)return null;
       return {
         offerId,

@@ -61,9 +61,19 @@
     </article>`;
   }
 
+  function creditCardRender(offer,esc){
+    const image=offer.imageUrl?'<div class="nb-main-art"><img src="'+esc(offer.imageUrl)+'" alt="'+esc(offer.name)+'" loading="lazy" /></div>':
+      '<div class="nb-brand-art">'+esc(offer.provider)+'</div>';
+    return '<article class="offer-card nb-offer-card nb-wp-api-card" data-action="open-offer" data-id="'+esc(offer.id)+'" tabindex="0" role="button" aria-label="'+esc(offer.name)+'">'+
+      '<div class="nb-offer-visual">'+image+'</div>'+
+      '<div class="nb-card-body"><div class="nb-title-row"><div class="nb-offer-name">'+esc(offer.name)+'</div></div>'+
+      '<div class="nb-primary-value">'+esc(offer.value)+'</div>'+
+      '<div class="nb-card-footer"><div class="nb-card-meta"><span class="nb-tag attribute">信用卡</span></div></div></div></article>';
+  }
   function render(offer,{saved=false,unavailable=false,esc=escapeHtml}={}){
     const id=offer?.id;
     if(offer?.source==='deals-api')return dynamicRender(offer,esc);
+    if(offer?.source==='credit-cards-api')return creditCardRender(offer,esc);
     if(offer?.source==='bank-offers-api')return bankRender(offer,esc);
     const {fact,product}=productFor(id);
     if(!id||!fact||!product)return '';

@@ -144,6 +144,9 @@
 
     const saved=isSaved(o.id);
     const mobileToolbar=mobileOfferToolbar(esc,o,saved);
+    if(o.source==='credit-cards-api'){
+      return window.NextBonusWordPressCardDetail?.render?.(o,{esc,saved,mobileToolbar})||'';
+    }
     if(o.source==='bank-offers-api'){
       return window.NextBonusBankOfferDetail?.render?.(o,{esc,saved,mobileToolbar})||'';
     }

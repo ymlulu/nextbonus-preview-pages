@@ -48,6 +48,17 @@
       Object.values(catalog).flat().map(product=>[product.id,product])
     ));
   }
+  const legacyCreditCards=catalog['信用卡'];
+  function replaceCreditProducts(cards){
+    catalog['信用卡']=Object.freeze([
+      ...legacyCreditCards,
+      ...(cards||[]).filter(card=>card?.status==='published').map(card=>Object.freeze(withCanonicalArt('信用卡',{
+        id:'cc-wp:'+card.slug,name:card.name,institution:card.issuer||'信用卡',
+        art:'bank',cardImageLocal:card.imageUrl||undefined
+      })))
+    ]);
+    rebuildIndex();
+  }
   function replaceBankProducts(products){
     catalog['银行账户']=Object.freeze(
       (products||[]).map(product=>Object.freeze(withCanonicalArt('银行账户',product)))
@@ -67,6 +78,15 @@
     retryBankCatalog(){ return window.NextBonusBankProductCatalog?.retry?.(); }
   });
 
+  const cardCatalog=window.NextBonusCreditCardsCatalog;
+  if(cardCatalog){
+    replaceCreditProducts(cardCatalog.products());
+    cardCatalog.subscribe(({cards})=>{
+      replaceCreditProducts(cards);
+      window.dispatchEvent?.(new CustomEvent('nextbonus:product-catalog-updated'));
+    });
+    void cardCatalog.load();
+  }
   const bankCatalog=window.NextBonusBankProductCatalog;
   if(bankCatalog){
     bankCatalog.prime(catalog['银行账户']);
