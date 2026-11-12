@@ -3,14 +3,14 @@
 .nb-wp-card-detail .nb-wp-card-photo{display:block;max-width:95%;max-height:70%;object-fit:contain}
 .nb-wp-card-detail .nb-wp-card-fallback{padding:48px 20px;color:#64748b;text-align:center}
 .nb-wp-card-detail .nb-wp-card-info{display:flex;flex-direction:column;gap:20px;padding:30px 28px;background:#fff}
-.nb-wp-card-detail .nb-wp-card-highlight{margin:0;color:#606975;line-height:1.65}
+.nb-wp-card-detail .nb-wp-card-highlight{margin:0;color:#606975;}
 .nb-wp-card-detail .nb-current-offer{margin:0}
 .nb-wp-card-detail .nb-wp-card-facts{display:grid;gap:14px}
 .nb-wp-card-detail .nb-wp-card-facts>div{border-bottom:1px solid #e8ebef;padding-bottom:12px}
-.nb-wp-card-detail .nb-wp-card-facts b{display:block;font-size:13px;margin-bottom:5px}
-.nb-wp-card-detail .nb-wp-card-facts p{margin:0;line-height:1.6;color:#525966;overflow-wrap:anywhere}
+.nb-wp-card-detail .nb-wp-card-facts b{display:block;margin-bottom:5px}
+.nb-wp-card-detail .nb-wp-card-facts p{margin:0;color:#525966;overflow-wrap:anywhere}
 .nb-wp-card-detail .nb-wp-card-actions{margin-top:auto;display:flex;flex-direction:column;align-items:stretch;gap:14px;text-align:center}
-.nb-wp-card-detail .nb-wp-card-article{font-size:13px;color:#1769c8;text-decoration:none}
+.nb-wp-card-detail .nb-wp-card-article{color:#1769c8;text-decoration:none}
 @media(max-width:1180px){
  .nb-wp-card-detail .nb-wp-card-image-pane{min-height:250px!important;height:auto!important;padding:34px 20px}
  .nb-wp-card-detail .nb-wp-card-photo{max-width:min(85%,360px);max-height:220px}

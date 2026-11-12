@@ -9,3 +9,29 @@
 .login-card input{height:45px}
 .login-card button{display:block;width:100%;height:45px;margin-top:20px}
 @media(max-width:640px){.login-wrap{min-height:65vh;padding:0}.login-card{padding:30px 20px}.top-actions{gap:10px}}
+
+/* Credit-card review: existing admin shell, independent tab and inline publish. */
+.admin-tabs{display:flex;gap:6px;margin:18px 0 4px;border-bottom:1px solid #dee6f0}
+.admin-tab{border:0;border-radius:9px 9px 0 0;padding:12px 24px;background:transparent;color:#64748b;font-weight:750}
+.admin-tab.active{color:#096ce4;background:#eaf2ff;box-shadow:inset 0 -2px #096ce4}
+.credit-admin-list{display:grid;gap:14px}
+.credit-admin-row{display:grid;grid-template-columns:110px minmax(0,1fr) minmax(230px,290px);gap:18px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:18px;align-items:start}
+.credit-admin-image{width:110px;height:72px;object-fit:contain;background:#f7f9fc;border-radius:10px}
+.credit-admin-placeholder{display:grid;place-items:center;color:#738198;font-weight:700;text-align:center}
+.credit-admin-title{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.credit-admin-title strong{font-size:16px}
+.credit-admin-main small{display:block;color:#64748b;margin:7px 0;overflow-wrap:anywhere}
+.credit-admin-highlight{color:#526078;font-size:13px;margin:10px 0;line-height:1.5}
+.credit-admin-actions{display:grid;gap:8px;align-content:start}
+.credit-admin-actions label{font-size:12px;font-weight:700;color:#5b6a80}
+.credit-admin-actions select{width:100%;font-size:13px}
+.credit-admin-buttons{display:flex;gap:8px}
+.credit-admin-buttons button{flex:1}
+.credit-admin-detail{margin-top:12px;border-top:1px solid #edf1f6;padding-top:12px;font-size:13px}
+.credit-admin-detail summary{cursor:pointer;color:#096ce4;font-weight:700;margin-bottom:6px}
+.credit-admin-detail p{margin:6px 0;color:#526078;white-space:pre-wrap}
+.credit-admin-offer-list{margin:8px 0;padding-left:18px}
+.credit-admin-offer-list li{margin:9px 0;overflow-wrap:anywhere}
+.credit-admin-link{color:#096ce4;font-size:12px;overflow-wrap:anywhere}
+.credit-admin-empty{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:30px;text-align:center;color:#64748b}
+@media(max-width:760px){.credit-admin-row{grid-template-columns:78px minmax(0,1fr)}.credit-admin-image{width:78px;height:56px}.credit-admin-actions{grid-column:1/-1}.credit-admin-buttons button{min-height:42px}.admin-tab{flex:1}}

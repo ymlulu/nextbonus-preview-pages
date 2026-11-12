@@ -12,6 +12,9 @@
     $('login-view').hidden=false;
     $('list-view').hidden=true;
     $('editor-view').hidden=true;
+    $('admin-tabs').hidden=true;
+    $('card-view').hidden=true;
+    window.NextBonusCardAdmin?.reset?.();
     $('logout').hidden=true;
     $('login-submit').disabled=false;
     if(error)message(error,true);
@@ -21,6 +24,12 @@
     $('logout').hidden=false;
     $('list-view').hidden=false;
     $('editor-view').hidden=true;
+    $('card-view').hidden=true;
+    $('admin-tabs').hidden=false;
+    $('tab-deals').classList.add('active');
+    $('tab-deals').setAttribute('aria-selected','true');
+    $('tab-cards').classList.remove('active');
+    $('tab-cards').setAttribute('aria-selected','false');
     message('');
   }
   const field=name=>form.elements.namedItem(name);
