@@ -209,6 +209,16 @@
   .discover-page .discover-search-row .search-clear{right:9px}
 }
 
+/* Semantic link cards open merchant pages without changing the shared card art. */
+.discover-page a.nb-dynamic-deal-card{
+  color:inherit;
+  text-decoration:none;
+}
+.discover-page a.nb-dynamic-deal-card:focus-visible{
+  outline:2px solid var(--nb-system-blue);
+  outline-offset:3px;
+}
+
 /* Shopping Deals: same card dimensions/image box, product/price-led content. */
 .discover-page .nb-dynamic-deal-card .nb-offer-visual{
   display:flex;

@@ -41,18 +41,28 @@
       ?'<div class="nb-main-art is-brand-logo nb-deal-card-art"><img src="'+esc(offer.imageUrl)+'" alt="" loading="lazy" referrerpolicy="no-referrer" /></div>'
       :'<div class="nb-brand-art nb-deal-card-art">'+esc(offer.provider||'Deal')+'</div>';
     const status=offer.featured?'<span class="nb-status-tag nb-deal-featured">精选</span>':'';
+    // Shopping items go directly through the existing click-tracking Worker.
+    // Never link to an unverified merchant/Dealmoon URL from the card.
+    const apiBase=String(window.NextBonusDealsConfig?.apiBase||'').trim().replace(/\/+$/,'');
+    const expectedGoUrl=apiBase+'/go/deal/'+encodeURIComponent(offer.id);
+    const goUrl=String(offer.goUrl||'').trim();
+    const direct=offer.category==='购物'&&apiBase.startsWith('https://')&&goUrl===expectedGoUrl;
+    const cardStart=direct
+      ?'<a class="offer-card nb-offer-card nb-dynamic-deal-card" data-id="'+esc(offer.id)+'" href="'+esc(goUrl)+'" target="_blank" rel="noopener noreferrer sponsored" aria-label="'+esc(offer.name)+'，前往商家购买">'
+      :'<article class="offer-card nb-offer-card nb-dynamic-deal-card" data-action="open-offer" data-id="'+esc(offer.id)+'" tabindex="0" role="button" aria-label="'+esc(offer.name)+'">';
+    const cardEnd=direct?'</a>':'</article>';
     const priceHtml=hasPrice
       ?'<div class="nb-deal-prices"><span class="nb-primary-value nb-deal-current-price">'+esc(currentPrice)+'</span>'+
         (showOriginal?'<del class="nb-deal-original-price" data-nb-type="callout">'+esc(originalPrice)+'</del>':'')+'</div>'
       :'<div class="nb-deal-prices"><span class="nb-deal-price-fallback" data-nb-type="callout">'+esc(offer.rewardText||offer.value||'查看优惠')+'</span></div>';
-    return '<article class="offer-card nb-offer-card nb-dynamic-deal-card" data-action="open-offer" data-id="'+esc(offer.id)+'" tabindex="0" role="button" aria-label="'+esc(offer.name)+'">'+
+    return cardStart+
       '<div class="nb-offer-visual">'+art+status+'</div>'+
       '<div class="nb-card-body">'+
         '<div class="nb-title-row"><div class="nb-offer-name" title="'+esc(title)+'">'+esc(title)+'</div></div>'+
         priceHtml+
         '<div class="nb-card-footer"><div class="nb-card-meta"><span class="nb-deal-merchant" data-nb-type="caption2">'+esc(offer.provider||'Deals')+'</span></div></div>'+
       '</div>'+
-    '</article>';
+    cardEnd;
   }
   function bankRender(offer,esc){
     // Reuse the existing product-offer card layout, but source text only from DD.
