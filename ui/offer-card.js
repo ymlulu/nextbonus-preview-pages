@@ -22,28 +22,35 @@
   }
 
   function dynamicRender(offer,esc){
-    // API-backed Deals (Admin and JSONL imports) use the same uncluttered
-    // Discover card contract as the original product/offer cards.
+    // Shopping Deals: product name, current price, crossed-out original price,
+    // and merchant only. Keep the shared visual panel and card dimensions.
     const money=window.NextBonusDealsCatalog?.money||((cents)=>'$'+(cents/100).toFixed(2));
-    const mainValue=offer.rewardText||(
-      Number.isSafeInteger(offer.priceCents)?money(offer.priceCents,offer.currency):offer.value||'查看优惠'
-    );
+    const hasPrice=Number.isSafeInteger(offer.priceCents);
+    const currentPrice=hasPrice?money(offer.priceCents,offer.currency):'';
+    const showOriginal=hasPrice&&Number.isSafeInteger(offer.originalPriceCents)&&
+      offer.originalPriceCents>offer.priceCents;
+    const originalPrice=showOriginal?money(offer.originalPriceCents,offer.currency):'';
     const fullTitle=String(offer.name||'').trim();
-    const title=mainValue&&fullTitle.endsWith(' '+mainValue)
-      ?fullTitle.slice(0,-mainValue.length-1).trim()||fullTitle
+    // Existing imports may already include "$23.38" in their titles.
+    // Strip it only when it equals the structured price; preserve model numbers.
+    const normalizedPrice=currentPrice.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const title=hasPrice
+      ?fullTitle.replace(new RegExp('\\s+'+normalizedPrice+'\\s*$'),'').trim()||fullTitle
       :fullTitle;
     const art=offer.imageUrl
       ?'<div class="nb-main-art is-brand-logo nb-deal-card-art"><img src="'+esc(offer.imageUrl)+'" alt="" loading="lazy" referrerpolicy="no-referrer" /></div>'
       :'<div class="nb-brand-art nb-deal-card-art">'+esc(offer.provider||'Deal')+'</div>';
-    const status=offer.featured?'<span class="nb-status-tag">精选</span>':'';
+    const status=offer.featured?'<span class="nb-status-tag nb-deal-featured">精选</span>':'';
+    const priceHtml=hasPrice
+      ?'<div class="nb-deal-prices"><span class="nb-primary-value nb-deal-current-price">'+esc(currentPrice)+'</span>'+
+        (showOriginal?'<del class="nb-deal-original-price" data-nb-type="callout">'+esc(originalPrice)+'</del>':'')+'</div>'
+      :'<div class="nb-deal-prices"><span class="nb-deal-price-fallback" data-nb-type="callout">'+esc(offer.rewardText||offer.value||'查看优惠')+'</span></div>';
     return '<article class="offer-card nb-offer-card nb-dynamic-deal-card" data-action="open-offer" data-id="'+esc(offer.id)+'" tabindex="0" role="button" aria-label="'+esc(offer.name)+'">'+
-      '<div class="nb-offer-visual">'+art+'</div>'+
+      '<div class="nb-offer-visual">'+art+status+'</div>'+
       '<div class="nb-card-body">'+
-        '<div class="nb-title-row"><div class="nb-offer-name">'+esc(title)+'</div></div>'+
-        '<div class="nb-primary-value">'+esc(mainValue)+'</div>'+
-        '<div class="nb-card-footer"><div class="nb-card-meta">'+
-          status+'<span class="nb-tag attribute">'+esc(offer.category||'其他')+'</span>'+
-        '</div></div>'+
+        '<div class="nb-title-row"><div class="nb-offer-name" title="'+esc(title)+'">'+esc(title)+'</div></div>'+
+        priceHtml+
+        '<div class="nb-card-footer"><div class="nb-card-meta"><span class="nb-deal-merchant" data-nb-type="caption2">'+esc(offer.provider||'Deals')+'</span></div></div>'+
       '</div>'+
     '</article>';
   }
