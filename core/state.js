@@ -17,6 +17,7 @@
       productOverlay:null,
       offerSearch:'',
       offerCategory:'全部',
+      offerPage:1,
       watchlistHistoryOpen:false,
       pastOpen:false,
       productSectionExpanded:{'其他':false},

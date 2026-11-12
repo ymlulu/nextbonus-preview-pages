@@ -219,3 +219,14 @@
 .nb-deals-status{margin:0 0 14px;padding:12px 14px;border-radius:9px;border:1px solid #d8e6f8;background:#f5f9ff;color:#3e5b7b;}
 .nb-deals-status.is-error{border-color:#f6c2b9;background:#fff6f3;color:#9b3526}
 .nb-deals-status button{padding:3px 9px;margin-left:8px;border:1px solid currentColor;color:inherit;border-radius:6px;background:transparent;cursor:pointer}
+
+/* Show twenty cards per page; keep the existing responsive grid unchanged. */
+.discover-page .discover-pagination{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:24px 0 10px}
+.discover-page .discover-pagination-total{color:#788499}
+.discover-page .discover-pagination-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.discover-page .discover-pagination-button{min-width:36px;height:36px;padding:0 10px;border:1px solid rgba(60,60,67,.12);border-radius:9px;background:#fff;color:#36445a;cursor:pointer}
+.discover-page .discover-pagination-button:hover:not(:disabled):not(.is-active){background:rgba(10,132,255,.06);border-color:rgba(10,132,255,.25)}
+.discover-page .discover-pagination-button.is-active{background:rgba(10,132,255,.10);border-color:rgba(10,132,255,.22);color:#086dc9}
+.discover-page .discover-pagination-button:disabled{opacity:.4;cursor:default}
+.discover-page .discover-pagination-button:focus-visible{outline:2px solid #0a84ff;outline-offset:2px}
+@media(max-width:780px){.discover-page .discover-pagination{justify-content:center;gap:10px}.discover-page .discover-pagination-total{width:100%;text-align:center}.discover-page .discover-pagination-controls{justify-content:center}}
