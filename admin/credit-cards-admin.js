@@ -166,6 +166,16 @@
     }
     select.value=card.primaryOfferId||'';
     action.append(label,select);
+    const lockButton=node('button','secondary credit-sync-lock'+(card.syncLocked?' locked':''),card.syncLocked?'🔒 已锁定':'🔓 自动同步');
+    lockButton.type='button';
+    lockButton.title=card.syncLocked?'点击解锁，后续 WordPress 数据更新将自动同步':'点击锁定，停止 WordPress 自动同步这张卡';
+    lockButton.setAttribute('aria-pressed',String(!!card.syncLocked));
+    lockButton.addEventListener('click',async()=>{
+      if(busy)return;
+      await change(card,{action:'set-sync-lock',locked:!card.syncLocked},
+        card.syncLocked?'已解锁，后续导入将同步 WordPress。':'已锁定，后续导入将跳过此卡。');
+    });
+    action.append(lockButton);
     const editButton=node('button','secondary','编辑 Offer');
     editButton.type='button';
     editButton.addEventListener('click',()=>{

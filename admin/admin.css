@@ -45,3 +45,7 @@
 .credit-admin-field textarea{min-height:58px;resize:vertical}
 .credit-editor-buttons{display:flex;gap:8px;flex-wrap:wrap}
 .credit-editor-buttons button{flex:1;min-width:110px}
+
+/* Card source-sync lock: independent from Draft / Published. */
+.credit-admin-actions .credit-sync-lock{width:100%;text-align:center}
+.credit-admin-actions .credit-sync-lock.locked{background:#fff7e7;border-color:#d5ad64;color:#70480d}
