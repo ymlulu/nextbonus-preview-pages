@@ -35,3 +35,13 @@
 .credit-admin-link{color:#096ce4;font-size:12px;overflow-wrap:anywhere}
 .credit-admin-empty{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:30px;text-align:center;color:#64748b}
 @media(max-width:760px){.credit-admin-row{grid-template-columns:78px minmax(0,1fr)}.credit-admin-image{width:78px;height:56px}.credit-admin-actions{grid-column:1/-1}.credit-admin-buttons button{min-height:42px}.admin-tab{flex:1}}
+
+/* Credit card Offer corrections are edited in the same row, below source facts. */
+.credit-admin-editor{margin:14px 0 0;padding:16px;background:#f7f9fc;border:1px solid #dce6f1;border-radius:12px}
+.credit-admin-editor[hidden]{display:none}
+.credit-offer-form{border:0;background:transparent;padding:0;display:grid;gap:12px}
+.credit-editor-title{display:block;color:#172b45}
+.credit-admin-field{display:grid;gap:6px;color:#52647a;font-size:12px}
+.credit-admin-field textarea{min-height:58px;resize:vertical}
+.credit-editor-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.credit-editor-buttons button{flex:1;min-width:110px}

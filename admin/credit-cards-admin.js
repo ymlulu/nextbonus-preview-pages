@@ -77,6 +77,80 @@
     }
     detail.append(list);
     main.append(detail);row.append(main);
+    const editor=node('div','credit-admin-editor');
+    editor.hidden=true;
+    const form=node('form','credit-offer-form');
+    form.noValidate=true;
+    form.addEventListener('submit',event=>event.preventDefault());
+    const editorTitle=node('strong','credit-editor-title','编辑 Offer');
+    const offerSelector=node('select','');
+    const options=offers.map(o=>({value:o.id,label:o.id+' · '+(o.bonus||'未填写奖励')}));
+    for(const option of options){
+      const opt=node('option','',option.label);opt.value=option.value;offerSelector.append(opt);
+    }
+    const addChoice=node('option','','＋ 新增 Offer');
+    addChoice.value='__new__';offerSelector.append(addChoice);
+    const field=(labelText,tag,maxLength)=>{
+      const wrapper=node('label','credit-admin-field');
+      wrapper.append(node('span','',labelText));
+      const input=node(tag,'');input.maxLength=maxLength;
+      wrapper.append(input);return {wrapper,input};
+    };
+    const bonus=field('完整奖励文案','textarea',1000);
+    const value=field('卡片展示奖励','input',160);
+    const requirement=field('消费要求','textarea',320);
+    const goUrl=field('申请链接（HTTPS）','input',2048);
+    goUrl.input.type='url';goUrl.input.placeholder='https://...';
+    const offerId=field('新 Offer ID（仅新增时填写）','input',255);
+    offerId.input.placeholder='例如 special-2026';
+    function showOffer(){
+      const isNew=offerSelector.value==='__new__';
+      const selected=offers.find(o=>o.id===offerSelector.value);
+      offerId.wrapper.hidden=!isNew;
+      bonus.input.value=isNew?'':selected?.bonus||'';
+      value.input.value=isNew?'':selected?.value||'';
+      requirement.input.value=isNew?'':selected?.requirement||'';
+      goUrl.input.value=isNew?'':selected?.goUrl||'';
+      if(isNew)offerId.input.value='';
+      restore.hidden=isNew||!selected?.edited;
+    }
+    form.append(editorTitle);
+    const pick=node('label','credit-admin-field');
+    pick.append(node('span','','选择要编辑的 Offer'),offerSelector);
+    form.append(pick,offerId.wrapper,bonus.wrapper,value.wrapper,requirement.wrapper,goUrl.wrapper);
+    const editorButtons=node('div','credit-editor-buttons');
+    const save=node('button','primary','保存修改');
+    save.type='button';
+    const restore=node('button','secondary','恢复原始内容');
+    restore.type='button';
+    const cancel=node('button','secondary','取消');
+    cancel.type='button';
+    editorButtons.append(save,restore,cancel);
+    form.append(editorButtons);
+    editor.append(form);main.append(editor);
+    offerSelector.addEventListener('change',showOffer);
+    save.addEventListener('click',async()=>{
+      if(busy)return;
+      const isNew=offerSelector.value==='__new__';
+      const id=isNew?offerId.input.value.trim():offerSelector.value;
+      if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)||id.length>255)return notice('请填写有效的 Offer ID（小写字母、数字、连字符）。',true);
+      const data={bonus:bonus.input.value,value:value.input.value,
+        requirement:requirement.input.value,goUrl:goUrl.input.value};
+      if(!data.bonus.trim()||!data.goUrl.trim())return notice('奖励文案和申请链接不可留空。',true);
+      let u;try{u=new URL(data.goUrl);if(u.protocol!=='https:')throw Error();}catch{return notice('申请链接必须是 HTTPS URL。',true);}
+      await change(card,{action:'save-offer',offerId:id,create:isNew,offer:data},'Offer 修改已保存；WordPress 同步不会覆盖它。');
+    });
+    restore.addEventListener('click',async()=>{
+      if(busy)return;
+      const selected=offers.find(o=>o.id===offerSelector.value);
+      if(!selected?.edited)return;
+      if(!window.confirm(selected.manual?'确定删除这条手动新增的 Offer 吗？':'恢复 WordPress 原始 Offer 内容？'))return;
+      await change(card,{action:'reset-offer',offerId:selected.id},'已恢复原始内容。');
+    });
+    cancel.addEventListener('click',()=>{editor.hidden=true;});
+    if(offers.length)offerSelector.value=card.primaryOfferId||offers[0].id;
+    else offerSelector.value='__new__';
+    showOffer();
     const action=node('div','credit-admin-actions');
     const label=node('label','','主 Offer');
     label.htmlFor='card-offer-'+card.slug;
@@ -92,6 +166,13 @@
     }
     select.value=card.primaryOfferId||'';
     action.append(label,select);
+    const editButton=node('button','secondary','编辑 Offer');
+    editButton.type='button';
+    editButton.addEventListener('click',()=>{
+      editor.hidden=!editor.hidden;
+      if(!editor.hidden)showOffer();
+    });
+    action.append(editButton);
     const buttons=node('div','credit-admin-buttons');
     const publish=node('button','primary',card.status==='published'?'更新发布':'发布');
     publish.type='button';
