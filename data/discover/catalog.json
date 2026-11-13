@@ -318,7 +318,7 @@
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/amex-delta-reserve-credit-card-review/",
         "status": "published",
         "primaryOfferId": "directam",
-        "sourceHash": "6277d1063fd385de8355a8b5ee8aa4ff5adf7fa956f2ec3656eaf8f117d7b062",
+        "sourceHash": "617eb0546da3dbbcd33ace343d1de3520fefe2056826c98215da149e33e709f3",
         "syncLocked": false,
         "offers": [
           {
@@ -326,7 +326,7 @@
             "bonus": "125k Delta 里程（六个月消费 $5k）",
             "value": "125k Delta 里程",
             "requirement": "六个月消费 $5k",
-            "goUrl": "https://www.dealam.com/go/339757?ref=uscc101d",
+            "goUrl": "https://www.dealam.com/go/339757?ref=nb",
             "edited": false,
             "manual": false
           }
@@ -438,7 +438,7 @@
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/amex-gold-delta-skymile-credit-card-review/",
         "status": "published",
         "primaryOfferId": "dealam",
-        "sourceHash": "65fe0956f37d2f652a975eb8debb8f5f6aa6354fb23be47f8e02794a2181d5ef",
+        "sourceHash": "85d6e7e916a330d6d4be766e5f1a8551b1ccffcb33581a642c32aeeccf735ea0",
         "syncLocked": false,
         "offers": [
           {
@@ -446,7 +446,7 @@
             "bonus": "最高 80k 里程（六个月消费 $2k）",
             "value": "最高 80k 里程",
             "requirement": "六个月消费 $2k",
-            "goUrl": "https://www.dealam.com/go/221732?ref=uscc101d",
+            "goUrl": "https://www.dealam.com/go/221732?ref=nb",
             "edited": false,
             "manual": false
           }
@@ -708,7 +708,7 @@
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/amex-starwood-preferred-guest-luxury-credit-card-review/",
         "status": "published",
         "primaryOfferId": "dealam",
-        "sourceHash": "7d9b90d9b02a413940342bbaad66fe8fed4011da36e4d0c4729b2be65a2ac28b",
+        "sourceHash": "c186f9180658adbda42e94823c65ce37ed912a90867cc9c1952229a5cef546c4",
         "syncLocked": false,
         "offers": [
           {
@@ -716,7 +716,7 @@
             "bonus": "100k Marriott 积分（六个月消费 $6k）",
             "value": "100k Marriott 积分",
             "requirement": "六个月消费 $6k",
-            "goUrl": "https://www.dealam.com/go/590764?ref=uscc101d",
+            "goUrl": "https://www.dealam.com/go/590764?ref=nb",
             "edited": false,
             "manual": false
           }
@@ -828,7 +828,7 @@
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/amex-delta-platinum-credit-card-review/",
         "status": "published",
         "primaryOfferId": "directam",
-        "sourceHash": "2467c7455fa9fc85dd0d91cdaac8b6740e1bc256cd00b09a38998d52552b1747",
+        "sourceHash": "03e306f9f353a1b683832a955b73420ad176fa21c8187771857f3ab626a8ba8c",
         "syncLocked": false,
         "offers": [
           {
@@ -836,7 +836,7 @@
             "bonus": "90k 里程（六个月消费 $3k）",
             "value": "90k 里程",
             "requirement": "六个月消费 $3k",
-            "goUrl": "https://www.dealam.com/go/193398?ref=uscc101d",
+            "goUrl": "https://www.dealam.com/go/193398?ref=nb",
             "edited": false,
             "manual": false
           }
@@ -2238,7 +2238,7 @@
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/capital-one-quicksilver-cash-rewards-review/",
         "status": "published",
         "primaryOfferId": "directam",
-        "sourceHash": "4dd4001018e7188450cc2f0de12e3c17890709c3a43f76683d2aa1b05c638dd8",
+        "sourceHash": "c5ce512217accc82c0646b968662bb3c58a6b25f980124071e82ef8941a4f5de",
         "syncLocked": false,
         "offers": [
           {
@@ -2246,7 +2246,7 @@
             "bonus": "$200 返现（前三个月花 $500）",
             "value": "$200 返现（前三个月花 $500）",
             "requirement": "",
-            "goUrl": "https://www.dealam.com/go/307339?ref=uscc101d",
+            "goUrl": "https://www.dealam.com/go/307339?ref=nb",
             "edited": false,
             "manual": false
           }
@@ -2298,7 +2298,7 @@
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/capital-one-savor-reveiw/",
         "status": "published",
         "primaryOfferId": "directam",
-        "sourceHash": "7557d8d5fdeb5bb38d6231bede04938cab11d32510f7842b0e0f11b135e8533f",
+        "sourceHash": "7993ccc2cb6ad41a21f92ab9dd2a2c6a529de5f03d877c04410eafc7b3f3ca5c",
         "syncLocked": false,
         "offers": [
           {
@@ -2306,7 +2306,7 @@
             "bonus": "$250 返现（前三个月花 $500）",
             "value": "$250 返现（前三个月花 $500）",
             "requirement": "",
-            "goUrl": "https://www.dealam.com/go/307348?ref=uscc101d",
+            "goUrl": "https://www.dealam.com/go/307348?ref=nb",
             "edited": false,
             "manual": false
           }
@@ -2328,7 +2328,7 @@
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/capital-one-spark-cash-biz-review/",
         "status": "published",
         "primaryOfferId": "directam",
-        "sourceHash": "60da8637281207b33f31c8fe7bbf316b70f26012b1397e95cc2d4a2500a453f9",
+        "sourceHash": "f94912dbc5f3cf15dd3f689c04ee05a6efa81915ca5eaa2dd730b16c509711a2",
         "syncLocked": false,
         "offers": [
           {
@@ -2336,7 +2336,7 @@
             "bonus": "$2000 返现（前三个月花 $30k）",
             "value": "$2000 返现（前三个月花 $30k）",
             "requirement": "",
-            "goUrl": "https://www.dealam.com/go/844360?ref=uscc101d",
+            "goUrl": "https://www.dealam.com/go/844360?ref=nb",
             "edited": false,
             "manual": false
           }
@@ -2358,7 +2358,7 @@
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/capital-one-spark-cash-select-review/",
         "status": "published",
         "primaryOfferId": "directam",
-        "sourceHash": "bd03601ba342ab8031ad019058261b661fc2480cea88f859674f8d1bbdfc17d9",
+        "sourceHash": "614edd577365d1354662eaf24db3fcd679dcc33a729dab1aabc45a06ae79392e",
         "syncLocked": false,
         "offers": [
           {
@@ -2366,7 +2366,7 @@
             "bonus": "$750 返现（前三个月花 $6000）",
             "value": "$750 返现（前三个月花 $6000）",
             "requirement": "",
-            "goUrl": "https://www.dealam.com/go/844379?ref=uscc101d",
+            "goUrl": "https://www.dealam.com/go/844379?ref=nb",
             "edited": false,
             "manual": false
           }
@@ -2388,7 +2388,7 @@
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/capital-one-spark-cash-business/",
         "status": "published",
         "primaryOfferId": "directam",
-        "sourceHash": "6e38dae1340a66fe4c130a55f47fa3a60e542a25cadcf58cb3a4c4b9bea9a018",
+        "sourceHash": "d745e95256604b14576b9e35a762b7d876976e123f88ef8059b06825f9bd8c62",
         "syncLocked": false,
         "offers": [
           {
@@ -2396,7 +2396,7 @@
             "bonus": "$1000 旅行报销（三个月消费 $10k）",
             "value": "$1000 旅行报销",
             "requirement": "三个月消费 $10k",
-            "goUrl": "https://www.dealam.com/go/1177857?ref=uscc101d",
+            "goUrl": "https://www.dealam.com/go/1177857?ref=nb",
             "edited": false,
             "manual": false
           }
@@ -4338,7 +4338,7 @@
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/citi-aa-globe-review/",
         "status": "published",
         "primaryOfferId": "directam",
-        "sourceHash": "89ea1314ba726ce8efd19531b28c4f49f640a04e52ce1b661042249c3490d821",
+        "sourceHash": "55b7b7055966aa0e3c29a97847170eb78dc414b08d527884f682da43ff056395",
         "syncLocked": false,
         "offers": [
           {
@@ -4346,7 +4346,7 @@
             "bonus": "60k AA 里程（三个月消费 $4k）",
             "value": "60k AA 里程",
             "requirement": "三个月消费 $4k",
-            "goUrl": "https://www.dealam.com/go/1284698?ref=uscc101d",
+            "goUrl": "https://www.dealam.com/go/1284698?ref=nb",
             "edited": false,
             "manual": false
           }
@@ -4518,7 +4518,7 @@
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/citi-costco-credit-card-review/",
         "status": "published",
         "primaryOfferId": "directam",
-        "sourceHash": "a52c65f2ede0fd9b15e434380655591e2c04e8975a68325c783fc16d52b2ce5f",
+        "sourceHash": "ea09977124326033de7c6e3f790710556416fae9371b3381a90ba618c812c58c",
         "syncLocked": false,
         "offers": [
           {
@@ -4526,7 +4526,7 @@
             "bonus": "暂无",
             "value": "暂无",
             "requirement": "",
-            "goUrl": "https://www.dealam.com/go/284588?ref=uscc101d",
+            "goUrl": "https://www.dealam.com/go/284588?ref=nb",
             "edited": false,
             "manual": false
           }
@@ -4788,7 +4788,7 @@
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/citi-strata-elite-review/",
         "status": "published",
         "primaryOfferId": "directam",
-        "sourceHash": "33f93a48b4db295e721f8eb25f4014ab5969d27d702e24e598c1f01b19129a00",
+        "sourceHash": "e6425691334b194b71e7a9c0c45b3d74fa5ceafdfd2d5b70c597bb3bc75f5a8e",
         "syncLocked": false,
         "offers": [
           {
@@ -4796,7 +4796,7 @@
             "bonus": "75k Thank You Points（3 个月消费 $6000）",
             "value": "75k Thank You Points",
             "requirement": "3 个月消费 $6000",
-            "goUrl": "https://www.dealam.com/go/1248253?ref=uscc101d",
+            "goUrl": "https://www.dealam.com/go/1248253?ref=nb",
             "edited": false,
             "manual": false
           }
