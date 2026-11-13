@@ -7,23 +7,45 @@
     const validDate=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s);
     const expired=validDate(o.expiresOn)&&o.expiresOn<new Date().toISOString().slice(0,10);
     const money=c=>window.NextBonusDiscoverBankOffers?.money?.(c)||'';
-    const requirements=Array.isArray(o.requirements?.requirements)
-      ?o.requirements.requirements.filter(x=>typeof x?.description==='string'&&x.description.trim()).map(x=>x.description.trim())
+    const raw=Array.isArray(o.requirements?.requirements)
+      ?o.requirements.requirements.filter(x=>typeof x?.description==='string'&&x.description.trim())
+        .map(x=>({id:x.id,description:x.description.trim()}))
       :[];
-    const fallback=[o.ddRequired?o.ddRequirement:'',...(o.extraRequirements||[])].filter(Boolean);
-    const steps=requirements.length?requirements:fallback;
+    const byId=new Map(raw.filter(x=>x.id!=null).map(x=>[x.id,x.description]));
     const tiers=Array.isArray(o.tiers)?o.tiers.filter(t=>
       Number.isSafeInteger(t?.bonus_amount_cents)&&t.bonus_amount_cents>0):[];
-    const detailRows=tiers.map(t=>{
-      const refs=Array.isArray(t.requirement_ids)?t.requirement_ids:[];
-      const matching=Array.isArray(o.requirements?.requirements)
-        ?o.requirements.requirements.filter(r=>refs.includes(r?.id)).map(r=>r.description).filter(Boolean):[];
-      const description=matching.length?matching.join('；'):'具体档位要求请查看官方条款';
-      return '<div class="remaining-tier"><span>'+esc(description)+'</span><span><strong>'+esc(money(t.bonus_amount_cents))+'</strong></span></div>';
+    const tierRefs=tiers.map(t=>Array.isArray(t.requirement_ids)
+      ?[...new Set(t.requirement_ids.filter(id=>byId.has(id)))] :[]);
+    const allTierRefs=new Set(tierRefs.flat());
+    // A shared tier requirement must be explicitly linked by *every* tier.
+    // For a single tier, keep its requirements with that tier; do not relabel
+    // its whole checklist as unconditional "other" account requirements.
+    const commonIds=new Set(tierRefs.length>1&&tierRefs.every(refs=>refs.length)
+      ?tierRefs[0].filter(id=>tierRefs.every(refs=>refs.includes(id)))
+      :[]);
+    const common=raw.filter(r=>commonIds.has(r.id)||!allTierRefs.has(r.id));
+    const extras=Array.isArray(o.extraRequirements)
+      ?o.extraRequirements.filter(x=>typeof x==='string'&&x.trim()).map(x=>x.trim()):[];
+    // Avoid duplicating extraRequirements already present as structured facts.
+    const known=new Set(raw.map(r=>r.description));
+    extras.forEach(description=>{
+      if(!known.has(description)){common.push({description});known.add(description);}
+    });
+    if(!tiers.length){
+      if(!raw.length&&o.ddRequired&&o.ddRequirement&&!known.has(o.ddRequirement)){
+        common.unshift({description:o.ddRequirement});
+      }
+    }
+    const detailRows=tiers.map((t,index)=>{
+      const exclusive=tierRefs[index].filter(id=>!commonIds.has(id)).map(id=>byId.get(id));
+      const description=exclusive.length?exclusive.join('；')
+        :(tierRefs[index].length?'同上方共同开户要求':'具体档位要求请查看官方条款');
+      return '<div class="remaining-tier"><span>'+esc(description)+'</span><span><strong>'+
+        esc(money(t.bonus_amount_cents))+'</strong></span></div>';
     }).join('');
-    const list=steps.map((step,index)=>'<div class="remaining-step"><div class="remaining-num">'+(index+1)+
+    const list=common.map((r,index)=>'<div class="remaining-step"><div class="remaining-num">'+(index+1)+
       '</div><div class="remaining-step-card"><div class="remaining-step-title"><span>'+
-      esc(step)+'</span></div></div></div>').join('');
+      esc(r.description)+'</span></div></div></div>').join('');
     const eligibility=o.eligibilityNotes
       ?'<details class="remaining-eligibility"><summary>申请资格与限制</summary><div class="remaining-eligibility-copy">'+esc(o.eligibilityNotes)+'</div></details>':'';
     const affiliate=o.applyUrl&&!expired
@@ -44,11 +66,10 @@
       '<button class="remaining-save nb-follow-control '+(saved?'saved':'')+'" data-action="bookmark" data-id="'+esc(o.id)+'" type="button">'+(saved?'已关注':'关注')+'</button></div>'+
       '<section class="remaining-reward"><div class="remaining-reward-top"><div class="remaining-reward-label">当前开户奖励</div>'+
       '<div class="remaining-reward-value">'+esc(o.value)+'</div>'+
-      (o.ddRequired&&o.ddRequirement?'<div class="remaining-reward-sub">'+esc(o.ddRequirement)+'</div>':'')+
       '</div>'+
       (detailRows?'<div class="remaining-tier-head"><span>奖励档位要求</span><span>奖励</span></div>'+detailRows:'')+
       '</section>'+
-      (list?'<div class="remaining-section-title">完成条件</div><div class="remaining-timeline">'+list+'</div>':'')+
+      (list?'<div class="remaining-section-title">其他开户要求</div><div class="remaining-timeline">'+list+'</div>':'')+
       (o.promoCode?'<div class="remaining-section-title">Promo Code：'+esc(o.promoCode)+'</div>':'')+
       affiliate+
       (o.expiresOn?'<div class="remaining-deadline">活动截止：'+esc(o.expiresOn)+'</div>':'')+
