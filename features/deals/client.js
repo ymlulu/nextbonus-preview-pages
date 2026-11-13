@@ -8,6 +8,8 @@
     (!row.startsOn||row.startsOn<=today())&&(!row.expiresOn||row.expiresOn>=today());
   const cache=window.NextBonusDiscoverCache;
   const cached=configured?cache?.read?.('deals',isActive):null;
+  // An empty cache must not suppress fresh Deals after publication.
+  const hasCachedDeals=Array.isArray(cached?.items)&&cached.items.length>0;
   const money=(cents,currency='USD')=>{
     if(!Number.isSafeInteger(cents)) return '';
     try{return new Intl.NumberFormat('en-US',{style:'currency',currency,minimumFractionDigits:0,maximumFractionDigits:2}).format(cents/100);}
@@ -47,7 +49,7 @@
     });
   }
   let items=Object.freeze((cached?.items||[]).map(normalize).filter(Boolean)), pending=null;
-  let state=Object.freeze({status:configured?(cached?'ready':'idle'):'unconfigured',error:null,updatedAt:cached?.updatedAt||null});
+  let state=Object.freeze({status:configured?(hasCachedDeals?'ready':'idle'):'unconfigured',error:null,updatedAt:cached?.updatedAt||null});
 
   function publish(next,patch){
     items=Object.freeze(next);
@@ -103,6 +105,6 @@
     if(typeof document!=='undefined')document.addEventListener?.('visibilitychange',()=>{
       if(!document.hidden)refreshOnReturn();
     });
-    if(!cached)void load();
+    if(!hasCachedDeals)void load();
   }
 })();
