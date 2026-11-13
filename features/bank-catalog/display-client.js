@@ -27,6 +27,18 @@
   state=Object.freeze({...state,status:'loading',error:null});
   pending=(async()=>{
    try{
+    let snapshot=null;
+    try{snapshot=await window.NextBonusStaticCatalog?.load?.({force,fetcher});}
+    catch(_){/* Bootstrap fallback to the existing reviewed Preview API. */}
+    if(snapshot){
+      const seen=new Set();
+      const safe=snapshot.bankOffers.offers.filter(x=>{
+        if(!valid(x)||seen.has(x.slug))return false;
+        seen.add(x.slug);return true;
+      });
+      cache?.write?.('bank-display',safe);
+      return announce(safe,{status:'ready',error:null,stale:false,updatedAt:new Date().toISOString()});
+    }
     const all=[];let offset=0;
     for(let p=0;p<100;p++){
      const response=await fetcher(ENDPOINT+'?offset='+offset,

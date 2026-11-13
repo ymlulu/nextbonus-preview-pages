@@ -35,6 +35,21 @@
     state=Object.freeze({...state,status:'loading',error:null});
     pending=(async()=>{
       try{
+        // First choice: a versioned, reviewed JSON snapshot served by GitHub Pages.
+        // Keep the existing public Worker request as a safe bootstrap fallback.
+        let snapshot=null;
+        try{snapshot=await window.NextBonusStaticCatalog?.load?.({force});}
+        catch(_){/* Snapshot not published or temporarily unavailable. */}
+        if(snapshot){
+          const all=snapshot.creditCards.items;
+          cards=Object.freeze(all.filter(c=>c.status==='published').map(c=>Object.freeze(c)));
+          cache?.write?.('credit-cards',cards);
+          offers=Object.freeze(cards.map(adapt).filter(Boolean));
+          state=Object.freeze({status:'ready',error:null,updatedAt:new Date().toISOString()});
+          for(const cb of listeners)cb({cards,offers,state});
+          window.dispatchEvent?.(new CustomEvent('nextbonus:credit-cards-updated'));
+          return {cards,offers,state};
+        }
         const all=[];
         let offset=0;
         for(let page=0;page<100;page++){
