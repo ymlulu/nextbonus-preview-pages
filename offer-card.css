@@ -121,6 +121,11 @@
   overflow:hidden;
 }
 
+/* WP credit cards: separate product name from reward without resizing the card. */
+.nb-offer-card.nb-wp-api-card .nb-primary-value{
+  margin-top:12px;
+}
+
 .nb-offer-card .nb-card-footer{
   flex:0 0 auto;
   margin-top:auto;

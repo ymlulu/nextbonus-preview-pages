@@ -63,7 +63,7 @@
     const nodes = [];
     root.querySelectorAll?.(selector).forEach(node => nodes.push(node));
     if (root.matches?.(selector)) nodes.push(root);
-    nodes.forEach(node => mark(node, mobileQuery.matches ? 'subheadline' : 'headline', null));
+    nodes.forEach(node => mark(node, mobileQuery.matches ? 'subheadline' : node.closest?.('.nb-wp-api-card') ? 'callout' : 'headline', null));
   }
 
   function syncDiscoverValueHierarchy(root = document) {
@@ -71,7 +71,7 @@
     const nodes = [];
     root.querySelectorAll?.(selector).forEach(node => nodes.push(node));
     if (root.matches?.(selector)) nodes.push(root);
-    nodes.forEach(node => mark(node, mobileQuery.matches ? 'headline' : node.closest?.('.nb-wp-api-card') ? 'title2' : 'display-value-compact', null));
+    nodes.forEach(node => mark(node, mobileQuery.matches ? 'headline' : node.closest?.('.nb-wp-api-card') ? 'title3' : 'display-value-compact', null));
   }
 
   function syncSavedWatchlistHierarchy(root = document) {
