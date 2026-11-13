@@ -2,6 +2,30 @@
   'use strict';
   // DD is the source of truth. Use only published API fields and do not infer
   // deadlines, tier requirements, eligibility or affiliate destinations.
+  // Present the actions in an executable order, not the canonical DD-first
+  // legacy grouping. Honor explicit dependencies and otherwise preserve
+  // source order within each semantic phase.
+  function displayOrder(items){
+    const remaining=items.map((item,index)=>({...item,sourceIndex:index}));
+    const byId=new Set(remaining.filter(item=>typeof item.id==='string').map(item=>item.id));
+    const out=[],done=new Set();
+    const phase=item=>item.subtype==='account_opening'?0:item.type==='dd'||item.subtype==='direct_deposit'?2:1;
+    while(remaining.length){
+      const ready=remaining.filter(item=>(item.depends_on||[]).every(id=>!byId.has(id)||done.has(id)));
+      if(!ready.length){
+        // Cyclic or unavailable dependency data should never hide requirements.
+        out.push(...remaining);
+        break;
+      }
+      ready.sort((a,b)=>phase(a)-phase(b)||a.sourceIndex-b.sourceIndex);
+      const next=ready[0];
+      out.push(next);
+      if(next.id)done.add(next.id);
+      remaining.splice(remaining.indexOf(next),1);
+    }
+    return out;
+  }
+
   function render(o,{esc,saved,mobileToolbar}){
     if(o?.source!=='bank-offers-api')return '';
     const validDate=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -9,7 +33,7 @@
     const money=c=>window.NextBonusDiscoverBankOffers?.money?.(c)||'';
     const raw=Array.isArray(o.requirements?.requirements)
       ?o.requirements.requirements.filter(x=>typeof x?.description==='string'&&x.description.trim())
-        .map(x=>({id:x.id,description:x.description.trim()}))
+        .map(x=>({id:x.id,description:x.description.trim(),type:x.type,subtype:x.subtype,depends_on:Array.isArray(x.depends_on)?x.depends_on:[]}))
       :[];
     const byId=new Map(raw.filter(x=>x.id!=null).map(x=>[x.id,x.description]));
     const tiers=Array.isArray(o.tiers)?o.tiers.filter(t=>
@@ -43,7 +67,7 @@
       return '<div class="remaining-tier"><span>'+esc(description)+'</span><span><strong>'+
         esc(money(t.bonus_amount_cents))+'</strong></span></div>';
     }).join('');
-    const list=common.map((r,index)=>'<div class="remaining-step"><div class="remaining-num">'+(index+1)+
+    const list=displayOrder(common).map((r,index)=>'<div class="remaining-step"><div class="remaining-num">'+(index+1)+
       '</div><div class="remaining-step-card"><div class="remaining-step-title"><span>'+
       esc(r.description)+'</span></div></div></div>').join('');
     const eligibility=o.eligibilityNotes
