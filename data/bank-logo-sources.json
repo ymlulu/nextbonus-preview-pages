@@ -574,6 +574,218 @@
     "Community State Bank": {
       "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ee/3a/62/ee3a62e0-9224-2d81-1047-105fd6374a49/AppIcon-0-1x_U007emarketing-0-8-0-85-220-0.png/512x512bb.jpg",
       "key": "bank-logo-community-state-bank-v1.webp"
+    },
+    "California Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/21/b9/98/21b99871-a1af-12c5-46ac-7d5c47d32f1e/AppIcon-0-1x_U007emarketing-0-8-0-85-220-0.png/512x512bb.jpg",
+      "key": "bank-logo-california-credit-union-v1.webp"
+    },
+    "Central Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/d6/1f/fe/d61ffe45-0d5c-32ac-7ecd-15a0dc67bcca/CentralAppIcons-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-central-bank-v1.webp"
+    },
+    "Sage Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/cc/7f/51/cc7f51b6-4ef4-a75f-60e9-137477cfc04f/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-sage-credit-union-v1.webp"
+    },
+    "First Community Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ea/56/6c/ea566cb2-f588-cb5b-7c63-12a793b0d16a/AppIcon-0-0-1x_U007emarketing-0-5-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-first-community-bank-v1.webp"
+    },
+    "Shell Federal Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/6f/77/df/6f77df0e-3f2a-7dc9-08ca-8ad5023c1dbb/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-shell-federal-credit-union-v1.webp"
+    },
+    "SouthState Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/47/00/88/4700887c-3e66-0b86-f2f5-b3145e240d7c/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-southstate-bank-v1.webp"
+    },
+    "The Summit Federal Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/32/f7/75/32f7750b-4f5a-4e9e-7c93-0957856cf8cf/AppIcon-0-1x_U007emarketing-0-8-0-85-220-0.png/512x512bb.jpg",
+      "key": "bank-logo-the-summit-federal-credit-union-v1.webp"
+    },
+    "Torrington Savings Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/2d/1f/40/2d1f4095-0f91-531f-fc7c-6bff021498ad/1056_TorringtonSavings_AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-torrington-savings-bank-v1.webp"
+    },
+    "Trax Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/f4/ec/ad/f4ecadbb-3d5e-adfe-0987-fc4f505942fc/AppIcon-0-0-1x_U007emarketing-0-5-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-trax-credit-union-v1.webp"
+    },
+    "TruNorth Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/55/39/03/553903e0-b4c4-8f9d-7062-69667b7bc97e/1142_TruNorth_AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-trunorth-bank-v1.webp"
+    },
+    "TruStone Financial": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/06/28/d4/0628d465-a21d-7eee-f31f-6f72c0e581e1/AppIcon-0-0-1x_U007epad-0-1-0-0-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-trustone-financial-v1.webp"
+    },
+    "Union Savings Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/4c/88/70/4c887089-bd7b-a01b-93fc-80f22a55b392/AppIcon-0-0-1x_U007emarketing-0-5-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-union-savings-bank-v1.webp"
+    },
+    "USC Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ba/7c/86/ba7c869b-abd7-fe22-4258-5ed61709db25/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-usc-credit-union-v1.webp"
+    },
+    "Valley Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/7f/ca/dc/7fcadc58-36eb-7083-b017-843d94e1b8bd/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-valley-bank-v1.webp"
+    },
+    "ValleyStar Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/2f/68/28/2f682816-982e-7368-a9bf-9aa9927c231c/AppIcon-1x_U007emarketing-0-8-0-sRGB-85-220-0.png/512x512bb.jpg",
+      "key": "bank-logo-valleystar-credit-union-v1.webp"
+    },
+    "Vantage Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3d/e8/66/3de86606-61d9-5e60-5b37-48ad5cce39c2/VantageAppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-vantage-credit-union-v1.webp"
+    },
+    "Vantage West Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/60/28/99/602899b0-5d0c-00c2-b49d-f01bc9528ec4/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-vantage-west-credit-union-v1.webp"
+    },
+    "Verve, A Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/71/28/25/71282589-78dd-ccc7-b0bf-b68abb28841d/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-verve-a-credit-union-v1.webp"
+    },
+    "Visions Federal Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/72/75/ec/7275ec28-241c-8dc6-52b1-babf32f9487a/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-visions-federal-credit-union-v1.webp"
+    },
+    "Walden Savings Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/78/8b/df/788bdf9d-b1c8-bc0f-8440-b434cc717b50/1179_WaldenSavingsBank_AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-walden-savings-bank-v1.webp"
+    },
+    "Washington Trust": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/9b/9c/3e/9b9c3e8b-705f-dcf5-0620-f6b476b5415b/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-washington-trust-v1.webp"
+    },
+    "Waukesha State Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/93/85/40/938540ee-4cb0-191d-8e6d-6f9086e73c7b/AppIcon-0-0-1x_U007epad-0-1-0-0-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-waukesha-state-bank-v1.webp"
+    },
+    "WEOKIE Federal Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/2d/98/76/2d9876ea-10dc-b63f-649a-c48c46403985/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-weokie-federal-credit-union-v1.webp"
+    },
+    "Wescom Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/cd/18/b0/cd18b046-1ed7-0cd5-60c4-105a05b5ca26/AppIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-wescom-credit-union-v1.webp"
+    },
+    "Westmark Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/f2/f8/36/f2f836ea-a2de-d7fa-4e02-085b385a363e/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-westmark-credit-union-v1.webp"
+    },
+    "Wings Credit Union (Ent Credit Union)": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/f1/2a/0b/f12a0b37-e7d5-7580-61b8-52173349c133/EntAppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-wings-credit-union-ent-credit-union-v1.webp"
+    },
+    "WSECU": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/75/d9/4f/75d94f91-65d7-0c2d-b7c4-0057def79eef/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-wsecu-v1.webp"
+    },
+    "Northwest Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/1e/85/a0/1e85a0a1-88a8-e93e-e4e9-2ea008c0401a/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-northwest-bank-v1.webp"
+    },
+    "Town Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/4c/7e/c0/4c7ec072-4bc4-ee47-b94f-88fb7d392fdf/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-town-bank-v1.webp"
+    },
+    "Univest Bank and Trust Co.": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c2/ca/9a/c2ca9a4c-2c16-fc49-6df5-a482f0b5d949/AppIcon-0-0-1x_U007epad-0-1-0-0-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-univest-bank-and-trust-co-v1.webp"
+    },
+    "The Union Bank Company": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/36/01/fa/3601fa98-9806-2e6c-8e91-08688f7e3534/AppIcon-0-1x_U007emarketing-0-8-0-85-220-0.png/512x512bb.jpg",
+      "key": "bank-logo-the-union-bank-company-v1.webp"
+    },
+    "City National Bank of West Virginia": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/bb/c0/91/bbc09171-133d-e9c5-03e4-7bc8abeb3521/AppIcon-0-0-1x_U007epad-0-1-0-0-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-city-national-bank-of-west-virginia-v1.webp"
+    },
+    "First National Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/cb/81/36/cb8136cd-8d2c-b52e-4b2a-547a63f0accd/AppIcon-0-0-1x_U007epad-0-1-0-0-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-first-national-bank-v1.webp"
+    },
+    "1st United Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/41/a7/22/41a72289-06a5-d9da-fd8d-f65c4a55c8cb/AppIcon-0-0-1x_U007epad-0-1-0-0-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-1st-united-credit-union-v1.webp"
+    },
+    "A+ Federal Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/44/ef/d3/44efd3cd-7f88-6d92-bc62-8e1505bfc4a1/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-a-federal-credit-union-v1.webp"
+    },
+    "Bankers Trust Company": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/2c/6d/13/2c6d13e7-def3-9b93-41d0-904f81c47963/AppIcon-0-0-1x_U007emarketing-0-5-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-bankers-trust-company-v1.webp"
+    },
+    "Broadway Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b5/03/97/b503970c-950b-a202-08fe-724c1d15f325/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-broadway-bank-v1.webp"
+    },
+    "CapEd Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/d7/75/8c/d7758c50-5f0b-9939-3eb5-457ba4254435/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-caped-credit-union-v1.webp"
+    },
+    "Cedar Rapids Bank & Trust": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/0e/98/31/0e983193-7bce-0c40-20c3-5d0fd6e5efad/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-cedar-rapids-bank-trust-v1.webp"
+    },
+    "Citadel Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/81/21/a0/8121a022-09cd-bc54-7b99-9a64802e5390/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-citadel-credit-union-v1.webp"
+    },
+    "Columbia Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/17/25/a9/1725a9e2-e690-452d-7cb6-73ffaf7b3038/AppIcon-0-1x_U007emarketing-0-8-0-85-220-0.png/512x512bb.jpg",
+      "key": "bank-logo-columbia-bank-v1.webp"
+    },
+    "Community First Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/8d/b8/33/8db8334e-4898-0d59-530c-72e3e1531766/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-community-first-credit-union-v1.webp"
+    },
+    "Equity Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/45/d9/4d/45d94d02-edac-5fd3-5b1e-3e725bcfdb85/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-equity-bank-v1.webp"
+    },
+    "GBC Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/1f/a5/50/1fa55059-c021-2c02-3d3e-661edb57db1f/AppIcon-0-0-1x_U007epad-0-1-0-0-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-gbc-bank-v1.webp"
+    },
+    "Greater Texas Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/04/7c/83/047c83b8-b61c-82ec-2caa-609d97b5128d/AppIcon-1x_U007emarketing-0-6-0-85-220-0.png/512x512bb.jpg",
+      "key": "bank-logo-greater-texas-credit-union-v1.webp"
+    },
+    "Park National Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/c3/70/c5/c370c560-3a3e-fa85-f4e7-2bc8260c5334/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-park-national-bank-v1.webp"
+    },
+    "Peoples Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/fe/f6/eb/fef6eb6e-b93b-4a1b-6cfa-9f38f27655ef/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-peoples-bank-v1.webp"
+    },
+    "Percapita": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/46/38/0a/46380ad8-0f8d-64b3-dd8b-2574dbcc533e/AppIcon-1x_U007emarketing-0-11-0-85-220-0.jpeg/512x512bb.jpg",
+      "key": "bank-logo-percapita-v1.webp"
+    },
+    "ProFed Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3b/86/51/3b8651ea-78ce-975d-09fc-300e9529db06/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-profed-credit-union-v1.webp"
+    },
+    "Town & Country Credit Union": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3d/5d/3f/3d5d3fba-69fa-ce25-bb4f-131476d532cf/AppIcon-0-1x_U007emarketing-0-8-0-85-220-0.png/512x512bb.jpg",
+      "key": "bank-logo-town-country-credit-union-v1.webp"
+    },
+    "Sovereign Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b9/6e/ff/b96eff98-4d3d-f8dd-f10c-0105adc439eb/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-sovereign-bank-v1.webp"
+    },
+    "Sterling Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/57/81/96/57819693-b799-53e7-a565-9a89c0940a8e/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-sterling-bank-v1.webp"
+    },
+    "Western State Bank": {
+      "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/e2/a6/f1/e2a6f1e4-9f1a-2932-0163-db93466a9f0e/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "key": "bank-logo-western-state-bank-v1.webp"
     }
   }
 }
