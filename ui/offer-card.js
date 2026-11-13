@@ -64,10 +64,22 @@
       '</div>'+
     cardEnd;
   }
+  function bankLogoHtml(offer,esc){
+    const bank=String(offer.provider||'').trim();
+    const logo=window.NextBonusBankLogoRegistry?.resolve?.(bank);
+    if(!logo?.src)return '<div class="nb-brand-art nb-bank-name-fallback">'+esc(bank||'Bank')+'</div>';
+    // Keep readable text in the DOM so broken app artwork never leaves
+    // blank cards. Each bank uses a single URL across all its offers.
+    return '<div class="nb-bank-logo-art '+(logo.kind==='app'?'is-app-icon':'is-brand-mark')+'">'+
+      '<img src="'+esc(logo.src)+'"'+(logo.fallbackSrc?' data-fallback-src="'+esc(logo.fallbackSrc)+'"':'')+
+      ' alt="'+esc(bank)+' Logo" loading="lazy" decoding="async" />'+
+      '<span class="nb-bank-logo-fallback" aria-hidden="true">'+esc(bank)+'</span></div>';
+  }
+
   function bankRender(offer,esc){
     // Reuse the existing product-offer card layout, but source text only from DD.
     return `<article class="offer-card nb-offer-card nb-bank-api-card" data-action="open-offer" data-id="${esc(offer.id)}" tabindex="0" role="button" aria-label="${esc(offer.name)}">
-      <div class="nb-offer-visual"><div class="nb-brand-art">${esc(offer.provider||'Bank')}</div></div>
+      <div class="nb-offer-visual">${bankLogoHtml(offer,esc)}</div>
       <div class="nb-card-body">
         <div class="nb-title-row"><div class="nb-offer-name">${esc(offer.name)}</div></div>
         <div class="nb-primary-value">${esc(offer.value)}</div>
