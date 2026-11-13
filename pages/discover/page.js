@@ -26,6 +26,9 @@
     const catalogState=catalog?.isConfigured?.()?catalog.getState():null;
     // Normal API loading is silent: other approved offers can be browsed immediately.
     // Only surface a recoverable error if Deals failed and no cached Deals exist.
+    const bankState=window.NextBonusDiscoverBankOffers?.getState?.();
+    const bankMessage=bankState?.status==='error'
+      ?'<div class="nb-deals-status is-error" role="status">银行奖励更新失败，当前数据可能不是最新。 <button type="button" data-action="discover-retry-bank">重试</button></div>':'';
     const statusMessage=catalogState?.status==='error'&&!catalog?.list?.()?.length
       ?'<div class="nb-deals-status is-error">Deals 暂时无法加载。 <button type="button" data-action="discover-retry-deals">重试</button></div>':'';
     const sourceStatuses=[
@@ -54,7 +57,7 @@
         </div>
         <div class="filters discover-filters" role="group" aria-label="分类筛选">${availableCategories.map(c=>`<button class="pill cat-${esc(c)} ${category===c?'active':''}" data-action="discover-category" data-category="${esc(c)}"><span class="pill-icon">${categoryIcon(c)}</span><span>${esc(c)}</span></button>`).join('')}</div>
       </div>
-      ${statusMessage}
+      ${statusMessage}${bankMessage}
       ${items.length?`<div class="offer-grid">${pageItems.map(offerCard).join('')}</div>${pagination({page,pageCount,total})}`:emptyState}
     </div>`;
   });

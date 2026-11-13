@@ -386,3 +386,15 @@
 .discover-page .discover-pagination-button:focus-visible{outline:2px solid #0a84ff;outline-offset:2px}
 @media(max-width:780px){.discover-page .discover-pagination{justify-content:center;gap:10px}.discover-page .discover-pagination-total{width:100%;text-align:center}.discover-page .discover-pagination-controls{justify-content:center}}
 
+
+/* Bank account cards: a compact two-line API condition summary. */
+.discover-page .nb-bank-api-card .nb-bank-card-requirement{
+  min-width:0;
+  margin-top:5px;
+  color:var(--nb-label-secondary);
+  overflow-wrap:anywhere;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}

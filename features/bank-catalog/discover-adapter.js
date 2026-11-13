@@ -13,7 +13,7 @@
   const today=()=>new Date().toISOString().slice(0,10);
 
   function safeDdUrl(value,prefix){
-    if(typeof value!=='string'||!value.startsWith(prefix))return '';
+    if(typeof value!=='string'||!value.trim())return '';
     try{
       const url=new URL(value,ORIGIN);
       if(url.origin!==ORIGIN||!url.pathname.startsWith(prefix)||url.username||url.password)return '';
@@ -43,7 +43,7 @@
       :title;
     const extras=Array.isArray(offer.extraRequirements)
       ?offer.extraRequirements.filter(x=>typeof x==='string'&&x.trim()).map(x=>x.trim()):[];
-    const requirement=[offer.ddRequired?text(offer.ddRequirement):'无需 Direct Deposit',extras[0]]
+    const requirement=[text(offer.ddRequirement),extras[0]]
       .filter(Boolean).join(' · ');
     return Object.freeze({
       id:idForSlug(slug),slug,source:'bank-offers-api',type:'bank',
@@ -63,7 +63,7 @@
       checklistReady:offer.checklistReady===true,
       requirements:offer.checklistReady===true?offer.requirements:null,
       tiers:Array.isArray(offer.tiers)?offer.tiers:[],
-      version:text(offer.version),tags:['开户奖励'],
+      version:offer.version??null,tags:['开户奖励'],
       status:'',featured:offer.featured===true,
       sortOrder:Number.isSafeInteger(offer.sortOrder)?offer.sortOrder:0
     });

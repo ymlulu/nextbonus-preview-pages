@@ -26,7 +26,7 @@
       checklistReady:input.checklistReady===true&&!!input.requirements,
       requirements:input.checklistReady===true?input.requirements:null,
       tiers:Array.isArray(input.tiers)?input.tiers:[],
-      version:str(input.version)||null
+      version:input.version??null
     });
   }
   function parse(payload){

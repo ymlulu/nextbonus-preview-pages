@@ -91,6 +91,7 @@
       <div class="nb-card-body">
         <div class="nb-title-row"><div class="nb-offer-name">${esc(offer.name)}</div></div>
         <div class="nb-primary-value">${esc(offer.value)}</div>
+        ${offer.requirement?`<div class="nb-bank-card-requirement" data-nb-type="caption2" data-nb-tone="secondary">${esc(offer.requirement)}</div>`:''}
         <div class="nb-card-footer"><div class="nb-card-meta">
           <span class="nb-tag attribute">银行账户</span>
         </div></div>
