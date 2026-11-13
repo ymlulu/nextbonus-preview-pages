@@ -262,8 +262,6 @@
 }
 .nb-bank-api-card .nb-bank-name-fallback{
   padding:12px;
-  font-size:14px;
-  line-height:1.3;
   overflow-wrap:anywhere;
 }
 @media(max-width:520px){

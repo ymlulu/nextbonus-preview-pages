@@ -1,16 +1,27 @@
-/* WordPress card detail only: approved clean two-column product layout.
-   Other Offer Detail / Assessment panels continue using their own rules. */
+/* WordPress credit card Offer Detail only. Bank offers and shopping deals are unchanged. */
+@media(min-width:1181px){
+  /* WP cards have less narrative content than other offer detail types.
+     Keep the shared overlay, but do not force the generic 800px-tall canvas. */
+  .nb-offer-detail-frame:has(.nb-wp-card-detail){
+    width:min(1140px,calc(100vw - 96px));
+    height:min(720px,calc(100vh - 80px));
+  }
+  .nb-offer-detail-host .nb-wp-card-detail .v4-offer-detail-grid{
+    grid-template-columns:minmax(0,44fr) minmax(0,56fr) !important;
+  }
+}
+
 .nb-wp-card-detail .nb-wp-card-image-pane{
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:40px;
-  background:#f6f7f9;
+  padding:36px;
+  background:#f8f9fb;
 }
 .nb-wp-card-detail .nb-wp-card-photo{
   display:block;
-  max-width:95%;
-  max-height:70%;
+  max-width:90%;
+  max-height:55%;
   object-fit:contain;
 }
 .nb-wp-card-detail .nb-wp-card-fallback{
@@ -19,88 +30,143 @@
   text-align:center;
 }
 
-@media(min-width:1181px){
-  .nb-offer-detail-host .nb-wp-card-detail .v4-offer-detail-grid{
-    grid-template-columns:minmax(0,52fr) minmax(0,48fr) !important;
-  }
-}
-
-/* The shared overlay locks generic panels to display:block / overflow:hidden.
-   This more specific rule gives only WP cards a clean vertical layout and scrolling
-   when longer reward text or smaller desktop windows need more space. */
+/* Stronger hierarchy: issuer/action on their own line, card name below. */
 .nb-offer-detail-host .nb-wp-card-detail .nb-wp-card-info{
   display:flex !important;
   flex-direction:column;
   align-items:stretch;
   gap:0;
-  padding:34px 30px 28px;
+  padding:28px 36px 24px;
   background:#fff;
   overflow-x:hidden !important;
   overflow-y:auto !important;
   overscroll-behavior:contain;
 }
 .nb-wp-card-detail .nb-wp-card-header{
+  display:block;
   padding:0;
   margin:0;
   border:0;
+}
+.nb-wp-card-detail .nb-wp-card-kicker{
+  display:flex;
   align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  min-height:34px;
+  margin-bottom:12px;
 }
-.nb-wp-card-detail .nb-wp-card-header .nb-credit-offer-name{
-  overflow-wrap:anywhere;
+.nb-wp-card-detail .nb-wp-card-provider{
+  color:#748196;
+  text-transform:uppercase;
 }
-.nb-wp-card-detail .nb-wp-card-highlight{
-  margin:24px 0 22px;
-  color:var(--nb-label-secondary);
+.nb-wp-card-detail .nb-wp-card-header .nb-wp-card-name{
+  display:block;
+  margin:0;
+  color:#172033;
+  white-space:normal;
   overflow-wrap:anywhere;
+  text-wrap:pretty;
 }
 
-/* One distinct reward block; no adjacent text should collide with its border. */
+/* Keep one clear focal point: the bonus and its requirement. */
 .nb-wp-card-detail .nb-wp-card-offer{
-  margin:0;
-  padding:20px 21px;
-  border:1px solid #c5dcff;
+  margin:24px 0 0;
+  padding:18px 21px 19px;
+  border:1px solid #d9e8ff;
   border-radius:16px;
-  background:linear-gradient(125deg,#f5f9ff 0%,#f8fbff 66%,#edf5ff 100%);
+  background:linear-gradient(125deg,#f7faff,#eff6ff);
+  box-shadow:none;
 }
 .nb-wp-card-detail .nb-wp-card-offer .nb-current-offer-label{
   margin:0;
 }
 .nb-wp-card-detail .nb-wp-card-offer .nb-current-offer-value{
-  margin-top:10px;
+  margin-top:8px;
+  color:#0875ef;
+  white-space:normal;
   overflow-wrap:anywhere;
+  text-wrap:pretty;
 }
 .nb-wp-card-detail .nb-wp-card-offer .nb-current-offer-requirement{
-  margin-top:9px;
+  margin:8px 0 0;
+  color:#657387;
+  white-space:normal;
   overflow-wrap:anywhere;
 }
 
-/* Short, aligned fact rows with unobtrusive dividers. */
-.nb-wp-card-detail .nb-wp-card-facts{
+/* Editorial highlights and facts get breathing room instead of single-line blurbs. */
+.nb-wp-card-detail .nb-wp-card-highlights-section{
+  margin-top:22px;
+}
+.nb-wp-card-detail .nb-wp-card-section-title{
+  margin:0 0 11px;
+  color:#263449;
+}
+.nb-wp-card-detail .nb-wp-card-highlights{
+  list-style:none;
   display:grid;
-  gap:0;
-  margin-top:25px;
+  gap:8px;
+  padding:0;
+  margin:0;
+}
+.nb-wp-card-detail .nb-wp-card-highlights li{
+  position:relative;
+  padding-left:15px;
+  color:#455369;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  text-wrap:pretty;
+}
+.nb-wp-card-detail .nb-wp-card-highlights li::before{
+  content:"";
+  position:absolute;
+  left:1px;
+  top:7px;
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#8aaeed;
+}
+.nb-wp-card-detail .nb-wp-card-facts{
+  margin-top:23px;
+}
+.nb-wp-card-detail .nb-wp-card-facts-list{
+  display:grid;
+  gap:9px;
 }
 .nb-wp-card-detail .nb-wp-card-fact{
-  border-bottom:1px solid #e6ebf1;
-  padding:0 0 15px;
-  margin:0 0 15px;
-}
-.nb-wp-card-detail .nb-wp-card-fact:last-child{
-  border:0;
-  padding-bottom:0;
-  margin-bottom:0;
+  padding:12px 14px;
+  border:1px solid #edf0f4;
+  border-radius:12px;
+  background:#fafbfc;
 }
 .nb-wp-card-detail .nb-wp-card-fact-label{
-  color:var(--nb-label-primary);
+  color:#35445a;
 }
 .nb-wp-card-detail .nb-wp-card-fact-value{
-  margin:7px 0 0;
-  color:var(--nb-label-secondary);
+  margin:6px 0 0;
+  color:#526075;
+  white-space:normal;
   overflow-wrap:anywhere;
+  text-wrap:pretty;
 }
+.nb-wp-card-detail .nb-wp-card-fact-line{
+  display:block;
+}
+.nb-wp-card-detail .nb-wp-card-fact-line+.nb-wp-card-fact-line{
+  margin-top:6px;
+}
+
+/* The application action stays near the foot of the detail rail. */
 .nb-wp-card-detail .nb-wp-card-actions{
-  margin-top:26px;
+  position:sticky;
+  bottom:0;
+  z-index:2;
+  margin-top:auto;
+  padding-top:20px;
   width:100%;
+  background:linear-gradient(to bottom,rgba(255,255,255,0),#fff 22px);
 }
 .nb-wp-card-detail .nb-wp-card-apply{
   width:100%;
@@ -112,26 +178,35 @@
   justify-content:center;
 }
 
-/* On phone/tablet keep the original full-screen back/follow toolbar and stacked
-   card image, but let the content expand instead of becoming a nested scroller. */
+/* Tablet and phone retain their existing full-page flow and mobile toolbar. */
 @media(max-width:1180px){
   .nb-wp-card-detail .nb-wp-card-image-pane{
-    min-height:250px !important;
+    min-height:230px !important;
     height:auto !important;
-    padding:34px 20px;
+    padding:30px 20px;
   }
   .nb-wp-card-detail .nb-wp-card-photo{
-    max-width:min(85%,360px);
-    max-height:220px;
+    max-width:min(85%,350px);
+    max-height:190px;
   }
   .nb-offer-detail-host .nb-wp-card-detail .nb-wp-card-info{
     height:auto !important;
     min-height:0 !important;
     max-height:none !important;
     overflow:visible !important;
-    padding:24px 20px 30px;
+    padding:24px 20px 32px;
   }
-  .nb-wp-card-detail .nb-wp-card-highlight{margin:18px 0 19px}
-  .nb-wp-card-detail .nb-wp-card-facts{margin-top:22px}
-  .nb-wp-card-detail .nb-wp-card-actions{margin-top:22px}
+  .nb-wp-card-detail .nb-wp-card-kicker{
+    min-height:0;
+    margin-bottom:10px;
+  }
+  .nb-wp-card-detail .nb-wp-card-offer{margin-top:20px}
+  .nb-wp-card-detail .nb-wp-card-highlights-section{margin-top:20px}
+  .nb-wp-card-detail .nb-wp-card-facts{margin-top:21px}
+  .nb-wp-card-detail .nb-wp-card-actions{
+    position:static;
+    margin-top:22px;
+    padding-top:0;
+    background:none;
+  }
 }

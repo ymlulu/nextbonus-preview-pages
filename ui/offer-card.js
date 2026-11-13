@@ -67,7 +67,7 @@
   function bankLogoHtml(offer,esc){
     const bank=String(offer.provider||'').trim();
     const logo=window.NextBonusBankLogoRegistry?.resolve?.(bank);
-    if(!logo?.src)return '<div class="nb-brand-art nb-bank-name-fallback">'+esc(bank||'Bank')+'</div>';
+    if(!logo?.src)return '<div class="nb-brand-art nb-bank-name-fallback" data-nb-type="headline">'+esc(bank||'Bank')+'</div>';
     // Keep readable text in the DOM so broken app artwork never leaves
     // blank cards. Each bank uses a single URL across all its offers.
     return '<div class="nb-bank-logo-art '+(logo.kind==='app'?'is-app-icon':'is-brand-mark')+'">'+
