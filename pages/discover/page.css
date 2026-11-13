@@ -62,7 +62,7 @@
   width:26px;
   height:4px;
   border-radius:999px;
-  background:#ff2442;
+  background:#0a84ff;
   opacity:0;
   transform:translateX(-50%) scaleX(.7);
   transition:opacity .15s ease,transform .15s ease;
