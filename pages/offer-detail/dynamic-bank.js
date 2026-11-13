@@ -26,6 +26,52 @@
     return out;
   }
 
+  // DD Database-like compact display: collapse variable dollar amounts only
+  // when each tier has one equivalent DD instruction and its other constraints
+  // are identical. Preserve all shared conditions in the actionable step list.
+  function compactDdTiers(tiers,tierRefs,commonIds,requirements,money,locale){
+    if(tiers.length<2||tiers.length>30)return null;
+    const byId=new Map(requirements.filter(r=>r.id!=null).map(r=>[r.id,r]));
+    const moneyPattern=/\$[0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{2})?(?![\d,.])/g;
+    const dollarsToCents=value=>Math.round(Number(value.replace(/[$,]/g,''))*100);
+    const sameTemplate=value=>value.normalize('NFKC').replace(/\s+/g,' ').trim().replace(/[.!。]+$/,'');
+    let firstTemplate=null,firstSignature=null;
+    const rows=[];
+    for(let i=0;i<tiers.length;i++){
+      const tier=tiers[i];
+      const specific=tierRefs[i].filter(id=>!commonIds.has(id));
+      if(specific.length!==1)return null;
+      const req=byId.get(specific[0]);
+      if(!req||!(req.type==='dd'||req.subtype==='direct_deposit'))return null;
+      const bonus=money(tier.bonus_amount_cents);
+      if(!bonus)return null;
+      // A leading "$250 奖励档位：" is merely a duplicate bonus label.
+      const cleaned=req.description.trim().replace(
+        /^\s*\$[\d,]+(?:\.\d{2})?\s*(?:奖励档位|奖金档位|奖励级别|bonus tier)\s*[:：]\s*/i,''
+      ).trim();
+      const amounts=[...cleaned.matchAll(moneyPattern)];
+      if(amounts.length!==1)return null;
+      const threshold=dollarsToCents(amounts[0][0]);
+      if(threshold<=0||(Number.isSafeInteger(req.amount_cents)&&req.amount_cents!==threshold))return null;
+      const template=cleaned.slice(0,amounts[0].index)+'{{TIER_AMOUNT}}'+cleaned.slice(amounts[0].index+amounts[0][0].length);
+      const signature=JSON.stringify({
+        type:req.type,subtype:req.subtype,amount_basis:req.amount_basis,
+        transaction_count:req.transaction_count,frequency:req.frequency,
+        repeat_count:req.repeat_count,consecutive_periods:req.consecutive_periods,
+        deadline:req.deadline,hold_days:req.hold_days,
+        period_anchor:req.period_anchor,independent_periods:req.independent_periods,
+        depends_on:req.depends_on
+      });
+      if(firstTemplate===null){firstTemplate=sameTemplate(template);firstSignature=signature;}
+      else if(sameTemplate(template)!==firstTemplate||signature!==firstSignature)return null;
+      rows.push({bonus,threshold:money(threshold)});
+    }
+    // This step retains the verified shared number/timing conditions while
+    // the table carries only the varying dollar thresholds.
+    const placeholder=locale==='zh-CN'?'所选奖励档位对应的金额':'the chosen bonus tier amount';
+    return {rows,sharedDd:firstTemplate.replace('{{TIER_AMOUNT}}',placeholder)};
+  }
+
   function render(o,{esc,saved,mobileToolbar}){
     if(o?.source!=='bank-offers-api')return '';
     const validDate=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -60,6 +106,15 @@
         common.unshift({description:o.ddRequirement});
       }
     }
+    const compact=compactDdTiers(tiers,tierRefs,commonIds,raw,money,o.textLocale);
+    if(compact){
+      const hasEquivalentCommonDd=common.some(r=>r.type==='dd'&&
+        r.description.replace(/\$[0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{2})?/g,'{{TIER_AMOUNT}}')===
+        compact.sharedDd.replace(/所选奖励档位对应的金额|the chosen bonus tier amount/,'{{TIER_AMOUNT}}'));
+      if(!hasEquivalentCommonDd)common.push({
+        type:'dd',subtype:'direct_deposit',description:compact.sharedDd
+      });
+    }
     const isDdRequirement=r=>r?.type==='dd'||r?.subtype==='direct_deposit'||
       (o.ddRequired&&typeof r?.description==='string'&&/\b(?:Direct Deposit|DD)\b|直接存款|工资入账/i.test(r.description));
     const reportLink=o.ddReportsUrl
@@ -71,17 +126,21 @@
     const ordered=displayOrder(common);
     const hasDdStep=ordered.some(isDdRequirement);
     let reportShown=false;
-    const detailRows=tiers.map((t,index)=>{
-      const exclusive=tierRefs[index].filter(id=>!commonIds.has(id));
-      const description=exclusive.length?exclusive.map(id=>byId.get(id)).join('；')
-        :(tierRefs[index].length?'同上方共同开户要求':'具体档位要求请查看官方条款');
-      const tierHasDd=exclusive.some(id=>isDdRequirement(raw.find(r=>r.id===id)));
-      const inlineReport=!hasDdStep&&!reportShown&&tierHasDd&&reportLink;
-      if(inlineReport)reportShown=true;
-      return '<div class="remaining-tier"><span>'+esc(description)+
-        (inlineReport?'<span class="nb-bank-dd-report">'+reportLink+'</span>':'')+
-        '</span><span><strong>'+esc(money(t.bonus_amount_cents))+'</strong></span></div>';
-    }).join('');
+    const detailRows=compact
+      ?compact.rows.map(row=>'<div class="remaining-tier nb-bank-compact-tier"><span><strong>'+
+        esc(row.bonus)+'</strong></span><span><strong>'+esc(row.threshold)+
+        '</strong></span></div>').join('')
+      :tiers.map((t,index)=>{
+        const exclusive=tierRefs[index].filter(id=>!commonIds.has(id));
+        const description=exclusive.length?exclusive.map(id=>byId.get(id)).join('；')
+          :(tierRefs[index].length?'同上方共同开户要求':'具体档位要求请查看官方条款');
+        const tierHasDd=exclusive.some(id=>isDdRequirement(raw.find(r=>r.id===id)));
+        const inlineReport=!hasDdStep&&!reportShown&&tierHasDd&&reportLink;
+        if(inlineReport)reportShown=true;
+        return '<div class="remaining-tier"><span>'+esc(description)+
+          (inlineReport?'<span class="nb-bank-dd-report">'+reportLink+'</span>':'')+
+          '</span><span><strong>'+esc(money(t.bonus_amount_cents))+'</strong></span></div>';
+      }).join('');
     const list=ordered.map((r,index)=>{
       const inlineReport=!reportShown&&isDdRequirement(r)&&reportLink;
       if(inlineReport)reportShown=true;
@@ -112,7 +171,7 @@
       '<section class="remaining-reward"><div class="remaining-reward-top"><div class="remaining-reward-label">当前开户奖励</div>'+
       '<div class="remaining-reward-value">'+esc(o.value)+'</div>'+
       '</div>'+
-      (detailRows?'<div class="remaining-tier-head"><span>奖励档位要求</span><span>奖励</span></div>'+detailRows:'')+
+      (detailRows?(compact?'<div class="remaining-tier-head nb-bank-compact-tier"><span>开户奖励</span><span>所需 Direct Deposit</span></div>':'<div class="remaining-tier-head"><span>奖励档位要求</span><span>奖励</span></div>')+detailRows:'')+
       '</section>'+
       (list?'<div class="remaining-section-title">步骤</div><div class="remaining-timeline">'+list+'</div>':'')+
       (o.promoCode?'<div class="remaining-section-title">Promo Code：'+esc(o.promoCode)+'</div>':'')+
