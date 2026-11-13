@@ -40,3 +40,20 @@
 .nb-bank-api-detail .remaining-tier.nb-bank-compact-tier span{min-width:0;overflow-wrap:anywhere}
 .nb-bank-api-detail .remaining-tier-head.nb-bank-compact-tier span:not(:first-child),
 .nb-bank-api-detail .remaining-tier.nb-bank-compact-tier span:not(:first-child){text-align:right}
+
+/* Keep the offer deadline as quiet metadata at the reward panel's lower right. */
+.nb-bank-api-detail .remaining-reward-top{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:8px 16px;
+}
+.nb-bank-api-detail .nb-bank-reward-amount{min-width:0}
+.nb-bank-api-detail .nb-bank-reward-deadline{
+  flex:0 0 auto;
+  margin-left:auto;
+  color:#657b96;
+  text-align:right;
+  white-space:nowrap;
+}

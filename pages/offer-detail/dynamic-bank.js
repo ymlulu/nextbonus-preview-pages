@@ -218,15 +218,16 @@
       '<aside class="v4-decision-panel">'+
       '<div class="remaining-head nb-offer-detail-head"><strong>'+esc(o.name)+'</strong>'+
       '<button class="remaining-save nb-follow-control '+(saved?'saved':'')+'" data-action="bookmark" data-id="'+esc(o.id)+'" type="button">'+(saved?'已关注':'关注')+'</button></div>'+
-      '<section class="remaining-reward"><div class="remaining-reward-top"><div class="remaining-reward-label">当前开户奖励</div>'+
-      '<div class="remaining-reward-value">'+esc(o.value)+'</div>'+
+      '<section class="remaining-reward"><div class="remaining-reward-top"><div class="nb-bank-reward-amount"><div class="remaining-reward-label">当前开户奖励</div>'+
+      '<div class="remaining-reward-value">'+esc(o.value)+'</div></div>'+
+      (o.expiresOn?'<div class="nb-bank-reward-deadline" data-nb-type="caption2">活动截止：'+esc(o.expiresOn)+'</div>':'')+
       '</div>'+
       (detailRows?(compact?'<div class="remaining-tier-head nb-bank-compact-tier" style="--nb-tier-columns:'+compact.columns.length+'"><span>开户奖励</span>'+compact.columns.map(label=>'<span>'+esc(label)+'</span>').join('')+'</div>':'<div class="remaining-tier-head"><span>奖励档位要求</span><span>奖励</span></div>')+detailRows:'')+
       '</section>'+
       (list?'<div class="remaining-section-title">步骤</div><div class="remaining-timeline">'+list+'</div>':'')+
       (o.promoCode?'<div class="remaining-section-title">Promo Code：'+esc(o.promoCode)+'</div>':'')+
       affiliate+
-      (o.expiresOn?'<div class="remaining-deadline">活动截止：'+esc(o.expiresOn)+'</div>':'')+
+
       eligibility+
       (o.payoutTiming?'<details class="remaining-eligibility"><summary>奖励发放时间</summary><div class="remaining-eligibility-copy">'+esc(o.payoutTiming)+'</div></details>':'')+
       (o.bonusClawback?'<details class="remaining-eligibility"><summary>奖励追回条款</summary><div class="remaining-eligibility-copy">'+esc(o.bonusClawback)+'</div></details>':'')+
