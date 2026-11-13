@@ -8,9 +8,6 @@
     (!row.startsOn||row.startsOn<=today())&&(!row.expiresOn||row.expiresOn>=today());
   const cache=window.NextBonusDiscoverCache;
   const cached=configured?cache?.read?.('deals',isActive):null;
-  let items=Object.freeze((cached?.items||[]).map(normalize).filter(Boolean)), pending=null;
-  let state=Object.freeze({status:configured?(cached?'ready':'idle'):'unconfigured',error:null,updatedAt:cached?.updatedAt||null});
-
   const money=(cents,currency='USD')=>{
     if(!Number.isSafeInteger(cents)) return '';
     try{return new Intl.NumberFormat('en-US',{style:'currency',currency,minimumFractionDigits:0,maximumFractionDigits:2}).format(cents/100);}
@@ -33,6 +30,9 @@
       applyUrl:item.goUrl||'',goUrl:item.goUrl||''
     });
   }
+  let items=Object.freeze((cached?.items||[]).map(normalize).filter(Boolean)), pending=null;
+  let state=Object.freeze({status:configured?(cached?'ready':'idle'):'unconfigured',error:null,updatedAt:cached?.updatedAt||null});
+
   function publish(next,patch){
     items=Object.freeze(next);
     state=Object.freeze({...state,...patch});
