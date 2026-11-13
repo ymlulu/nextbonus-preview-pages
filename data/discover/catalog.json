@@ -750,13 +750,13 @@
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/amex-graphite-business/",
         "status": "published",
         "primaryOfferId": "cardbenefit",
-        "sourceHash": "12f7a3ae798788d582f4fec95d877c2945b7eb4a43d760c24811e2cdaeb32d3e",
+        "sourceHash": "3a3af141a9d0a883413b6c121bd854f6077c2cdb3e0e5c8eecb8ea8056f5de89",
         "syncLocked": false,
         "offers": [
           {
             "id": "cardbenefit",
-            "bonus": "$1500（六个月消费 $50k）",
-            "value": "$1500",
+            "bonus": "最高 $2000（六个月消费 $50k）",
+            "value": "最高 $2000",
             "requirement": "六个月消费 $50k",
             "goUrl": "https://www.uscreditcards101.com/go/amex-graphite-business/cardbenefit",
             "edited": false,
@@ -1010,10 +1010,19 @@
         "cardImageUrl": "https://nextbonus-preview-deals.uscc101-data.workers.dev/api/public/images/8190a04c-689b-4c18-93d8-3a4f2b417a8b.webp",
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/amex-marriott-bonvoy-bevy-credit-card-review/",
         "status": "published",
-        "primaryOfferId": "directam",
-        "sourceHash": "65cff2874624aa1288e13241031b3851c1d625eff98cc2364cabb1c52a270c20",
+        "primaryOfferId": "public",
+        "sourceHash": "e5433e52498e35f0419f997460043137f19107cd3498c57134d2c2ce0be108ad",
         "syncLocked": false,
         "offers": [
+          {
+            "id": "public",
+            "bonus": "150k Mariott 积分+$250（前 6 个月花 $5k）",
+            "value": "150k Mariott 积分+$250（前 6 个月花 $5k）",
+            "requirement": "",
+            "goUrl": "https://www.uscreditcards101.com/go/amex-marriott-bevy/public",
+            "edited": false,
+            "manual": false
+          },
           {
             "id": "directam",
             "bonus": "85k Mariott 积分（前 6 个月花 $5k）",
@@ -1029,15 +1038,6 @@
             "value": "85k Mariott 积分（前 6 个月花 $5k）+50k（前六个月再消费 $2k）",
             "requirement": "",
             "goUrl": "https://www.uscreditcards101.com/go/amex-marriott-bevy/referral",
-            "edited": false,
-            "manual": false
-          },
-          {
-            "id": "public",
-            "bonus": "125k Mariott 积分（前三个月花 $4k）",
-            "value": "125k Mariott 积分（前三个月花 $4k）",
-            "requirement": "",
-            "goUrl": "https://www.uscreditcards101.com/go/amex-marriott-bevy/public",
             "edited": false,
             "manual": false
           }
@@ -4125,13 +4125,13 @@
         "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/chase-aeroplan-card-review/",
         "status": "published",
         "primaryOfferId": "public",
-        "sourceHash": "e01678fcb2d75614bda59148b19ff2e5cef757187a0c170e9a0c9364d3452b05",
+        "sourceHash": "71fb6ad17bd98883d108f251064e4cad8846311fb6571d06042ca57c7614874c",
         "syncLocked": false,
         "offers": [
           {
             "id": "public",
-            "bonus": "75k 里程（3 个月消费 $4k）+40k 里程（12 个月总消费 $20k）",
-            "value": "75k 里程（3 个月消费 $4k）+40k 里程（12 个月总消费 $20k）",
+            "bonus": "60k 里程（3 个月消费 $3k）+20k（前两个月消费额外 50% 积分，最高 20k）",
+            "value": "60k 里程（3 个月消费 $3k）+20k（前两个月消费额外 50% 积分，最高 20k）",
             "requirement": "",
             "goUrl": "https://www.uscreditcards101.com/go/chase-aeroplan/public",
             "edited": false,
@@ -8220,6 +8220,96 @@
             "value": "60k Virgin Points 里程（三个月消费 $4000）+20k（六个月再消费 $2k）",
             "requirement": "",
             "goUrl": "https://www.uscreditcards101.com/go/synchrony-virgin-red/public",
+            "edited": false,
+            "manual": false
+          }
+        ]
+      },
+      {
+        "id": "wp-card:td-business-solutions",
+        "slug": "td-business-solutions",
+        "name": "TD Business Solutions",
+        "issuer": "",
+        "highlight": "所有消费 2% 返现，非常省心~",
+        "spending": "所有消费 2% 返现",
+        "reward": "直接兑现，$25 起",
+        "fee": "0",
+        "feeCurrency": "USD",
+        "feeExtra": "",
+        "imageUrl": "https://www.uscreditcards101.com/wp-content/uploads/2026/11/snipaste_2026-11-12_23-59-11.jpg",
+        "cardImageUrl": "",
+        "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/td-business-solutions-review/",
+        "status": "published",
+        "primaryOfferId": "cardbenefit",
+        "sourceHash": "52f3ab19cb650c8dfde6d6968af553d27ab32ebe3ac600c0b08aabc27c9732de",
+        "syncLocked": false,
+        "offers": [
+          {
+            "id": "cardbenefit",
+            "bonus": "$250 返现（90 天内消费 $1500）",
+            "value": "$250 返现",
+            "requirement": "90 天内消费 $1500",
+            "goUrl": "https://www.uscreditcards101.com/go/td-business-solutions/cardbenefit",
+            "edited": false,
+            "manual": false
+          }
+        ]
+      },
+      {
+        "id": "wp-card:td-cash",
+        "slug": "td-cash",
+        "name": "TD Cash",
+        "issuer": "",
+        "highlight": "自选 3% 和 2% 类别，无上限！",
+        "spending": "自选一个 3% 和 2% 类别（餐饮、娱乐、加油站、超市、旅行）；其余消费 1%",
+        "reward": "直接兑现，$25 起",
+        "fee": "0",
+        "feeCurrency": "USD",
+        "feeExtra": "",
+        "imageUrl": "https://www.uscreditcards101.com/wp-content/uploads/2026/11/snipaste_2026-11-12_21-20-18.jpg",
+        "cardImageUrl": "",
+        "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/td-cash-review/",
+        "status": "published",
+        "primaryOfferId": "cardbenefit",
+        "sourceHash": "6227d892a9529dcad77bd648ef231797f46464e21cd2a1cc20642369be0ecfe5",
+        "syncLocked": false,
+        "offers": [
+          {
+            "id": "cardbenefit",
+            "bonus": "$200 返现（90 天消费 $1000）",
+            "value": "$200 返现",
+            "requirement": "90 天消费 $1000",
+            "goUrl": "https://www.uscreditcards101.com/go/td-cash/cardbenefit",
+            "edited": false,
+            "manual": false
+          }
+        ]
+      },
+      {
+        "id": "wp-card:td-double-up",
+        "slug": "td-double-up",
+        "name": "TD Double Up",
+        "issuer": "",
+        "highlight": "所有消费 2% 返现，超省心~",
+        "spending": "所有消费 2% 返现！",
+        "reward": "直接兑现，$25 起",
+        "fee": "0",
+        "feeCurrency": "USD",
+        "feeExtra": "",
+        "imageUrl": "https://www.uscreditcards101.com/wp-content/uploads/2026/11/snipaste_2026-11-12_23-14-09.jpg",
+        "cardImageUrl": "",
+        "articleUrl": "https://www.uscreditcards101.com/zh/cn/article/td-double-up-review/",
+        "status": "published",
+        "primaryOfferId": "cardbenefit",
+        "sourceHash": "e8454f709f5b02dd0000a6c445bd98cdc9cc6670d42ddc9c7a4eb2a3f7694f40",
+        "syncLocked": false,
+        "offers": [
+          {
+            "id": "cardbenefit",
+            "bonus": "$200 返现（90 天消费 $1500）",
+            "value": "$200 返现",
+            "requirement": "90 天消费 $1500",
+            "goUrl": "https://www.uscreditcards101.com/go/td-double-up/cardbenefit",
             "edited": false,
             "manual": false
           }
