@@ -11,6 +11,27 @@
   let state=Object.freeze({status:cached?'ready':'idle',error:null,updatedAt:cached?.updatedAt||null});
   const valid=v=>typeof v==='string'?v.trim():'';
   const listeners=new Set();
+  // Card preview copy only. The raw bonus, requirement and edited Offer remain
+  // unchanged for Detail/Admin; never rewrite WordPress or D1 fields here.
+  function compactReward(value){
+    const raw=valid(value);
+    if(!raw)return '';
+    let cleaned=raw;
+    // Strip full-width and ASCII parenthetical application requirements.
+    // Repeat for nested brackets; keep everything outside them intact.
+    for(let i=0;i<8;i++){
+      const next=cleaned.replace(/（[^（）]*）|\([^()]*\)/g,' ');
+      if(next===cleaned)break;
+      cleaned=next;
+    }
+    // Split explicit multi-bonus separators, not thousands separators:
+    // "50,000" is one reward, "$100 + 50k" is two.
+    const segments=cleaned.split(/\s*(?:[+＋]|[；;]|、)\s*/)
+      .map(part=>part.replace(/^[\s，,：:]+|[\s，,：:。]+$/g,'').trim())
+      .filter(Boolean);
+    return (segments.length?segments.join(' + '):cleaned.trim())
+      .replace(/\s{2,}/g,' ').trim();
+  }
   function adapt(card){
     if(!card||!valid(card.slug)||!valid(card.name)||!Array.isArray(card.offers))return null;
     const primary=card.offers.find(o=>o.id===card.primaryOfferId)||null;
@@ -18,7 +39,7 @@
     return Object.freeze({
       id:'wp-card:'+card.slug,slug:card.slug,source:'credit-cards-api',category:'信用卡',
       provider:card.issuer||'信用卡',name:card.name,
-      value:primary.value||primary.bonus||'查看奖励',
+      value:compactReward(primary.value||primary.bonus)||'查看奖励',
       requirement:primary.requirement||'',
       bonusRaw:primary.bonus||'',status:'',tags:[],
       imageUrl:valid(card.imageUrl),cardImageUrl:valid(card.cardImageUrl),highlight:valid(card.highlight),
