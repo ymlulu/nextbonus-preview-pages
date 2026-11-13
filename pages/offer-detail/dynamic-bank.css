@@ -23,7 +23,7 @@
 /* Read-only compact comparison for structurally identical DD bonus tiers. */
 .nb-bank-api-detail .remaining-tier-head.nb-bank-compact-tier,
 .nb-bank-api-detail .remaining-tier.nb-bank-compact-tier{
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  grid-template-columns:repeat(calc(var(--nb-tier-columns,1) + 1),minmax(0,1fr));
 }
 .nb-bank-api-detail .remaining-tier.nb-bank-compact-tier span{
   padding:12px 16px;
@@ -34,3 +34,9 @@
 .nb-bank-api-detail .remaining-tier-head.nb-bank-compact-tier span+span{
   text-align:right;
 }
+
+/* Keep different required-amount columns readable inside the existing right rail. */
+.nb-bank-api-detail .remaining-tier-head.nb-bank-compact-tier span,
+.nb-bank-api-detail .remaining-tier.nb-bank-compact-tier span{min-width:0;overflow-wrap:anywhere}
+.nb-bank-api-detail .remaining-tier-head.nb-bank-compact-tier span:not(:first-child),
+.nb-bank-api-detail .remaining-tier.nb-bank-compact-tier span:not(:first-child){text-align:right}
