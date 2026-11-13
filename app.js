@@ -528,37 +528,15 @@
   });
 
   let discoverUpdateTimer=null;
-  let discoverInitialTimer=null;
-  let discoverInitialSettled=false;
-  const catalogStates=()=>[
-    window.NextBonusDealsCatalog?.getState?.(),
-    window.NextBonusCreditCardsCatalog?.getState?.(),
-    window.NextBonusDiscoverBankOffers?.getState?.()
-  ];
-  const catalogsSettled=()=>catalogStates().every(s=>s&&
-    ['ready','error','unconfigured','unavailable'].includes(s.status));
   function scheduleCatalogRender(){
+    // A completed catalog should become visible without waiting for two slower
+    // sources. Coalesce responses arriving close together to avoid extra DOM work.
     if(!['discover','wishlist'].includes(state.route)||hasDetailLayer())return;
-    if(discoverUpdateTimer!==null)window.clearTimeout(discoverUpdateTimer);
-    if(!discoverInitialSettled&&!catalogsSettled()){
-      if(discoverInitialTimer===null){
-        discoverInitialTimer=window.setTimeout(()=>{
-          discoverInitialTimer=null;
-          discoverInitialSettled=true;
-          scheduleCatalogRender();
-        },1800);
-      }
-      return;
-    }
-    if(discoverInitialTimer!==null){
-      window.clearTimeout(discoverInitialTimer);
-      discoverInitialTimer=null;
-    }
-    discoverInitialSettled=true;
+    if(discoverUpdateTimer!==null)return;
     discoverUpdateTimer=window.setTimeout(()=>{
       discoverUpdateTimer=null;
       if(['discover','wishlist'].includes(state.route)&&!hasDetailLayer())render();
-    },160);
+    },80);
   }
   window.addEventListener?.('nextbonus:deals-updated',()=>{
     // Preserve the Discover base DOM beneath Offer Detail for all async catalogs.

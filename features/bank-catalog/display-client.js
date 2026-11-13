@@ -11,17 +11,20 @@
    (!x.expiresOn||x.expiresOn>=today())&&Number.isSafeInteger(x.bonusAmountCents)&&x.bonusAmountCents>0;
  const cached=cache?.read?.('bank-display',valid);
  let offers=Object.freeze((cached?.items||[]).map(x=>Object.freeze(x))),pending=null;
- let state=Object.freeze({status:'idle',error:null,stale:!!cached,updatedAt:cached?.updatedAt||null});
+ let state=Object.freeze({status:cached?'ready':'idle',error:null,stale:!!cached,updatedAt:cached?.updatedAt||null});
  function announce(next,patch){
   offers=Object.freeze(next.map(x=>Object.freeze(x)));
   state=Object.freeze({...state,...patch});
   for(const fn of listeners)fn({offers,state});
   return {offers,state};
  }
- async function load({fetcher=window.fetch?.bind(window)}={}){
+ async function load({fetcher=window.fetch?.bind(window),force=false}={}){
   if(pending)return pending;
-  if(typeof fetcher!=='function')return announce([],{status:'error',error:'Fetch unavailable'});
-  announce(offers,{status:'loading',error:null});
+  if(!force&&state.status==='ready')return {offers,state};
+  if(typeof fetcher!=='function')return announce(offers,{status:'error',error:'Fetch unavailable'});
+  // Keep the last reviewed snapshot visible while refreshing; do not emit
+  // a redundant loading event that rebuilds the whole Discover page.
+  state=Object.freeze({...state,status:'loading',error:null});
   pending=(async()=>{
    try{
     const all=[];let offset=0;
@@ -59,7 +62,20 @@
   endpoint:ENDPOINT,load,
   subscribe(listener){listeners.add(listener);return()=>listeners.delete(listener);},
   list(){return offers;},getState(){return state;},
-  ensure(){return state.status==='idle'?load():null;},
-  retry(){return load();}
+  ensure(){
+    if(state.status==='idle')return load();
+    if(state.status==='ready'&&Date.now()-Date.parse(state.updatedAt||0)>=(cache?.ttl||300000))
+      return load({force:true});
+    return null;
+  },
+  retry(){return load({force:true});}
+ });
+ const refreshOnReturn=()=>{
+   if(state.status==='ready'&&Date.now()-Date.parse(state.updatedAt||0)>=(cache?.ttl||300000))
+     void load({force:true});
+ };
+ window.addEventListener?.('focus',refreshOnReturn);
+ if(typeof document!=='undefined')document.addEventListener?.('visibilitychange',()=>{
+   if(!document.hidden)refreshOnReturn();
  });
 })();

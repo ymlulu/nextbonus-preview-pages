@@ -8,7 +8,7 @@
     c.offers.some(o=>o.id===c.primaryOfferId&&o.goUrl&&o.bonus));
   let cards=Object.freeze((cached?.items||[]).map(c=>Object.freeze(c)));
   let offers=Object.freeze([]),pending=null;
-  let state=Object.freeze({status:'idle',error:null,updatedAt:cached?.updatedAt||null});
+  let state=Object.freeze({status:cached?'ready':'idle',error:null,updatedAt:cached?.updatedAt||null});
   const valid=v=>typeof v==='string'?v.trim():'';
   const listeners=new Set();
   function adapt(card){
@@ -57,6 +57,7 @@
         return {cards,offers,state};
       }catch(e){
         state=Object.freeze({...state,status:'error',error:String(e?.message||e)});
+        window.dispatchEvent?.(new CustomEvent('nextbonus:credit-cards-updated'));
         return {cards,offers,state};
       }finally{pending=null;}
     })();
@@ -64,7 +65,21 @@
   }
   window.NextBonusCreditCardsCatalog=Object.freeze({
     list:()=>offers,products:()=>cards,getById:id=>offers.find(o=>o.id===id)||null,
-    getState:()=>state,load,ensure:()=>state.status==='idle'?load():null,
+    getState:()=>state,load,
+    ensure:()=>{
+      if(state.status==='idle')return load();
+      if(state.status==='ready'&&Date.now()-Date.parse(state.updatedAt||0)>=(cache?.ttl||300000))
+        return load({force:true});
+      return null;
+    },
     subscribe:cb=>{listeners.add(cb);return()=>listeners.delete(cb);}
+  });
+  const refreshOnReturn=()=>{
+    if(state.status==='ready'&&Date.now()-Date.parse(state.updatedAt||0)>=(cache?.ttl||300000))
+      void load({force:true});
+  };
+  window.addEventListener?.('focus',refreshOnReturn);
+  if(typeof document!=='undefined')document.addEventListener?.('visibilitychange',()=>{
+    if(!document.hidden)refreshOnReturn();
   });
 })();
