@@ -47,10 +47,12 @@
           ${state.offerSearch?`<button class="search-clear nb-icon-button nb-icon-button--round nb-icon-button--soft" data-action="discover-clear-search" aria-label="清除搜索">${window.NextBonusIcons?.svg?.('close')||''}</button>`:''}
         </div>
       </div>
-      <div class="filters">${availableCategories.map(c=>`<button class="pill cat-${esc(c)} ${category===c?'active':''}" data-action="discover-category" data-category="${esc(c)}"><span class="pill-icon">${categoryIcon(c)}</span><span>${esc(c)}</span></button>`).join('')}</div>
-      <div class="discover-sort" role="group" aria-label="优惠排序">
-        <button type="button" class="discover-sort-button ${sort==='personal'?'is-active':''}" data-action="discover-sort" data-sort="personal" aria-pressed="${sort==='personal'}">为你推荐</button>
-        <button type="button" class="discover-sort-button ${sort==='latest'?'is-active':''}" data-action="discover-sort" data-sort="latest" aria-pressed="${sort==='latest'}">最新</button>
+      <div class="discover-toolbar">
+        <div class="discover-sort" role="group" aria-label="内容排序">
+          <button type="button" class="discover-sort-button ${sort==='personal'?'is-active':''}" data-action="discover-sort" data-sort="personal" data-nb-type="${sort==='personal'?'title3':'callout'}" aria-pressed="${sort==='personal'}">为你推荐</button>
+          <button type="button" class="discover-sort-button ${sort==='latest'?'is-active':''}" data-action="discover-sort" data-sort="latest" data-nb-type="${sort==='latest'?'title3':'callout'}" aria-pressed="${sort==='latest'}">最新发布</button>
+        </div>
+        <div class="filters discover-filters" role="group" aria-label="分类筛选">${availableCategories.map(c=>`<button class="pill cat-${esc(c)} ${category===c?'active':''}" data-action="discover-category" data-category="${esc(c)}"><span class="pill-icon">${categoryIcon(c)}</span><span>${esc(c)}</span></button>`).join('')}</div>
       </div>
       ${statusMessage}
       ${items.length?`<div class="offer-grid">${pageItems.map(offerCard).join('')}</div>${pagination({page,pageCount,total})}`:emptyState}

@@ -22,25 +22,99 @@
   box-shadow:0 0 0 3px rgba(10,132,255,.08);
 }
 
-/* Filters should read as a control group, not a row of mini cards. */
-.discover-page .filters{
-  gap:6px;
-  margin-top:14px;
-  margin-bottom:24px;
+/* Xiaohongshu-like discovery tabs: prominent editorial sorting on the left,
+   quiet category chips aligned to the right. One shared toolbar, no card changes. */
+.discover-page .discover-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  min-width:0;
+  margin:0 0 18px;
 }
-.discover-page .pill{
-  border-color:transparent;
+.discover-page .discover-sort{
+  display:flex;
+  align-items:center;
+  flex:0 0 auto;
+  gap:22px;
+  margin:0;
+}
+.discover-page .discover-sort-button{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:0 2px 7px;
+  border:0;
+  border-radius:0;
   background:transparent;
-  padding-left:11px;
-  padding-right:11px;
+  color:var(--nb-label-secondary-strong,#6a717d);
+  cursor:pointer;
+  white-space:nowrap;
+  transition:color .15s ease;
 }
-.discover-page .pill:hover{
-  background:rgba(120,120,128,.08);
+.discover-page .discover-sort-button::after{
+  content:"";
+  position:absolute;
+  bottom:0;
+  left:50%;
+  width:26px;
+  height:4px;
+  border-radius:999px;
+  background:#ff2442;
+  opacity:0;
+  transform:translateX(-50%) scaleX(.7);
+  transition:opacity .15s ease,transform .15s ease;
+}
+.discover-page .discover-sort-button.is-active{
+  color:var(--nb-label-primary,#111);
+}
+.discover-page .discover-sort-button.is-active::after{
+  opacity:1;
+  transform:translateX(-50%) scaleX(1);
+}
+.discover-page .discover-sort-button:hover:not(.is-active){
+  color:var(--nb-label-primary,#111);
+}
+.discover-page .discover-sort-button:focus-visible{
+  outline:2px solid #ff2442;
+  outline-offset:3px;
+  border-radius:4px;
+}
+.discover-page .discover-toolbar .filters{
+  display:flex;
+  flex:1 1 auto;
+  min-width:0;
+  justify-content:flex-end;
+  align-items:center;
+  flex-wrap:nowrap;
+  gap:7px;
+  margin:0;
+  padding:0;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scrollbar-width:none;
+}
+.discover-page .discover-toolbar .filters::-webkit-scrollbar{display:none}
+.discover-page .discover-toolbar .pill{
+  flex:0 0 auto;
+  height:36px;
+  padding:0 12px;
+  border:1px solid transparent;
+  border-radius:999px;
+  background:#eef0f3;
+  color:#606873;
+  box-shadow:none;
+}
+.discover-page .discover-toolbar .pill:hover{
+  background:#e5e9ee;
   border-color:transparent;
 }
-.discover-page .pill.active{
-  border-color:transparent;
-  background:rgba(10,132,255,.09);
+.discover-page .discover-toolbar .pill.active{
+  background:#eaf2ff;
+  border-color:#d7e6fa;
+  color:#1269d2;
 }
 .discover-page .pill:not(.active) .pill-icon{
   color:rgba(60,60,67,.68);
@@ -124,9 +198,16 @@
   background:transparent;
 }
 
+/* Narrow layouts retain a single row. Category pills scroll independently. */
+@media(max-width:1160px){
+  .discover-page .discover-toolbar .filters{justify-content:flex-start}
+}
 @media(max-width:780px){
-  .discover-page .filters{gap:4px;margin-bottom:20px}
-  .discover-page .pill{padding-left:9px;padding-right:9px}
+  .discover-page .discover-toolbar{gap:14px;margin-bottom:16px}
+  .discover-page .discover-sort{gap:14px}
+  .discover-page .discover-sort-button{min-height:40px;padding:0 0 6px}
+  .discover-page .discover-toolbar .filters{gap:6px;overscroll-behavior-x:contain}
+  .discover-page .discover-toolbar .pill{height:34px;padding:0 10px}
 }
 
 /* Mobile Discover: keep desktop search unchanged; collapse only the phone search control. */
@@ -305,11 +386,3 @@
 .discover-page .discover-pagination-button:focus-visible{outline:2px solid #0a84ff;outline-offset:2px}
 @media(max-width:780px){.discover-page .discover-pagination{justify-content:center;gap:10px}.discover-page .discover-pagination-total{width:100%;text-align:center}.discover-page .discover-pagination-controls{justify-content:center}}
 
-/* Discover sort uses the established type scale and card styling. */
-.discover-page .filters{margin-bottom:10px}
-.discover-page .discover-sort{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin:0 0 14px}
-.discover-page .discover-sort-button{padding:8px 12px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--nb-label-secondary,#718096);cursor:pointer}
-.discover-page .discover-sort-button.is-active{background:rgba(10,132,255,.09);border-color:rgba(10,132,255,.15);color:#086dc9}
-.discover-page .discover-sort-button:hover:not(.is-active){background:rgba(120,120,128,.08)}
-.discover-page .discover-sort-button:focus-visible{outline:2px solid #0a84ff;outline-offset:2px}
-@media(max-width:780px){.discover-page .discover-sort{justify-content:flex-start}}
