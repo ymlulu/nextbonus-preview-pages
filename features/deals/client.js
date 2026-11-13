@@ -13,11 +13,27 @@
     try{return new Intl.NumberFormat('en-US',{style:'currency',currency,minimumFractionDigits:0,maximumFractionDigits:2}).format(cents/100);}
     catch(_){return '$'+(cents/100).toFixed(2);}
   };
+  // Public click-tracking links remain validated against the Deals Worker.
+  // On Cloudflare Pages, use a branded same-origin first hop which redirects
+  // to the unchanged Worker tracking route. GitHub Pages keeps its old URL.
+  const hostname=String(window.location?.hostname||'').toLowerCase();
+  const onPages=hostname==='deals.nextbonus.app' ||
+    hostname==='nextbonus-preview.pages.dev' ||
+    /^[a-z0-9-]+\.nextbonus-preview\.pages\.dev$/.test(hostname);
+  function trackedGoUrl(item){
+    const original=String(item.goUrl||'').trim();
+    const canonical=base+'/go/deal/'+encodeURIComponent(item.id);
+    const origin=String(window.location?.origin||'');
+    if(onPages && /^https:\/\//.test(origin) && original===canonical)
+      return origin+'/go/deal/'+encodeURIComponent(item.id);
+    return original;
+  }
   function normalize(item){
     if(!item||typeof item.id!=='string'||typeof item.title!=='string') return null;
     const price=Number.isSafeInteger(item.priceCents)?item.priceCents:null;
     const original=Number.isSafeInteger(item.originalPriceCents)?item.originalPriceCents:null;
     const value=item.rewardText || (price!==null ? money(price,item.currency||'USD') : '查看优惠');
+    const goUrl=trackedGoUrl(item);
     return Object.freeze({
       id:item.id,slug:item.slug,source:'deals-api',provider:item.merchant||'Deals',
       name:item.title,category:item.category||'其他',value,
@@ -27,7 +43,7 @@
       currency:item.currency||'USD',rewardText:item.rewardText||'',promoCode:item.promoCode||'',
       expiresOn:item.expiresOn||null,startsOn:item.startsOn||null,
       featured:item.featured===true,publishedAt:item.publishedAt||'',
-      applyUrl:item.goUrl||'',goUrl:item.goUrl||''
+      applyUrl:goUrl,goUrl
     });
   }
   let items=Object.freeze((cached?.items||[]).map(normalize).filter(Boolean)), pending=null;

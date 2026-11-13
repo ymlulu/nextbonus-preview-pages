@@ -46,7 +46,15 @@
     const apiBase=String(window.NextBonusDealsConfig?.apiBase||'').trim().replace(/\/+$/,'');
     const expectedGoUrl=apiBase+'/go/deal/'+encodeURIComponent(offer.id);
     const goUrl=String(offer.goUrl||'').trim();
-    const direct=offer.category==='购物'&&apiBase.startsWith('https://')&&goUrl===expectedGoUrl;
+    const hostname=String(window.location?.hostname||'').toLowerCase();
+    const onPages=hostname==='deals.nextbonus.app' ||
+      hostname==='nextbonus-preview.pages.dev' ||
+      /^[a-z0-9-]+\.nextbonus-preview\.pages\.dev$/.test(hostname);
+    const pageOrigin=onPages?String(window.location?.origin||''):'';
+    const localGoUrl=pageOrigin.startsWith('https://')
+      ?pageOrigin+'/go/deal/'+encodeURIComponent(offer.id):'';
+    const direct=offer.category==='购物'&&apiBase.startsWith('https://')&&
+      (goUrl===expectedGoUrl||(localGoUrl&&goUrl===localGoUrl));
     const cardStart=direct
       ?'<a class="offer-card nb-offer-card nb-dynamic-deal-card" data-id="'+esc(offer.id)+'" href="'+esc(goUrl)+'" target="_blank" rel="noopener noreferrer sponsored" aria-label="'+esc(offer.name)+'，前往商家购买">'
       :'<article class="offer-card nb-offer-card nb-dynamic-deal-card" data-action="open-offer" data-id="'+esc(offer.id)+'" tabindex="0" role="button" aria-label="'+esc(offer.name)+'">';

@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   // Public read-only card catalog. WordPress credentials never reach the browser.
-  const API='https://nextbonus-preview-deals.uscc101-data.workers.dev/api/public/credit-cards';
+  const API=String(window.NextBonusDealsConfig?.apiBase||'https://nextbonus-preview-deals.uscc101-data.workers.dev').trim().replace(/\/+$/,'')+'/api/public/credit-cards';
   const cache=window.NextBonusDiscoverCache;
   const cached=cache?.read?.('credit-cards',c=>c.status==='published'&&
     typeof c.slug==='string'&&Array.isArray(c.offers)&&
