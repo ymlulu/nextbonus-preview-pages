@@ -30,7 +30,8 @@
   text-align:center;
 }
 
-/* Stronger hierarchy: issuer/action on their own line, card name below. */
+/* Right rail interior only: shared modal frame, dimensions, column ratio,
+   poster placement and card artwork intentionally stay unchanged. */
 .nb-offer-detail-host .nb-wp-card-detail .nb-wp-card-info{
   display:flex !important;
   flex-direction:column;
@@ -68,97 +69,148 @@
   overflow-wrap:anywhere;
   text-wrap:pretty;
 }
-
-/* Keep one clear focal point: the bonus and its requirement. */
+.nb-wp-card-detail .nb-wp-card-svg{
+  display:block;
+  width:20px;
+  height:20px;
+  flex:none;
+}
 .nb-wp-card-detail .nb-wp-card-offer{
+  display:grid;
+  grid-template-columns:52px minmax(0,1fr);
+  align-items:center;
+  gap:16px;
   margin:24px 0 0;
-  padding:18px 21px 19px;
+  padding:18px 20px;
   border:1px solid #d9e8ff;
   border-radius:16px;
-  background:linear-gradient(125deg,#f7faff,#eff6ff);
+  background:linear-gradient(125deg,#f5f9ff,#eaf3ff);
   box-shadow:none;
 }
-.nb-wp-card-detail .nb-wp-card-offer .nb-current-offer-label{
-  margin:0;
+.nb-wp-card-detail .nb-wp-card-offer-icon{
+  display:grid;
+  place-items:center;
+  width:52px;
+  height:52px;
+  border-radius:14px;
+  background:rgba(255,255,255,.55);
+  color:var(--nb-system-blue);
 }
+.nb-wp-card-detail .nb-wp-card-offer-icon .nb-wp-card-svg{
+  width:27px;
+  height:27px;
+}
+.nb-wp-card-detail .nb-wp-card-offer-body{
+  min-width:0;
+  padding-left:17px;
+  border-left:1px solid #bfd5f3;
+}
+.nb-wp-card-detail .nb-wp-card-offer .nb-current-offer-label{margin:0}
 .nb-wp-card-detail .nb-wp-card-offer .nb-current-offer-value{
-  margin-top:8px;
+  margin-top:7px;
   color:#0875ef;
   white-space:normal;
   overflow-wrap:anywhere;
   text-wrap:pretty;
 }
 .nb-wp-card-detail .nb-wp-card-offer .nb-current-offer-requirement{
-  margin:8px 0 0;
+  margin:9px 0 0;
   color:#657387;
   white-space:normal;
   overflow-wrap:anywhere;
 }
-
-/* Editorial highlights and facts get breathing room instead of single-line blurbs. */
-.nb-wp-card-detail .nb-wp-card-highlights-section{
-  margin-top:22px;
-}
+.nb-wp-card-detail .nb-wp-card-highlights-section{margin-top:21px}
 .nb-wp-card-detail .nb-wp-card-section-title{
-  margin:0 0 11px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:0 0 12px;
   color:#263449;
+}
+.nb-wp-card-detail .nb-wp-card-section-icon{
+  display:grid;
+  place-items:center;
+  width:22px;
+  height:22px;
+  color:#364253;
 }
 .nb-wp-card-detail .nb-wp-card-highlights{
   list-style:none;
-  display:grid;
-  gap:8px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
   padding:0;
   margin:0;
 }
 .nb-wp-card-detail .nb-wp-card-highlights li{
-  position:relative;
-  padding-left:15px;
-  color:#455369;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex:1 1 205px;
+  min-width:0;
+  min-height:44px;
+  box-sizing:border-box;
+  padding:11px 14px;
+  border-radius:12px;
+  background:#f3f4f7;
+  color:#374457;
   white-space:normal;
   overflow-wrap:anywhere;
   text-wrap:pretty;
 }
-.nb-wp-card-detail .nb-wp-card-highlights li::before{
-  content:"";
-  position:absolute;
-  left:1px;
-  top:7px;
-  width:5px;
-  height:5px;
-  border-radius:50%;
-  background:#8aaeed;
+.nb-wp-card-detail .nb-wp-card-highlight-icon{
+  display:grid;
+  place-items:center;
+  flex:none;
+  color:#495463;
 }
-.nb-wp-card-detail .nb-wp-card-facts{
-  margin-top:23px;
+.nb-wp-card-detail .nb-wp-card-highlight-copy{
+  display:block;
+  min-width:0;
 }
+.nb-wp-card-detail .nb-wp-card-facts{margin-top:22px}
 .nb-wp-card-detail .nb-wp-card-facts-list{
   display:grid;
-  gap:9px;
+  gap:10px;
 }
 .nb-wp-card-detail .nb-wp-card-fact{
-  padding:12px 14px;
-  border:1px solid #edf0f4;
+  display:grid;
+  grid-template-columns:44px minmax(0,1fr);
+  align-items:center;
+  gap:14px;
+  padding:15px 17px;
+  border:1px solid #e7ebf1;
+  border-radius:14px;
+  background:#f9fafc;
+}
+.nb-wp-card-detail .nb-wp-card-fact-icon{
+  display:grid;
+  place-items:center;
+  width:44px;
+  height:44px;
   border-radius:12px;
-  background:#fafbfc;
+  background:#eff1f5;
+  color:#455063;
 }
-.nb-wp-card-detail .nb-wp-card-fact-label{
-  color:#35445a;
+.nb-wp-card-detail .nb-wp-card-fact-icon .nb-wp-card-svg{
+  width:24px;
+  height:24px;
 }
+.nb-wp-card-detail .nb-wp-card-fact-content{
+  min-width:0;
+  padding-left:17px;
+  border-left:1px solid #d7dde7;
+}
+.nb-wp-card-detail .nb-wp-card-fact-label{color:#2c394e}
 .nb-wp-card-detail .nb-wp-card-fact-value{
-  margin:6px 0 0;
-  color:#526075;
+  margin:8px 0 0;
+  color:#566579;
   white-space:normal;
   overflow-wrap:anywhere;
   text-wrap:pretty;
 }
-.nb-wp-card-detail .nb-wp-card-fact-line{
-  display:block;
-}
-.nb-wp-card-detail .nb-wp-card-fact-line+.nb-wp-card-fact-line{
-  margin-top:6px;
-}
-
-/* The application action stays near the foot of the detail rail. */
+.nb-wp-card-detail .nb-wp-card-fact-line{display:block}
+.nb-wp-card-detail .nb-wp-card-fact-line+.nb-wp-card-fact-line{margin-top:8px}
 .nb-wp-card-detail .nb-wp-card-actions{
   position:sticky;
   bottom:0;
@@ -209,4 +261,23 @@
     padding-top:0;
     background:none;
   }
+}
+
+/* Right rail mobile adjustments only; the modal and image stage are untouched. */
+@media(max-width:560px){
+  .nb-wp-card-detail .nb-wp-card-offer{
+    grid-template-columns:42px minmax(0,1fr);
+    gap:12px;
+    padding:16px;
+  }
+  .nb-wp-card-detail .nb-wp-card-offer-icon{width:42px;height:42px}
+  .nb-wp-card-detail .nb-wp-card-offer-body{padding-left:12px}
+  .nb-wp-card-detail .nb-wp-card-highlights li{flex-basis:100%}
+  .nb-wp-card-detail .nb-wp-card-fact{
+    grid-template-columns:40px minmax(0,1fr);
+    gap:12px;
+    padding:14px;
+  }
+  .nb-wp-card-detail .nb-wp-card-fact-icon{width:40px;height:40px}
+  .nb-wp-card-detail .nb-wp-card-fact-content{padding-left:12px}
 }
