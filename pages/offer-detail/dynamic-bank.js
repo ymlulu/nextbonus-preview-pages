@@ -60,16 +60,37 @@
         common.unshift({description:o.ddRequirement});
       }
     }
+    const isDdRequirement=r=>r?.type==='dd'||r?.subtype==='direct_deposit'||
+      (o.ddRequired&&typeof r?.description==='string'&&/\b(?:Direct Deposit|DD)\b|直接存款|工资入账/i.test(r.description));
+    const reportLink=o.ddReportsUrl
+      ?'<a class="nb-bank-dd-report-link" href="'+esc(o.ddReportsUrl)+
+        '" target="_blank" rel="noopener noreferrer">查看成功触发的 Direct Deposit 报告 ↗</a>'
+      :'';
+    // A report belongs to the DD instruction, not to a detached footer.
+    // If DD exists only in reward tiers, show one link in the first DD tier.
+    const ordered=displayOrder(common);
+    const hasDdStep=ordered.some(isDdRequirement);
+    let reportShown=false;
     const detailRows=tiers.map((t,index)=>{
-      const exclusive=tierRefs[index].filter(id=>!commonIds.has(id)).map(id=>byId.get(id));
-      const description=exclusive.length?exclusive.join('；')
+      const exclusive=tierRefs[index].filter(id=>!commonIds.has(id));
+      const description=exclusive.length?exclusive.map(id=>byId.get(id)).join('；')
         :(tierRefs[index].length?'同上方共同开户要求':'具体档位要求请查看官方条款');
-      return '<div class="remaining-tier"><span>'+esc(description)+'</span><span><strong>'+
-        esc(money(t.bonus_amount_cents))+'</strong></span></div>';
+      const tierHasDd=exclusive.some(id=>isDdRequirement(raw.find(r=>r.id===id)));
+      const inlineReport=!hasDdStep&&!reportShown&&tierHasDd&&reportLink;
+      if(inlineReport)reportShown=true;
+      return '<div class="remaining-tier"><span>'+esc(description)+
+        (inlineReport?'<span class="nb-bank-dd-report">'+reportLink+'</span>':'')+
+        '</span><span><strong>'+esc(money(t.bonus_amount_cents))+'</strong></span></div>';
     }).join('');
-    const list=displayOrder(common).map((r,index)=>'<div class="remaining-step"><div class="remaining-num">'+(index+1)+
-      '</div><div class="remaining-step-card"><div class="remaining-step-title"><span>'+
-      esc(r.description)+'</span></div></div></div>').join('');
+    const list=ordered.map((r,index)=>{
+      const inlineReport=!reportShown&&isDdRequirement(r)&&reportLink;
+      if(inlineReport)reportShown=true;
+      return '<div class="remaining-step"><div class="remaining-num">'+(index+1)+
+        '</div><div class="remaining-step-card"><div class="remaining-step-title"><span>'+
+        esc(r.description)+'</span></div>'+
+        (inlineReport?'<div class="nb-bank-dd-report">'+reportLink+'</div>':'')+
+        '</div></div>';
+    }).join('');
     const eligibility=o.eligibilityNotes
       ?'<details class="remaining-eligibility"><summary>申请资格与限制</summary><div class="remaining-eligibility-copy">'+esc(o.eligibilityNotes)+'</div></details>':'';
     const affiliate=o.applyUrl&&!expired
@@ -93,7 +114,7 @@
       '</div>'+
       (detailRows?'<div class="remaining-tier-head"><span>奖励档位要求</span><span>奖励</span></div>'+detailRows:'')+
       '</section>'+
-      (list?'<div class="remaining-section-title">其他开户要求</div><div class="remaining-timeline">'+list+'</div>':'')+
+      (list?'<div class="remaining-section-title">步骤</div><div class="remaining-timeline">'+list+'</div>':'')+
       (o.promoCode?'<div class="remaining-section-title">Promo Code：'+esc(o.promoCode)+'</div>':'')+
       affiliate+
       (o.expiresOn?'<div class="remaining-deadline">活动截止：'+esc(o.expiresOn)+'</div>':'')+
@@ -101,7 +122,6 @@
       (o.payoutTiming?'<details class="remaining-eligibility"><summary>奖励发放时间</summary><div class="remaining-eligibility-copy">'+esc(o.payoutTiming)+'</div></details>':'')+
       (o.bonusClawback?'<details class="remaining-eligibility"><summary>奖励追回条款</summary><div class="remaining-eligibility-copy">'+esc(o.bonusClawback)+'</div></details>':'')+
       (o.officialTermsUrl?'<p class="remaining-deadline"><a href="'+esc(o.officialTermsUrl)+'" target="_blank" rel="noopener noreferrer">银行官方条款 ↗</a></p>':'')+
-      (o.ddReportsUrl?'<p class="remaining-deadline"><a href="'+esc(o.ddReportsUrl)+'" target="_blank" rel="noopener noreferrer">Direct Deposit 社区报告 ↗</a></p>':'')+
       (o.verifiedOn?'<div class="remaining-deadline">最近核实：'+esc(o.verifiedOn)+'</div>':'')+
       '</aside></div></div>';
   }
